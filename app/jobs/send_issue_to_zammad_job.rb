@@ -6,7 +6,7 @@ class SendIssueToZammadJob < ApplicationJob
       group: "Dobrovoľníci",
       customer: issue.author,
       customer_id: "guess:#{issue.author}",
-      # anonymous: true, TODO: allow and handle anonymous issues
+      # anonymous: true, TODO: handle anonymous issues - email and name visible to triage zammad, invisible for municipality
       article: {
         content_type: "text/plain", # or text/html, if not given test/plain is used
         body: issue.description,
