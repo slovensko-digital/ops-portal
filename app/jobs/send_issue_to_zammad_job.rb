@@ -8,12 +8,15 @@ class SendIssueToZammadJob < ApplicationJob
     ticket = client.ticket.create(
       title: issue.title,
       state: "new",
-      group: "Users",
+      group: "Dobrovoľníci",
       customer: issue.author,
+      customer_id: "guess:#{issue.author}",
       # anonymous: true,
       article: {
         content_type: "text/plain", # or text/html, if not given test/plain is used
-        body: issue.description
+        body: issue.description,
+        sender: "Agent",
+        type: "web"
         # attachments can be optional, data needs to be base64 encoded
         # attachments: [
         #   'filename' => 'some_file.txt',
