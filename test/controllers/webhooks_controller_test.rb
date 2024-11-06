@@ -7,7 +7,7 @@ class WebhooksControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "ticket-updated should receive 400 with bad signature" do
-    post webhooks_ticket_updated_url, params: {}, headers: { "X-Hub-Signature": "sha1=sadfasdfas"}
+    post webhooks_ticket_updated_url, params: {}, headers: { "X-Hub-Signature": "sha1=sadfasdfas" }
     assert_response :bad_request
   end
 
