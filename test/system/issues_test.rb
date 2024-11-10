@@ -31,7 +31,7 @@ class IssuesTest < ApplicationSystemTestCase
 
   test "should update Issue" do
     visit issue_url(@issue)
-    click_on "Edit this issues", match: :first
+    click_on "Edit this issue", match: :first
 
     fill_in "Author", with: @issue.author
     fill_in "Description", with: @issue.description
@@ -45,7 +45,7 @@ class IssuesTest < ApplicationSystemTestCase
 
   test "should destroy Issue" do
     visit issue_url(@issue)
-    click_on "Destroy this issues", match: :first
+    click_on "Destroy this issue", match: :first
 
     assert_text "Issue was successfully destroyed"
   end
