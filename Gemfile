@@ -67,4 +67,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "good_job", "~> 4.4"
+gem "good_job"

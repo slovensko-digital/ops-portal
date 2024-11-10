@@ -15,15 +15,21 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create issues" do
-    assert_difference("Issue.count") do
-      post issues_url, params: { issue: { author: @issue.author, description: @issue.description, reported_at: @issue.reported_at, title: @issue.title } }
+  test "should create issue" do
+    mock_job = Minitest::Mock.new
+    mock_job.expect :enqueue, true
+
+    SendIssueToZammadJob.stub :new, mock_job do
+      assert_difference("Issue.count") do
+        post issues_url, params: { issue: { author: @issue.author, description: @issue.description, reported_at: @issue.reported_at, title: @issue.title } }
+      end
     end
 
     assert_redirected_to issue_url(Issue.last)
+    mock_job.verify
   end
 
-  test "should show issues" do
+  test "should show issue" do
     get issue_url(@issue)
     assert_response :success
   end
@@ -33,12 +39,12 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should update issues" do
+  test "should update issue" do
     patch issue_url(@issue), params: { issue: { author: @issue.author, description: @issue.description, reported_at: @issue.reported_at, title: @issue.title } }
     assert_redirected_to issue_url(@issue)
   end
 
-  test "should destroy issues" do
+  test "should destroy issue" do
     assert_difference("Issue.count", -1) do
       delete issue_url(@issue)
     end
