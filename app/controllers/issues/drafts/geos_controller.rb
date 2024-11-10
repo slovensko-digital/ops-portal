@@ -2,6 +2,7 @@ class Issues::Drafts::GeosController < ApplicationController
   before_action :set_draft
 
   def show
+    @draft.load_geo_from_exif(@draft.photos.first) unless @draft.geo.present?
   end
 
   def update

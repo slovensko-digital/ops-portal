@@ -12,9 +12,16 @@ export default class extends Controller {
             maxZoom: 19,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(this.map);
-        this.map.setView([48.148598, 17.107748], 13)
-        this.map.addEventListener('moveend', this.setInputs.bind(this));
 
+        let place = [this.latitudeTarget.value, this.longitudeTarget.value];
+        let zoom = 17;
+        if (place[0] === '' || place[1] === '') {
+            place = [48.148598, 17.107748]
+            zoom = 12;
+        }
+
+        this.map.setView(place, zoom)
+        this.map.addEventListener('moveend', this.setInputs.bind(this));
     }
 
     setInputs() {

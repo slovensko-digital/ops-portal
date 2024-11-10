@@ -6,7 +6,7 @@ class Issues::DraftsController < ApplicationController
   def create
     @draft = Issues::Draft.new(draft_params)
     if @draft.save(context: :photos)
-      redirect_to new_issues_draft_details_path(@draft)
+      redirect_to issues_draft_geo_path(@draft)
     else
       render :new, status: :unprocessable_entity
     end

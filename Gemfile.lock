@@ -105,6 +105,7 @@ GEM
     erubi (1.13.0)
     et-orbi (1.2.11)
       tzinfo
+    exif (2.2.4)
     faraday (2.12.0)
       faraday-net_http (>= 2.0, < 3.4)
       json
@@ -359,6 +360,7 @@ DEPENDENCIES
   capybara
   debug
   dotenv
+  exif
   good_job (~> 4.4)
   image_processing (~> 1.2)
   importmap-rails

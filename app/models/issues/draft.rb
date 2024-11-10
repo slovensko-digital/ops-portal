@@ -5,7 +5,30 @@ class Issues::Draft < ApplicationRecord
     llm_get_suggestions
   end
 
+  def geo
+    [ latitude, longitude ] if latitude.present? && longitude.present?
+  end
+
+  def load_geo_from_exif(photo)
+    begin
+      d = Exif::Data.new(photo.blob.download)
+    rescue Exif::NotReadable
+      return
+    end
+
+    gps = d[:gps]
+    if gps
+      self.latitude = gps_to_float(gps[:gps_latitude])
+      self.longitude = gps_to_float(gps[:gps_longitude])
+    end
+  end
+
   private
+
+  def gps_to_float(gps)
+    d, m, s = gps
+    d.to_f + m / 60 + s / 3600
+  end
 
   SYSTEM_PROMPT = <<-LLM
     Your task is to analyze a photo that was uploaded by a citizen reporting a problem in municipality. 
