@@ -1,5 +1,5 @@
 class Issues::Drafts::SuggestionsController < ApplicationController
-  before_action :set_draft
+  include Issues::DraftScoped
 
   def show
   end
@@ -18,10 +18,6 @@ class Issues::Drafts::SuggestionsController < ApplicationController
   end
 
   private
-
-  def set_draft
-    @draft = Issues::Draft.find(params[:draft_id])
-  end
 
   def suggestions_params
     params.expect(issues_draft: [:picked_suggestion_index])

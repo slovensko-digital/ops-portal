@@ -1,5 +1,5 @@
 class Issues::Drafts::DetailsController < ApplicationController
-  before_action :set_draft
+  include Issues::DraftScoped
 
   def show
     @draft.load_suggestion
@@ -14,10 +14,6 @@ class Issues::Drafts::DetailsController < ApplicationController
   end
 
   private
-
-  def set_draft
-    @draft = Issues::Draft.find(params[:draft_id])
-  end
 
   def details_params
     params.expect(issues_draft: [:title, :description, :author])

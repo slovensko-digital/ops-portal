@@ -1,5 +1,5 @@
 class Issues::Drafts::GeosController < ApplicationController
-  before_action :set_draft
+  include Issues::DraftScoped
 
   def show
     @draft.load_geo_from_exif(@draft.photos.first) unless @draft.geo.present?
@@ -14,10 +14,6 @@ class Issues::Drafts::GeosController < ApplicationController
   end
 
   private
-
-  def set_draft
-    @draft = Issues::Draft.find(params[:draft_id])
-  end
 
   def geo_params
     params.expect(issues_draft: [:longitude, :latitude])
