@@ -1,0 +1,27 @@
+<%= form_with(model: @draft, url: issues_draft_suggestions_path(@draft), class: "my-5") do |form| %>
+  <% suggestions.each_with_index do |suggestion, idx| %>
+    <div class="group -space-y-px rounded-md bg-white">
+      <label class="relative flex cursor-pointer border <%= class_names "rounded-tl-md rounded-tr-md": suggestion == suggestions.first %> p-4 focus:outline-none has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50 has-[:checked]:z-10">
+        <%= form.radio_button :picked_suggestion_index, idx, class: "mt-0.5 h-4 w-4 shrink-0 cursor-pointer border-gray-300 text-indigo-600 focus:ring-indigo-600 active:ring-2 active:ring-indigo-600 active:ring-offset-2 z-10" %>
+        <span class="ml-3 flex flex-col">
+          <span class="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900"><%= suggestion['title'] %></span>
+          <span class="block text-sm text-gray-500 group-has-[:checked]:text-indigo-700"><%= simple_format(suggestion['description']) %></span>
+        </span>
+      </label>
+    </div>
+  <% end %>
+
+  <div class="mb-5 group -space-y-px rounded-md bg-white">
+    <label class="relative flex cursor-pointer rounded-bl-md rounded-br-md border p-4 focus:outline-none has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50">
+      <%= form.radio_button :picked_suggestion_index, -1, class: "mt-0.5 h-4 w-4 shrink-0 cursor-pointer border-gray-300 text-indigo-600 focus:ring-indigo-600 active:ring-2 active:ring-indigo-600 active:ring-offset-2 z-10" %>
+      <span class="ml-3 flex flex-col">
+        <span class="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900">Vlastný popis</span>
+        <span class="block text-sm text-gray-500 group-has-[:checked]:text-indigo-700">Zadám vlastný popis</span>
+      </span>
+    </label>
+  </div>
+
+  <div class="inline">
+    <%= form.submit "Pokračovať", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

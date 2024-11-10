@@ -9,7 +9,7 @@ class Issues::Drafts::GeosController < ApplicationController
     if @draft.update(geo_params)
       redirect_to @draft
     else
-      render :show
+      render :show, status: :unprocessable_entity
     end
   end
 

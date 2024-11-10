@@ -1,9 +1,18 @@
-<% @draft.photos.each do |photo| %>
-  <div><%= image_tag photo.variant(resize_to_limit: [400, 400]) %></div>
-<% end %>
+<div id="<%= dom_id @draft %>">
+  <h1 class="my-5 text-2xl"><%= @draft.title %></h1>
 
-<div>
-<%= turbo_frame_tag @draft, src: issues_draft_suggest_path(@draft) do %>
-  Analyzujem obrázky...
-<% end %>
+  <p class="my-5">
+    <%= @draft.description %>
+  </p>
+
+  <div class="my-5">
+    <% @draft.photos.each do |photo| %>
+      <div><%= image_tag photo.variant(resize_to_limit: [320, 240]), class: 'border shadow rounded-md' %></div>
+    <% end %>
+  </div>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Author:</strong>
+    <%= @draft.author %>
+  </p>
 </div>

@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   namespace :issues do
     resources :drafts do
       scope module: :drafts do
+        resource :suggestions do
+          get :suggest
+        end
         resource :details
         resource :geo
       end
@@ -19,5 +22,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "issues/drafts#new"
 end

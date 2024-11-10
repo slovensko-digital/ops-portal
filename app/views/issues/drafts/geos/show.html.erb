@@ -1,20 +1,17 @@
-<div data-controller="geo" class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Geo</h1>
+<h1 class="font-bold text-4xl">Geo</h1>
+<%= form_with(model: @draft, class: "contents", url: issues_draft_geo_path(@draft), data: {controller: :geo}) do |form| %>
+  <div class="my-5">
+    <%= button_tag "Load current position", type: :button, data: { action: "geo#locate" }, class: "rounded-lg py-3 px-5 bg-gray-600 text-white inline-block font-medium cursor-pointer" %>
+  </div>
 
-  <%= form_with(model: @draft, class: "contents", url: issues_draft_geo_path(@draft)) do |form| %>
-    <div class="my-5">
-      <%= button_tag "Load current position", type: :button, data: { action: "geo#locate" }, class: "rounded-lg py-3 px-5 bg-gray-600 text-white inline-block font-medium cursor-pointer" %>
-    </div>
+  <div data-geo-target="map" class="my-5 h-3/4 block shadow rounded-md border border-gray-400 outline-none">
+    <div class="top-1/2 left-1/2 w-8 -ml-4 h-8 -mt-4 leading-8 relative z-50 text-4xl text-center align-middle">&#8982;</div>
+  </div>
 
-    <div data-geo-target="map" class="my-5 h-3/4 block shadow rounded-md border border-gray-400 outline-none">
-      <div class="top-1/2 left-1/2 w-8 -ml-4 h-8 -mt-4 leading-8 relative z-50 text-4xl text-center align-middle">&#8982;</div>
-    </div>
+  <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
+  <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
 
-    <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
-    <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
-
-    <div class="my-5">
-      <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-    </div>
-  <% end %>
-</div>
+  <div class="my-5">
+    <%= form.submit "Odoslať", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
