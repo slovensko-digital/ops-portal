@@ -18,9 +18,14 @@ class IssuesTest < ApplicationSystemTestCase
     fill_in "Description", with: @issue.description
     fill_in "Reported at", with: @issue.reported_at
     fill_in "Title", with: @issue.title
-    click_on "Create Issue"
 
-    assert_text "Issue was successfully created"
+    mock_job = Minitest::Mock.new
+    mock_job.expect :enqueue, true
+    SendIssueToZammadJob.stub :new, mock_job do
+      click_on "Create Issue"
+      assert_text "Issue was successfully created"
+    end
+
     click_on "Back"
   end
 

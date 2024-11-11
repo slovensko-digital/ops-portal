@@ -99,3 +99,27 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
+
+  gitlab-push:
+    name: Push to GitLab
+
+    if: ${{github.ref == 'refs/heads/main'}}
+
+    runs-on: ubuntu-latest
+
+    needs:
+      - test
+      - scan_ruby
+      - scan_js
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: dokku/github-action@master
+        with:
+          git_push_flags: '--force'
+          git_remote_url: ssh://git@${{secrets.GITLAB_DEPLOY_HOST}}/${{github.event.repository.name}}.git
+          ssh_private_key: ${{secrets.GITLAB_DEPLOY_KEY}}
+        
