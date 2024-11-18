@@ -3,12 +3,16 @@ Rails.application.routes.draw do
   resources :issues
   namespace :issues do
     resources :drafts do
+      post :confirm
       scope module: :drafts do
         resource :suggestions do
-          get :suggest
+          get :generate
         end
         resource :details
         resource :geo
+        resource :checks do
+          get :generate
+        end
       end
     end
   end

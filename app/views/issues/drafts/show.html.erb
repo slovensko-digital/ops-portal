@@ -7,7 +7,7 @@
 
   <div class="my-5">
     <% @draft.photos.each do |photo| %>
-      <div><%= image_tag photo.variant(resize_to_limit: [320, 240]), class: 'border shadow rounded-md' %></div>
+      <div><%= image_tag photo.variant(:thumb), class: 'border shadow rounded-md' %></div>
     <% end %>
   </div>
 
@@ -15,4 +15,8 @@
     <strong class="block font-medium mb-1">Author:</strong>
     <%= @draft.author %>
   </p>
+</div>
+
+<div class="mt-20">
+  <%= link_to "Vytvoriť nový podnet", new_issues_draft_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
 </div>

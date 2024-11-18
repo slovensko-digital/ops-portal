@@ -4,13 +4,17 @@ class Issues::Drafts::SuggestionsController < ApplicationController
   def show
   end
 
-  def suggest
-    @draft.calculate_suggestions # TODO unless @draft.suggestions.any?
-    @draft.save!
+  def generate
+    unless @draft.suggestions.any?
+      Issues::Draft::GenerateSuggestionsJob.perform_now(@draft)
+    end
   end
 
   def update
-    if @draft.update_with_context(suggestions_params, :suggestions_step)
+    @draft.assign_attributes(suggestions_params)
+    @draft.load_suggestion
+
+    if @draft.save(context: :suggestions_step)
       redirect_to issues_draft_details_path(@draft)
     else
       render :show, status: :unprocessable_entity

@@ -5,8 +5,10 @@ class Issues::DraftsController < ApplicationController
 
   def create
     @draft = Issues::Draft.new(draft_params)
+    @draft.author = "test@test.com"
     if @draft.save(context: :photos_step)
-      redirect_to issues_draft_suggestions_path(@draft)
+      @draft.schedule_calculate_suggestions # TODO move somhow to after_save
+      redirect_to issues_draft_geo_path(@draft)
     else
       render :new, status: :unprocessable_entity
     end
@@ -16,9 +18,17 @@ class Issues::DraftsController < ApplicationController
     @draft = Issues::Draft.find(params[:id])
   end
 
+  def confirm
+    @draft = Issues::Draft.find(params[:draft_id])
+
+    @draft.confirm
+
+    redirect_to @draft
+  end
+
   private
 
   def draft_params
-    params.expect(issues_draft: [ photos: [] ])
+    params.expect(issues_draft: [photos: []])
   end
 end

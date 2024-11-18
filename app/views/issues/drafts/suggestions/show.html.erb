@@ -2,13 +2,15 @@
 
 <div class="my-5">
   <% @draft.photos.each do |photo| %>
-    <%= image_tag photo.variant(resize_to_limit: [320, 240]), class: "block w-1/4 rounded-md" %>
+    <%= image_tag photo.variant(:thumb), class: "block w-1/4 rounded-md" %>
   <% end %>
 </div>
 
 
-<% if true %>
-  <%= turbo_frame_tag @draft, src: suggest_issues_draft_suggestions_path(@draft), target: :_top do %>
+<% if @draft.suggestions.any? %>
+  <%= render partial: 'suggestions', object: @draft.suggestions %>
+  <% else %>
+  <%= turbo_frame_tag @draft, src: generate_issues_draft_suggestions_path(@draft), target: :_top do %>
     <div>
       <svg class="text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
            width="24" height="24">
