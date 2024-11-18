@@ -24,16 +24,16 @@ readinessProbe:
 #     memory: 600Mi
 #   limits:
 #     memory: 600Mi
-# persistence:
-#   enabled: true
-#   volumes:
-#   - name: ops-app-storage
-#     mount:
-#       path: /app/storage
-#     claim:
-#       accessMode: ReadWriteMany
-#       size: 10Gi
-#       storageClass: nfs-client
+persistence:
+  enabled: true
+  volumes:
+  - name: ops-app-storage
+    mount:
+      path: /app/storage
+    claim:
+      accessMode: ReadWriteMany
+      size: 1Gi
+      storageClass: nfs-client
 # workers:
 #   worker:
 #     replicaCount: "1"

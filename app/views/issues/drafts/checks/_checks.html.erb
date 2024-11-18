@@ -1,0 +1,49 @@
+<% if @draft.checks.empty? %>
+  <div class="group">
+    <div class="bg-green-50 sm:rounded-lg my-4 border-green-400 border-2">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-base font-semibold text-green-900">Podnet je v poriadku</h3>
+        <div class="mt-2 max-w-xl text-sm text-green-700">
+          Kontrola podnetu prebehla v poriadku. Podnet je pripravený na odoslanie.
+        </div>
+        <div class="mt-5">
+          <%= button_to "Odoslať podnet", issues_draft_confirm_path(@draft), class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-green-900 shadow-sm ring-1 ring-inset ring-green-300 hover:bg-green-50" %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div data-controller="confirm-all">
+    <% @draft.checks.each do |check| %>
+      <div class="group action-<%= check["action"] %>">
+        <div class="bg-gray-50 sm:rounded-lg my-4 group-[.action-back]:border-red-400 group-[.action-back]:bg-red-50 group-[.action-confirm]:border-blue-400 group-[.action-confirm]:bg-blue-50 border-2">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold text-gray-900 group-[.action-back]:text-red-800 group-[.action-confirm]:text-blue-800"><%= check["title"] %></h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500 group-[.action-back]:text-red-700 group-[.action-confirm]:text-blue-700">
+              <%= simple_format check["description"] %>
+            </div>
+            <% if check["action"] == "back" %>
+              <div class="mt-5">
+                <%= link_to "Chcem podnet ešte upraviť", issues_draft_details_path(@draft), class: "rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600" %>
+                <button type="button" data-action="confirm-all#confirm" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Pokračovať</button>
+              </div>
+            <% elsif check["action"] == "confirm" %>
+              <div class="mt-5">
+                <button type="button" data-action="confirm-all#confirm" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Rozumiem</button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="mt-5 hidden" data-confirm-all-target="continue">
+      <%= button_to issues_draft_confirm_path(@draft), data: { "confirm-all-target": "continue-button" }, class: "inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+        <svg class="-ml-0.5 size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/>
+        </svg>
+        Odoslať podnet
+      <% end %>
+    </div>
+  </div>
+<% end %>
