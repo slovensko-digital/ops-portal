@@ -32,17 +32,23 @@ class Issues::Draft < ApplicationRecord
     end
   end
 
-  def load_suggestion
-    self.title, self.description = suggestions[picked_suggestion_index]&.values_at("title", "description")
-    self.title = self.description = nil if picked_suggestion_index == -1
-  end
-
   def update_with_context(attributes, context)
     # TODO move to AR monkey-patch
     with_transaction_returning_status do
       assign_attributes(attributes)
       save(context: context)
     end
+  end
+
+  def pick_suggestion(suggestions_params)
+    assign_attributes(suggestions_params)
+    if picked_suggestion_index == -1
+      self.title = self.description = nil
+      self.categories = []
+    else
+      self.title, self.description, self.category, self.subcategory, self.subtype = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
+    end
+    save(context: :suggestions_step)
   end
 
   private

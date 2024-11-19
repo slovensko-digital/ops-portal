@@ -23,6 +23,23 @@
     <%= form.text_area :description, rows: 6, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
+  <div class="my-5">
+    <div class="grid grid-cols-3 gap-x-6">
+      <div class="col-span-1">
+        <%= form.label :category %>
+        <%= form.text_field :category, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      </div>
+      <div class="col-span-1">
+        <%= form.label :subcategory %>
+        <%= form.text_field :subcategory, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      </div>
+      <div class="col-span-1">
+        <%= form.label :subtype %>
+        <%= form.text_field :subtype, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      </div>
+    </div>
+  </div>
+
   <div class="inline">
     <%= form.submit "Pokračovať", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>

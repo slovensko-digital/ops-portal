@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_18_153059) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_19_141626) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -155,6 +155,21 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_18_153059) do
     t.jsonb "suggestions", default: []
     t.integer "picked_suggestion_index"
     t.jsonb "checks"
+    t.string "address_house_number"
+    t.string "address_road"
+    t.string "address_neighbourhood"
+    t.string "address_town"
+    t.string "address_suburb"
+    t.string "address_city_district"
+    t.string "address_city"
+    t.string "address_state"
+    t.string "address_postcode"
+    t.string "address_country"
+    t.string "address_country_code"
+    t.string "address_village"
+    t.string "category"
+    t.string "subcategory"
+    t.string "subtype"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

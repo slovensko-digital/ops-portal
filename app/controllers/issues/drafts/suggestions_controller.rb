@@ -11,10 +11,7 @@ class Issues::Drafts::SuggestionsController < ApplicationController
   end
 
   def update
-    @draft.assign_attributes(suggestions_params)
-    @draft.load_suggestion
-
-    if @draft.save(context: :suggestions_step)
+    if @draft.pick_suggestion(suggestions_params)
       redirect_to issues_draft_details_path(@draft)
     else
       render :show, status: :unprocessable_entity

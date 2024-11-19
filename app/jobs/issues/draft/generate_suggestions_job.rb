@@ -9,9 +9,10 @@ class Issues::Draft::GenerateSuggestionsJob < ApplicationJob
   private
 
   SYSTEM_PROMPT = <<-LLM
-    Your task is to analyze a photo that was uploaded by a citizen reporting a problem in municipality.#{' '}
+    Your task is to analyze a photo that was uploaded by a citizen reporting a problem in municipality.
 
-    You should carefully look at the photo and suggest a title and description of distinct problems that will be approved by a human later. Title should be descriptive and less than 100 characters, description must be concise a clear so a civil servant will understand it.#{' '}
+    You should carefully look at the photo and suggest a title and description of distinct problems that will be approved by a human later.#{' '}
+    Title should be descriptive and less than 100 characters, description must be concise a clear so a civil servant will understand it.
 
     Never suggest more than 3 problems, try to suggest 2 problems.
     Suggestions should not have duplicates.
