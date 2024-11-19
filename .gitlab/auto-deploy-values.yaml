@@ -29,7 +29,7 @@ persistence:
   volumes:
   - name: ops-app-storage
     mount:
-      path: /app/storage
+      path: /rails/storage
     claim:
       accessMode: ReadWriteMany
       size: 1Gi
