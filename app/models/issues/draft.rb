@@ -26,7 +26,7 @@ class Issues::Draft < ApplicationRecord
     end
 
     gps = d[:gps]
-    if gps
+    if gps && gps[:gps_latitude] && gps[:gps_longitude]
       self.latitude = gps_to_float(gps[:gps_latitude])
       self.longitude = gps_to_float(gps[:gps_longitude])
     end
