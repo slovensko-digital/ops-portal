@@ -1,4 +1,4 @@
-class WebhooksController < ActionController::API
+class OvmConnector::Ovm::WebhooksController < ActionController::API
   before_action :authenticate
   before_action :set_issue, only: %i[ ticket_updated ]
 
@@ -21,7 +21,8 @@ class WebhooksController < ActionController::API
     sig_header = request.headers["X-Hub-Signature"]&.gsub("sha1=", "")
     render status: :unauthorized, json: nil and return unless sig_header.present?
 
-    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), ENV.fetch("WEBHOOK_SECRET"), request.body.read)
+    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), ENV.fetch("CONNECTOR__OVM_ZAMMAD_WEBHOOK_SECRET"), request.body.read)
     render status: :forbidden, json: nil if signature != sig_header
   end
+
 end

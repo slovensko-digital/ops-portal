@@ -71,3 +71,5 @@ group :test do
 end
 
 gem "good_job"
+
+gem "rack-cors", "~> 2.0"

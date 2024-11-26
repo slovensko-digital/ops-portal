@@ -1,5 +1,21 @@
 Rails.application.routes.draw do
-  post "webhooks/ticket-updated"
+  namespace :ovm_connector, path: "ovm-connector" do
+    namespace :webhooks do
+      post "triage/ticket-created"
+    end
+  end
+
+  namespace :webhooks do
+    post "ticket-created"
+    post "ticket-status-changed"
+    post "article-created"
+  end
+
+  namespace "api" do
+    namespace "v1" do
+    end
+  end
+
   resources :issues
   namespace :issues do
     resources :drafts do
