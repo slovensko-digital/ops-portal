@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_19_141626) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_27_170723) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -170,6 +170,44 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_19_141626) do
     t.string "category"
     t.string "subcategory"
     t.string "subtype"
+    t.string "embed"
+    t.integer "map_zoom"
+    t.integer "accuracy"
+    t.datetime "posted_at"
+    t.datetime "published_at"
+    t.boolean "front_page"
+    t.boolean "mms"
+    t.integer "state"
+    t.boolean "soft_reject"
+    t.integer "owner_id"
+    t.integer "new_owner_id"
+    t.datetime "modified_at"
+    t.integer "updated_by"
+    t.datetime "last_status_changed_at"
+    t.integer "responsibility_type"
+    t.integer "responsibility"
+    t.boolean "mobile"
+    t.inet "ip"
+    t.string "secure"
+    t.boolean "discussion_allowed"
+    t.integer "like_count"
+    t.integer "comment_count_7d"
+    t.integer "like_count_7d"
+    t.boolean "question"
+    t.boolean "responsibility_set"
+    t.datetime "responsibility_set_at"
+    t.string "platform"
+    t.string "reg_symbol"
+    t.integer "internal_state_id"
+    t.integer "label_id"
+    t.string "note"
+    t.integer "posted_by_municipality_user_id"
+    t.boolean "manual"
+    t.integer "source_id"
+    t.integer "organizational_unit_id"
+    t.datetime "ended_at"
+    t.integer "parent_id"
+    t.integer "organizational_unit2_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
