@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_18_153059) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_03_182619) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,16 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_18_153059) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "api_integrations", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.string "responsible_subject_zammad_identifier"
+    t.string "api_token_public_key"
+    t.string "webhook_private_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -155,6 +165,15 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_18_153059) do
     t.jsonb "suggestions", default: []
     t.integer "picked_suggestion_index"
     t.jsonb "checks"
+  end
+
+  create_table "ovm_connector_tenants", force: :cascade do |t|
+    t.string "name"
+    t.string "api_token_private_key"
+    t.integer "api_subject_identifier"
+    t.string "webhook_public_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

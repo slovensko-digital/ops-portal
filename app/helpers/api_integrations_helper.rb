@@ -1,0 +1,2 @@
+module ApiIntegrationsHelper
+end

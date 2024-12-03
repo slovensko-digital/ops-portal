@@ -1,14 +1,16 @@
 Rails.application.routes.draw do
+  resources :api_integrations, path: "api-integrations"
+
   namespace :ovm_connector, path: "ovm-connector" do
-    namespace :webhooks do
-      post "triage/ticket-created"
+    namespace "api" do
+      namespace "v1" do
+        post "webhook" => "webhooks#webhook"
+      end
     end
   end
 
-  namespace :webhooks do
-    post "ticket-created"
-    post "ticket-status-changed"
-    post "article-created"
+  namespace :triage do
+    post "webhook"
   end
 
   namespace "api" do
@@ -39,7 +41,9 @@ Rails.application.routes.draw do
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+
+  mount GoodJob::Engine => "admin/good_job"
 
   # Defines the root path route ("/")
   root "issues/drafts#new"

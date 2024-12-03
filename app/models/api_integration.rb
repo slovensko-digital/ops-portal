@@ -1,0 +1,2 @@
+class ApiIntegration < ApplicationRecord
+end
