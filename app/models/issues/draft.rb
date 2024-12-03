@@ -1,5 +1,38 @@
+# == Schema Information
+#
+# Table name: issues_drafts
+#
+#  id                      :bigint           not null, primary key
+#  address_city            :string
+#  address_city_district   :string
+#  address_country         :string
+#  address_country_code    :string
+#  address_house_number    :string
+#  address_neighbourhood   :string
+#  address_postcode        :string
+#  address_road            :string
+#  address_state           :string
+#  address_suburb          :string
+#  address_town            :string
+#  address_village         :string
+#  anonymous               :boolean
+#  author                  :string
+#  category                :string
+#  checks                  :jsonb
+#  description             :string
+#  latitude                :float
+#  longitude               :float
+#  picked_suggestion_index :integer
+#  subcategory             :string
+#  subtype                 :string
+#  suggestions             :jsonb
+#  title                   :string
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#
 class Issues::Draft < ApplicationRecord
   has_many_attached :photos do |photo|
+    photo.variant :llm, resize_to_limit: [ 800, 600 ], preprocessed: true
     photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
   end
 
@@ -26,15 +59,10 @@ class Issues::Draft < ApplicationRecord
     end
 
     gps = d[:gps]
-    if gps
+    if gps && gps[:gps_latitude] && gps[:gps_longitude]
       self.latitude = gps_to_float(gps[:gps_latitude])
       self.longitude = gps_to_float(gps[:gps_longitude])
     end
-  end
-
-  def load_suggestion
-    self.title, self.description = suggestions[picked_suggestion_index]&.values_at("title", "description")
-    self.title = self.description = nil if picked_suggestion_index == -1
   end
 
   def update_with_context(attributes, context)
@@ -43,6 +71,17 @@ class Issues::Draft < ApplicationRecord
       assign_attributes(attributes)
       save(context: context)
     end
+  end
+
+  def pick_suggestion(suggestions_params)
+    assign_attributes(suggestions_params)
+    if picked_suggestion_index == -1
+      self.title = self.description = nil
+      self.categories = []
+    else
+      self.title, self.description, self.category, self.subcategory, self.subtype = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
+    end
+    save(context: :suggestions_step)
   end
 
   private

@@ -165,6 +165,21 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_03_182619) do
     t.jsonb "suggestions", default: []
     t.integer "picked_suggestion_index"
     t.jsonb "checks"
+    t.string "address_house_number"
+    t.string "address_road"
+    t.string "address_neighbourhood"
+    t.string "address_town"
+    t.string "address_suburb"
+    t.string "address_city_district"
+    t.string "address_city"
+    t.string "address_state"
+    t.string "address_postcode"
+    t.string "address_country"
+    t.string "address_country_code"
+    t.string "address_village"
+    t.string "category"
+    t.string "subcategory"
+    t.string "subtype"
   end
 
   create_table "ovm_connector_tenants", force: :cascade do |t|

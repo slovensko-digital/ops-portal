@@ -7,7 +7,7 @@ class Issues::DraftsController < ApplicationController
     @draft = Issues::Draft.new(draft_params)
     @draft.author = "test@test.com"
     if @draft.save(context: :photos_step)
-      @draft.schedule_calculate_suggestions # TODO move somhow to after_save
+      @draft.schedule_calculate_suggestions # TODO move somehow to after_save
       redirect_to issues_draft_geo_path(@draft)
     else
       render :new, status: :unprocessable_entity
