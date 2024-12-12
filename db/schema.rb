@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_27_170723) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,12 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_27_170723) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "districts", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -131,6 +137,20 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_27_170723) do
     t.index ["scheduled_at"], name: "index_good_jobs_on_scheduled_at", where: "(finished_at IS NULL)"
   end
 
+  create_table "issue_categories", force: :cascade do |t|
+    t.string "category"
+    t.string "category_hu"
+    t.string "category_alias"
+    t.string "description"
+    t.string "description_hu"
+    t.boolean "catch_all"
+    t.bigint "parent_id", null: false
+    t.integer "weight"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_issue_categories_on_parent_id"
+  end
+
   create_table "issues", force: :cascade do |t|
     t.string "title", null: false
     t.string "description", null: false
@@ -141,7 +161,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_27_170723) do
     t.datetime "last_synced_at"
     t.integer "triage_external_id"
     t.string "state"
-    t.jsonb "history_data"
+    t.jsonb "legacy_data"
   end
 
   create_table "issues_drafts", force: :cascade do |t|
@@ -173,6 +193,146 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_27_170723) do
     t.string "subtype"
   end
 
+  create_table "municipalities", force: :cascade do |t|
+    t.string "name"
+    t.bigint "district_id", null: false
+    t.string "sub"
+    t.string "alias"
+    t.string "email"
+    t.integer "municipality_type"
+    t.boolean "has_municipality_districts"
+    t.integer "handled_by"
+    t.float "latitude"
+    t.float "longitude"
+    t.integer "population"
+    t.boolean "active"
+    t.integer "category"
+    t.string "languages"
+    t.string "logo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_municipalities_on_active"
+    t.index ["alias"], name: "index_municipalities_on_alias"
+    t.index ["district_id"], name: "index_municipalities_on_district_id"
+    t.index ["latitude"], name: "index_municipalities_on_latitude"
+    t.index ["longitude"], name: "index_municipalities_on_longitude"
+  end
+
+  create_table "municipality_districts", force: :cascade do |t|
+    t.string "name"
+    t.bigint "municipality_id", null: false
+    t.string "genitiv"
+    t.string "lokal"
+    t.string "description"
+    t.string "logo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["municipality_id"], name: "index_municipality_districts_on_municipality_id"
+  end
+
+  create_table "responsible_subject_categories", force: :cascade do |t|
+    t.bigint "responsible_subject_id", null: false
+    t.bigint "issue_category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_category_id"], name: "index_responsible_subject_categories_on_issue_category_id"
+    t.index ["responsible_subject_id"], name: "index_responsible_subject_categories_on_responsible_subject_id"
+  end
+
+  create_table "responsible_subject_types", force: :cascade do |t|
+    t.string "name"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "responsible_subjects", force: :cascade do |t|
+    t.bigint "district_id", null: false
+    t.bigint "municipality_id", null: false
+    t.bigint "responsible_subject_type_id", null: false
+    t.integer "scope"
+    t.string "email"
+    t.string "name"
+    t.string "code"
+    t.boolean "active"
+    t.boolean "pro"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["district_id"], name: "index_responsible_subjects_on_district_id"
+    t.index ["municipality_id"], name: "index_responsible_subjects_on_municipality_id"
+    t.index ["responsible_subject_type_id"], name: "index_responsible_subjects_on_responsible_subject_type_id"
+  end
+
+  create_table "streets", force: :cascade do |t|
+    t.string "name"
+    t.bigint "municipality_id", null: false
+    t.bigint "municipality_district_id", null: false
+    t.string "place_id"
+    t.float "latitude"
+    t.float "longitude"
+    t.boolean "tested"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["latitude"], name: "index_streets_on_latitude"
+    t.index ["longitude"], name: "index_streets_on_longitude"
+    t.index ["municipality_district_id"], name: "index_streets_on_municipality_district_id"
+    t.index ["municipality_id"], name: "index_streets_on_municipality_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.boolean "banned", default: false
+    t.string "login"
+    t.integer "rights"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "admin_name"
+    t.string "phone"
+    t.string "email"
+    t.string "password"
+    t.string "about"
+    t.string "logo"
+    t.string "website"
+    t.boolean "organization"
+    t.boolean "anonymous", default: false
+    t.boolean "active"
+    t.bigint "municipality_id", null: false
+    t.boolean "created_from_app", default: false
+    t.string "verification"
+    t.boolean "verified", default: false
+    t.string "signature"
+    t.integer "city_id"
+    t.bigint "street_id", null: false
+    t.boolean "resident"
+    t.integer "sex"
+    t.date "birth"
+    t.string "fcm_token"
+    t.boolean "gdpr_accepted"
+    t.string "access_token"
+    t.integer "exp"
+    t.boolean "email_notification", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_users_on_active"
+    t.index ["anonymous"], name: "index_users_on_anonymous"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["login"], name: "index_users_on_login"
+    t.index ["municipality_id"], name: "index_users_on_municipality_id"
+    t.index ["rights"], name: "index_users_on_rights"
+    t.index ["street_id"], name: "index_users_on_street_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "issue_categories", "issue_categories", column: "parent_id"
+  add_foreign_key "municipalities", "districts"
+  add_foreign_key "municipality_districts", "municipalities"
+  add_foreign_key "responsible_subject_categories", "issue_categories"
+  add_foreign_key "responsible_subject_categories", "responsible_subjects"
+  add_foreign_key "responsible_subjects", "districts"
+  add_foreign_key "responsible_subjects", "municipalities"
+  add_foreign_key "responsible_subjects", "responsible_subject_types"
+  add_foreign_key "streets", "municipalities"
+  add_foreign_key "streets", "municipality_districts"
+  add_foreign_key "users", "municipalities"
+  add_foreign_key "users", "streets"
 end

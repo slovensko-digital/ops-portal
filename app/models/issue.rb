@@ -6,6 +6,7 @@
 #  author             :string           not null
 #  description        :string           not null
 #  last_synced_at     :datetime
+#  legacy_data        :jsonb
 #  reported_at        :datetime         not null
 #  state              :string
 #  title              :string           not null
