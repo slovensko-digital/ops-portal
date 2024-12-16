@@ -34,21 +34,21 @@ persistence:
       accessMode: ReadWriteMany
       size: 1Gi
       storageClass: nfs-client
-# workers:
-#   worker:
-#     replicaCount: "1"
-#     command: ["bundle", "exec", "good_job", "start"]
-#     startupProbe:
-#       probeType: "httpGet"
-#       path: "/status/started"
-#     livenessProbe:
-#       probeType: "httpGet"
-#       path: "/status/connected"
-#     readinessProbe:
-#       probeType: "httpGet"
-#       path: "/status/started"
-#     resources:
-#       requests:
-#         memory: 1Gi
-#       limits:
-#         memory: 1Gi
+workers:
+  worker:
+    replicaCount: "1"
+    command: ["bundle", "exec", "good_job", "start"]
+    startupProbe:
+      probeType: "httpGet"
+      path: "/status/started"
+    livenessProbe:
+      probeType: "httpGet"
+      path: "/status/connected"
+    readinessProbe:
+      probeType: "httpGet"
+      path: "/status/started"
+    resources:
+      requests:
+        memory: 1Gi
+      limits:
+        memory: 1Gi

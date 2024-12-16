@@ -27,4 +27,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "issues/drafts#new"
+
+  mount GoodJob::Engine => "good_job"
 end
