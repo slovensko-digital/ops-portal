@@ -9,12 +9,12 @@
 #   end
 
 [
-  { name: "MÚ Staré Mesto", subject: "1", url: "http://localhost:3000/ovm-connector/api/v1/webhook" },
-  { name: "MÚ Karlova Ves", subject: "8", url: "http://localhost:3000/ovm-connector/api/v1/webhook" },
-  { name: "Dopravný podnik Bratislava, a.s.", subject: "217", url: "http://localhost:3000/ovm-connector/api/v1/webhook" }
+  { name: "MÚ Staré Mesto", subject: "1", url: "http://localhost:3000/connector/api/v1/webhook" },
+  { name: "MÚ Karlova Ves", subject: "8", url: "http://localhost:3000/connector/api/v1/webhook" },
+  { name: "Dopravný podnik Bratislava, a.s.", subject: "217", url: "http://localhost:3000/connector/api/v1/webhook" }
 ].each do |data|
   api_integration = ApiIntegration.find_or_create_by!(name: data[:name])
-  tenant = OvmConnector::Tenant.find_or_create_by!(name: data[:name])
+  tenant = Connector::Tenant.find_or_create_by!(name: data[:name])
 
   api_key = OpenSSL::PKey::EC.generate("prime256v1")
   webhook_key = OpenSSL::PKey::EC.generate("prime256v1")

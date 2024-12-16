@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  url: MyString
+  api_token_public_key: MyString
+  webhook_private_key: MyString
+  responsible_subject_zammad_identifier: 1
+
+two:
+  name: MyString
+  url: MyString
+  api_token_public_key: MyString
+  webhook_private_key: MyString
+  responsible_subject_zammad_identifier: 2

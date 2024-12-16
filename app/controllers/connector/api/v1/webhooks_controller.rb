@@ -1,4 +1,4 @@
-class OvmConnector::Api::V1::WebhooksController < ActionController::API
+class Connector::Api::V1::WebhooksController < Connector::ApplicationController
   before_action :set_tenant
   before_action :authenticate
 
@@ -7,11 +7,11 @@ class OvmConnector::Api::V1::WebhooksController < ActionController::API
 
     case event_type
     when "issue.created"
-      OvmConnector::CreateNewIssueJob.perform_later(@tenant, data.require(:issue_id))
+      Connector::CreateNewBackOfficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     when "comment.created"
-      OvmConnector::CreateNewCommentJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
+      Connector::CreateNewCommentJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
     when "issue.status_updated"
-      OvmConnector::UpdateIssueStatusJob.perform_later(@tenant, data.require(:issue_id))
+      Connector::UpdateIssueStatusJob.perform_later(@tenant, data.require(:issue_id))
     else
       render text: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end
@@ -28,7 +28,7 @@ class OvmConnector::Api::V1::WebhooksController < ActionController::API
   end
 
   def set_tenant
-    @tenant = OvmConnector::Tenant.find_by(api_subject_identifier: data.require(:subject_id))
+    @tenant = Connector::Tenant.find_by(api_subject_identifier: data.require(:subject_id))
   end
 
   def authenticate

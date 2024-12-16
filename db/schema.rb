@@ -52,6 +52,15 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_03_182619) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "connector_tenants", force: :cascade do |t|
+    t.string "name"
+    t.string "api_token_private_key"
+    t.integer "api_subject_identifier"
+    t.string "webhook_public_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -180,15 +189,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_03_182619) do
     t.string "category"
     t.string "subcategory"
     t.string "subtype"
-  end
-
-  create_table "ovm_connector_tenants", force: :cascade do |t|
-    t.string "name"
-    t.string "api_token_private_key"
-    t.integer "api_subject_identifier"
-    t.string "webhook_public_key"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

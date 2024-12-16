@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: ovm_connector_tenants
+# Table name: connector_tenants
 #
 #  id                     :bigint           not null, primary key
 #  api_subject_identifier :integer
@@ -10,5 +10,5 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
-class OvmConnector::Tenant < ApplicationRecord
+class Connector::Tenant < ApplicationRecord
 end

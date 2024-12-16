@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   resources :api_integrations, path: "api-integrations"
 
-  namespace :ovm_connector, path: "ovm-connector" do
+  namespace :ovm_connector, path: "connector" do
     namespace "api" do
       namespace "v1" do
         post "webhook" => "webhooks#webhook"
@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   namespace "api" do
     namespace "v1" do
+      resources :issues
     end
   end
 

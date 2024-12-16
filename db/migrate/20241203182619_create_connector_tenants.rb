@@ -1,6 +1,6 @@
-class CreateOvmConnectorTenants < ActiveRecord::Migration[8.0]
+class CreateConnectorTenants < ActiveRecord::Migration[8.0]
   def change
-    create_table :ovm_connector_tenants do |t|
+    create_table :connector_tenants do |t|
       t.string :name
       t.string :api_token_private_key
       t.integer :api_subject_identifier
