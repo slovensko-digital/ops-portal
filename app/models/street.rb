@@ -6,12 +6,12 @@
 #  latitude                 :float
 #  longitude                :float
 #  name                     :string
+#  place_identifier         :string
 #  tested                   :boolean
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  municipality_district_id :bigint           not null
 #  municipality_id          :bigint           not null
-#  place_id                 :string
 #
 class Street < ApplicationRecord
   belongs_to :municipality

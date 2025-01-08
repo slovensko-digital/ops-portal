@@ -6,7 +6,7 @@ class CreateIssueCategories < ActiveRecord::Migration[8.0]
       t.string :category_alias
       t.string :description
       t.string :description_hu
-      t.boolean :catch_all
+      t.boolean :catch_all, default: false
       t.references :parent, null: false, foreign_key: { to_table: :issue_categories }
       t.integer :weight
 

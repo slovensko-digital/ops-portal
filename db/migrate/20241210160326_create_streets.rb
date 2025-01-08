@@ -4,10 +4,10 @@ class CreateStreets < ActiveRecord::Migration[8.0]
       t.string :name
       t.references :municipality, null: false, foreign_key: true
       t.references :municipality_district, null: false, foreign_key: true
-      t.string :place_id
+      t.string :place_identifier
       t.float :latitude
       t.float :longitude
-      t.boolean :tested
+      t.boolean :tested # Toto nevieme co znamena
 
       t.timestamps
 

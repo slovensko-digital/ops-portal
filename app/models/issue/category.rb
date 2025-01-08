@@ -3,7 +3,7 @@
 # Table name: issue_categories
 #
 #  id             :bigint           not null, primary key
-#  catch_all      :boolean
+#  catch_all      :boolean          default(FALSE)
 #  category       :string
 #  category_alias :string
 #  category_hu    :string

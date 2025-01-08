@@ -3,7 +3,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
     create_table :users do |t|
       t.boolean :banned, default: false
       t.string :login
-      t.integer :rights
+      t.integer :legacy_rights
       t.string :first_name
       t.string :last_name
       t.string :admin_name
@@ -21,7 +21,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :verification
       t.boolean :verified, default: false
       t.string :signature
-      t.integer :city_id # Toto netusim co je, referencia na mesto je ocividne municipality a tu nie je vzdy to iste
+      t.integer :city_id # Toto nevieme co je, referencia na mesto je ocividne municipality a tu nie je vzdy to iste
       t.references :street, null: false, foreign_key: true
       t.boolean :resident
       t.integer :sex
@@ -29,14 +29,14 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :fcm_token
       t.boolean :gdpr_accepted
       t.string :access_token
-      t.integer :exp
-      t.boolean :email_notification, default: true
+      t.integer :exp # Toto nevieme co znamena
+      t.boolean :email_notifiable, default: true
 
       t.timestamps
 
       t.index :email, unique: true
       t.index :login
-      t.index :rights
+      t.index :legacy_rights
       t.index :anonymous
       t.index :active
     end

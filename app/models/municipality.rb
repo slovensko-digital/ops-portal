@@ -25,5 +25,5 @@ class Municipality < ApplicationRecord
   belongs_to :district
 
   enum :municipality_type, huge: 2, other: 1
-  enum :category, regional_capital: 1, town: 2, village: 3
+  enum :category, regional_capital: 1, town: 2, village: 3 # Pomenovanie ciselnych hodnot iba podla nasho usudku
 end

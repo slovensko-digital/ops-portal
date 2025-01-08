@@ -143,7 +143,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
     t.string "category_alias"
     t.string "description"
     t.string "description_hu"
-    t.boolean "catch_all"
+    t.boolean "catch_all", default: false
     t.bigint "parent_id", null: false
     t.integer "weight"
     t.datetime "created_at", null: false
@@ -267,7 +267,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
     t.string "name"
     t.bigint "municipality_id", null: false
     t.bigint "municipality_district_id", null: false
-    t.string "place_id"
+    t.string "place_identifier"
     t.float "latitude"
     t.float "longitude"
     t.boolean "tested"
@@ -282,7 +282,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
   create_table "users", force: :cascade do |t|
     t.boolean "banned", default: false
     t.string "login"
-    t.integer "rights"
+    t.integer "legacy_rights"
     t.string "first_name"
     t.string "last_name"
     t.string "admin_name"
@@ -309,15 +309,15 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
     t.boolean "gdpr_accepted"
     t.string "access_token"
     t.integer "exp"
-    t.boolean "email_notification", default: true
+    t.boolean "email_notifiable", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_users_on_active"
     t.index ["anonymous"], name: "index_users_on_anonymous"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["legacy_rights"], name: "index_users_on_legacy_rights"
     t.index ["login"], name: "index_users_on_login"
     t.index ["municipality_id"], name: "index_users_on_municipality_id"
-    t.index ["rights"], name: "index_users_on_rights"
     t.index ["street_id"], name: "index_users_on_street_id"
   end
 

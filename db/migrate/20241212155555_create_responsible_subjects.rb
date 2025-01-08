@@ -4,11 +4,11 @@ class CreateResponsibleSubjects < ActiveRecord::Migration[8.0]
       t.references :district, null: false, foreign_key: true
       t.references :municipality, null: false, foreign_key: true
       t.references :responsible_subject_type, null: false, foreign_key: true
-      t.integer :scope
+      t.integer :scope # Toto nevieme co znamena, iba jeden zaznam ma nie null hodnotu
       t.string :email
       t.string :name
       t.string :code
-      t.boolean :active # Predpokladam, ze status znamena toto
+      t.boolean :active # Predpokladame, ze status znamena toto
       t.boolean :pro
 
       t.timestamps
