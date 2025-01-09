@@ -15,13 +15,13 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :website
       t.boolean :organization
       t.boolean :anonymous, default: false
-      t.boolean :active # Toto je len taky odhad co moze boolean status atribut znamenat
+      t.boolean :active # TODO Toto je len taky odhad co moze boolean status atribut znamenat
       t.references :municipality, null: false, foreign_key: true
       t.boolean :created_from_app, default: false
       t.string :verification
       t.boolean :verified, default: false
       t.string :signature
-      t.integer :city_id # Toto nevieme co je, referencia na mesto je ocividne municipality a tu nie je vzdy to iste
+      t.integer :city_id # TODO Toto nevieme co je, referencia na mesto je ocividne municipality a tu nie je vzdy to iste
       t.references :street, null: false, foreign_key: true
       t.boolean :resident
       t.integer :sex
@@ -29,7 +29,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :fcm_token
       t.boolean :gdpr_accepted
       t.string :access_token
-      t.integer :exp # Toto nevieme co znamena
+      t.integer :exp # TODO Toto nevieme co znamena
       t.boolean :email_notifiable, default: true
 
       t.timestamps

@@ -7,7 +7,7 @@ class CreateStreets < ActiveRecord::Migration[8.0]
       t.string :place_identifier
       t.float :latitude
       t.float :longitude
-      t.boolean :tested # Toto nevieme co znamena
+      t.boolean :tested # TODO Toto nevieme co znamena
 
       t.timestamps
 
