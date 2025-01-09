@@ -1,4 +1,4 @@
-class Connector::Api::V1::BackOfficeWebhooksController < Connector::ApplicationController
+class Connector::Api::V1::BackofficeWebhooksController < Connector::ApplicationController
   # before_action :authenticate
 
   def webhook
@@ -6,9 +6,9 @@ class Connector::Api::V1::BackOfficeWebhooksController < Connector::ApplicationC
 
     case event_type
     when "article.created"
-      Connector::SendNewCommentToTriageFromBackOfficeJob.perform_later(data.require(:ticket_id), data.require(:article_id))
+      Connector::SendNewCommentToTriageFromBackofficeJob.perform_later(data.require(:ticket_id), data.require(:article_id))
     when "ticket.status_updated"
-      Connector::SendNewIssueStatusToTriageFromBackOfficeJob.perform_later(data.require :ticket_id)
+      Connector::SendNewIssueStatusToTriageFromBackofficeJob.perform_later(data.require :ticket_id)
     else
       render json: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end
@@ -28,7 +28,7 @@ class Connector::Api::V1::BackOfficeWebhooksController < Connector::ApplicationC
     sig_header = request.headers["X-Hub-Signature"]&.gsub("sha1=", "")
     render status: :unauthorized, json: nil and return unless sig_header.present?
 
-    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), ENV.fetch("CONNECTOR__OVM_ZAMMAD_WEBHOOK_SECRET"), request.body.read)
+    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), ENV.fetch("CONNECTOR__ZAMMAD_WEBHOOK_SECRET"), request.body.read)
     render status: :forbidden, json: nil if signature != sig_header
   end
 end

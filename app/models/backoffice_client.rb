@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: api_integrations
+# Table name: backoffice_clients
 #
 #  id                                    :bigint           not null, primary key
 #  api_token_public_key                  :string
@@ -11,5 +11,5 @@
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
 #
-class ApiIntegration < ApplicationRecord
+class BackofficeClient < ApplicationRecord
 end

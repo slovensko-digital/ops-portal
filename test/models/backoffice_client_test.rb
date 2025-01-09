@@ -1,6 +1,6 @@
 require "test_helper"
 
-class ApiIntegrationTest < ActiveSupport::TestCase
+class BackofficeClientTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

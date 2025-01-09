@@ -1,5 +1,5 @@
 class Api::V1::IssuesController < ApiController
-  before_action :authenticate_integration
+  before_action :authenticate_backoffice_client
   before_action :set_issue, only: [ :show ]
 
   def show
@@ -11,12 +11,10 @@ class Api::V1::IssuesController < ApiController
   def set_issue
     zammad_client = TriageZammadEnvironment.client
 
-    begin
-      @ticket = zammad_client.ticket.find(params.require :id)
-    rescue
-      return head(:not_found)
-    end
+    @ticket = zammad_client.get_ticket(params.require :id)
+    puts @ticket
 
-    head :not_found unless @ticket.responsible_subject == @api_integration.responsible_subject_zammad_identifier
+    head :not_found unless @ticket
+    # head :not_found unless @ticket["responsible_subject"] == @backoffice_client.responsible_subject_zammad_identifier
   end
 end

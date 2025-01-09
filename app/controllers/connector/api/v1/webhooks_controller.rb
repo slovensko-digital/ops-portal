@@ -7,7 +7,7 @@ class Connector::Api::V1::WebhooksController < Connector::ApplicationController
 
     case event_type
     when "issue.created"
-      Connector::CreateNewBackOfficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
+      Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     when "comment.created"
       Connector::CreateNewCommentJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
     when "issue.status_updated"

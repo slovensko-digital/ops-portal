@@ -1,6 +1,6 @@
 class WebhookClient
-  def initialize(api_integration)
-    @api_integration = api_integration
+  def initialize(backoffice_client)
+    @backoffice_client = backoffice_client
   end
 
   def issue_created(issue_id)
@@ -8,12 +8,12 @@ class WebhookClient
       type: "issue.created",
       timestamp: Time.now.to_i,
       data: {
-        subject_id: @api_integration.id,
+        subject_id: @backoffice_client.id,
         issue_id: issue_id
       }
     }
 
-    Triage::FireWebhookJob.perform_later(@api_integration, Random.uuid, payload)
+    Triage::FireWebhookJob.perform_later(@backoffice_client, Random.uuid, payload)
   end
 
   def comment_created(issue_id, comment_id)
@@ -21,13 +21,13 @@ class WebhookClient
       type: "comment.created",
       timestamp: Time.now.to_i,
       data: {
-        subject_id: @api_integration.id,
+        subject_id: @backoffice_client.id,
         issue_id: issue_id,
         comment_id: comment_id
       }
     }
 
-    Triage::FireWebhookJob.perform_later(@api_integration, Random.uuid, payload)
+    Triage::FireWebhookJob.perform_later(@backoffice_client, Random.uuid, payload)
   end
 
   def issue_status_updated(issue_id, comment_id)
@@ -35,11 +35,11 @@ class WebhookClient
       type: "issue.status_updated",
       timestamp: Time.now.to_i,
       data: {
-        subject_id: @api_integration.id,
+        subject_id: @backoffice_client.id,
         issue_id: issue_id
       }
     }
 
-    Triage::FireWebhookJob.perform_later(@api_integration, Random.uuid, payload)
+    Triage::FireWebhookJob.perform_later(@backoffice_client, Random.uuid, payload)
   end
 end

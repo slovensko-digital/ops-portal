@@ -1,10 +1,10 @@
-<%= form_with(model: api_integration, class: "contents") do |form| %>
-  <% if api_integration.errors.any? %>
+<%= form_with(model: backoffice_client, class: "contents") do |form| %>
+  <% if backoffice_client.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(api_integration.errors.count, "error") %> prohibited this api_integration from being saved:</h2>
+      <h2><%= pluralize(backoffice_client.errors.count, "error") %> prohibited this backoffice_client from being saved:</h2>
 
       <ul>
-        <% api_integration.errors.each do |error| %>
+        <% backoffice_client.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>

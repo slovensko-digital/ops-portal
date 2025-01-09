@@ -19,7 +19,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     mock_job = Minitest::Mock.new
     mock_job.expect :enqueue, true
 
-    SendIssueToZammadJob.stub :new, mock_job do
+    SendNewIssueToTriageJob.stub :new, mock_job do
       assert_difference("Issue.count") do
         post issues_url, params: { issue: { author: @issue.author, description: @issue.description, reported_at: @issue.reported_at, title: @issue.title } }
       end

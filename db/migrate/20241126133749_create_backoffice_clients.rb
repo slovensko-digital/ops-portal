@@ -1,6 +1,6 @@
-class CreateApiIntegrations < ActiveRecord::Migration[8.0]
+class CreateBackofficeClients < ActiveRecord::Migration[8.0]
   def change
-    create_table :api_integrations do |t|
+    create_table :backoffice_clients do |t|
       t.string :name
       t.string :url
       t.string :responsible_subject_zammad_identifier

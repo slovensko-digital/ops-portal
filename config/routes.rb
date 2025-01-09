@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  resources :api_integrations, path: "api-integrations"
+  resources :backoffice_clients
 
-  namespace :ovm_connector, path: "connector" do
+  namespace :connector do
     namespace "api" do
       namespace "v1" do
         post "webhook" => "webhooks#webhook"
@@ -48,6 +48,4 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "issues/drafts#new"
-
-  mount GoodJob::Engine => "good_job"
 end

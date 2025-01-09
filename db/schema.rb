@@ -42,7 +42,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_03_182619) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "api_integrations", force: :cascade do |t|
+  create_table "backoffice_clients", force: :cascade do |t|
     t.string "name"
     t.string "url"
     t.string "responsible_subject_zammad_identifier"

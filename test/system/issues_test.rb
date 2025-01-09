@@ -21,7 +21,7 @@ class IssuesTest < ApplicationSystemTestCase
 
     mock_job = Minitest::Mock.new
     mock_job.expect :enqueue, true
-    SendIssueToZammadJob.stub :new, mock_job do
+    SendNewIssueToTriageJob.stub :new, mock_job do
       click_on "Create Issue"
       assert_text "Issue was successfully created"
     end
