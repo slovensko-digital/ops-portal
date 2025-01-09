@@ -9,5 +9,6 @@
 #  responsible_subject_id :bigint           not null
 #
 class ResponsibleSubjectCategory < ApplicationRecord
-
+  belongs_to :responsible_subject
+  belongs_to :issue_category, class_name: 'Issue::Category'
 end

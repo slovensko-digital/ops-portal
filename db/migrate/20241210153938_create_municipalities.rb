@@ -2,7 +2,7 @@ class CreateMunicipalities < ActiveRecord::Migration[8.0]
   def change
     create_table :municipalities do |t|
       t.string :name
-      t.references :district, null: false, foreign_key: true
+      t.references :district, null: true, foreign_key: true
       t.string :sub
       t.string :alias
       t.string :email

@@ -12,8 +12,8 @@
 #  weight         :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  parent_id      :bigint           not null
+#  parent_id      :bigint
 #
 class Issue::Category < ApplicationRecord
-
+  belongs_to :parent, class_name: 'Issue::Category', dependent: :destroy, optional: true
 end

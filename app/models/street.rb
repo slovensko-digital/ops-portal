@@ -10,10 +10,10 @@
 #  tested                   :boolean
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  municipality_district_id :bigint           not null
+#  municipality_district_id :bigint
 #  municipality_id          :bigint           not null
 #
 class Street < ApplicationRecord
   belongs_to :municipality
-  belongs_to :municipality_district
+  belongs_to :municipality_district, optional: true
 end

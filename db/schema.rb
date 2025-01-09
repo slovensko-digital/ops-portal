@@ -144,7 +144,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
     t.string "description"
     t.string "description_hu"
     t.boolean "catch_all", default: false
-    t.bigint "parent_id", null: false
+    t.bigint "parent_id"
     t.integer "weight"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -195,7 +195,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
 
   create_table "municipalities", force: :cascade do |t|
     t.string "name"
-    t.bigint "district_id", null: false
+    t.bigint "district_id"
     t.string "sub"
     t.string "alias"
     t.string "email"
@@ -221,6 +221,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
   create_table "municipality_districts", force: :cascade do |t|
     t.string "name"
     t.bigint "municipality_id", null: false
+    t.string "alias"
     t.string "genitiv"
     t.string "lokal"
     t.string "description"
@@ -247,10 +248,12 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
   end
 
   create_table "responsible_subjects", force: :cascade do |t|
-    t.bigint "district_id", null: false
-    t.bigint "municipality_id", null: false
+    t.bigint "district_id"
+    t.bigint "municipality_id"
     t.bigint "responsible_subject_type_id", null: false
+    t.bigint "municipality_district_id"
     t.integer "scope"
+    t.string "subject_name"
     t.string "email"
     t.string "name"
     t.string "code"
@@ -259,6 +262,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["district_id"], name: "index_responsible_subjects_on_district_id"
+    t.index ["municipality_district_id"], name: "index_responsible_subjects_on_municipality_district_id"
     t.index ["municipality_id"], name: "index_responsible_subjects_on_municipality_id"
     t.index ["responsible_subject_type_id"], name: "index_responsible_subjects_on_responsible_subject_type_id"
   end
@@ -266,7 +270,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
   create_table "streets", force: :cascade do |t|
     t.string "name"
     t.bigint "municipality_id", null: false
-    t.bigint "municipality_district_id", null: false
+    t.bigint "municipality_district_id"
     t.string "place_identifier"
     t.float "latitude"
     t.float "longitude"
@@ -330,6 +334,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_157250) do
   add_foreign_key "responsible_subject_categories", "responsible_subjects"
   add_foreign_key "responsible_subjects", "districts"
   add_foreign_key "responsible_subjects", "municipalities"
+  add_foreign_key "responsible_subjects", "municipality_districts"
   add_foreign_key "responsible_subjects", "responsible_subject_types"
   add_foreign_key "streets", "municipalities"
   add_foreign_key "streets", "municipality_districts"

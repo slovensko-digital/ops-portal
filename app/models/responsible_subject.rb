@@ -9,12 +9,14 @@
 #  name                        :string
 #  pro                         :boolean
 #  scope                       :integer
+#  subject_name                :string
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
-#  district_id                 :bigint           not null
-#  municipality_id             :bigint           not null
+#  district_id                 :bigint
+#  municipality_district_id    :bigint
+#  municipality_id             :bigint
 #  responsible_subject_type_id :bigint           not null
 #
 class ResponsibleSubject < ApplicationRecord
-
+  has_many :categories, class_name: 'ResponsibleSubjectCategory'
 end

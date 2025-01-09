@@ -19,10 +19,11 @@
 #  sub                        :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  district_id                :bigint           not null
+#  district_id                :bigint
 #
 class Municipality < ApplicationRecord
-  belongs_to :district
+  belongs_to :district, optional: true
+  has_many :municipality_districts
 
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # Pomenovanie ciselnych hodnot iba podla nasho usudku
