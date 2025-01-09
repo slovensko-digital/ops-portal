@@ -9,7 +9,7 @@ module Import
         end
 
         records_array.each do |record|
-          Street.find_or_create_by(
+          Street.find_or_create_by!(
             id: record['id'],
             latitude: record['geo_y'],
             longitude: record['geo_x'],

@@ -8,7 +8,7 @@ module Import
       end
 
       records_array.each do |record|
-        District.find_or_create_by(
+        District.find_or_create_by!(
           id: record['id'],
           name: record['nazov_kraju']
         )

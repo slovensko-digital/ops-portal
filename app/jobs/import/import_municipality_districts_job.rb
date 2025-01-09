@@ -8,7 +8,7 @@ module Import
       end
 
       records_array.each do |record|
-        municipality.municipality_districts.find_or_create_by(
+        municipality.municipality_districts.find_or_create_by!(
           id: record['id'],
           alias: record['alias'],
           description: record['popis'].presence,

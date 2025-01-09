@@ -8,7 +8,7 @@ module Import
       end
 
       records_array.each do |record|
-        responsible_subject.categories.find_or_create_by(
+        responsible_subject.categories.find_or_create_by!(
           id: record['id'],
           issue_category_id: record['id_kategoria'],
         )

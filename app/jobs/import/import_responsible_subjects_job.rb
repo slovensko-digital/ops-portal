@@ -9,7 +9,7 @@ module Import
         end
 
         records_array.each do |record|
-          responsible_subject = ResponsibleSubject.find_or_create_by(
+          responsible_subject = ResponsibleSubject.find_or_create_by!(
             id: record['id'],
             active: record['status'],
             code: record['code'],

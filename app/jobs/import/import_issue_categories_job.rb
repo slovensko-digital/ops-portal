@@ -37,7 +37,7 @@ module Import
     end
 
     def find_or_create_category(record, parent_record)
-      ::Issue::Category.find_or_create_by(
+      ::Issue::Category.find_or_create_by!(
         id: record['id'],
         catch_all: record['catch_all'],
         category: record['kategoria'],

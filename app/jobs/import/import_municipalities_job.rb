@@ -8,7 +8,7 @@ module Import
       end
 
       records_array.each do |record|
-        municipality = Municipality.find_or_create_by(
+        municipality = Municipality.find_or_create_by!(
           id: record['id'],
           active: record['status'],
           alias: record['alias'],
