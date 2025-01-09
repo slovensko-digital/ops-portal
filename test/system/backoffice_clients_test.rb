@@ -17,7 +17,7 @@ class BackofficeClientsTest < ApplicationSystemTestCase
     fill_in "Api token public key", with: @backoffice_client.api_token_public_key
     fill_in "Name", with: @backoffice_client.name
     fill_in "Url", with: @backoffice_client.url
-    fill_in "Webhook secret", with: @backoffice_client.webhook_private_key
+    fill_in "Webhook private key", with: @backoffice_client.webhook_private_key
     click_on "Create Backoffice client"
 
     assert_text "Backoffice client was successfully created"
@@ -31,7 +31,7 @@ class BackofficeClientsTest < ApplicationSystemTestCase
     fill_in "Api token public key", with: @backoffice_client.api_token_public_key
     fill_in "Name", with: @backoffice_client.name
     fill_in "Url", with: @backoffice_client.url
-    fill_in "Webhook secret", with: @backoffice_client.webhook_private_key
+    fill_in "Webhook private key", with: @backoffice_client.webhook_private_key
     click_on "Update Backoffice client"
 
     assert_text "Backoffice client was successfully updated"
