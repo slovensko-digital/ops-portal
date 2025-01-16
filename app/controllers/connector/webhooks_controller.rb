@@ -9,9 +9,9 @@ class Connector::WebhooksController < ActionController::API
     when "issue.created"
       Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     when "comment.created"
-      Connector::CreateNewCommentJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
+      Connector::CreateNewBackofficeCommentFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
     when "issue.status_updated"
-      Connector::UpdateIssueStatusJob.perform_later(@tenant, data.require(:issue_id))
+      Connector::UpdateBackofficeIssueStatusFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     else
       render text: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end

@@ -19,10 +19,10 @@ class Connector::ZammadApiClient
       title: issue["title"],
       origin_by_id: create_or_find_customer(issue["author"]),
       customer_id: create_or_find_customer(issue["author"]),
-      triage_id: issue["triage_identifier"],
+      triage_identifier: issue["triage_identifier"],
       article: {
         origin_by_id: create_or_find_customer(article["author"]),
-        triage_id: article["triage_identifier"],
+        triage_identifier: article["triage_identifier"],
         content_type: article["content_type"],
         body: article["body"],
         type: article["type"],
@@ -45,22 +45,26 @@ class Connector::ZammadApiClient
     issue["comments"][1..-1].each do |comment|
       new_article = new_ticket.article(
         origin_by_id: create_or_find_customer(comment["author"]),
-        triage_id: comment["triage_identifier"],
+        triage_identifier: comment["triage_identifier"],
         content_type: comment["content_type"],
         body: comment["body"],
         type: comment["type"],
         triage_created_at: comment["created_at"],
         attachments: comment["attachments"].map do |attachment|
           {
-            filename: attachment["filename"],
-            "mime-type": attachment["content_type"],
-            data: attachment["data64"]
+            'filename' => attachment["filename"],
+            'mime-type' => attachment["content_type"],
+            'data' => attachment["data64"]
           }
         end
       )
 
       raise unless new_article.id
     end
+  end
+
+  def get_issue(ticket_id)
+    @client.ticket.find(ticket_id)
   end
 
   def create_or_find_customer(author)

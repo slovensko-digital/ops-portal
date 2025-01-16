@@ -86,6 +86,14 @@ class ZammadApiClient
     @client.ticket.find(ticket_id).responsible_subject
   end
 
+  def update_ticket_status(issue_id, status, responsible_subject_zammad_identifier)
+    ticket = @client.ticket.find(issue_id)
+    raise unless responsible_subject_zammad_identifier == ticket.responsible_subject
+
+    ticket.state = status
+    ticket.save
+  end
+
   private
 
   def create_or_find_customer(author_email)

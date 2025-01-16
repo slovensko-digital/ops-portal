@@ -13,6 +13,11 @@ class Connector::OpsApiClient
     JSON.parse response.body
   end
 
+  def update_issue_status(issue_id, status)
+    response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/status"), { status: status }, { token: jwt_token })
+    raise unless response.status == 204
+  end
+
   def get_comment(issue_id, comment_id)
     # TODO
   end

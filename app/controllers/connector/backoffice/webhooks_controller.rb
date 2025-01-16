@@ -1,5 +1,5 @@
 class Connector::Backoffice::WebhooksController < ActionController::API
-  # before_action :authenticate
+  before_action :authenticate
 
   def webhook
     event_type = webhook_params.require :type
@@ -8,7 +8,7 @@ class Connector::Backoffice::WebhooksController < ActionController::API
     when "article.created"
       Connector::SendNewCommentToTriageFromBackofficeJob.perform_later(data.require(:ticket_id), data.require(:article_id))
     when "ticket.status_updated"
-      Connector::SendNewIssueStatusToTriageFromBackofficeJob.perform_later(data.require :ticket_id)
+      Connector::SendNewIssueStatusToTriageFromBackofficeJob.perform_later(data.require(:ticket_id), data.require(:group))
     else
       render json: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end
@@ -21,7 +21,7 @@ class Connector::Backoffice::WebhooksController < ActionController::API
   end
 
   def data
-    params.require(:data).permit(:ticket_id, :article_id)
+    params.require(:data).permit(:ticket_id, :article_id, :group)
   end
 
   def authenticate

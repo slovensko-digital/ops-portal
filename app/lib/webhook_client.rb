@@ -30,7 +30,7 @@ class WebhookClient
     Triage::FireWebhookJob.perform_later(@client, Random.uuid, payload)
   end
 
-  def issue_status_updated(issue_id, comment_id)
+  def issue_status_updated(issue_id)
     payload = {
       type: "issue.status_updated",
       timestamp: Time.now.to_i,
