@@ -14,7 +14,7 @@ class Connector::OpsApiClient
   end
 
   def update_issue_status(issue_id, status)
-    response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/status"), { status: status }, { token: jwt_token })
+    response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/status"), { status: status, token: jwt_token })
     raise unless response.status == 204
   end
 
@@ -31,7 +31,13 @@ class Connector::OpsApiClient
   private
 
   def jwt_token
-    # TODO: generate JWT
-    ""
+    JWT.encode({
+        sub: @subject,
+        exp: 5.minutes.from_now.to_i,
+        jti: SecureRandom.uuid
+      },
+      @private_key,
+      "ES256"
+    )
   end
 end

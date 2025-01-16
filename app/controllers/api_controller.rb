@@ -3,9 +3,13 @@ class ApiController < ActionController::API
 
   private
 
+  def authenticity_token
+    (ActionController::HttpAuthentication::Token.token_and_options(request)&.first || params[:token])&.squish&.presence
+  end
+
   def authenticate_client
     # TODO
-    @client = Client.first
+    @client = ApiEnvironment.token_authenticator.verify_token(authenticity_token)
   end
 
   def default_format_json
