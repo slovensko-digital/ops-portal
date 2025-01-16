@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_09_101324) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_14_121522) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -164,13 +164,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_09_101324) do
   create_table "issues", force: :cascade do |t|
     t.string "title", null: false
     t.string "description", null: false
-    t.string "author", null: false
     t.datetime "reported_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "last_synced_at"
     t.integer "triage_external_id"
     t.string "state"
+    t.bigint "user_id"
+    t.boolean "anonymous"
+    t.string "address"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "category", null: false
+    t.string "municipality", null: false
+    t.bigint "author_id"
+    t.index ["author_id"], name: "index_issues_on_author_id"
+    t.index ["user_id"], name: "index_issues_on_user_id"
   end
 
   create_table "issues_drafts", force: :cascade do |t|
@@ -213,4 +222,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_09_101324) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "issues", "users", column: "author_id"
 end

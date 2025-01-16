@@ -1,6 +1,9 @@
 class ZammadApiClient
   attr :client
 
+  DEFAULT_GROUP = "Incomming"
+  DEFAULT_ARTICLE_TYPE = "web"
+
   def initialize(url:, http_token:)
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
   end
@@ -34,7 +37,7 @@ class ZammadApiClient
             {
               triage_identifier: attachment.id,
               filename: attachment.filename,
-              content_type: attachment.preferences.dig(:"Content-Type"),
+              content_type: attachment.preferences.dig(:"Mime-Type"),
               data64: Base64.strict_encode64(attachment.download)
             }
           end
@@ -46,27 +49,25 @@ class ZammadApiClient
   end
 
   def create_ticket(issue)
-    # TODO: real values from issues
-    create_or_find_customer(issue.author)
     ticket = @client.ticket.create(
       title: issue.title,
-      group: "Incomming",
-      customer: issue.author,
-      origin_by: issue.author,
-      municipality: "Bratislava::Staré Mesto",
-      category: 1,
-      # anonymous: true, TODO: handle anonymous issues - email and name visible to triage zammad, invisible for municipality
+      group: DEFAULT_GROUP,
+      customer_id: issue.author.zammad_identifier,
+      origin_by_id: issue.author.zammad_identifier,
+      municipality: issue.municipality,
+      category: find_zammad_category(issue.category),
+      anonymous: issue.anonymous,
       article: {
-        origin_by: issue.author,
-        content_type: "text/plain", # or text/html, if not given test/plain is used
+        origin_by_id: issue.author.zammad_identifier,
         body: issue.description,
-        type: "web"
-        # attachments can be optional, data needs to be base64 encoded
-        # attachments: [
-        #   'filename' => 'some_file.txt',
-        #   'data' => 'dGVzdCAxMjM=',
-        #   'mime-type' => 'text/plain',
-        # ],
+        type: DEFAULT_ARTICLE_TYPE,
+        attachments: issue.photos.map do |photo|
+          {
+            'filename' => photo.filename.to_s,
+            'data' => Base64.encode64(photo.blob.download),
+            'mime-type' => photo.content_type
+          }
+        end
       },
     )
 
@@ -114,5 +115,10 @@ class ZammadApiClient
 
     u = get_user(user_id)
     User.create!(zammad_identifier: u.id, email: u.email, firstname: u.firstname, lastname: u.lastname)
+  end
+
+  def find_zammad_category(issue_category)
+    # TODO: do something real
+    "1"
   end
 end

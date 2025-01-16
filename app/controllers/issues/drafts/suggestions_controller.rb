@@ -5,7 +5,7 @@ class Issues::Drafts::SuggestionsController < ApplicationController
   end
 
   def generate
-    unless @draft.suggestions.any?
+    unless @draft.suggestions.present?
       Issues::Draft::GenerateSuggestionsJob.perform_now(@draft)
     end
   end

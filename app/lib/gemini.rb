@@ -23,6 +23,7 @@ class Gemini
       }.to_json
     end
 
+    return [] unless res.body["candidates"]
     JSON.parse(res.body["candidates"].first.dig("content", "parts").first["text"])
   end
 

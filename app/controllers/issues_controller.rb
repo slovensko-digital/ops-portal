@@ -1,5 +1,5 @@
 class IssuesController < ApplicationController
-  before_action :set_issue, only: %i[ show edit update destroy ]
+  before_action :set_issue, only: %i[ show destroy ]
 
   # GET /issues or /issues.json
   def index
@@ -8,35 +8,6 @@ class IssuesController < ApplicationController
 
   # GET /issues/1 or /issues/1.json
   def show
-  end
-
-  # GET /issues/new
-  def new
-    @issue = Issue.new
-  end
-
-  # GET /issues/1/edit
-  def edit
-  end
-
-  # POST /issues or /issues.json
-  def create
-    @issue = Issue.new(issue_params)
-
-    if @issue.save
-      redirect_to @issue, notice: "Issue was successfully created."
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  # PATCH/PUT /issues/1 or /issues/1.json
-  def update
-    if @issue.update(issue_params)
-      redirect_to @issue, notice: "Issue was successfully updated."
-    else
-      render :edit, status: :unprocessable_entity
-    end
   end
 
   # DELETE /issues/1 or /issues/1.json

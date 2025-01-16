@@ -19,7 +19,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :issues
+  resources :issues, only: [ :index, :show, :destroy ]
+
   namespace :issues do
     resources :drafts do
       post :confirm
