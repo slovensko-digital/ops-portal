@@ -16,8 +16,8 @@ class ApiTokenAuthenticator
 
     key_finder = ->(_, payload) do
       @public_key_reader.call(payload["sub"])
-    # rescue
-      # raise JWT::InvalidSubError
+    rescue
+      raise JWT::InvalidSubError
     end
 
     payload, _ = JWT.decode(token, nil, true, options, &key_finder)
