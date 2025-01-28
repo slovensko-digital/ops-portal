@@ -1,7 +1,7 @@
 module Import
   class Addresses::ImportDistrictsJob < ApplicationJob
-    def perform(import_municipalities_job: ImportMunicipalitiesJob, chain_import: false)
-      Legacy::GenericModel.set_table_name('kraje')
+    def perform(import_municipalities_job: ::Import::Addresses::ImportMunicipalitiesJob, chain_import: false)
+      Legacy::GenericModel.set_table_name("kraje")
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           District.find_or_create_by!(

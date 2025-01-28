@@ -3,7 +3,7 @@ module Import
     include ImportHelper
 
     def perform
-      Legacy::GenericModel.set_table_name('alerts')
+      Legacy::GenericModel.set_table_name("alerts")
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           Issue.find_or_initialize_by!(

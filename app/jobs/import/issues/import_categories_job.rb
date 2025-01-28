@@ -1,7 +1,7 @@
 module Import
   class Issues::ImportCategoriesJob < ApplicationJob
     def perform
-      Legacy::GenericModel.set_table_name('alerts_categories')
+      Legacy::GenericModel.set_table_name("alerts_categories")
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           find_or_create_category_with_parent(legacy_record)
@@ -20,7 +20,7 @@ module Import
     end
 
     def load_parent_record_data(record_id)
-      return ::Issues::Category.find_by_id(record_id) if Issues::Category.find_by_id(record_id)
+      return ::Issues::Category.find_by_id(record_id) if ::Issues::Category.find_by_id(record_id)
 
       record = Legacy::GenericModel.find_by_id(record_id)
 

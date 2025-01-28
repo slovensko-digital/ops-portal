@@ -20,4 +20,5 @@
 #
 class ResponsibleSubjects::User < ApplicationRecord
   belongs_to :responsible_subject, optional: true
+  belongs_to :organization_unit, optional: true
 end
