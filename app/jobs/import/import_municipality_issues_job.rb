@@ -2,7 +2,7 @@ module Import
   class ImportMunicipalityIssuesJob < ApplicationJob
     include ImportHelper
 
-    def perform(municipality:, import_comments_job: Issues::ImportIssueCommentsJob, import_communications_job: Issues::ImportIssueCommunicationsJob)
+    def perform(municipality:, import_updates_job: Issues::ImportIssueUpdatesJob, import_comments_job: Issues::ImportIssueCommentsJob, import_communications_job: Issues::ImportIssueCommunicationsJob)
       Legacy::GenericModel.set_table_name("alerts")
       Legacy::GenericModel.where(mesto: municipality.id).find_in_batches do |group|
         group.each do |legacy_record|
@@ -62,6 +62,7 @@ module Import
 
             issue.save!
 
+            import_updates_job.perform_later(issue: issue)
             import_comments_job.perform_later(issue: issue)
             import_communications_job.perform_later(issue: issue)
           end

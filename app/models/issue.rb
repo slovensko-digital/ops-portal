@@ -25,6 +25,7 @@ class Issue < ApplicationRecord
   belongs_to :municipality
   belongs_to :state, class_name: "Issues::State", optional: true
 
+  has_many :updates, class_name: "Issues::Update"
   has_many :comments, class_name: "Issues::Comment"
   has_many :communications, class_name: "Issues::Communication"
 
