@@ -6,7 +6,7 @@ module Import
       Legacy::GenericModel.set_table_name('alerts')
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
-          Issue.find_or_create_by!(
+          Issue.find_or_initialize_by!(
             id: legacy_record.id,
             author: User.find_by_id(legacy_record.posted_by),
             reported_at: convert_timestamp_value(legacy_record.posted_time),
