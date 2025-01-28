@@ -15,9 +15,9 @@
 #  email_notifiable :boolean          default(TRUE)
 #  exp              :integer
 #  fcm_token        :string
-#  first_name       :string
+#  firstname        :string
 #  gdpr_accepted    :boolean
-#  last_name        :string
+#  lastname         :string
 #  legacy_rights    :integer
 #  login            :string
 #  organization     :boolean
@@ -27,6 +27,7 @@
 #  sex              :integer
 #  signature        :string
 #  timestamp        :datetime
+#  uuid             :uuid             not null
 #  verification     :string
 #  verified         :boolean          default(FALSE)
 #  created_at       :datetime         not null

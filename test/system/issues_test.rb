@@ -10,39 +10,6 @@ class IssuesTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Issues"
   end
 
-  test "should create issue" do
-    visit issues_url
-    click_on "New issue"
-
-    fill_in "Author", with: @issue.author
-    fill_in "Description", with: @issue.description
-    fill_in "Reported at", with: @issue.reported_at
-    fill_in "Title", with: @issue.title
-
-    mock_job = Minitest::Mock.new
-    mock_job.expect :enqueue, true
-    SendIssueToZammadJob.stub :new, mock_job do
-      click_on "Create Issue"
-      assert_text "Issue was successfully created"
-    end
-
-    click_on "Back"
-  end
-
-  test "should update Issue" do
-    visit issue_url(@issue)
-    click_on "Edit this issue", match: :first
-
-    fill_in "Author", with: @issue.author
-    fill_in "Description", with: @issue.description
-    fill_in "Reported at", with: @issue.reported_at.to_s
-    fill_in "Title", with: @issue.title
-    click_on "Update Issue"
-
-    assert_text "Issue was successfully updated"
-    click_on "Back"
-  end
-
   test "should destroy Issue" do
     visit issue_url(@issue)
     click_on "Destroy this issue", match: :first

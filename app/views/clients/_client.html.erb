@@ -1,0 +1,26 @@
+<div id="<%= dom_id client %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= client.name %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Url:</strong>
+    <%= client.url %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Api token public key:</strong>
+    <%= client.api_token_public_key %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Webhook secret:</strong>
+    <%= client.webhook_private_key %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Responsible subject identifier:</strong>
+    <%= client.responsible_subject_zammad_identifier %>
+  </p>
+</div>

@@ -1,6 +1,28 @@
 Rails.application.routes.draw do
-  post "webhooks/ticket-updated"
-  resources :issues
+  resources :clients
+
+  namespace :connector do
+    post "webhook" => "webhooks#webhook"
+    namespace :backoffice do
+      post "webhook" => "webhooks#webhook"
+    end
+  end
+
+  namespace :triage do
+    post "webhook" => "webhooks#webhook"
+  end
+
+  namespace "api" do
+    namespace "v1" do
+      resources :issues, only: [ :show ] do
+        resources :comments, only: [ :show, :create ]
+        post :status
+      end
+    end
+  end
+
+  resources :issues, only: [ :index, :show, :destroy ]
+
   namespace :issues do
     resources :drafts do
       post :confirm
@@ -23,7 +45,9 @@ Rails.application.routes.draw do
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+
+  mount GoodJob::Engine => "admin/good_job"
 
   # Defines the root path route ("/")
   root "issues/drafts#new"

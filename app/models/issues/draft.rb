@@ -40,7 +40,31 @@ class Issues::Draft < ApplicationRecord
   validates_presence_of :title, :description, on: :details_step
 
   def confirm
+    # TODO: choose real user
+    user = User.find_or_create_by(
+      email: ENV.fetch("DEFAULT_USER_EMAIL"),
+      zammad_identifier: ENV.fetch("DEFAULT_USER_ZAMMAD_IDENTIFIER"),
+      firstname: ENV.fetch("DEFAULT_USER_FIRSTNAME"),
+      lastname: ENV.fetch("DEFAULT_USER_LASTNAME")
+    )
+
     # TODO create issue and delete draft
+    issue = Issue.create!(
+      author: user,
+      municipality: temp_get_municipality(),
+      title: title,
+      description: description,
+      category: category,
+      anonymous: anonymous,
+      address: address_city,
+      latitude: latitude,
+      longitude: longitude,
+      reported_at: created_at
+    )
+
+    photos.each do |photo|
+      issue.photos.append photo
+    end
   end
 
   def schedule_calculate_suggestions
@@ -77,7 +101,7 @@ class Issues::Draft < ApplicationRecord
     assign_attributes(suggestions_params)
     if picked_suggestion_index == -1
       self.title = self.description = nil
-      self.categories = []
+      self.category = "1"
     else
       self.title, self.description, self.category, self.subcategory, self.subtype = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
     end
@@ -89,5 +113,16 @@ class Issues::Draft < ApplicationRecord
   def gps_to_float(gps)
     d, m, s = gps
     d.to_f + m / 60 + s / 3600
+  end
+
+  # TODO: select real municipality
+  def temp_get_municipality
+    return "Hlohovec" unless address_city == "Bratislava"
+
+    return "Bratislava::Staré Mesto" if address_city_district == "okres Bratislava I"
+    return "Bratislava::Nové Mesto" if address_city_district == "okres Bratislava III"
+    return "Bratislava::Karlova Ves" if address_city_district == "okres Bratislava IV"
+
+    "Hlohvec"
   end
 end

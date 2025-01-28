@@ -51,41 +51,9 @@ class Issues::Draft::GenerateSuggestionsJob < ApplicationJob
   LLM
 
   def generate_suggestions(draft)
-    conn = Faraday.new(
-      url: "https://api.anthropic.com",
-      headers: {
-        "x-api-key": ENV["ANTHROPIC_API_KEY"],
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json"
-      }
-    ) do |f|
-      f.adapter :patron
-      f.response :json
-    end
-
-    res = conn.post("v1/messages") do |req|
-      req.body = {
-        messages: [
-          {
-            role: :user,
-            content: draft.photos.map do |photo|
-              {
-                type: :image,
-                source: {
-                  type: :base64,
-                  media_type: photo.blob.content_type,
-                  data: Base64.strict_encode64(photo.variant(:llm).processed.download)
-                }
-              }
-            end
-          }
-        ],
-        system: SYSTEM_PROMPT,
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 1024
-      }.to_json
-    end
-
-    JSON.parse(res.body["content"].first["text"])
+    Gemini.generate(
+      messages: [ "" ] + draft.photos,
+      system_prompt: SYSTEM_PROMPT,
+    )
   end
 end

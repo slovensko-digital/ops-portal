@@ -2,12 +2,12 @@ require "test_helper"
 
 class WebhooksControllerTest < ActionDispatch::IntegrationTest
   test "ticket-updated should receive 401 without x-hub-signature header" do
-    post webhooks_ticket_updated_url
+    post triage_webhook_url
     assert_response :unauthorized
   end
 
   test "ticket-updated should receive 400 with bad signature" do
-    post webhooks_ticket_updated_url, params: {}, headers: { "X-Hub-Signature": "sha1=sadfasdfas" }
+    post triage_webhook_url, params: {}, headers: { "X-Hub-Signature": "sha1=sadfasdfas" }
     assert_response :forbidden
   end
 

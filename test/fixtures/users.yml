@@ -1,0 +1,6 @@
+one:
+  email: firstname.lastname@example.org
+  zammad_identifier: 1
+  firstname: Firstname
+  lastname: Lastname
+

@@ -47,6 +47,8 @@ gem "exif"
 gem "zammad_api"
 
 gem "faraday-patron"
+gem "jwt"
+
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -73,3 +75,5 @@ group :test do
 end
 
 gem "good_job"
+
+gem "rack-cors", "~> 2.0"

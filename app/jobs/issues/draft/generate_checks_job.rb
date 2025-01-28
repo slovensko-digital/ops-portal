@@ -12,9 +12,12 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
 
     The problem has a title and description and must be checked with various rules written in Slovak.
 
-    Return JSON array with failing checks as hashes with `title`, `description` and `action` keys.
+    Return JSON array with failing checks as hashes with `title`, `description` and `action` keys.#{' '}
+    Optionally return `explanation` with further guidance how to fix the problem.
+
     Do not return the `rule`.
     Do not return anything else than JSON and if there are no problems return empty array `[]`.
+    If the reported problem matches a check with action `back` it takes precedence over other checks.
 
     Checks dictionary:
 
@@ -40,45 +43,29 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
     Description: Podnet je popísaný nedostatočne. Skúste ho opísať širšie.
     Action: back
     Rules:
-     - Nadpis a popis podnetu musia byť jednoznačné a dostatočne obšírne, aby sa podnet dal spracovať.
+     - Nadpis a popis podnetu musia byť jednoznačné a jasné, aby sa podnet dal spracovať.
+
+    ---
 
   LLM
 
   def llm_generate_checks(draft)
-    conn = Faraday.new(
-      url: "https://api.anthropic.com",
-      headers: {
-        "x-api-key": ENV["ANTHROPIC_API_KEY"],
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json"
-      }
-    ) do |f|
-      f.adapter :patron
-      f.response :json
-    end
-
-    res = conn.post("v1/messages") do |req|
-      req.body = {
-        messages: [
-          {
-            role: :user,
-            content: <<-MSG
+    prompt = <<-LLM
              Podnet
 
              Title:
              #{draft.title}
 
-              Description:
-              #{draft.description}
-            MSG
-          }
-        ],
-        system: SYSTEM_PROMPT,
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 1024
-      }.to_json
-    end
+             Description:
+             #{draft.description}
 
-    JSON.parse(res.body["content"].first["text"])
+             Address:
+             #{[ draft.address_city, draft.address_city_district, draft.address_road ].compact.join(', ')}
+    LLM
+
+    Gemini.generate(
+      system_prompt: SYSTEM_PROMPT,
+      messages: [ prompt ]
+    )
   end
 end

@@ -24,9 +24,9 @@ module Import
             user.active = legacy_record.status
             user.banned = legacy_record.is_banned
             user.email_notifiable = legacy_record.email_notification
-            user.first_name = legacy_record.meno
+            user.firstname = legacy_record.meno
             user.gdpr_accepted = legacy_record.gdpr_accepted
-            user.last_name = legacy_record.priezvisko
+            user.lastname = legacy_record.priezvisko
             user.password = legacy_record.password
             user.phone = legacy_record.telefon
             user.resident = legacy_record.residency
