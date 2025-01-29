@@ -1,6 +1,6 @@
 module Import
   class ImportResponsibleSubjectsJob < ApplicationJob
-    def perform(import_categories_job: ResponsibleSubjects::ImportCategoriesJob, import_organization_units_job: ResponsibleSubjects::ImportOrganizationUnitsJob ,chain_import: false)
+    def perform(import_categories_job: ResponsibleSubjects::ImportCategoriesJob, import_organization_units_job: ResponsibleSubjects::ImportOrganizationUnitsJob ,import_users_job: ResponsibleSubjects::ImportUsersJob, chain_import: false)
       Legacy::GenericModel.set_table_name("zodpovednost")
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
@@ -26,6 +26,7 @@ module Import
       if chain_import
         import_categories_job.perform_later
         import_organization_units_job.perform_later
+        import_users_job.perform_later
       end
     end
   end
