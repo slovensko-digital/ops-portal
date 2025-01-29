@@ -499,8 +499,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_29_090214) do
     t.boolean "email_notifiable", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "zammad_identifier"
     t.index ["municipality_id"], name: "index_users_on_municipality_id"
     t.index ["street_id"], name: "index_users_on_street_id"
+    t.index ["zammad_identifier"], name: "index_users_on_zammad_identifier", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
