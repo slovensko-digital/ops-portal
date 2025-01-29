@@ -31,9 +31,9 @@ module Import
       ::Issues::Category.find_or_initialize_by(
         id: legacy_record.id,
         catch_all: legacy_record.catch_all,
-        category: legacy_record.kategoria,
-        category_hu: legacy_record.kategoria_hu,
-        category_alias: legacy_record.kategoria_alias,
+        name: legacy_record.kategoria,
+        name_hu: legacy_record.kategoria_hu,
+        alias: legacy_record.kategoria_alias,
         parent: legacy_parent_record
       ).tap do |issues_category|
         issues_category.description = legacy_record.popis.presence

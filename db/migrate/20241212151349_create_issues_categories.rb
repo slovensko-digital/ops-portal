@@ -1,9 +1,9 @@
 class CreateIssuesCategories < ActiveRecord::Migration[8.0]
   def change
     create_table :issues_categories do |t|
-      t.string :category
-      t.string :category_hu
-      t.string :category_alias
+      t.string :name
+      t.string :name_hu
+      t.string :alias
       t.string :description
       t.string :description_hu
       t.boolean :catch_all, default: false

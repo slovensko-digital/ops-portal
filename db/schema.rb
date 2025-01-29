@@ -180,9 +180,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_29_090214) do
     t.float "latitude"
     t.float "longitude"
     t.bigint "author_id"
-    t.bigint "municipality_id", null: false
     t.bigint "category_id"
     t.bigint "state_id"
+    t.bigint "municipality_id", null: false
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["municipality_id"], name: "index_issues_on_municipality_id"
@@ -190,9 +190,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_29_090214) do
   end
 
   create_table "issues_categories", force: :cascade do |t|
-    t.string "category"
-    t.string "category_hu"
-    t.string "category_alias"
+    t.string "name"
+    t.string "name_hu"
+    t.string "alias"
     t.string "description"
     t.string "description_hu"
     t.boolean "catch_all", default: false
@@ -470,6 +470,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_29_090214) do
     t.string "email"
     t.string "firstname"
     t.string "lastname"
+    t.integer "zammad_identifier"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.boolean "banned", default: false
     t.string "login"
@@ -499,7 +500,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_29_090214) do
     t.boolean "email_notifiable", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "zammad_identifier"
     t.index ["municipality_id"], name: "index_users_on_municipality_id"
     t.index ["street_id"], name: "index_users_on_street_id"
     t.index ["zammad_identifier"], name: "index_users_on_zammad_identifier", unique: true

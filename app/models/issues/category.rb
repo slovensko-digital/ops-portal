@@ -3,12 +3,12 @@
 # Table name: issues_categories
 #
 #  id             :bigint           not null, primary key
+#  alias          :string
 #  catch_all      :boolean          default(FALSE)
-#  category       :string
-#  category_alias :string
-#  category_hu    :string
 #  description    :string
 #  description_hu :string
+#  name           :string
+#  name_hu        :string
 #  weight         :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
