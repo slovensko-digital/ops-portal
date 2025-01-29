@@ -7,9 +7,9 @@ one:
   reported_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 1
-  category: 1
-  state: new
-  municipality: "Bratislava::Staré Mesto"
+  category: one
+  state: zero
+  municipality: one
 
 two:
   title: MyString
@@ -18,6 +18,6 @@ two:
   reported_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 2
-  category: 1
-  state: open
-  municipality: "Bratislava::Staré Mesto"
+  category: one
+  state: three
+  municipality: one
