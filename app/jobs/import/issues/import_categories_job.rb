@@ -28,19 +28,17 @@ module Import
     end
 
     def find_or_create_category(legacy_record, legacy_parent_record)
-      ::Issues::Category.find_or_initialize_by(
+      ::Issues::Category.find_or_create_by!(
         id: legacy_record.id,
         catch_all: legacy_record.catch_all,
+        description: legacy_record.popis.presence,
+        description_hu: legacy_record.popis_hu.presence,
         name: legacy_record.kategoria,
         name_hu: legacy_record.kategoria_hu,
+        weight: legacy_record.weight,
         alias: legacy_record.kategoria_alias,
         parent: legacy_parent_record
-      ).tap do |issues_category|
-        issues_category.description = legacy_record.popis.presence
-        issues_category.description_hu = legacy_record.popis_hu.presence,
-        issues_category.weight = legacy_record.weight,
-        issues_category.save!
-      end
+      )
     end
   end
 end

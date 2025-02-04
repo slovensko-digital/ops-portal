@@ -4,18 +4,16 @@ module Import
       Legacy::GenericModel.set_table_name("mestske_casti")
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
-          MunicipalityDistrict.find_or_initialize_by(
+          MunicipalityDistrict.find_or_create_by!(
             id: legacy_record.id,
             alias: legacy_record.alias,
+            description: legacy_record.popis.presence,
             genitiv: legacy_record.genitiv,
+            logo: legacy_record.logo,
             lokal: legacy_record.lokal,
             name: legacy_record.nazov,
             municipality_id: legacy_record.mesto.nonzero? || nil,
-          ).tap do |municipality_district|
-            municipality_district.description = legacy_record.popis.presence
-            municipality_district.logo = legacy_record.logo
-            municipality_district.save!
-          end
+          )
         end
       end
 

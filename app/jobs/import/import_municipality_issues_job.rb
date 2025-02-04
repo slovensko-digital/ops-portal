@@ -6,20 +6,12 @@ module Import
       Legacy::GenericModel.set_table_name("alerts")
       Legacy::GenericModel.where(mesto: municipality.id).find_in_batches do |group|
         group.each do |legacy_record|
-          Issue.find_or_initialize_by(
+          issue = Issue.find_or_create_by!(
             id: legacy_record.id,
-            author: User.find_by_id(legacy_record.posted_by),
-            reported_at: convert_timestamp_value(legacy_record.posted_time),
-            municipality: Municipality.find_by_id(legacy_record.mesto),
-          ).tap do |issue|
-            issue.anonymous = legacy_record.anonymous
-            issue.category = ::Issues::Category.find_by_id(legacy_record.kategoria)
-            issue.description = legacy_record.description
-            issue.longitude = legacy_record.map_x
-            issue.latitude = legacy_record.map_y
-            issue.state = ::Issues::State.find_by_id(legacy_record.status)
-            issue.title = legacy_record.heading
-            issue.legacy_data = {
+            anonymous: legacy_record.anonymous,
+            description: legacy_record.description,
+            latitude: legacy_record.map_y,
+            legacy_data: {
               embed: legacy_record.embed,
               map_zoom: legacy_record.map_zoom,
               accuracy: legacy_record.accuracy,
@@ -58,15 +50,20 @@ module Import
               ended_at: legacy_record.end_date,
               parent_id: legacy_record.parent_id,
               organization_unit_id2: legacy_record.organizational_unit_id2
-            }
-
-            issue.save!
-
-            import_images_job.perform_later(issue: issue)
-            import_updates_job.perform_later(issue: issue)
-            import_comments_job.perform_later(issue: issue)
-            import_communications_job.perform_later(issue: issue)
-          end
+            },
+            longitude: legacy_record.map_x,
+            reported_at: convert_timestamp_value(legacy_record.posted_time),
+            title: legacy_record.heading,
+            author: User.find_by_id(legacy_record.posted_by),
+            category: ::Issues::Category.find_by_id(legacy_record.kategoria),
+            municipality: Municipality.find_by_id(legacy_record.mesto),
+            state: ::Issues::State.find_by_id(legacy_record.status),
+          )
+          
+          import_images_job.perform_later(issue: issue)
+          import_updates_job.perform_later(issue: issue)
+          import_comments_job.perform_later(issue: issue)
+          import_communications_job.perform_later(issue: issue)
         end
       end
     end

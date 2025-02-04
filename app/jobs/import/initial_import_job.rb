@@ -1,4 +1,4 @@
-class InitialImportJob < ApplicationJob
+class Import::InitialImportJob < ApplicationJob
   def perform
     Import::Addresses::ImportDistrictsJob.perform_later(chain_import: true)
 
