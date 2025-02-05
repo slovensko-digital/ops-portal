@@ -47,7 +47,7 @@ gem "exif"
 gem "zammad_api"
 
 gem "faraday-patron"
-gem 'open-uri'
+gem "open-uri"
 gem "jwt"
 
 

@@ -9,5 +9,5 @@
 #  issue_id   :bigint           not null
 #
 class Issues::CommunicationActivity < Issues::Activity
-  has_one :activity_object, class_name: 'Issues::Communication', foreign_key: :activity_id
+  has_one :activity_object, class_name: "Issues::Communication", foreign_key: :activity_id
 end
