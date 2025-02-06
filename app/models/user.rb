@@ -45,4 +45,8 @@ class User < ApplicationRecord
   enum :sex, m: 1, f: 2
 
   validates :zammad_identifier, uniqueness: true, allow_nil: true
+
+  def fullname
+    [firstname, lastname].reject(&:empty?).join(' ')
+  end
 end
