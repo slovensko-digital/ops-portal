@@ -11,7 +11,7 @@
 
   <p class="my-5">
     <strong class="block font-medium mb-1">Author:</strong>
-    <%= issue.author %>
+    <%= issue.author.fullname %>
   </p>
 
   <p class="my-5">
@@ -26,7 +26,7 @@
 
   <p class="my-5">
     <strong class="block font-medium mb-1">Status:</strong>
-    <%= issue.state %>
+    <%= issue.state.name %>
   </p>
 
 </div>
