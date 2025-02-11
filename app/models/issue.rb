@@ -34,7 +34,7 @@ class Issue < ApplicationRecord
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
 
-  after_create_commit :schedule_send_to_zammad
+  # after_create_commit :schedule_send_to_zammad
 
   def schedule_send_to_zammad
     SendNewIssueToTriageJob.perform_later self
