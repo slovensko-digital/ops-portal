@@ -16,13 +16,14 @@ module Import
             banned: legacy_record.is_banned,
             birth: legacy_record.birth,
             created_from_app: legacy_record.created_from_app,
-            # email: legacy_record.email, #  TODO skip emails for now
+            email: generate_dummy_email(legacy_record.id), # TODO skip emails for now
+            # email: legacy_record.email, # TODO skip emails for now
             email_notifiable: legacy_record.email_notification,
             exp: legacy_record.exp,
             fcm_token: legacy_record.fcm_token,
             firstname: legacy_record.meno,
             gdpr_accepted: legacy_record.gdpr_accepted,
-            lastname: legacy_record.priezvisko,
+            lastname: legacy_record.priezvisko.presence,
             legacy_rights: convert_legacy_rights_value(legacy_record.rights),
             login: legacy_record.login,
             organization: legacy_record.is_organization,

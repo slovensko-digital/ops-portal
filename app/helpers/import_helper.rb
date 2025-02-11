@@ -6,4 +6,8 @@ module ImportHelper
   def download_from_ops_portal(path)
     URI.parse("#{ENV.fetch("LEGACY_PORTAL_URL")}/#{path}").open
   end
+
+  def generate_dummy_email(id)
+    "#{id}@localhost.dev"
+  end
 end

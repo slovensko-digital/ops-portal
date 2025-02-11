@@ -11,7 +11,8 @@ module Import
             id: legacy_record.id,
             added_at: convert_timestamp_value(legacy_record.ts),
             confirmation_needed: legacy_record.need_confirmation,
-            # email: legacy_record.email, TODO skip emails for now
+            email: generate_dummy_email(legacy_record.user), # TODO skip emails for now
+            # email: legacy_record.email, # TODO skip emails for now
             from_responsible_subject: legacy_record.direction,
             internal: legacy_record.internal,
             ip: legacy_record.ip,

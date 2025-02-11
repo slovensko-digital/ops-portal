@@ -1,5 +1,7 @@
 module Import
   class ResponsibleSubjects::ImportUsersJob < ApplicationJob
+    include ImportHelper
+
     def perform
       Legacy::GenericModel.set_table_name("municipality_users")
       Legacy::GenericModel.find_in_batches do |group|
@@ -7,9 +9,11 @@ module Import
           ::ResponsibleSubjects::User.find_or_create_by!(
             id: legacy_record.id,
             deleted_at: legacy_record.deleted_at,
-            # email: legacy_record.email, #  TODO skip emails for now
+            email: generate_dummy_email(legacy_record.id), # TODO skip emails for now
+            # email: legacy_record.email, # TODO skip emails for now
             gdpr_accepted: legacy_record.gdpr_accepted,
-            # login: legacy_record.login, #  TODO skip emails for now
+            login: generate_dummy_email(legacy_record.id), # TODO skip emails for now
+            # login: legacy_record.login, # TODO skip emails for now
             name: legacy_record.name,
             password: legacy_record.password,
             photo: legacy_record.photo,

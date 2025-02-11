@@ -10,7 +10,8 @@ module Import
           update = ::Issues::Update.find_or_create_by!(
             id: legacy_record.id,
             added_at: convert_timestamp_value(legacy_record.ts),
-            # email: legacy_record.email, TODO skip emails for now
+            email: generate_dummy_email(legacy_record.updated_by), # TODO skip emails for now
+            # email: legacy_record.email, # TODO skip emails for now
             ip: legacy_record.ip,
             name: legacy_record.meno,
             published: legacy_record.status,
