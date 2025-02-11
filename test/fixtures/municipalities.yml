@@ -1,0 +1,8 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sub: ba
+  alias: bratislava
+  email: bratislava
+  municipality_type: 2
+  has_municipality_districts: 1

@@ -1,0 +1,12 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+_fixture:
+  model_class: Issues::State
+
+zero:
+  name: Čakajúci
+  color: "#999999"
+
+three:
+  name: V riešení
+  color: "#5598C4"
+

@@ -1,0 +1,15 @@
+module Import
+  class ResponsibleSubjects::ImportOrganizationUnitsJob < ApplicationJob
+    def perform
+      Legacy::GenericModel.set_table_name("organizational_unit")
+      Legacy::GenericModel.find_in_batches do |group|
+        group.each do |legacy_record|
+          ::ResponsibleSubjects::OrganizationUnit.find_or_create_by!(
+            id: legacy_record.id,
+            responsible_subject_id: legacy_record.zodpovednost_id
+          )
+        end
+      end
+    end
+  end
+end
