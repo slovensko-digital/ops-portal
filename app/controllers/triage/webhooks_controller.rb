@@ -8,7 +8,7 @@ class Triage::WebhooksController < ActionController::API
     when "ticket.created"
       Triage::SendNewIssueFromTriageToBackofficeJob.perform_later(data.require(:ticket_id))
     when "article.created"
-      Triage::SendNewCommentFromTriageToBackofficeJob.perform_later(data.require(:ticket_id), data.require(:article_id))
+      Triage::ProcessNewCommentFromTriageJob.perform_later(data.require(:ticket_id), data.require(:article_id))
     when "ticket.status_updated"
       Triage::SendNewIssueStatusFromTriageToBackofficeJob.perform_later(data.require :ticket_id)
     else

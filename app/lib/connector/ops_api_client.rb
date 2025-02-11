@@ -19,13 +19,18 @@ class Connector::OpsApiClient
   end
 
   def get_comment(issue_id, comment_id)
-    # TODO
+    response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/comments/#{comment_id}"), { token: jwt_token })
+    nil unless response.status == 200
+
+    JSON.parse response.body
   end
 
   def create_comment!(issue_id, comment)
     # TODO
-    response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/comments"), { token: jwt_token })
-    # fire webhook to ops api that comment has been created
+    response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/comments"), { comment: comment, token: jwt_token })
+    raise unless response.status == 200
+
+    JSON.parse response.body["comment_id"]
   end
 
   private

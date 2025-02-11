@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   namespace "api" do
     namespace "v1" do
       resources :issues, only: [ :show ] do
-        resources :comments, only: [ :show, :create ]
+        resources :issue_comments, only: [ :show, :create ]
         post :status
       end
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_14_121522) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_11_091245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -51,6 +51,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_14_121522) do
     t.string "webhook_private_key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "connector_comments", force: :cascade do |t|
+    t.integer "triage_external_id"
+    t.string "backoffice_external_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["backoffice_external_id"], name: "index_connector_comments_on_backoffice_external_id", unique: true
+    t.index ["triage_external_id"], name: "index_connector_comments_on_triage_external_id", unique: true
+  end
+
+  create_table "connector_issues", force: :cascade do |t|
+    t.integer "triage_external_id"
+    t.string "backoffice_external_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["backoffice_external_id"], name: "index_connector_issues_on_backoffice_external_id", unique: true
+    t.index ["triage_external_id"], name: "index_connector_issues_on_triage_external_id", unique: true
   end
 
   create_table "connector_tenants", force: :cascade do |t|

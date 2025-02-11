@@ -9,7 +9,9 @@ class Connector::WebhooksController < ActionController::API
     when "issue.created"
       Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     when "comment.created"
-      Connector::CreateNewBackofficeCommentFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
+      unless Connector::Comment.find_by(triage_external_id: data.require(:comment_id))
+        Connector::CreateNewBackofficeCommentFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
+      end
     when "issue.status_updated"
       Connector::UpdateBackofficeIssueStatusFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     else
