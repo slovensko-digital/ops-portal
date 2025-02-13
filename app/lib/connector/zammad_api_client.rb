@@ -112,7 +112,7 @@ class Connector::ZammadApiClient
   def get_comment(ticket_id, comment_id)
     begin
       ticket = @client.ticket.find(ticket_id)
-      article = ticket.articles.select { |a| comment_id == a.id }.first&.attributes
+      article = ticket.articles.find { |a| comment_id == a.id }&.attributes
 
       {
         author: @triage_user_id,

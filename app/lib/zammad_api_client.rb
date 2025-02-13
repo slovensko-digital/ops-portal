@@ -72,14 +72,14 @@ class ZammadApiClient
     )
 
     # TODO custom error
-    raise unelss ticket.id
+    raise unless ticket.id
     ticket.id
   end
 
   def get_article(ticket_id, article_id)
     begin
       ticket = @client.ticket.find(ticket_id)
-      article = ticket.articles.select { |a| a.id == article_id }.first&.attributes
+      article = ticket.articles.find { |a| a.id == article_id }&.attributes
 
       {
         author: get_author(article.origin_by_id || article.created_by_id, anonymous: (ticket.anonymous && article.created_by == ticket.customer)),
