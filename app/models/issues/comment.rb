@@ -18,6 +18,7 @@
 #  updated_at   :datetime         not null
 #  activity_id  :bigint           not null
 #  author_id    :bigint
+#  legacy_id    :integer
 #
 class Issues::Comment < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity"

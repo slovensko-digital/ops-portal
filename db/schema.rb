@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_18_144430) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -96,6 +96,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -204,6 +205,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.bigint "category_id"
     t.bigint "state_id"
     t.bigint "municipality_id", null: false
+    t.integer "legacy_id"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["municipality_id"], name: "index_issues_on_municipality_id"
@@ -230,6 +232,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.integer "weight"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["parent_id"], name: "index_issues_categories_on_parent_id"
   end
 
@@ -249,6 +252,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.integer "verification"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["activity_id"], name: "index_issues_comments_on_activity_id"
     t.index ["author_id"], name: "index_issues_comments_on_author_id"
   end
@@ -275,6 +279,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.string "signature"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["activity_id"], name: "index_issues_communications_on_activity_id"
   end
 
@@ -312,6 +317,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.string "color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
   end
 
   create_table "issues_updates", force: :cascade do |t|
@@ -326,6 +332,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.inet "ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["activity_id"], name: "index_issues_updates_on_activity_id"
     t.index ["author_id"], name: "index_issues_updates_on_author_id"
     t.index ["confirmed_by_id"], name: "index_issues_updates_on_confirmed_by_id"
@@ -349,6 +356,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.string "logo"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["active"], name: "index_municipalities_on_active"
     t.index ["alias"], name: "index_municipalities_on_alias"
     t.index ["district_id"], name: "index_municipalities_on_district_id"
@@ -366,6 +374,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.string "logo"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["municipality_id"], name: "index_municipality_districts_on_municipality_id"
   end
 
@@ -383,6 +392,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.boolean "pro"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["district_id"], name: "index_responsible_subjects_on_district_id"
     t.index ["municipality_district_id"], name: "index_responsible_subjects_on_municipality_district_id"
     t.index ["municipality_id"], name: "index_responsible_subjects_on_municipality_id"
@@ -394,6 +404,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.bigint "issues_category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["issues_category_id"], name: "index_responsible_subjects_categories_on_issues_category_id"
     t.index ["responsible_subject_id"], name: "idx_on_responsible_subject_id_7ec5499a35"
   end
@@ -403,6 +414,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["responsible_subject_id"], name: "idx_on_responsible_subject_id_f2ce80d659"
   end
 
@@ -411,6 +423,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
   end
 
   create_table "responsible_subjects_user_roles", force: :cascade do |t|
@@ -418,6 +431,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
   end
 
   create_table "responsible_subjects_users", force: :cascade do |t|
@@ -435,6 +449,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.boolean "tooltips"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["organization_unit_id"], name: "index_responsible_subjects_users_on_organization_unit_id"
     t.index ["responsible_subject_id"], name: "index_responsible_subjects_users_on_responsible_subject_id"
     t.index ["role_id"], name: "index_responsible_subjects_users_on_role_id"
@@ -450,6 +465,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.boolean "tested"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["latitude"], name: "index_streets_on_latitude"
     t.index ["longitude"], name: "index_streets_on_longitude"
     t.index ["municipality_district_id"], name: "index_streets_on_municipality_district_id"
@@ -490,6 +506,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
     t.boolean "email_notifiable", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "legacy_id"
     t.index ["municipality_id"], name: "index_users_on_municipality_id"
     t.index ["street_id"], name: "index_users_on_street_id"
     t.index ["zammad_identifier"], name: "index_users_on_zammad_identifier", unique: true

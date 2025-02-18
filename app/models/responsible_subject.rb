@@ -13,6 +13,7 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  district_id                  :bigint
+#  legacy_id                    :integer
 #  municipality_district_id     :bigint
 #  municipality_id              :bigint
 #  responsible_subjects_type_id :bigint           not null

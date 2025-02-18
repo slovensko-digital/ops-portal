@@ -14,6 +14,7 @@
 #  tooltips               :boolean
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  legacy_id              :integer
 #  organization_unit_id   :bigint
 #  responsible_subject_id :bigint
 #  role_id                :bigint           not null

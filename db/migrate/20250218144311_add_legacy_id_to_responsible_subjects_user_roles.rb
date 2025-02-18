@@ -1,0 +1,5 @@
+class AddLegacyIdToResponsibleSubjectsUserRoles < ActiveRecord::Migration[8.0]
+  def change
+    add_column :responsible_subjects_user_roles, :legacy_id, :integer
+  end
+end

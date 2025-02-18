@@ -7,6 +7,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  issues_category_id     :bigint           not null
+#  legacy_id              :integer
 #  responsible_subject_id :bigint
 #
 class ResponsibleSubjects::Category < ApplicationRecord
