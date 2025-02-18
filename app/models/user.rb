@@ -47,6 +47,6 @@ class User < ApplicationRecord
   validates :zammad_identifier, uniqueness: true, allow_nil: true
 
   def fullname
-    [ firstname, lastname ].reject(&:empty?).join(" ")
+    [firstname, lastname].reject(&:blank?).join(" ")
   end
 end
