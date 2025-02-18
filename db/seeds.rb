@@ -12,9 +12,9 @@ webhook_url = ENV.fetch("CONNECTOR_WEBHOOK_URL", "http://localhost:3000/connecto
 
 # TODO: only run in development
 [
-  { name: "MÚ Staré Mesto", subject: "1", url: webhook_url },
-  { name: "MÚ Karlova Ves", subject: "8", url: webhook_url },
-  { name: "Dopravný podnik Bratislava, a.s.", subject: "217", url: webhook_url }
+  { name: "MÚ Staré Mesto", subject: "1", url: webhook_url, triage_user_id: 46 },
+  { name: "MÚ Karlova Ves", subject: "8", url: webhook_url, triage_user_id: 46 },
+  { name: "Dopravný podnik Bratislava, a.s.", subject: "217", url: webhook_url, triage_user_id: 46 }
 ].each do |data|
   client = Client.find_or_create_by!(name: data[:name])
   tenant = Connector::Tenant.find_or_create_by!(name: data[:name])
@@ -32,6 +32,7 @@ webhook_url = ENV.fetch("CONNECTOR_WEBHOOK_URL", "http://localhost:3000/connecto
   tenant.update_columns(
     api_token_private_key: api_key.to_pem,
     webhook_public_key: webhook_key.public_to_pem,
-    api_subject_identifier: client.id
+    api_subject_identifier: client.id,
+    triage_user_id: data["triage_user_id"]
   )
 end

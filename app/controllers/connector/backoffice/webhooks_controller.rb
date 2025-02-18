@@ -6,7 +6,9 @@ class Connector::Backoffice::WebhooksController < ActionController::API
 
     case event_type
     when "article.created"
-      Connector::SendNewCommentToTriageFromBackofficeJob.perform_later(data.require(:ticket_id), data.require(:article_id))
+      unless Connector::Comment.find_by(backoffice_external_id: data.require(:article_id))
+        Connector::SendNewCommentToTriageFromBackofficeJob.perform_later(data.require(:ticket_id), data.require(:article_id))
+      end
     when "ticket.status_updated"
       Connector::SendNewIssueStatusToTriageFromBackofficeJob.perform_later(data.require(:ticket_id), data.require(:group))
     else

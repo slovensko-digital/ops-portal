@@ -18,6 +18,7 @@
 #  municipality_id    :bigint           not null
 #  state_id           :bigint
 #  triage_external_id :integer
+#  user_id            :bigint
 #
 class Issue < ApplicationRecord
   belongs_to :author, class_name: "User"

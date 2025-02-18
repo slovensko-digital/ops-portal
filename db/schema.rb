@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_06_092153) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_13_074949) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -54,6 +54,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_092153) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "connector_comments", force: :cascade do |t|
+    t.integer "triage_external_id"
+    t.string "backoffice_external_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["backoffice_external_id"], name: "index_connector_comments_on_backoffice_external_id", unique: true
+    t.index ["triage_external_id"], name: "index_connector_comments_on_triage_external_id", unique: true
+  end
+
+  create_table "connector_issues", force: :cascade do |t|
+    t.integer "triage_external_id"
+    t.string "backoffice_external_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["backoffice_external_id"], name: "index_connector_issues_on_backoffice_external_id", unique: true
+    t.index ["triage_external_id"], name: "index_connector_issues_on_triage_external_id", unique: true
+  end
+
   create_table "connector_tenants", force: :cascade do |t|
     t.string "name"
     t.string "api_token_private_key"
@@ -61,6 +79,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_092153) do
     t.string "webhook_public_key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "triage_user_id"
   end
 
   create_table "connector_users", force: :cascade do |t|
@@ -176,18 +195,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_092153) do
     t.datetime "updated_at", null: false
     t.datetime "last_synced_at"
     t.integer "triage_external_id"
-    t.jsonb "legacy_data"
+    t.bigint "user_id"
     t.boolean "anonymous"
     t.float "latitude"
     t.float "longitude"
     t.bigint "author_id"
-    t.bigint "municipality_id", null: false
+    t.jsonb "legacy_data"
     t.bigint "category_id"
     t.bigint "state_id"
+    t.bigint "municipality_id", null: false
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["municipality_id"], name: "index_issues_on_municipality_id"
     t.index ["state_id"], name: "index_issues_on_state_id"
+    t.index ["user_id"], name: "index_issues_on_user_id"
   end
 
   create_table "issues_activities", force: :cascade do |t|

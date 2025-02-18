@@ -48,7 +48,7 @@ class ZammadApiClient
     result
   end
 
-  def create_ticket(issue)
+  def create_ticket!(issue)
     ticket = @client.ticket.create(
       title: issue.title,
       group: DEFAULT_GROUP,
@@ -71,7 +71,59 @@ class ZammadApiClient
       },
     )
 
+    # TODO custom error
+    raise unless ticket.id
     ticket.id
+  end
+
+  def get_article(ticket_id, article_id)
+    begin
+      ticket = @client.ticket.find(ticket_id)
+      article = ticket.articles.find { |a| a.id == article_id }&.attributes
+
+      {
+        author: get_author(article.origin_by_id || article.created_by_id, anonymous: (ticket.anonymous && article.created_by == ticket.customer)),
+        triage_identifier: article.id,
+        content_type: article.content_type,
+        body: article.body,
+        type: article.type,
+        created_at: article.created_at,
+        updated_at: article.updated_at,
+        attachments: article.attachments.map do |attachment|
+          {
+            triage_identifier: attachment.id,
+            filename: attachment.filename,
+            content_type: attachment.preferences.dig(:"Mime-Type"),
+            data64: Base64.strict_encode64(attachment.download)
+          }
+        end
+      }
+
+    rescue RuntimeError => e
+      raise e unless e.message.include? "Couldn't find Ticket with"
+    end
+  end
+
+  def create_article!(issue_id, comment, use_author_id = false)
+    ticket = @client.ticket.find(issue_id)
+
+    article = ticket.article(
+      origin_by_id: use_author_id ? comment["author"] : create_or_find_customer(comment["author"]),
+      content_type: comment["content_type"],
+      body: comment["body"],
+      type: comment["type"],
+      attachments: comment["attachments"].map do |attachment|
+        {
+          "filename" => attachment["filename"],
+          "mime-type" => attachment["content_type"],
+          "data" => attachment["data64"]
+        }
+      end
+    )
+
+    # TODO custom error
+    raise unless article.id
+    article.id
   end
 
   def get_users

@@ -9,6 +9,7 @@
 #  webhook_public_key     :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  triage_user_id         :integer
 #
 class Connector::Tenant < ApplicationRecord
 end
