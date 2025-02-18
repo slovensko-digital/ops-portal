@@ -1,0 +1,24 @@
+servers:
+  web:
+    hosts:
+      - dev.slovensko.digital
+  worker:
+    hosts:
+      - dev.slovensko.digital
+
+x-load-env:
+  - "<% require 'dotenv'; Dotenv.load('.env.staging') %>"
+
+env:
+  clear:
+    RAILS_ENV: production
+    RAILS_LOG_LEVEL: debug
+
+proxy:
+  host: ops.dev.slovensko.digital
+
+volumes:
+  - "ops_portal_storage:/rails/storage"
+
+ssh:
+  user: kamal
