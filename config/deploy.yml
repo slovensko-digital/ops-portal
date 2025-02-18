@@ -17,7 +17,7 @@ proxy:
 
 env:
   secret:
-    - RAILS_MASTER_KEY
+    - SECRET_KEY_BASE
     - DEFAULT_USER_EMAIL
     - DEFAULT_USER_FIRSTNAME
     - DEFAULT_USER_LASTNAME

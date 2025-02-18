@@ -1,4 +1,4 @@
-class IssueCommentsController < ApiController
+class Api::V1::IssueCommentsController < ApiController
   before_action :set_comment, only: [ :show ]
 
   def show
