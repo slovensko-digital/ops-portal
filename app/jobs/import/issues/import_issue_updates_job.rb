@@ -8,7 +8,7 @@ module Import
         group.each do |legacy_record|
           update_activity = issue.update_activities.create!
           update = ::Issues::Update.find_or_create_by!(
-            id: legacy_record.legacy_id,
+            legacy_id: legacy_record.id,
             added_at: convert_timestamp_value(legacy_record.ts),
             email: generate_dummy_email(legacy_record.updated_by), # TODO skip emails for now
             # email: legacy_record.email, # TODO skip emails for now

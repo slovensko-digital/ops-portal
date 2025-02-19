@@ -10,7 +10,7 @@ module Import
       import_communications_job: Issues::ImportIssueCommunicationsJob
     )
       Legacy::GenericModel.set_table_name("alerts")
-      Legacy::GenericModel.where(mesto: municipality.id).find_in_batches do |group|
+      Legacy::GenericModel.where(mesto: municipality.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
           issue = Issue.find_or_create_by!(
             legacy_id: legacy_record.id,
@@ -60,10 +60,10 @@ module Import
             longitude: legacy_record.map_x,
             reported_at: convert_timestamp_value(legacy_record.posted_time),
             title: legacy_record.heading,
-            author: User.find_by_id(legacy_record.posted_by),
-            category: ::Issues::Category.find_by_id(legacy_record.kategoria),
-            municipality: Municipality.find_by_id(legacy_record.mesto),
-            state: ::Issues::State.find_by_id(legacy_record.status),
+            author: find_or_create_user(legacy_record.posted_by),
+            category: ::Issues::Category.find_by(legacy_id: legacy_record.kategoria),
+            municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
+            state: ::Issues::State.find_by(legacy_id: legacy_record.status),
           )
 
           import_photos_job.perform_later(issue: issue)
@@ -72,6 +72,16 @@ module Import
           import_communications_job.perform_later(issue: issue)
         end
       end
+    end
+
+    private
+
+    def find_or_create_user(posted_by)
+      return User.find_by(legacy_id: posted_by) if User.find_by(legacy_id: posted_by)
+
+      Legacy::GenericModel.set_table_name("users")
+      legacy_record = Legacy::GenericModel.find_by_id(posted_by)
+      create_user_from_legacy_record(legacy_record) if legacy_record
     end
   end
 end
