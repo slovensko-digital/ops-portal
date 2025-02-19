@@ -119,3 +119,4 @@ jobs:
       - test
 
     uses: ./.github/workflows/dev_deploy.yml
+    secrets: inherit
