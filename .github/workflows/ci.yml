@@ -4,7 +4,6 @@ on:
   pull_request:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   scan_ruby:
@@ -112,34 +111,11 @@ jobs:
 
   dev-deploy:
     name: Deploy to DEV environment
-
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
-
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     needs:
       - scan_ruby
       - scan_js
       - lint
       - test
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-
-      - name: Install Kamal gem
-        run: |
-          KAMAL_VERSION=$(ruby -rbundler -e "puts Bundler.locked_gems.specs.find { |s| s.name == 'kamal' }&.version")
-          gem install kamal -v $KAMAL_VERSION
-
-      - uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.DEV_DEPLOY_KEY }}
-
-      - name: Run deploy command
-        run: kamal deploy -d staging
+    uses: ./.github/workflows/dev_deploy.yml
