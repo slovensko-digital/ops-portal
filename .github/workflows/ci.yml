@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   scan_ruby:
@@ -109,27 +110,36 @@ jobs:
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
 
-# TODO: deploy to kamal
-  # gitlab-push:
-  #   name: Push to GitLab
+  dev-deploy:
+    name: Deploy to DEV environment
 
-  #   if: ${{github.ref == 'refs/heads/main'}}
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
 
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    needs:
+      - scan_ruby
+      - scan_js
+      - lint
+      - test
 
-  #   needs:
-  #     - test
-  #     - scan_ruby
-  #     - scan_js
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
 
-  #     - uses: dokku/github-action@master
-  #       with:
-  #         git_push_flags: '--force'
-  #         git_remote_url: ssh://git@${{secrets.GITLAB_DEPLOY_HOST}}/${{github.event.repository.name}}.git
-  #         ssh_private_key: ${{secrets.GITLAB_DEPLOY_KEY}}
-  
+      - name: Install Kamal gem
+        run: |
+          KAMAL_VERSION=$(ruby -rbundler -e "puts Bundler.locked_gems.specs.find { |s| s.name == 'kamal' }&.version")
+          gem install kamal -v $KAMAL_VERSION
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEV_DEPLOY_KEY }}
+
+      - name: Run deploy command
+        run: kamal deploy -d staging
