@@ -50,8 +50,8 @@ module ImportHelper
       verification: legacy_record.verification,
       verified: legacy_record.verified,
       city_id: legacy_record.cityid,
-      municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
-      street: Street.find_by(legacy_id: legacy_record.streetid)
+      municipality: ::Municipality.find_by(legacy_id: legacy_record.mesto),
+      street: ::Street.find_by(legacy_id: legacy_record.streetid)
     )
   end
 
