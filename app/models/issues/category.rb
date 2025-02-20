@@ -12,6 +12,7 @@
 #  weight         :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  legacy_id      :integer
 #  parent_id      :bigint
 #
 class Issues::Category < ApplicationRecord

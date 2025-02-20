@@ -14,6 +14,7 @@
 #  activity_id     :bigint           not null
 #  author_id       :bigint
 #  confirmed_by_id :bigint
+#  legacy_id       :integer
 #
 class Issues::Update < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity"

@@ -1,17 +1,17 @@
 module Import
   class Issues::ImportIssueCommunicationsJob < ApplicationJob
-    include ImportHelper
+    include ImportMethods
 
     def perform(issue:, import_attachments_job: Issues::ImportIssueCommunicationAttachmentsJob)
       Legacy::GenericModel.set_table_name("communication")
-      Legacy::GenericModel.where(alert: issue.id).find_in_batches do |group|
+      Legacy::GenericModel.where(alert: issue.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
           communication_activity = issue.communication_activities.create!
           communication = ::Issues::Communication.find_or_create_by!(
-            id: legacy_record.id,
+            legacy_id: legacy_record.id,
             added_at: convert_timestamp_value(legacy_record.ts),
             confirmation_needed: legacy_record.need_confirmation,
-            email: generate_dummy_email(legacy_record.user), # TODO skip emails for now
+            email: Legacy::User.generate_dummy_email(legacy_record.user), # TODO skip emails for now
             # email: legacy_record.email, # TODO skip emails for now
             from_responsible_subject: legacy_record.direction,
             internal: legacy_record.internal,

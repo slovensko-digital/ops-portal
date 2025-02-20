@@ -5,7 +5,7 @@ module Import
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           ::Issues::State.find_or_create_by!(
-            id: legacy_record.id,
+            legacy_id: legacy_record.id,
             name: legacy_record.status,
             color: legacy_record.color
           )

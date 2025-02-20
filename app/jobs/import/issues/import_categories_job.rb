@@ -20,7 +20,7 @@ module Import
     end
 
     def load_parent_record_data(record_id)
-      return ::Issues::Category.find_by_id(record_id) if ::Issues::Category.find_by_id(record_id)
+      return ::Issues::Category.find_by(legacy_id: record_id) if ::Issues::Category.find_by(legacy_id: record_id)
 
       record = Legacy::GenericModel.find_by_id(record_id)
 
@@ -29,7 +29,7 @@ module Import
 
     def find_or_create_category(legacy_record, legacy_parent_record)
       ::Issues::Category.find_or_create_by!(
-        id: legacy_record.id,
+        legacy_id: legacy_record.id,
         catch_all: legacy_record.catch_all,
         description: legacy_record.popis.presence,
         description_hu: legacy_record.popis_hu.presence,

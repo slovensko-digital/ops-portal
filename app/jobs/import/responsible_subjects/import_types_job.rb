@@ -5,7 +5,7 @@ module Import
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           ::ResponsibleSubjects::Type.find_or_create_by!(
-            id: legacy_record.id,
+            legacy_id: legacy_record.id,
             active: legacy_record.status,
             name: legacy_record.nazov,
           )

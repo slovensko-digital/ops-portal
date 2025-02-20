@@ -5,7 +5,7 @@ module Import
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           ResponsibleSubject.find_or_create_by!(
-            id: legacy_record.id,
+            legacy_id: legacy_record.id,
             active: legacy_record.status,
             code: legacy_record.code,
             email: legacy_record.email,
@@ -13,10 +13,10 @@ module Import
             pro: legacy_record.pro,
             scope: legacy_record.scope,
             subject_name: legacy_record.nazov,
-            district_id: legacy_record.kraj,
-            municipality_district_id: legacy_record.mestska_cast.to_i.nonzero? || nil,
-            municipality_id: Municipality.find_by_id(legacy_record.mesto)&.id,
-            responsible_subjects_type_id: legacy_record.typ
+            district: ::District.find_by(legacy_id: legacy_record.kraj),
+            municipality_district: ::MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
+            municipality: ::Municipality.find_by(legacy_id: legacy_record.mesto),
+            responsible_subjects_type: ::ResponsibleSubjects::Type.find_by(legacy_id: legacy_record.typ)
           )
         end
       end

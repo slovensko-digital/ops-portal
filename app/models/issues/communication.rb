@@ -22,6 +22,7 @@
 #  updated_at               :datetime         not null
 #  activity_id              :bigint           not null
 #  admin_id                 :integer
+#  legacy_id                :integer
 #  person_id                :integer
 #  user_id                  :integer
 #

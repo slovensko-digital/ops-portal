@@ -15,6 +15,7 @@
 #  updated_at         :datetime         not null
 #  author_id          :bigint
 #  category_id        :bigint
+#  legacy_id          :integer
 #  municipality_id    :bigint           not null
 #  state_id           :bigint
 #  triage_external_id :integer

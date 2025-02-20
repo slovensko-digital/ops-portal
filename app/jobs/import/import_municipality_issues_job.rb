@@ -1,6 +1,6 @@
 module Import
   class ImportMunicipalityIssuesJob < ApplicationJob
-    include ImportHelper
+    include ImportMethods
 
     def perform(
       municipality:,
@@ -10,10 +10,10 @@ module Import
       import_communications_job: Issues::ImportIssueCommunicationsJob
     )
       Legacy::GenericModel.set_table_name("alerts")
-      Legacy::GenericModel.where(mesto: municipality.id).find_in_batches do |group|
+      Legacy::GenericModel.where(mesto: municipality.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
           issue = Issue.find_or_create_by!(
-            id: legacy_record.id,
+            legacy_id: legacy_record.id,
             anonymous: legacy_record.anonymous,
             description: legacy_record.description,
             latitude: legacy_record.map_y,
@@ -60,10 +60,10 @@ module Import
             longitude: legacy_record.map_x,
             reported_at: convert_timestamp_value(legacy_record.posted_time),
             title: legacy_record.heading,
-            author: User.find_by_id(legacy_record.posted_by),
-            category: ::Issues::Category.find_by_id(legacy_record.kategoria),
-            municipality: Municipality.find_by_id(legacy_record.mesto),
-            state: ::Issues::State.find_by_id(legacy_record.status),
+            author: Legacy::User.find_or_create_user(legacy_record.posted_by),
+            category: ::Issues::Category.find_by(legacy_id: legacy_record.kategoria),
+            municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
+            state: ::Issues::State.find_by(legacy_id: legacy_record.status),
           )
 
           import_photos_job.perform_later(issue: issue)

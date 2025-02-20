@@ -5,14 +5,14 @@ module Import
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           MunicipalityDistrict.find_or_create_by!(
-            id: legacy_record.id,
+            legacy_id: legacy_record.id,
             alias: legacy_record.alias,
             description: legacy_record.popis.presence,
             genitiv: legacy_record.genitiv,
             logo: legacy_record.logo,
             lokal: legacy_record.lokal,
             name: legacy_record.nazov,
-            municipality_id: legacy_record.mesto.nonzero? || nil,
+            municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
           )
         end
       end

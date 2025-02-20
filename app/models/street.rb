@@ -10,6 +10,7 @@
 #  tested                   :boolean
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  legacy_id                :integer
 #  municipality_district_id :bigint
 #  municipality_id          :bigint           not null
 #

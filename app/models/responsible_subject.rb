@@ -13,10 +13,15 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  district_id                  :bigint
+#  legacy_id                    :integer
 #  municipality_district_id     :bigint
 #  municipality_id              :bigint
 #  responsible_subjects_type_id :bigint           not null
 #
 class ResponsibleSubject < ApplicationRecord
-  has_many :categories, class_name: "ResponsibleSubjectCategory"
+  has_many :categories, class_name: "ResponsibleSubjects::Category"
+  belongs_to :responsible_subjects_type, optional: true, class_name: "ResponsibleSubjects::Type"
+  belongs_to :district, optional: true
+  belongs_to :municipality, optional: true
+  belongs_to :municipality_district, optional: true
 end

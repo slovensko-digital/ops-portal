@@ -7,6 +7,7 @@
 #  name                   :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  legacy_id              :integer
 #  responsible_subject_id :bigint           not null
 #
 class ResponsibleSubjects::OrganizationUnit < ApplicationRecord

@@ -5,7 +5,7 @@ module Import
       Legacy::GenericModel.find_in_batches do |group|
         group.each do |legacy_record|
           Municipality.find_or_create_by!(
-            id: legacy_record.id,
+            legacy_id: legacy_record.id,
             active: legacy_record.status,
             alias: legacy_record.alias,
             category: legacy_record.city_type,
@@ -20,7 +20,7 @@ module Import
             name: legacy_record.nazov,
             population: legacy_record.pocet_obyvatelov,
             sub: legacy_record.sub.presence,
-            district_id: legacy_record.kraj || nil
+            district: District.find_by(legacy_id: legacy_record.kraj)
           )
         end
       end

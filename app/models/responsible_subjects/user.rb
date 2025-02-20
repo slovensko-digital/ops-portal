@@ -14,6 +14,7 @@
 #  tooltips               :boolean
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  legacy_id              :integer
 #  organization_unit_id   :bigint
 #  responsible_subject_id :bigint
 #  role_id                :bigint           not null
@@ -21,4 +22,5 @@
 class ResponsibleSubjects::User < ApplicationRecord
   belongs_to :responsible_subject, optional: true
   belongs_to :organization_unit, optional: true
+  belongs_to :role, class_name: "ResponsibleSubjects::UserRole", optional: true
 end

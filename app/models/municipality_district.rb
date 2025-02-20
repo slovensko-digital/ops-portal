@@ -11,6 +11,7 @@
 #  name            :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  legacy_id       :integer
 #  municipality_id :bigint           not null
 #
 class MunicipalityDistrict < ApplicationRecord

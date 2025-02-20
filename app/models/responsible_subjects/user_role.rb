@@ -7,6 +7,7 @@
 #  slug       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  legacy_id  :integer
 #
 class ResponsibleSubjects::UserRole < ApplicationRecord
 end
