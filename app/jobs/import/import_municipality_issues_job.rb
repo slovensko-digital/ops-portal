@@ -1,6 +1,6 @@
 module Import
   class ImportMunicipalityIssuesJob < ApplicationJob
-    include ImportHelper
+    include Import
 
     def perform(
       municipality:,
@@ -60,7 +60,7 @@ module Import
             longitude: legacy_record.map_x,
             reported_at: convert_timestamp_value(legacy_record.posted_time),
             title: legacy_record.heading,
-            author: find_or_create_user(legacy_record.posted_by),
+            author: Legacy::User.find_or_create_user(legacy_record.posted_by),
             category: ::Issues::Category.find_by(legacy_id: legacy_record.kategoria),
             municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
             state: ::Issues::State.find_by(legacy_id: legacy_record.status),

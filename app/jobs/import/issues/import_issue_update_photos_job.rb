@@ -1,6 +1,6 @@
 module Import
   class Issues::ImportIssueUpdatePhotosJob < ApplicationJob
-    include ImportHelper
+    include Import
 
     def perform(update:)
       Legacy::GenericModel.set_table_name("media_updates")
