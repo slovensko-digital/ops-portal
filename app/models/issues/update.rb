@@ -22,5 +22,9 @@ class Issues::Update < ApplicationRecord
   belongs_to :author, optional: true, class_name: "User"
   belongs_to :confirmed_by, optional: true, class_name: "User"
 
-  has_many_attached :photos
+  has_many_attached :attachments
+
+  def activity_body
+    text
+  end
 end

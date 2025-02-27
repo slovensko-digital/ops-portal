@@ -25,5 +25,9 @@ class Issues::Comment < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity"
   belongs_to :author, class_name: "User", optional: true
 
-  has_many_attached :photos
+  has_many_attached :attachments
+
+  def activity_body
+    text
+  end
 end
