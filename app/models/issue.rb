@@ -2,29 +2,35 @@
 #
 # Table name: issues
 #
-#  id                 :bigint           not null, primary key
-#  anonymous          :boolean
-#  description        :string           not null
-#  last_synced_at     :datetime
-#  latitude           :float
-#  legacy_data        :jsonb
-#  longitude          :float
-#  reported_at        :datetime         not null
-#  title              :string           not null
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  author_id          :bigint
-#  category_id        :bigint
-#  legacy_id          :integer
-#  municipality_id    :bigint           not null
-#  state_id           :bigint
-#  triage_external_id :integer
-#  user_id            :bigint
+#  id                       :bigint           not null, primary key
+#  anonymous                :boolean
+#  description              :string           not null
+#  last_synced_at           :datetime
+#  latitude                 :float
+#  legacy_data              :jsonb
+#  longitude                :float
+#  reported_at              :datetime         not null
+#  title                    :string           not null
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  author_id                :bigint
+#  category_id              :bigint
+#  legacy_id                :integer
+#  municipality_district_id :bigint
+#  municipality_id          :bigint           not null
+#  responsible_subject_id   :bigint
+#  state_id                 :bigint
+#  street_id                :bigint
+#  triage_external_id       :integer
+#  user_id                  :bigint
 #
 class Issue < ApplicationRecord
   belongs_to :author, class_name: "User"
   belongs_to :category, class_name: "Issues::Category", optional: true
   belongs_to :municipality
+  belongs_to :municipality_district, optional: true
+  belongs_to :street, optional: true
+  belongs_to :responsible_subject, optional: true
   belongs_to :state, class_name: "Issues::State", optional: true
 
   has_many :activities, class_name: "Issues::Activity", dependent: :destroy

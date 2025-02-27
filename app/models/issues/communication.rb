@@ -24,6 +24,7 @@
 #  admin_id                 :integer
 #  legacy_id                :integer
 #  person_id                :integer
+#  triage_external_id       :integer
 #  user_id                  :integer
 #
 class Issues::Communication < ApplicationRecord

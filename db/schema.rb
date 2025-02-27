@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_18_144430) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_26_151727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -207,11 +207,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_18_144430) do
     t.bigint "state_id"
     t.bigint "municipality_id", null: false
     t.integer "legacy_id"
+    t.bigint "street_id"
+    t.bigint "municipality_district_id"
+    t.bigint "responsible_subject_id"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["legacy_id"], name: "index_issues_on_legacy_id", unique: true
+    t.index ["municipality_district_id"], name: "index_issues_on_municipality_district_id"
     t.index ["municipality_id"], name: "index_issues_on_municipality_id"
+    t.index ["responsible_subject_id"], name: "index_issues_on_responsible_subject_id"
     t.index ["state_id"], name: "index_issues_on_state_id"
+    t.index ["street_id"], name: "index_issues_on_street_id"
     t.index ["user_id"], name: "index_issues_on_user_id"
   end
 
@@ -256,6 +262,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_18_144430) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
+    t.integer "triage_external_id"
     t.index ["activity_id"], name: "index_issues_comments_on_activity_id"
     t.index ["author_id"], name: "index_issues_comments_on_author_id"
     t.index ["legacy_id"], name: "index_issues_comments_on_legacy_id", unique: true
@@ -284,6 +291,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_18_144430) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
+    t.integer "triage_external_id"
     t.index ["activity_id"], name: "index_issues_communications_on_activity_id"
     t.index ["legacy_id"], name: "index_issues_communications_on_legacy_id", unique: true
   end
@@ -339,6 +347,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_18_144430) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
+    t.integer "triage_external_id"
     t.index ["activity_id"], name: "index_issues_updates_on_activity_id"
     t.index ["author_id"], name: "index_issues_updates_on_author_id"
     t.index ["confirmed_by_id"], name: "index_issues_updates_on_confirmed_by_id"
@@ -533,6 +542,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_18_144430) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "issues", "issues_categories", column: "category_id"
   add_foreign_key "issues", "issues_states", column: "state_id"
+  add_foreign_key "issues", "municipality_districts"
+  add_foreign_key "issues", "responsible_subjects"
+  add_foreign_key "issues", "streets"
   add_foreign_key "issues", "users", column: "author_id"
   add_foreign_key "issues_activities", "issues"
   add_foreign_key "issues_categories", "issues_categories", column: "parent_id"

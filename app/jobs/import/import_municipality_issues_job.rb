@@ -30,10 +30,7 @@ module Import
               modified_at: legacy_record.modified_time, # TODO nestaci updated_at?
               updated_by_id: legacy_record.modified_by, # TODO overit na ktory model je toto referencia
               state_changed_at: legacy_record.last_status_change_time,
-              municipal_district_id: legacy_record.mestska_cast,
-              street_id: legacy_record.ulica,
               responsible_subject_type_id: legacy_record.zodpovednost_typ,
-              responsible_subject_id: legacy_record.zodpovednost,
               mobile: legacy_record.mobile,
               ip: legacy_record.ip,
               secure: legacy_record.secure,
@@ -63,7 +60,10 @@ module Import
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),
             category: ::Issues::Category.find_by(legacy_id: legacy_record.kategoria),
             municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
+            municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
+            responsible_subject: ResponsibleSubject.find_by(legacy_id: legacy_record.zodpovednost),
             state: ::Issues::State.find_by(legacy_id: legacy_record.status),
+            street: Street.find_by(legacy_id: legacy_record.ulica)
           )
 
           import_photos_job.perform_later(issue: issue)
