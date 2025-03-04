@@ -16,7 +16,7 @@ class ZammadApi
 
     raise "Unexpected status: #{status}" unless status == 200
 
-    import_mode_on = body.select {| attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
+    import_mode_on = body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
 
     raise "Import mode OFF" unless import_mode_on
   end
