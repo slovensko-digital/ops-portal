@@ -58,6 +58,7 @@ module Import
             reported_at: convert_timestamp_value(legacy_record.posted_time),
             title: legacy_record.heading,
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),
+            owner: Legacy::User.find_or_create_user(legacy_record.riesitel_new || legacy_record.riesitel),
             category: ::Issues::Category.find_by(legacy_id: legacy_record.kategoria),
             municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
             municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),

@@ -18,6 +18,7 @@
 #  legacy_id                :integer
 #  municipality_district_id :bigint
 #  municipality_id          :bigint           not null
+#  owner_id                 :bigint
 #  responsible_subject_id   :bigint
 #  state_id                 :bigint
 #  street_id                :bigint
@@ -26,6 +27,7 @@
 #
 class Issue < ApplicationRecord
   belongs_to :author, class_name: "User"
+  belongs_to :owner, class_name: "User", optional: true
   belongs_to :category, class_name: "Issues::Category", optional: true
   belongs_to :municipality
   belongs_to :municipality_district, optional: true

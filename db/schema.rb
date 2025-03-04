@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_26_151727) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_27_132100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -210,11 +210,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_151727) do
     t.bigint "street_id"
     t.bigint "municipality_district_id"
     t.bigint "responsible_subject_id"
+    t.bigint "owner_id"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["legacy_id"], name: "index_issues_on_legacy_id", unique: true
     t.index ["municipality_district_id"], name: "index_issues_on_municipality_district_id"
     t.index ["municipality_id"], name: "index_issues_on_municipality_id"
+    t.index ["owner_id"], name: "index_issues_on_owner_id"
     t.index ["responsible_subject_id"], name: "index_issues_on_responsible_subject_id"
     t.index ["state_id"], name: "index_issues_on_state_id"
     t.index ["street_id"], name: "index_issues_on_street_id"
@@ -546,6 +548,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_151727) do
   add_foreign_key "issues", "responsible_subjects"
   add_foreign_key "issues", "streets"
   add_foreign_key "issues", "users", column: "author_id"
+  add_foreign_key "issues", "users", column: "owner_id"
   add_foreign_key "issues_activities", "issues"
   add_foreign_key "issues_categories", "issues_categories", column: "parent_id"
   add_foreign_key "issues_comments", "issues_activities", column: "activity_id"
