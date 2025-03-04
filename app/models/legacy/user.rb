@@ -42,11 +42,11 @@ module Legacy
   class User < ::ApplicationRecord
     include ImportMethods
 
-    def self.find_or_create_user(posted_by)
-      return ::User.find_by(legacy_id: posted_by) if ::User.find_by(legacy_id: posted_by)
+    def self.find_or_create_user(legacy_id)
+      return ::User.find_by(legacy_id: legacy_id) if ::User.find_by(legacy_id: legacy_id)
 
       Legacy::GenericModel.set_table_name("users")
-      legacy_record = Legacy::GenericModel.find_by_id(posted_by)
+      legacy_record = Legacy::GenericModel.find_by_id(legacy_id)
       self.create_user_from_legacy_record(legacy_record) if legacy_record
     end
 

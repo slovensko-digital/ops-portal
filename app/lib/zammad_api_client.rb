@@ -54,9 +54,15 @@ class ZammadApiClient
       group: DEFAULT_GROUP,
       customer_id: issue.author.zammad_identifier,
       origin_by_id: issue.author.zammad_identifier,
-      municipality: issue.municipality,
+      municipality: build_ticket_municipality(issue),
+      street: issue.street&.name,
       category: find_zammad_category(issue.category),
+      state: issue.state.name,
       anonymous: issue.anonymous,
+      responsible_subject: issue.responsible_subject&.legacy_id,
+      owner_id: issue.owner&.zammad_identifier,
+      created_at: issue.reported_at,
+      like_count: issue.legacy_data["like_count"],
       article: {
         origin_by_id: issue.author.zammad_identifier,
         body: issue.description,
@@ -67,7 +73,8 @@ class ZammadApiClient
             "data" => Base64.encode64(photo.blob.download),
             "mime-type" => photo.content_type
           }
-        end
+        end,
+        created_at: issue.reported_at,
       },
     )
 
@@ -104,21 +111,22 @@ class ZammadApiClient
     end
   end
 
-  def create_article!(issue_id, comment, use_author_id = false)
+  def create_article!(issue_id, activity_object, use_author_id = false)
     ticket = @client.ticket.find(issue_id)
 
     article = ticket.article(
-      origin_by_id: use_author_id ? comment["author"] : create_or_find_customer(comment["author"]),
-      content_type: comment["content_type"],
-      body: comment["body"],
-      type: comment["type"],
-      attachments: comment["attachments"].map do |attachment|
+      origin_by_id: activity_object.author&.zammad_identifier,
+      content_type: "text/html",
+      body: activity_object.activity_body,
+      type: "web",
+      attachments: activity_object.attachments.map do |attachment|
         {
-          "filename" => attachment["filename"],
-          "mime-type" => attachment["content_type"],
-          "data" => attachment["data64"]
+          "filename" => attachment.filename,
+          "mime-type" => attachment.content_type,
+          "data" => Base64.encode64(attachment.blob.download)
         }
-      end
+      end,
+      created_at: activity_object.added_at,
     )
 
     # TODO custom error
@@ -132,6 +140,15 @@ class ZammadApiClient
 
   def get_user(identifier)
     @client.user.find identifier
+  end
+
+  def create_user!(email)
+    begin
+      zammad_user = @client.user.create(email: email)
+      zammad_user.id
+    rescue RuntimeError => e
+      raise e unless e.message.include? "is already used for another user."
+    end
   end
 
   def find_ticket_responsible_subject(ticket_id)
@@ -180,5 +197,17 @@ class ZammadApiClient
   def find_zammad_category(issue_category)
     # TODO: do something real
     "1"
+  end
+
+  def build_ticket_municipality(issue)
+    if issue.municipality_district.present?
+      "#{issue.municipality&.name}::#{issue.municipality_district.name}"
+    else
+      issue.municipality&.name
+    end
+  end
+
+  def check_import_mode!
+
   end
 end

@@ -1,5 +1,5 @@
 module Import
-  class Issues::ImportIssueAttachmentsPhotosJob < ApplicationJob
+  class Issues::ImportIssueCommentAttachmentsJob < ApplicationJob
     include ImportMethods
 
     def perform(comment:)
