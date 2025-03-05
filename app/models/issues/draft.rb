@@ -50,11 +50,11 @@ class Issues::Draft < ApplicationRecord
     issue = Issue.create!(
       title: title,
       description: description,
-      author: user,
+      author: author,
       anonymous: anonymous,
       municipality: temp_get_municipality(), # TODO
       latitude: latitude,
-      longitude: longtitude,
+      longitude: longitude,
       category: category,
       subcategory: subcategory,
       subtype: subtype,

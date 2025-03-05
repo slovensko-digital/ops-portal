@@ -27,15 +27,15 @@
     <div class="grid md:grid-cols-3 gap-3">
       <div>
         <%= form.label :category %>
-        <%= form.text_field :category, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+        <%= form.select :category_id, Issues::Category.all.map { |c| [c.name, c.id] }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
       </div>
       <div>
         <%= form.label :subcategory %>
-        <%= form.text_field :subcategory, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+        <%= form.select :subcategory_id, @draft.category&.subcategories.map { |c| [c.name, c.id] }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
       </div>
       <div>
         <%= form.label :subtype %>
-        <%= form.text_field :subtype, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+        <%= form.select :subtype_id, @draft.subcategory&.subtypes.map { |c| [c.name, c.id] }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
       </div>
     </div>
   </div>

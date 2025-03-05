@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_05_111441) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_05_120443) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -448,11 +448,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_05_111441) do
 
   create_table "responsible_subjects_categories", force: :cascade do |t|
     t.bigint "responsible_subject_id"
-    t.bigint "issues_category_id", null: false
+    t.bigint "issues_category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
+    t.bigint "issues_subcategory_id"
+    t.bigint "issues_subtype_id"
     t.index ["issues_category_id"], name: "index_responsible_subjects_categories_on_issues_category_id"
+    t.index ["issues_subcategory_id"], name: "index_responsible_subjects_categories_on_issues_subcategory_id"
+    t.index ["issues_subtype_id"], name: "index_responsible_subjects_categories_on_issues_subtype_id"
     t.index ["legacy_id"], name: "index_responsible_subjects_categories_on_legacy_id", unique: true
     t.index ["responsible_subject_id"], name: "idx_on_responsible_subject_id_7ec5499a35"
   end
