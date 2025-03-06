@@ -57,10 +57,10 @@ class ZammadApiClient
       origin_by_id: issue.author.zammad_identifier,
       municipality: build_ticket_municipality(issue),
       street: issue.street&.name,
-      category: find_zammad_category(issue.category),
+      category: find_zammad_category(issue.category),  # TODO add subcategory and subtype once implemented in triage
       state: issue.state.name,
       anonymous: issue.anonymous,
-      responsible_subject: issue.responsible_subject&.legacy_id,
+      responsible_subject: issue.responsible_subject&.legacy_id,  # TODO map to responsible_subjects in triage
       owner_id: issue.owner&.zammad_identifier,
       created_at: issue.reported_at,
       like_count: issue.legacy_data["like_count"],
