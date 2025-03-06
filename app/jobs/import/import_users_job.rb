@@ -4,10 +4,8 @@ module Import
 
     def perform
       Legacy::GenericModel.set_table_name("users")
-      Legacy::GenericModel.where(rights: 'U').find_in_batches do |group|
-        group.each do |legacy_record|
-          Legacy::User.create_user_from_legacy_record(legacy_record)
-        end
+      Legacy::GenericModel.where(rights: 'U').find_each do |legacy_record|
+        Legacy::User.create_user_from_legacy_record(legacy_record)
       end
     end
   end
