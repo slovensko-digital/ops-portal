@@ -2,15 +2,18 @@ module Import
   class ImportMunicipalityIssuesJob < ApplicationJob
     include ImportMethods
 
+    IMPORT_ISSUES_SINCE = Date.parse(ENV.fetch('LEGACY_IMPORT_SINCE')).beginning_of_day
+
     def perform(
       municipality:,
+      municipality_district: nil,
       import_photos_job: Issues::ImportIssuePhotosJob,
       import_updates_job: Issues::ImportIssueUpdatesJob,
       import_comments_job: Issues::ImportIssueCommentsJob,
       import_communications_job: Issues::ImportIssueCommunicationsJob
     )
       Legacy::GenericModel.set_table_name("alerts")
-      Legacy::GenericModel.where(mesto: municipality.legacy_id).find_in_batches do |group|
+      Legacy::GenericModel.where(mesto: municipality.legacy_id).where(mestska_cast: municipality_district&.legacy_id).where("posted_time >= ?", IMPORT_ISSUES_SINCE.to_i).find_in_batches do |group|
         group.each do |legacy_record|
           issue = Issue.find_or_create_by!(
             legacy_id: legacy_record.id,
