@@ -3,6 +3,7 @@ class ImportMunicipalityIssuesToTriageJob < ApplicationJob
     api.check_import_mode!
 
     zammad_group = client.get_groups.select{ |group| municipality.name.in?(group.name) && municipality_district&.name&.in?(group.name)}[0]
+    raise "No zammad group found!" unless zammad_group
 
     Issue.where(municipality: municipality).where(municipality_district: municipality_district).find_in_batches do |group|
       group.each do |issue|
