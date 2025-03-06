@@ -143,9 +143,18 @@ class ZammadApiClient
     @client.user.find identifier
   end
 
-  def create_user!(email)
+  def create_customer!(email)
     begin
       zammad_user = @client.user.create(email: email)
+      zammad_user.id
+    rescue RuntimeError => e
+      raise e unless e.message.include? "is already used for another user."
+    end
+  end
+
+  def create_agent!(email)
+    begin
+      zammad_user = @client.user.create(email: email, roles: ["Agent"])
       zammad_user.id
     rescue RuntimeError => e
       raise e unless e.message.include? "is already used for another user."

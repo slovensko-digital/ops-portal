@@ -4,10 +4,10 @@ class ImportIssueToTriageJob < ApplicationJob
 
     api.check_import_mode!
 
-    issue.author.update!(zammad_identifier: client.create_user!(issue.author.email)) unless issue.author.zammad_identifier.present?
+    issue.author.update!(zammad_identifier: client.create_customer!(issue.author.email)) unless issue.author.zammad_identifier.present?
 
     # TODO nastavit aj skupinu, inak sa vlastnik nepriradi k ticketu
-    issue.owner&.update!(zammad_identifier: client.create_user!(issue.owner&.email)) if issue.owner && !issue.owner&.zammad_identifier&.present?
+    issue.owner&.update!(zammad_identifier: client.create_agent!(issue.owner&.email)) if issue.owner && !issue.owner&.zammad_identifier&.present?
 
     ticket_id = client.create_ticket!(issue)
 
