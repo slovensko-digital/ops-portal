@@ -28,6 +28,8 @@ class Issues::Comment < ApplicationRecord
   has_many_attached :attachments
 
   def activity_body
+    return "Zmazaný komentár: #{text}" unless published
+
     text
   end
 end
