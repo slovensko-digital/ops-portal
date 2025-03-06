@@ -1,15 +1,17 @@
 class ImportIssueToTriageJob < ApplicationJob
-  def perform(issue, api: TriageZammadEnvironment.api, client: TriageZammadEnvironment.client, send_activities_to_triage_job: ImportIssueActivitiesToTriageJob)
+  def perform(issue, zammad_group:, api: TriageZammadEnvironment.api, client: TriageZammadEnvironment.client, import_activities_to_triage_job: ImportIssueActivitiesToTriageJob)
     return if issue.triage_external_id.present?
 
     api.check_import_mode!
 
     issue.author.update!(zammad_identifier: client.create_customer!(issue.author.email)) unless issue.author.zammad_identifier.present?
 
-    # TODO nastavit aj skupinu, inak sa vlastnik nepriradi k ticketu
-    issue.owner&.update!(zammad_identifier: client.create_agent!(issue.owner&.email)) if issue.owner && !issue.owner&.zammad_identifier&.present?
+    if issue.owner
+      issue.owner.update!(zammad_identifier: client.create_agent!(issue.owner.email)) unless issue.owner.zammad_identifier.present?
+      client.add_user_to_group(issue.owner.zammad_identifier, zammad_group)
+    end
 
-    ticket_id = client.create_ticket!(issue)
+    ticket_id = client.create_ticket!(issue, group: zammad_group)
 
     raise unless ticket_id
 
@@ -18,6 +20,6 @@ class ImportIssueToTriageJob < ApplicationJob
       triage_external_id: ticket_id
     )
 
-    send_activities_to_triage_job.perform_later(issue)
+    import_activities_to_triage_job.perform_later(issue)
   end
 end

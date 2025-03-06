@@ -49,10 +49,10 @@ class ZammadApiClient
     result
   end
 
-  def create_ticket!(issue)
+  def create_ticket!(issue, group: DEFAULT_GROUP)
     ticket = @client.ticket.create(
       title: issue.title,
-      group: DEFAULT_GROUP,
+      group: group,
       customer_id: issue.author.zammad_identifier,
       origin_by_id: issue.author.zammad_identifier,
       municipality: build_ticket_municipality(issue),
@@ -143,6 +143,15 @@ class ZammadApiClient
     @client.user.find identifier
   end
 
+  def add_user_to_group(user_identifier, group_name)
+    user = get_user(user_identifier)
+    user_groups = user.groups
+    user_groups[group_name] = "full"
+    user.groups = user_groups
+
+    user.save
+  end
+
   def create_customer!(email)
     begin
       zammad_user = @client.user.create(email: email)
@@ -159,6 +168,10 @@ class ZammadApiClient
     rescue RuntimeError => e
       raise e unless e.message.include? "is already used for another user."
     end
+  end
+
+  def get_groups
+    @client.group.all
   end
 
   def find_ticket_responsible_subject(ticket_id)
