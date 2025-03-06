@@ -14,7 +14,7 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  author_id          :bigint
-#  category_id        :bigint
+#  category_id        :bigint           not null
 #  legacy_id          :integer
 #  municipality_id    :bigint           not null
 #  state_id           :bigint
@@ -24,7 +24,7 @@
 #
 class Issue < ApplicationRecord
   belongs_to :author, class_name: "User"
-  belongs_to :category, class_name: "Issues::Category", optional: true
+  belongs_to :category, class_name: "Issues::Category"
   belongs_to :subcategory, class_name: "Issues::Subcategory", optional: true
   belongs_to :subtype, class_name: "Issues::Subtype", optional: true
   belongs_to :municipality

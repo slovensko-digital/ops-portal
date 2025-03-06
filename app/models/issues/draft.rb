@@ -42,7 +42,7 @@ class Issues::Draft < ApplicationRecord
   belongs_to :author, class_name: "User", optional: false
 
   validates_presence_of :photos, on: :photos_step
-  validates_presence_of :title, :description, on: :details_step
+  validates_presence_of :title, :description, :category, on: :details_step
 
   DEFAULT_STATE = Issues::State.find_by(name: "Čakajúci")
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_05_153541) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_06_142824) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -202,7 +202,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_05_153541) do
     t.float "latitude"
     t.float "longitude"
     t.bigint "author_id"
-    t.bigint "category_id"
+    t.bigint "category_id", null: false
     t.bigint "state_id"
     t.bigint "municipality_id", null: false
     t.integer "legacy_id"
