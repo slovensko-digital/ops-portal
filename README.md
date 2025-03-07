@@ -4,6 +4,7 @@
 
 Install this before running `bundle`:
 - `brew install pkg-config`
+- `brew install libexif`
 - `brew install vips`
 - `brew install mysql@8.4`
 
