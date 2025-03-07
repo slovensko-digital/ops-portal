@@ -15,7 +15,7 @@ module Import
         group.each do |legacy_record|
           ::Issues::Category.find_or_create_by!(
             legacy_id: legacy_record.id,
-            catch_all: legacy_record.catch_all,
+            catch_all: legacy_record.catch_all == true,
             description: legacy_record.popis.presence,
             description_hu: legacy_record.popis_hu.presence,
             name: legacy_record.kategoria,
