@@ -4,6 +4,7 @@ class ZammadApiClient
   DEFAULT_GROUP = "Incoming"
   DEFAULT_ARTICLE_TYPE = "web"
   DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
+  USERS_PER_PAGE = 1000
 
   def initialize(url:, http_token:)
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
@@ -158,6 +159,10 @@ class ZammadApiClient
       zammad_user.id
     rescue RuntimeError => e
       raise e unless e.message.include? "is already used for another user."
+
+      result = find_zammad_user email
+      raise "Can't find nor create triage zammad user with email: #{email}" unless result
+      result
     end
   end
 
@@ -167,6 +172,10 @@ class ZammadApiClient
       zammad_user.id
     rescue RuntimeError => e
       raise e unless e.message.include? "is already used for another user."
+
+      result = find_zammad_user email
+      raise "Can't find nor create triage zammad user with email: #{email}" unless result
+      result
     end
   end
 
@@ -188,14 +197,14 @@ class ZammadApiClient
 
   private
 
-  def create_or_find_customer(author_email)
-    begin
-      @client.user.create(email: author_email)
-    rescue RuntimeError => e
-      raise e unless e.message.include? "is already used for another user."
-    end
+  def find_zammad_user(email)
+    (1..).each do |page|
+      users_on_page = @client.user.all.page(page, USERS_PER_PAGE) { }.map { |user| { email: user.attributes[:email], id: user.attributes[:id] } }
+      zammad_user = users_on_page.select { |user| email == user[:email] }.first
 
-    author_email
+      return zammad_user[:id] if zammad_user
+      return nil unless users_on_page == USERS_PER_PAGE
+    end
   end
 
   def get_author(user_id, anonymous: false)

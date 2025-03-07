@@ -65,7 +65,7 @@ module Legacy
       Legacy::Agent.find_or_create_by!(self.user_params(legacy_record).merge!({ rights: convert_legacy_rights_value(legacy_record.rights) }))
     end
 
-    def self.user_params(legacy_record)
+    def self.user_params(legacy_record, dummy_email: true, dummy_password: true)
       {
         legacy_id: legacy_record.id,
         about: legacy_record.about,
@@ -76,7 +76,7 @@ module Legacy
         banned: legacy_record.is_banned,
         birth: legacy_record.birth,
         created_from_app: legacy_record.created_from_app,
-        email: self.generate_dummy_email(legacy_record.id), # TODO skip emails for now
+        email: dummy_email ? self.generate_dummy_email(legacy_record.id) : legacy_record.email, # TODO skip emails for now
         # email: legacy_record.email, # TODO skip emails for now
         email_notifiable: legacy_record.email_notification,
         exp: legacy_record.exp,
@@ -86,7 +86,7 @@ module Legacy
         lastname: legacy_record.priezvisko.presence,
         login: legacy_record.login,
         organization: legacy_record.is_organization,
-        password: legacy_record.password,
+        password: dummy_password ? generate_dummy_password : legacy_record.password,
         phone: legacy_record.telefon,
         resident: legacy_record.residency,
         sex: legacy_record.sex,
@@ -102,6 +102,10 @@ module Legacy
 
     def self.generate_dummy_email(id)
       "#{id}@localhost.dev"
+    end
+
+    def self.generate_dummy_password
+      Random.uuid
     end
 
     def self.convert_legacy_rights_value(value)
