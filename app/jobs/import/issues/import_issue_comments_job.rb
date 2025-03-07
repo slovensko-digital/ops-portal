@@ -2,7 +2,7 @@ module Import
   class Issues::ImportIssueCommentsJob < ApplicationJob
     include ImportMethods
 
-    def perform(issue:, import_photos_job: Issues::ImportIssueCommentPhotosJob)
+    def perform(issue:, import_photos_job: Issues::ImportIssueCommentAttachmentsJob)
       Legacy::GenericModel.set_table_name("comments")
       Legacy::GenericModel.where(remoteid: issue.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|

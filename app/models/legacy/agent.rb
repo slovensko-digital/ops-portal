@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: users
+# Table name: legacy_agents
 #
 #  id                :bigint           not null, primary key
 #  about             :string
@@ -23,6 +23,7 @@
 #  password          :string
 #  phone             :string
 #  resident          :boolean
+#  rights            :integer
 #  sex               :integer
 #  signature         :string
 #  timestamp         :datetime
@@ -37,12 +38,11 @@
 #  municipality_id   :bigint
 #  street_id         :bigint
 #
-class User < ApplicationRecord
+class Legacy::Agent < ApplicationRecord
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true
-  has_many :issues
-  has_many :issues_drafts, class_name: "Issues::Draft"
 
+  enum :rights, ops_admin: 1, municipality_admin: 2
   enum :sex, m: 1, f: 2
 
   validates :zammad_identifier, uniqueness: true, allow_nil: true

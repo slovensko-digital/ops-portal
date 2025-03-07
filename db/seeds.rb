@@ -37,6 +37,10 @@ webhook_url = ENV.fetch("CONNECTOR_WEBHOOK_URL", "http://localhost:3000/connecto
   )
 end
 
+[ "Zaslaný zodpovednému", "Odstúpený", "Čakajúci", "Vyriešený", "Neriešený", "V riešení", "Neprijatý", "Uzavretý", "Označený za vyriešený" ].each do |state_name|
+  Issues::State.find_or_create_by!(name: state_name)
+end
+
 [
   { triage_external_id: 1, name: "Cesty a chodníky", name_hu: "Közutak és közterület", alias: "cesty-a-dopravne-znacenie", description: "cesty, cyklotrasy, schody, oplotenie", description_hu: "utak, kerékpárutak, lépcsők, kerítések", weight: 1000, legacy_id: 16 },
   { triage_external_id: 2, name: "Zeleň a životné prostredie", name_hu: "Zöldterületek", alias: "priroda-a-zivotne-prostredie", description: "stromy, neporiadok, znečisťovanie", description_hu: "fák, rendetlenség, szennyezés", weight: 900, legacy_id: 1 },

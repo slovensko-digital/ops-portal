@@ -18,7 +18,6 @@
 #  firstname         :string
 #  gdpr_accepted     :boolean
 #  lastname          :string
-#  legacy_rights     :integer
 #  login             :string
 #  organization      :boolean
 #  password          :string
@@ -42,16 +41,32 @@ module Legacy
   class User < ::ApplicationRecord
     include ImportMethods
 
-    def self.find_or_create_user(posted_by)
-      return ::User.find_by(legacy_id: posted_by) if ::User.find_by(legacy_id: posted_by)
+    def self.find_or_create_user(legacy_id)
+      return ::User.find_by(legacy_id: legacy_id) if ::User.find_by(legacy_id: legacy_id)
 
       Legacy::GenericModel.set_table_name("users")
-      legacy_record = Legacy::GenericModel.find_by_id(posted_by)
+      legacy_record = Legacy::GenericModel.find_by_id(legacy_id)
       self.create_user_from_legacy_record(legacy_record) if legacy_record
     end
 
+    def self.find_or_create_agent(legacy_id)
+      return Legacy::Agent.find_by(legacy_id: legacy_id) if Legacy::Agent.find_by(legacy_id: legacy_id)
+
+      Legacy::GenericModel.set_table_name("users")
+      legacy_record = Legacy::GenericModel.find_by_id(legacy_id)
+      self.create_agent_from_legacy_record(legacy_record) if legacy_record
+    end
+
     def self.create_user_from_legacy_record(legacy_record)
-      ::User.find_or_create_by!(
+      ::User.find_or_create_by!(self.user_params(legacy_record))
+    end
+
+    def self.create_agent_from_legacy_record(legacy_record)
+      Legacy::Agent.find_or_create_by!(self.user_params(legacy_record).merge!({ rights: convert_legacy_rights_value(legacy_record.rights) }))
+    end
+
+    def self.user_params(legacy_record)
+      {
         legacy_id: legacy_record.id,
         about: legacy_record.about,
         access_token: legacy_record.access_token,
@@ -69,7 +84,6 @@ module Legacy
         firstname: legacy_record.meno,
         gdpr_accepted: legacy_record.gdpr_accepted,
         lastname: legacy_record.priezvisko.presence,
-        legacy_rights: self.convert_legacy_rights_value(legacy_record.rights),
         login: legacy_record.login,
         organization: legacy_record.is_organization,
         password: legacy_record.password,
@@ -83,7 +97,7 @@ module Legacy
         city_id: legacy_record.cityid,
         municipality: ::Municipality.find_by(legacy_id: legacy_record.mesto),
         street: ::Street.find_by(legacy_id: legacy_record.streetid)
-      )
+      }
     end
 
     def self.generate_dummy_email(id)

@@ -4,13 +4,15 @@ module Import
 
     def perform(
       municipality:,
+      municipality_district: nil,
+      import_since: Date.parse("2020-01-01").beginning_of_day,
       import_photos_job: Issues::ImportIssuePhotosJob,
       import_updates_job: Issues::ImportIssueUpdatesJob,
       import_comments_job: Issues::ImportIssueCommentsJob,
       import_communications_job: Issues::ImportIssueCommunicationsJob
     )
       Legacy::GenericModel.set_table_name("alerts")
-      Legacy::GenericModel.where(mesto: municipality.legacy_id).find_in_batches do |group|
+      Legacy::GenericModel.where(mesto: municipality.legacy_id).where(mestska_cast: municipality_district&.legacy_id).where("posted_time >= ?", import_since.to_i).find_in_batches do |group|
         group.each do |legacy_record|
           subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
           subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
@@ -34,10 +36,7 @@ module Import
               modified_at: legacy_record.modified_time, # TODO nestaci updated_at?
               updated_by_id: legacy_record.modified_by, # TODO overit na ktory model je toto referencia
               state_changed_at: legacy_record.last_status_change_time,
-              municipal_district_id: legacy_record.mestska_cast,
-              street_id: legacy_record.ulica,
               responsible_subject_type_id: legacy_record.zodpovednost_typ,
-              responsible_subject_id: legacy_record.zodpovednost,
               mobile: legacy_record.mobile,
               ip: legacy_record.ip,
               secure: legacy_record.secure,
@@ -65,11 +64,15 @@ module Import
             reported_at: convert_timestamp_value(legacy_record.posted_time),
             title: legacy_record.heading,
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),
+            owner: Legacy::User.find_or_create_agent(legacy_record.riesitel_new || legacy_record.riesitel),
             category: category,
             subcategory: subcategory,
             subtype: subtype,
             municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
+            municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
+            responsible_subject: ResponsibleSubject.find_by(legacy_id: legacy_record.zodpovednost),
             state: ::Issues::State.find_by(legacy_id: legacy_record.status),
+            street: Street.find_by(legacy_id: legacy_record.ulica)
           )
 
           import_photos_job.perform_later(issue: issue)

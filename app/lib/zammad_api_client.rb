@@ -1,8 +1,9 @@
 class ZammadApiClient
   attr :client
 
-  DEFAULT_GROUP = "Incomming"
+  DEFAULT_GROUP = "Incoming"
   DEFAULT_ARTICLE_TYPE = "web"
+  DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
 
   def initialize(url:, http_token:)
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
@@ -48,15 +49,21 @@ class ZammadApiClient
     result
   end
 
-  def create_ticket!(issue)
+  def create_ticket!(issue, group: DEFAULT_GROUP)
     ticket = @client.ticket.create(
       title: issue.title,
-      group: DEFAULT_GROUP,
+      group: group,
       customer_id: issue.author.zammad_identifier,
       origin_by_id: issue.author.zammad_identifier,
-      municipality: issue.municipality,
-      category: find_zammad_category(issue.category),
+      municipality: build_ticket_municipality(issue),
+      street: issue.street&.name,
+      category: find_zammad_category(issue.category),  # TODO add subcategory and subtype once implemented in triage
+      state: issue.state.name,
       anonymous: issue.anonymous,
+      responsible_subject: issue.responsible_subject&.legacy_id,  # TODO map to responsible_subjects in triage
+      owner_id: issue.owner&.zammad_identifier,
+      created_at: issue.reported_at,
+      like_count: issue.legacy_data["like_count"],
       article: {
         origin_by_id: issue.author.zammad_identifier,
         body: issue.description,
@@ -67,7 +74,8 @@ class ZammadApiClient
             "data" => Base64.encode64(photo.blob.download),
             "mime-type" => photo.content_type
           }
-        end
+        end,
+        created_at: issue.reported_at
       },
     )
 
@@ -104,21 +112,22 @@ class ZammadApiClient
     end
   end
 
-  def create_article!(issue_id, comment, use_author_id = false)
+  def create_article!(issue_id, activity_object)
     ticket = @client.ticket.find(issue_id)
 
     article = ticket.article(
-      origin_by_id: use_author_id ? comment["author"] : create_or_find_customer(comment["author"]),
-      content_type: comment["content_type"],
-      body: comment["body"],
-      type: comment["type"],
-      attachments: comment["attachments"].map do |attachment|
+      origin_by_id: activity_object.author&.zammad_identifier,
+      content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
+      body: activity_object.activity_body,
+      type: "web",
+      attachments: activity_object.attachments.map do |attachment|
         {
-          "filename" => attachment["filename"],
-          "mime-type" => attachment["content_type"],
-          "data" => attachment["data64"]
+          "filename" => attachment.filename,
+          "mime-type" => attachment.content_type,
+          "data" => Base64.encode64(attachment.blob.download)
         }
-      end
+      end,
+      created_at: activity_object.added_at,
     )
 
     # TODO custom error
@@ -132,6 +141,37 @@ class ZammadApiClient
 
   def get_user(identifier)
     @client.user.find identifier
+  end
+
+  def add_user_to_group(user_identifier, group_name)
+    user = get_user(user_identifier)
+    user_groups = user.groups
+    user_groups[group_name] = "full"
+    user.groups = user_groups
+
+    user.save
+  end
+
+  def create_customer!(email)
+    begin
+      zammad_user = @client.user.create(email: email)
+      zammad_user.id
+    rescue RuntimeError => e
+      raise e unless e.message.include? "is already used for another user."
+    end
+  end
+
+  def create_agent!(email)
+    begin
+      zammad_user = @client.user.create(email: email, roles: [ "Agent" ])
+      zammad_user.id
+    rescue RuntimeError => e
+      raise e unless e.message.include? "is already used for another user."
+    end
+  end
+
+  def get_groups
+    @client.group.all
   end
 
   def find_ticket_responsible_subject(ticket_id)
@@ -179,5 +219,13 @@ class ZammadApiClient
 
   def find_zammad_category(issue_category)
     issue_category.triage_external_id
+  end
+
+  def build_ticket_municipality(issue)
+    if issue.municipality_district.present?
+      "#{issue.municipality&.name}::#{issue.municipality_district.name}"
+    else
+      issue.municipality&.name
+    end
   end
 end
