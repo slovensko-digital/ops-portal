@@ -4,9 +4,9 @@ module Connector
 
     # TODO
     ANONYMOUS_USER_ID = 25
+    DEFAULT_GROUP = "Incoming"
 
     def initialize(tenant)
-      @name = tenant.name
       @triage_user_id = tenant.triage_user_id
       @token = tenant.backoffice_instance.api_token
       @url = tenant.backoffice_instance.url
@@ -15,59 +15,28 @@ module Connector
     end
 
     def create_issue!(issue)
-      # TODO custom error
-      raise RuntimeError.new("Issue with triage_external_id: #{issue.id} already exists.") if @backoffice_instance.issues.find_by(triage_external_id: issue.id)
-
-      article = issue["comments"].first
-      tmp_body = {
-        state: issue["state"],
-        group: @name,
-        title: issue["title"],
-        origin_by_id: create_or_find_customer(issue["author"]),
-        customer_id: create_or_find_customer(issue["author"]),
-        triage_identifier: issue["triage_identifier"],
-        article: {
-          origin_by_id: create_or_find_customer(article["author"]),
-          triage_identifier: article["triage_identifier"],
-          content_type: article["content_type"],
-          body: article["body"],
-          type: article["type"],
-          triage_created_at: article["created_at"],
-          attachments: article["attachments"].map do |attachment|
-            {
-              "filename" => attachment["filename"],
-              "mime-type" => attachment["content_type"],
-              "data" => attachment["data64"]
-            }
-          end
-        }
-      }
-
-      new_ticket = @client.ticket.create(tmp_body)
-      # TODO custom error
-      raise unless new_ticket.id
-
-      @backoffice_instance.issues.create!(triage_external_id: issue.id, backoffice_external_id: new_ticket.id)
-
-      return unless issue["comments"].count > 1
+      ticket = find_or_create_ticket!(issue)
 
       issue["comments"][1..-1].each do |comment|
-        create_comment_for_ticket!(new_ticket, comment)
+        find_or_create_article!(ticket, comment)
       end
     end
 
-    def update_issue_status!(issue_id, issue)
-      ticket = @client.ticket.find(@backoffice_instance.issues.find_by(triage_external_id: issue_id)&.backoffice_external_id)
-      ticket.update(state: issue["state"])
-    end
+    def update_issue_status!(issue_id, issue_state)
+      issue = @backoffice_instance.issues.find_by(triage_external_id: issue_id)
+      raise "Issue not found" unless issue
 
-    def get_issue(ticket_id)
-      @client.ticket.find(ticket_id)
+      ticket = @client.ticket.find(issue.backoffice_external_id)
+      ticket.state = issue_state
+      ticket.save
     end
 
     def create_comment!(issue_id, comment)
-      ticket = @client.ticket.find(@backoffice_instance.issues.find_by(triage_external_id: issue_id)&.backoffice_external_id)
-      create_comment_for_ticket!(ticket, comment)
+      issue = @backoffice_instance.issues.find_by(triage_external_id: issue_id)
+      raise "Issue not found" unless issue
+
+      ticket = @client.ticket.find(issue.backoffice_external_id)
+      find_or_create_article!(ticket, comment)
     end
 
     private
@@ -88,32 +57,6 @@ module Connector
       end
 
       zammad_identifier
-    end
-
-    def create_comment_for_ticket!(ticket, comment)
-      # TODO custom error
-      raise RuntimeError.new("Comment with triage_external_id: #{comment.id} already exists.") if @backoffice_instance.comments.find_by(triage_external_id: comment.id)
-
-      new_article = ticket.article(
-        origin_by_id: create_or_find_customer(comment["author"]),
-        triage_identifier: comment["triage_identifier"],
-        content_type: comment["content_type"],
-        body: comment["body"],
-        type: comment["type"],
-        triage_created_at: comment["created_at"],
-        attachments: comment["attachments"].map do |attachment|
-          {
-            "filename" => attachment["filename"],
-            "mime-type" => attachment["content_type"],
-            "data" => attachment["data64"]
-          }
-        end
-      )
-
-      # TODO custom error
-      raise unless new_article.id
-
-      @backoffice_instance.comments.create!(triage_external_id: comment.id, backoffice_external_id: new_article.id)
     end
 
     def get_comment(ticket_id, comment_id)
@@ -140,6 +83,72 @@ module Connector
       rescue RuntimeError => e
         raise e unless e.message.include? "Couldn't find Ticket with"
       end
+    end
+
+    private
+
+    def find_or_create_ticket!(issue)
+      ticket = @backoffice_instance.issues.find_by(triage_external_id: issue["triage_identifier"])
+      return @client.ticket.find(ticket.backoffice_external_id) if ticket
+
+      article = issue["comments"].first
+      tmp_body = {
+        state: issue["state"],
+        group: DEFAULT_GROUP,
+        title: issue["title"],
+        origin_by_id: create_or_find_customer(issue["author"]),
+        customer_id: create_or_find_customer(issue["author"]),
+        triage_identifier: issue["triage_identifier"],
+        article: {
+          origin_by_id: create_or_find_customer(article["author"]),
+          triage_identifier: article["triage_identifier"],
+          content_type: article["content_type"],
+          body: article["body"],
+          type: article["type"],
+          triage_created_at: article["created_at"],
+          attachments: article["attachments"].map do |attachment|
+            {
+              "filename" => attachment["filename"],
+              "mime-type" => attachment["content_type"],
+              "data" => attachment["data64"]
+            }
+          end
+        }
+      }
+
+      new_ticket = @client.ticket.create(tmp_body)
+      # TODO custom error
+      raise unless new_ticket.id
+
+      @backoffice_instance.issues.create!(triage_external_id: issue["triage_identifier"], backoffice_external_id: new_ticket.id)
+      new_ticket
+    end
+
+    def find_or_create_article!(ticket, comment)
+      article = @backoffice_instance.comments.find_by(triage_external_id: comment["triage_identifier"])
+      return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
+
+      new_article = ticket.article(
+        origin_by_id: create_or_find_customer(comment["author"]),
+        triage_identifier: comment["triage_identifier"],
+        content_type: comment["content_type"],
+        body: comment["body"],
+        type: comment["type"],
+        triage_created_at: comment["created_at"],
+        attachments: comment["attachments"].map do |attachment|
+          {
+            "filename" => attachment["filename"],
+            "mime-type" => attachment["content_type"],
+            "data" => attachment["data64"]
+          }
+        end
+      )
+
+      # TODO custom error
+      raise unless new_article.id
+
+      @backoffice_instance.comments.create!(triage_external_id: comment["triage_identifier"], backoffice_external_id: new_article.id)
+      new_article
     end
   end
 end

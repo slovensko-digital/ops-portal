@@ -1,6 +1,6 @@
 module Connector
   class OpsApiClient
-    def initialize(tenant, url: ENV.fetch("CONNECTOR__OPS_API_URL"), provider: Faraday)
+    def initialize(tenant, url: ENV.fetch("CONNECTOR__OPS_API_URL", "http://localhost:3000/"), provider: Faraday)
       @subject = tenant.api_subject_identifier
       @private_key = OpenSSL::PKey::EC.new(tenant.api_token_private_key)
       @url = url
@@ -9,9 +9,16 @@ module Connector
 
     def get_issue(issue_id)
       response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}"), { token: jwt_token })
-      nil unless response.status == 200
+      return nil unless response.status == 200
 
       JSON.parse response.body
+    end
+
+    def get_issue_state(issue_id)
+      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/status"), { token: jwt_token })
+      return nil unless response.status == 200
+
+      JSON.parse(response.body)["state"]
     end
 
     def update_issue_status(issue_id, status)
@@ -20,15 +27,15 @@ module Connector
     end
 
     def get_comment(issue_id, comment_id)
-      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/comments/#{comment_id}"), { token: jwt_token })
-      nil unless response.status == 200
+      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/issue_comments/#{comment_id}"), { token: jwt_token })
+      return nil unless response.status == 200
 
       JSON.parse response.body
     end
 
     def create_comment!(issue_id, comment)
       # TODO
-      response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/comments"), { comment: comment, token: jwt_token })
+      response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/issue_comments"), { comment: comment, token: jwt_token })
       raise unless response.status == 200
 
       JSON.parse response.body["comment_id"]

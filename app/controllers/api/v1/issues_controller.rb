@@ -10,6 +10,11 @@ class Api::V1::IssuesController < ApiController
     head :not_found unless @zammad_client.update_ticket_status(params.require(:issue_id), params.require(:status), @client.responsible_subject_zammad_identifier)
   end
 
+  def status
+    @issue_status = @zammad_client.get_ticket_status(params.require(:issue_id))
+    head :not_found unless @issue_status
+  end
+
   private
 
   def set_issue

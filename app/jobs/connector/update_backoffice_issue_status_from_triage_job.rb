@@ -3,7 +3,7 @@ class Connector::UpdateBackofficeIssueStatusFromTriageJob < ApplicationJob
     ops_client = ops_api_client.new(tenant)
     zammad_client = zammad_api_client.new(tenant)
 
-    issue_data = ops_client.get_issue issue_id
-    zammad_client.update_issue_status! issue_id, issue_data
+    issue_state = ops_client.get_issue_state issue_id
+    zammad_client.update_issue_status! issue_id, issue_state
   end
 end

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       resources :issues, only: [ :show ] do
         resources :issue_comments, only: [ :show, :create ]
         post :status
+        get :status
       end
     end
   end

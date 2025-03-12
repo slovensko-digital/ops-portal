@@ -50,6 +50,16 @@ class ZammadApiClient
     result
   end
 
+  def get_ticket_status(ticket_id)
+    begin
+      ticket = @client.ticket.find(ticket_id)
+      ticket.state
+    rescue => e
+      Rails.logger.debug("Failed to get ticket with an error: #{e}")
+      nil
+    end
+  end
+
   def create_ticket!(issue, group: DEFAULT_GROUP)
     ticket = @client.ticket.create(
       title: issue.title,
@@ -88,7 +98,8 @@ class ZammadApiClient
   def get_article(ticket_id, article_id)
     begin
       ticket = @client.ticket.find(ticket_id)
-      article = ticket.articles.find { |a| a.id == article_id }&.attributes
+      article = ticket.articles.find { |a| a.id == article_id.to_i }
+      return nil unless article
 
       {
         author: get_author(article.origin_by_id || article.created_by_id, anonymous: (ticket.anonymous && article.created_by == ticket.customer)),
