@@ -1,5 +1,7 @@
 class Connector::CreateNewBackofficeCommentFromTriageJob < ApplicationJob
   def perform(tenant, issue_id, comment_id, zammad_api_client: Connector::ZammadApiClient, ops_api_client: Connector::OpsApiClient)
+    return if tenant.comments.find_by(triage_external_id: comment_id).present?
+
     ops_client = ops_api_client.new(tenant)
     zammad_client = zammad_api_client.new(tenant)
 

@@ -8,9 +8,9 @@ module Connector
 
     def initialize(tenant)
       @triage_user_id = tenant.triage_user_id
-      @token = tenant.backoffice_instance.api_token
-      @url = tenant.backoffice_instance.url
-      @backoffice_instance = tenant.backoffice_instance
+      @token = tenant.api_token
+      @url = tenant.url
+      @tenant = tenant
       @client = ZammadAPI::Client.new(url: @url, http_token: @token)
     end
 
@@ -23,7 +23,7 @@ module Connector
     end
 
     def update_issue_status!(issue_id, issue_state)
-      issue = @backoffice_instance.issues.find_by(triage_external_id: issue_id)
+      issue = @tenant.issues.find_by(triage_external_id: issue_id)
       raise "Issue not found" unless issue
 
       ticket = @client.ticket.find(issue.backoffice_external_id)
@@ -32,11 +32,16 @@ module Connector
     end
 
     def create_comment!(issue_id, comment)
-      issue = @backoffice_instance.issues.find_by(triage_external_id: issue_id)
+      issue = @tenant.issues.find_by(triage_external_id: issue_id)
       raise "Issue not found" unless issue
 
       ticket = @client.ticket.find(issue.backoffice_external_id)
       find_or_create_article!(ticket, comment)
+    end
+
+    def get_issue_state(issue_id)
+      ticket = @client.ticket.find(issue_id)
+      ticket.state
     end
 
     private
@@ -45,7 +50,7 @@ module Connector
       return ANONYMOUS_USER_ID unless author
 
       begin
-        user = @backoffice_instance.users.find_or_initialize_by(uuid: author["uuid"])
+        user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
         return user.zammad_identifier unless user.new_record?
 
         zammad_identifier = @client.user.create(firstname: author["firstname"], lastname: author["lastname"], login: author["uuid"]).id
@@ -88,7 +93,7 @@ module Connector
     private
 
     def find_or_create_ticket!(issue)
-      ticket = @backoffice_instance.issues.find_by(triage_external_id: issue["triage_identifier"])
+      ticket = @tenant.issues.find_by(triage_external_id: issue["triage_identifier"])
       return @client.ticket.find(ticket.backoffice_external_id) if ticket
 
       article = issue["comments"].first
@@ -120,12 +125,12 @@ module Connector
       # TODO custom error
       raise unless new_ticket.id
 
-      @backoffice_instance.issues.create!(triage_external_id: issue["triage_identifier"], backoffice_external_id: new_ticket.id)
+      @tenant.issues.create!(triage_external_id: issue["triage_identifier"], backoffice_external_id: new_ticket.id)
       new_ticket
     end
 
     def find_or_create_article!(ticket, comment)
-      article = @backoffice_instance.comments.find_by(triage_external_id: comment["triage_identifier"])
+      article = @tenant.comments.find_by(triage_external_id: comment["triage_identifier"])
       return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
 
       new_article = ticket.article(
@@ -147,7 +152,7 @@ module Connector
       # TODO custom error
       raise unless new_article.id
 
-      @backoffice_instance.comments.create!(triage_external_id: comment["triage_identifier"], backoffice_external_id: new_article.id)
+      @tenant.comments.create!(triage_external_id: comment["triage_identifier"], backoffice_external_id: new_article.id)
       new_article
     end
   end

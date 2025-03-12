@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_10_150122) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_12_135218) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -54,22 +54,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_150122) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "connector_backoffice_instances", force: :cascade do |t|
-    t.string "url"
-    t.string "api_token"
-    t.string "webhook_secret"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "connector_comments", force: :cascade do |t|
     t.integer "triage_external_id"
     t.integer "backoffice_external_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "connector_backoffice_instance_id"
     t.index ["backoffice_external_id"], name: "index_connector_comments_on_backoffice_external_id", unique: true
-    t.index ["connector_backoffice_instance_id"], name: "index_connector_comments_on_connector_backoffice_instance_id"
     t.index ["triage_external_id"], name: "index_connector_comments_on_triage_external_id", unique: true
   end
 
@@ -78,9 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_150122) do
     t.integer "backoffice_external_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "connector_backoffice_instance_id"
     t.index ["backoffice_external_id"], name: "index_connector_issues_on_backoffice_external_id", unique: true
-    t.index ["connector_backoffice_instance_id"], name: "index_connector_issues_on_connector_backoffice_instance_id"
     t.index ["triage_external_id"], name: "index_connector_issues_on_triage_external_id", unique: true
   end
 
@@ -92,8 +80,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_150122) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "triage_user_id"
-    t.bigint "connector_backoffice_instance_id"
-    t.index ["connector_backoffice_instance_id"], name: "index_connector_tenants_on_connector_backoffice_instance_id"
+    t.string "url"
+    t.string "api_token"
+    t.string "webhook_secret"
   end
 
   create_table "connector_users", force: :cascade do |t|
@@ -103,8 +92,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_150122) do
     t.string "lastname"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "connector_backoffice_instance_id"
-    t.index ["connector_backoffice_instance_id"], name: "index_connector_users_on_connector_backoffice_instance_id"
     t.index ["zammad_identifier"], name: "index_connector_users_on_zammad_identifier", unique: true
   end
 
@@ -638,10 +625,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_150122) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "connector_comments", "connector_backoffice_instances"
-  add_foreign_key "connector_issues", "connector_backoffice_instances"
-  add_foreign_key "connector_tenants", "connector_backoffice_instances"
-  add_foreign_key "connector_users", "connector_backoffice_instances"
   add_foreign_key "issues", "issues_categories", column: "category_id"
   add_foreign_key "issues", "issues_states", column: "state_id"
   add_foreign_key "issues", "issues_subcategories", column: "subcategory_id"

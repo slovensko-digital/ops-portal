@@ -2,13 +2,12 @@
 #
 # Table name: connector_comments
 #
-#  id                               :bigint           not null, primary key
-#  created_at                       :datetime         not null
-#  updated_at                       :datetime         not null
-#  backoffice_external_id           :integer
-#  connector_backoffice_instance_id :bigint
-#  triage_external_id               :integer
+#  id                     :bigint           not null, primary key
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  backoffice_external_id :integer
+#  triage_external_id     :integer
 #
 class Connector::Comment < ApplicationRecord
-  belongs_to :backoffice_instance, class_name: "Connector::BackofficeInstance", optional: false, foreign_key: :connector_backoffice_instance_id
+  belongs_to :tenant, class_name: "Connector::Tenant", optional: false, foreign_key: :connector_tenant_id
 end

@@ -9,9 +9,7 @@ class Connector::WebhooksController < ActionController::API
     when "issue.created"
       Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     when "comment.created"
-      unless Connector::Comment.find_by(triage_external_id: data.require(:comment_id))
-        Connector::CreateNewBackofficeCommentFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
-      end
+      Connector::CreateNewBackofficeCommentFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
     when "issue.status_updated"
       Connector::UpdateBackofficeIssueStatusFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     else
@@ -47,7 +45,7 @@ class Connector::WebhooksController < ActionController::API
 
     # elsif signature.starts_with "v1,"
     #   key = OpenSSL::PKey::EC.new(@tenant.webhook_public_key)
-    #   expected_signature = OpenSSL::HMAC.base64digest("SHA256", @tenant.webhook_public_key, "#{hook_id}.#{timestamp}.#{webhook_params.to_json}")
+    #   expected_signature = OpenSSL::HMAC.base64digest("SHA256", key, "#{hook_id}.#{timestamp}.#{webhook_params.to_json}")
     #   render status: :forbidden, json: nil unless expected_signature == signature&.gsub("v1,", "")
 
     # else
