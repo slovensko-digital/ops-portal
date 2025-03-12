@@ -15,5 +15,7 @@
 #  triage_user_id         :integer
 #
 class Connector::Tenant < ApplicationRecord
-  belongs_to :tenant, class_name: "Connector::Tenant", optional: false, foreign_key: :connector_tenant_id
+  has_many :issues, class_name: "Connector::Issue", dependent: :destroy
+  has_many :users, class_name: "Connector::User", dependent: :destroy
+  has_many :comments, class_name: "Connector::Comment", dependent: :destroy
 end
