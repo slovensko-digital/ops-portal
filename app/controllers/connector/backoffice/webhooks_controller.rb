@@ -7,9 +7,9 @@ class Connector::Backoffice::WebhooksController < ActionController::API
 
     case event_type
     when "article.created"
-      Connector::SendNewCommentToTriageFromBackofficeJob.perform_later(@tenant, data.require(:ticket_id), data.require(:article_id))
-    when "ticket.status_updated"
-      Connector::SendNewIssueStatusToTriageFromBackofficeJob.perform_later(@tenant, data.require(:ticket_id))
+      Connector::SendNewActivityToTriageFromBackofficeJob.perform_later(@tenant, data.require(:ticket_id), data.require(:article_id))
+    when "ticket.updated"
+      Connector::UpdateTriageIssueFromBackofficeJob.perform_later(@tenant, data.require(:ticket_id))
     else
       render json: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end
@@ -34,7 +34,7 @@ class Connector::Backoffice::WebhooksController < ActionController::API
     sig_header = request.headers["X-Hub-Signature"]&.gsub("sha1=", "")
     render status: :unauthorized, json: nil and return unless sig_header.present?
 
-    secret = @tenant.webhook_secret
+    secret = @tenant.backoffice_webhook_secret
     signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), secret, request.body.read)
     render status: :forbidden, json: nil if signature != sig_header
   end

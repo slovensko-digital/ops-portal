@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_12_142328) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_13_121252) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -52,17 +52,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_142328) do
     t.string "webhook_private_key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "triage_external_author_identifier"
   end
 
-  create_table "connector_comments", force: :cascade do |t|
+  create_table "connector_activities", force: :cascade do |t|
     t.integer "triage_external_id"
     t.integer "backoffice_external_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "connector_tenant_id", null: false
-    t.index ["backoffice_external_id"], name: "index_connector_comments_on_backoffice_external_id", unique: true
-    t.index ["connector_tenant_id"], name: "index_connector_comments_on_connector_tenant_id"
-    t.index ["triage_external_id"], name: "index_connector_comments_on_triage_external_id", unique: true
+    t.index ["backoffice_external_id"], name: "index_connector_activities_on_backoffice_external_id", unique: true
+    t.index ["connector_tenant_id"], name: "index_connector_activities_on_connector_tenant_id"
+    t.index ["triage_external_id"], name: "index_connector_activities_on_triage_external_id", unique: true
   end
 
   create_table "connector_issues", force: :cascade do |t|
@@ -78,15 +79,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_142328) do
 
   create_table "connector_tenants", force: :cascade do |t|
     t.string "name"
-    t.string "api_token_private_key"
-    t.integer "api_subject_identifier"
-    t.string "webhook_public_key"
+    t.string "ops_api_token_private_key"
+    t.integer "ops_api_subject_identifier"
+    t.string "ops_webhook_public_key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "triage_user_id"
-    t.string "url"
-    t.string "api_token"
-    t.string "webhook_secret"
+    t.string "backoffice_url"
+    t.string "backoffice_api_token"
+    t.string "backoffice_webhook_secret"
   end
 
   create_table "connector_users", force: :cascade do |t|
@@ -631,7 +631,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_142328) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "connector_comments", "connector_tenants"
+  add_foreign_key "connector_activities", "connector_tenants"
   add_foreign_key "connector_issues", "connector_tenants"
   add_foreign_key "connector_users", "connector_tenants"
   add_foreign_key "issues", "issues_categories", column: "category_id"

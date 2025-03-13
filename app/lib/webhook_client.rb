@@ -16,23 +16,23 @@ class WebhookClient
     Triage::FireWebhookJob.perform_later(@client, Random.uuid, payload)
   end
 
-  def comment_created(issue_id, comment_id)
+  def activity_created(issue_id, activity_id)
     payload = {
-      type: "comment.created",
+      type: "activity.created",
       timestamp: Time.now.to_i,
       data: {
         subject_id: @client.id,
         issue_id: issue_id,
-        comment_id: comment_id
+        activity_id: activity_id
       }
     }
 
     Triage::FireWebhookJob.perform_later(@client, Random.uuid, payload)
   end
 
-  def issue_status_updated(issue_id)
+  def issue_updated(issue_id)
     payload = {
-      type: "issue.status_updated",
+      type: "issue.updated",
       timestamp: Time.now.to_i,
       data: {
         subject_id: @client.id,

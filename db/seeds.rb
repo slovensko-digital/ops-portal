@@ -35,8 +35,8 @@ default_connector_zammad_webhook_secret = ENV.fetch("CONNECTOR__ZAMMAD_WEBHOOK_S
   }
 ].each do |data|
   client = Client.find_or_create_by!(name: data[:name])
+  tenant = Connector::Tenant.find_or_create_by!(name: data[:name])
 
-  tenant = Connector::Tenant.find_or_create_by!(url: data[:connector_zammad_url])
   api_key = OpenSSL::PKey::EC.generate("prime256v1")
   webhook_key = OpenSSL::PKey::EC.generate("prime256v1")
 
@@ -44,16 +44,17 @@ default_connector_zammad_webhook_secret = ENV.fetch("CONNECTOR__ZAMMAD_WEBHOOK_S
     api_token_public_key: api_key.public_to_pem,
     webhook_private_key: webhook_key.to_pem,
     url: data[:url],
-    responsible_subject_zammad_identifier: data[:subject]
+    responsible_subject_zammad_identifier: data[:subject],
+    triage_external_author_identifier: data[:triage_user_id]
   )
 
   tenant.update_columns(
-    api_token: data[:connector_zammad_api_token],
-    webhook_secret: data[:connector_zammad_webhook_secret],
-    api_token_private_key: api_key.to_pem,
-    webhook_public_key: webhook_key.public_to_pem,
-    api_subject_identifier: client.id,
-    triage_user_id: data[:triage_user_id]
+    backoffice_api_token: data[:connector_zammad_api_token],
+    backoffice_webhook_secret: data[:connector_zammad_webhook_secret],
+    ops_api_token_private_key: api_key.to_pem,
+    ops_webhook_public_key: webhook_key.public_to_pem,
+    ops_api_subject_identifier: client.id,
+    backoffice_url: data[:connector_zammad_url]
   )
 end
 

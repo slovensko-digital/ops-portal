@@ -8,10 +8,10 @@ class Connector::WebhooksController < ActionController::API
     case event_type
     when "issue.created"
       Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
-    when "comment.created"
-      Connector::CreateNewBackofficeCommentFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:comment_id))
-    when "issue.status_updated"
-      Connector::UpdateBackofficeIssueStatusFromTriageJob.perform_later(@tenant, data.require(:issue_id))
+    when "activity.created"
+      Connector::CreateNewBackofficeActivityFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:activity_id))
+    when "issue.updated"
+      Connector::UpdateBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     else
       render text: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end
@@ -20,11 +20,11 @@ class Connector::WebhooksController < ActionController::API
   private
 
   def webhook_params
-    params.permit(:type, :timestamp, data: [ :subject_id, :issue_id, :comment_id ])
+    params.permit(:type, :timestamp, data: [ :subject_id, :issue_id, :activity_id ])
   end
 
   def data
-    params.require(:data).permit(:subject_id, :issue_id, :comment_id)
+    params.require(:data).permit(:subject_id, :issue_id, :activity_id)
   end
 
   def set_tenant
@@ -39,12 +39,12 @@ class Connector::WebhooksController < ActionController::API
 
     # TODO: canonicalize/sort json keys to create the same signed hash
     # if signature.starts_with? "v1a,"
-    #   key = OpenSSL::PKey::EC.new(@tenant.webhook_public_key)
+    #   key = OpenSSL::PKey::EC.new(@tenant.ops_webhook_public_key)
     #   hash = OpenSSL::Digest.digest("SHA256", "#{hook_id}.#{timestamp}.#{webhook_params.to_json}")
     #   render status: :forbidden, json: nil unless key.verify_raw("SHA256", Base64.decode64(signature&.gsub("v1a,", "")), hash)
 
     # elsif signature.starts_with "v1,"
-    #   key = OpenSSL::PKey::EC.new(@tenant.webhook_public_key)
+    #   key = OpenSSL::PKey::EC.new(@tenant.ops_webhook_public_key)
     #   expected_signature = OpenSSL::HMAC.base64digest("SHA256", key, "#{hook_id}.#{timestamp}.#{webhook_params.to_json}")
     #   render status: :forbidden, json: nil unless expected_signature == signature&.gsub("v1,", "")
 

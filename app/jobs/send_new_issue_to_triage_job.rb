@@ -7,7 +7,5 @@ class SendNewIssueToTriageJob < ApplicationJob
     issue.last_synced_at = Time.now
     issue.triage_external_id = ticket_id
     issue.save!
-
-    UpdateIssueStateFromTriageJob.perform_later(issue)
   end
 end

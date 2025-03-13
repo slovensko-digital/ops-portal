@@ -1,4 +1,4 @@
-class Triage::ProcessNewCommentFromTriageJob < ApplicationJob
+class Triage::ProcessNewActivityFromTriageJob < ApplicationJob
   FRONTEND_MESSAGE_TAG = "[[portal]]"
   BACKOFFICE_MESSAGE_TAG = "[[zodpovedny]]"
 
@@ -8,7 +8,7 @@ class Triage::ProcessNewCommentFromTriageJob < ApplicationJob
     if article[:body].include? BACKOFFICE_MESSAGE_TAG
       responsible_subject = triage_zammad_client.find_ticket_responsible_subject(ticket_id)
       client = Client.find_by!(responsible_subject_zammad_identifier: responsible_subject)
-      webhook_client.new(client).comment_created(ticket_id, article_id)
+      webhook_client.new(client).activity_created(ticket_id, article_id)
     end
 
     if article[:body].include? FRONTEND_MESSAGE_TAG

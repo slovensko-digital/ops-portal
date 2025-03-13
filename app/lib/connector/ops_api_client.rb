@@ -1,8 +1,8 @@
 module Connector
   class OpsApiClient
     def initialize(tenant, url: ENV.fetch("CONNECTOR__OPS_API_URL", "http://localhost:3000/"), provider: Faraday)
-      @subject = tenant.api_subject_identifier
-      @private_key = OpenSSL::PKey::EC.new(tenant.api_token_private_key)
+      @subject = tenant.ops_api_subject_identifier
+      @private_key = OpenSSL::PKey::EC.new(tenant.ops_api_token_private_key)
       @url = url
       @provider = provider
     end
@@ -14,32 +14,24 @@ module Connector
       JSON.parse response.body
     end
 
-    def get_issue_state(issue_id)
-      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/status"), { token: jwt_token })
-      return nil unless response.status == 200
-
-      JSON.parse(response.body)["state"]
-    end
-
-    def update_issue_status(issue_id, status)
-      response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/new_status"), { status: status, token: jwt_token })
+    def update_issue(issue_id, issue_data)
+      response = @provider.put(URI.join(@url, "api/v1/issues/#{issue_id}"), { token: jwt_token } + issue_data)
       raise unless response.status == 204
     end
 
-    def get_comment(issue_id, comment_id)
-      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/issue_comments/#{comment_id}"), { token: jwt_token })
+    def get_activity(issue_id, activity_id)
+      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/activities/#{activity_id}"), { token: jwt_token })
       return nil unless response.status == 200
 
       JSON.parse response.body
     end
 
-    def create_comment!(issue_id, comment)
-      # TODO
-      response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/issue_comments"), { comment: comment, token: jwt_token })
+    def create_activity!(issue_id, activity)
+      response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/activities"), { activity: activity, token: jwt_token })
       raise unless response.status == 200
 
       puts "Response body: #{response.body}"
-      JSON.parse(response.body)["comment_id"]
+      JSON.parse(response.body)["activity_id"]
     end
 
     private

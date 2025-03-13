@@ -27,6 +27,7 @@
 #  triage_external_id       :integer
 #
 class Issue < ApplicationRecord
+  # TODO add triage_draft_external_id - este premenovat
   belongs_to :author, class_name: "User"
   belongs_to :owner, class_name: "Legacy::Agent", optional: true # TODO drop after legacy import
   belongs_to :category, class_name: "Issues::Category"

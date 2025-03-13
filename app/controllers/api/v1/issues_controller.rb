@@ -1,27 +1,25 @@
 class Api::V1::IssuesController < ApiController
   before_action :authenticate_client
-  before_action :set_issue, only: [ :show ]
+  before_action :set_issue, only: [ :show, :update ]
 
   def show
-    @issue = @ticket
+    @issue = @zammad_client.get_ticket(params.require :id, expand: true)
   end
 
-  def new_status
-    head :not_found unless @zammad_client.update_ticket_status(params.require(:issue_id), params.require(:status), @client.responsible_subject_zammad_identifier)
-  end
-
-  def status
-    @issue_status = @zammad_client.get_ticket_status(params.require(:issue_id))
-    head :not_found unless @issue_status
+  def update
+    head :not_found unless @zammad_client.update_ticket!(params.require(:issue_id), issue_params)
   end
 
   private
+
+  def issue_params
+    params.require(:issue).permit(:state)
+  end
 
   def set_issue
     @ticket = @zammad_client.get_ticket(params.require :id)
 
     head :not_found unless @ticket
-    # TODO
-    # head :not_found unless @ticket["responsible_subject"] == @client.responsible_subject_zammad_identifier
+    head :not_found unless @ticket["responsible_subject"] == @client.responsible_subject_zammad_identifier
   end
 end

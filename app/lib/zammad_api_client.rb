@@ -10,54 +10,22 @@ class ZammadApiClient
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
   end
 
-  def get_ticket(ticket_id)
+  def get_ticket(ticket_id, expand: false)
+    puts "Getting ticket: #{ticket_id}"
     begin
       ticket = @client.ticket.find(ticket_id)
     rescue => e
-      Rails.logger.debug("Failed to get ticket with an error: #{e}")
+      raise e unless e.message.include?("Couldn't find Ticket with")
       return nil
     end
 
-    result = {
-      triage_identifier: ticket.id,
-      state: ticket.state,
-      title: ticket.title,
-      author: get_author(ticket.customer_id, anonymous: ticket.anonymous),
-      responsible_subject_identifier: ticket.responsible_subject,
-      created_at: ticket.created_at,
-      updated_at: ticket.updated_at,
-      comments: ticket.articles.map do |article|
-        {
-          author: get_author(article.origin_by_id || article.created_by_id, anonymous: (ticket.anonymous && article.created_by == ticket.customer)),
-          triage_identifier: article.id,
-          content_type: article.content_type,
-          body: article.body,
-          type: article.type,
-          created_at: article.created_at,
-          updated_at: article.updated_at,
-          attachments: article.attachments.map do |attachment|
-            {
-              triage_identifier: attachment.id,
-              filename: attachment.filename,
-              content_type: attachment.preferences.dig(:"Mime-Type"),
-              data64: Base64.strict_encode64(attachment.download)
-            }
-          end
-        }
-      end
+    result = build_ticket_response(ticket)
+    puts "Ticket: #{result}"
+    return result unless expand
+
+    result + {
+      activities: ticket.articles.map { |article| build_article_response(ticket, article) }.compact
     }
-
-    result
-  end
-
-  def get_ticket_status(ticket_id)
-    begin
-      ticket = @client.ticket.find(ticket_id)
-      ticket.state
-    rescue => e
-      Rails.logger.debug("Failed to get ticket with an error: #{e}")
-      nil
-    end
   end
 
   def create_ticket!(issue, group: DEFAULT_GROUP)
@@ -95,33 +63,33 @@ class ZammadApiClient
     ticket.id
   end
 
+  def update_ticket!(ticket_id, ticket_params)
+    ticket = @client.ticket.find(ticket_id)
+
+    # TODO add more fields
+    for key, value in ticket_params
+      case key
+      when "state"
+        ticket.state = value
+      end
+    end
+
+    ticket.save
+  end
+
   def get_article(ticket_id, article_id)
     begin
       ticket = @client.ticket.find(ticket_id)
       article = ticket.articles.find { |a| a.id == article_id.to_i }
-      return nil unless article
-
-      {
-        author: get_author(article.origin_by_id || article.created_by_id, anonymous: (ticket.anonymous && article.created_by == ticket.customer)),
-        triage_identifier: article.id,
-        content_type: article.content_type,
-        body: article.body,
-        type: article.type,
-        created_at: article.created_at,
-        updated_at: article.updated_at,
-        attachments: article.attachments.map do |attachment|
-          {
-            triage_identifier: attachment.id,
-            filename: attachment.filename,
-            content_type: attachment.preferences.dig(:"Mime-Type"),
-            data64: Base64.strict_encode64(attachment.download)
-          }
-        end
-      }
-
     rescue RuntimeError => e
-      raise e unless e.message.include? "Couldn't find Ticket with"
+      raise e unless e.message.include?("Couldn't find Ticket with") || e.message.include?("Couldn't find Article with")
+      puts "Couldn't find article with id: #{article_id} in ticket with id: #{ticket_id}"
+      return nil
     end
+
+    result = build_article_response(ticket, article)
+    return nil unless result.present?
+    result
   end
 
   def create_article!(issue_id, activity_object)
@@ -147,22 +115,22 @@ class ZammadApiClient
     article.id
   end
 
-  def create_article_from_api!(issue_id, comment_data)
+  def create_article_from_api!(triage_external_author_identifier, issue_id, activity)
     ticket = @client.ticket.find(issue_id)
 
     article = ticket.article(
-      origin_by_id: comment_data["author"],
-      content_type: comment_data["content_type"],
-      body: comment_data["body"],
-      type: comment_data["type"],
-      attachments: comment_data["attachments"].map do |attachment|
+      origin_by_id: triage_external_author_identifier,
+      content_type: activity["content_type"],
+      body: activity["body"],
+      type: activity["type"],
+      attachments: activity["attachments"].map do |attachment|
         {
           "filename" => attachment["filename"],
           "mime-type" => attachment["content_type"],
           "data" => attachment["data64"]
         }
       end,
-      created_at: comment_data["created_at"],
+      created_at: activity["created_at"],
     )
 
     # TODO custom error
@@ -221,14 +189,6 @@ class ZammadApiClient
     @client.ticket.find(ticket_id).responsible_subject
   end
 
-  def update_ticket_status(issue_id, status, responsible_subject_zammad_identifier)
-    ticket = @client.ticket.find(issue_id)
-    raise unless responsible_subject_zammad_identifier == ticket.responsible_subject
-
-    ticket.state = status
-    ticket.save
-  end
-
   private
 
   def find_zammad_user(email)
@@ -270,5 +230,39 @@ class ZammadApiClient
     else
       issue.municipality&.name
     end
+  end
+
+  def build_ticket_response(ticket)
+    {
+      triage_identifier: ticket.id,
+      state: ticket.state,
+      title: ticket.title,
+      author: get_author(ticket.customer_id, anonymous: ticket.anonymous),
+      responsible_subject_identifier: ticket.responsible_subject,
+      created_at: ticket.created_at,
+      updated_at: ticket.updated_at
+    }
+  end
+
+  def build_article_response(ticket, article)
+    return nil unless article.body.include? "[[zodpovedny]]"
+
+    {
+      author: get_author(article.origin_by_id || article.created_by_id, anonymous: (ticket.anonymous && article.created_by == ticket.customer)),
+      triage_identifier: article.id,
+      content_type: article.content_type,
+      body: article.body,
+      type: article.type,
+      created_at: article.created_at,
+      updated_at: article.updated_at,
+      attachments: article.attachments.map do |attachment|
+        {
+          triage_identifier: attachment.id,
+          filename: attachment.filename,
+          content_type: attachment.preferences.dig(:"Mime-Type"),
+          data64: Base64.strict_encode64(attachment.download)
+        }
+      end
+    }
   end
 end

@@ -8,9 +8,9 @@ class Triage::WebhooksController < ActionController::API
     when "ticket.created"
       Triage::SendNewIssueFromTriageToBackofficeJob.perform_later(data.require(:ticket_id))
     when "article.created"
-      Triage::ProcessNewCommentFromTriageJob.perform_later(data.require(:ticket_id), data.require(:article_id))
-    when "ticket.status_updated"
-      Triage::SendNewIssueStatusFromTriageToBackofficeJob.perform_later(data.require :ticket_id)
+      Triage::ProcessNewActivityFromTriageJob.perform_later(data.require(:ticket_id), data.require(:article_id))
+    when "ticket.updated"
+      Triage::SendNewIssueUpdateFromTriageToBackofficeJob.perform_later(data.require :ticket_id)
     else
       render json: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end
