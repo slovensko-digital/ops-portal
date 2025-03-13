@@ -3,7 +3,7 @@ module Connector
     attr :client
 
     # TODO
-    ANONYMOUS_USER_ID = 25
+    ANONYMOUS_USER_ID = 2
     DEFAULT_GROUP = "Incoming"
 
     def initialize(tenant)
