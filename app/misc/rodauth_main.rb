@@ -301,18 +301,18 @@ class RodauthMain < Rodauth::Rails::Auth
         valid = true
 
         if param_or_nil("municipality_id").to_s.empty?
-          field_error(:municipality_id, "Municipality is required")
+          set_field_error(:municipality_id, "Municipality is required")
           valid = false
         else
           municipality_id = param_or_nil("municipality_id")
           unless Municipality.exists?(municipality_id)
-            field_error(:municipality_id, "Municipality not found")
+            set_field_error(:municipality_id, "Municipality not found")
             valid = false
           end
         end
 
         if param_or_nil("street_name").to_s.empty?
-          field_error(:street_name, "Street is required")
+          set_field_error(:street_name, "Street is required")
           valid = false
         end
 
@@ -498,35 +498,35 @@ class RodauthMain < Rodauth::Rails::Auth
 
         login_value = param_or_nil(login_param)
         if login_value.to_s.empty?
-          field_error(login_param, "Email is required")
+          set_field_error(login_param, "Email is required")
           valid = false
         elsif !login_value.to_s.match?(/\A[^@\s]+@[^@\s]+\.[^@\s]+\z/)
-          field_error(login_param, "Invalid email format")
+          set_field_error(login_param, "Invalid email format")
           valid = false
         end
 
         if require_login_confirmation?
           login_confirm_value = param_or_nil(login_confirm_param)
           if login_confirm_value.to_s.empty?
-            field_error(login_confirm_param, "Email confirmation is required")
+            set_field_error(login_confirm_param, "Email confirmation is required")
             valid = false
           elsif login_confirm_value != login_value
-            field_error(login_confirm_param, "Email confirmation doesn't match")
+            set_field_error(login_confirm_param, "Email confirmation doesn't match")
             valid = false
           end
         end
 
         if param_or_nil(password_param).to_s.empty?
-          field_error(password_param, "Password is required")
+          set_field_error(password_param, "Password is required")
           valid = false
         end
 
         if require_password_confirmation?
           if param_or_nil(password_confirm_param).to_s.empty?
-            field_error(password_confirm_param, "Password confirmation is required")
+            set_field_error(password_confirm_param, "Password confirmation is required")
             valid = false
           elsif param_or_nil(password_confirm_param) != param_or_nil(password_param)
-            field_error(password_confirm_param, "Password confirmation doesn't match")
+            set_field_error(password_confirm_param, "Password confirmation doesn't match")
             valid = false
           end
         end
@@ -538,39 +538,39 @@ class RodauthMain < Rodauth::Rails::Auth
         valid = true
 
         if param_or_nil("firstname").to_s.empty?
-          field_error(:firstname, "First name is required")
+          set_field_error(:firstname, "First name is required")
           valid = false
         end
 
         if param_or_nil("lastname").to_s.empty?
-          field_error(:lastname, "Last name is required")
+          set_field_error(:lastname, "Last name is required")
           valid = false
         end
 
         day = param_or_nil("day_of_birth")
         if day.to_s.empty?
-          field_error(:day_of_birth, "Day is required")
+          set_field_error(:day_of_birth, "Day is required")
           valid = false
         elsif !day.to_s.match?(/^\d+$/) || day.to_i < 1 || day.to_i > 31
-          field_error(:day_of_birth, "Day must be between 1 and 31")
+          set_field_error(:day_of_birth, "Day must be between 1 and 31")
           valid = false
         end
 
         month = param_or_nil("month_of_birth")
         if month.to_s.empty?
-          field_error(:month_of_birth, "Month is required")
+          set_field_error(:month_of_birth, "Month is required")
           valid = false
         elsif !month.to_s.match?(/^\d+$/) || month.to_i < 1 || month.to_i > 12
-          field_error(:month_of_birth, "Month must be between 1 and 12")
+          set_field_error(:month_of_birth, "Month must be between 1 and 12")
           valid = false
         end
 
         year = param_or_nil("year_of_birth")
         if year.to_s.empty?
-          field_error(:year_of_birth, "Year is required")
+          set_field_error(:year_of_birth, "Year is required")
           valid = false
         elsif !year.to_s.match?(/^\d+$/) || year.to_i < 1900 || year.to_i > Date.today.year
-          field_error(:year_of_birth, "Year must be between 1900 and #{Date.today.year}")
+          set_field_error(:year_of_birth, "Year must be between 1900 and #{Date.today.year}")
           valid = false
         end
 
@@ -578,13 +578,13 @@ class RodauthMain < Rodauth::Rails::Auth
           begin
             Date.new(year.to_i, month.to_i, day.to_i)
           rescue ArgumentError
-            field_error(:day_of_birth, "Invalid date combination")
+            set_field_error(:day_of_birth, "Invalid date combination")
             valid = false
           end
         end
 
         if param_or_nil("sex").to_s.empty?
-          field_error(:sex, "Gender selection is required")
+          set_field_error(:sex, "Gender selection is required")
           valid = false
         end
 
