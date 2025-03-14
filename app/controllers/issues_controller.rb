@@ -3,7 +3,7 @@ class IssuesController < ApplicationController
 
   # GET /issues or /issues.json
   def index
-    @issues = Issue.all
+    @issues = Issue.order(created_at: :desc).limit(2)
   end
 
   # GET /issues/1 or /issues/1.json
