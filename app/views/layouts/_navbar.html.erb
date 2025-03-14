@@ -1,38 +1,70 @@
-<nav class="bg-white shadow">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 justify-between">
-      <div class="flex">
-        <div class="flex shrink-0 items-center">
-          <a href="/" class="font-extrabold">Odkaz pre starostu</a>
-        </div>
+<!--
+
+Taken from
+
+https://tailwindcss.com/plus/ui-blocks/application-ui/navigation/navbars#component-70a9bdf83ef2c8568c5cddf6c39c2331
+
+with smaller changes
+
+-->
+<nav class="bg-gray-800" id="main-navbar" data-controller="dropdown" data-action="click->dropdown#toggle click@window->dropdown#hide">
+  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <div class="relative flex h-16 items-center justify-between">
+      <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+        <!-- Mobile menu button-->
+        <button type="button" data-dropdown-target="button" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="absolute -inset-0.5"></span>
+          <span class="sr-only">Open main menu</span>
+          <!--
+            Icon when menu is closed.
+
+            Menu open: "hidden", Menu closed: "block"
+          -->
+          <svg class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+          </svg>
+          <!--
+            Icon when menu is open.
+
+            Menu open: "block", Menu closed: "hidden"
+          -->
+          <svg class="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
-      <div class="hidden sm:ml-6 sm:flex sm:items-center">
-        
-        <% if rodauth.logged_in? %>
-          <div data-controller="dropdown" class="relative ml-3">
-            <div>
-              <button type="button"
-                data-action="click->dropdown#toggle"
-                class="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                <span class="sr-only">Open user menu</span>
-                <span> <%= current_user.firstname.present? && current_user.lastname.present? ? "#{current_user.firstname} #{current_user.lastname}" : current_user.email %> </span>
-              </button>
+      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+        <div class="flex flex-1 hidden sm:block">
+          <div class="flex justify-between space-x-4">
+            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+            <div class="flex space-x-4">
+              <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Odkaz pre starostu</a>
+              <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Menu 1</a>
             </div>
 
-            <div data-dropdown-target="menu" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 invisible opacity-0 scale-95 transition ease-out duration-200"
-              role="menu" aria-orientation="vertical">
-              <a class="block px-4 py-2 text-sm text-gray-400" role="menuitem">Your Profile</a>
-              <%= button_to "Change login", rodauth.change_login_path, class: "block px-4 py-2 text-sm text-gray-700", method: :get %>
-              <%= button_to "Change password", rodauth.change_password_path, class: "block px-4 py-2 text-sm text-gray-700", method: :get %>
-              <%= button_to "Close account", rodauth.close_account_path, class: "block px-4 py-2 text-sm text-red-700", method: :get %>
-              <%= button_to "Sign out", rodauth.logout_path, class: "block px-4 py-2 text-sm text-gray-700" %>
-            </div>
+            <% if !rodauth.logged_in? %>
+              <div class="flex space-x-4">
+                <a href="<%= rodauth.create_account_path %>" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Register</a>
+                <a href="<%= rodauth.login_path %>" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login</a>
+              </div>
+            <% end %>
           </div>
-        <% else %>
-          <%= button_to "Sign in", rodauth.login_path, class: "rounded-md bg-indigo-50 px-2.5 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100 mr-4", method: :get %>
-          <%= button_to "Register", rodauth.create_account_path, class: "rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", method: :get %>
-        <% end%>
+        </div>
       </div>
+      <%#= render "layouts/navbar_profile" %>
+    </div>
+  </div>
+
+  <!-- Mobile menu, show/hide based on menu state. -->
+  <div data-dropdown-target="menu" class="hidden sm:hidden" id="mobile-menu">
+    <div class="space-y-1 px-2 pb-3 pt-2">
+      <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+      <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Odkaz pre starostu</a>
+      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Menu 1</a>
+      <% if !rodauth.logged_in? %>
+        <a href="<%= rodauth.login_path %>" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login</a>
+        <a href="<%= rodauth.create_account_path %>" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Registration</a>
+      <% end %>
     </div>
   </div>
 </nav>
