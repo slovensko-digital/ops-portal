@@ -462,7 +462,7 @@ class RodauthMain < Rodauth::Rails::Auth
             "lastname" => last_name
           }
 
-          after_login_redirect create_account_path
+          redirect create_account_path
         end
       end
 
