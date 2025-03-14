@@ -31,6 +31,6 @@ class Triage::WebhooksController < ActionController::API
     render status: :unauthorized, json: nil and return unless sig_header.present?
 
     signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), ENV.fetch("TRIAGE_ZAMMAD_WEBHOOK_SECRET"), request.body.read)
-    render status: :forbidden, json: nil if signature != sig_header
+    render status: :forbidden, json: nil unless ActiveSupport::SecurityUtils.secure_compare(signature, sig_header)
   end
 end

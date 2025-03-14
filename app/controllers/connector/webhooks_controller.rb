@@ -47,7 +47,7 @@ class Connector::WebhooksController < ActionController::API
     elsif signature.starts_with? "v1,"
       key = @tenant.ops_webhook_public_key
       expected_signature = OpenSSL::HMAC.base64digest("SHA256", key, data_string)
-      render status: :forbidden, json: nil unless expected_signature == signature.gsub("v1,", "")
+      render status: :forbidden, json: nil unless ActiveSupport::SecurityUtils.secure_compare(expected_signature, signature.gsub("v1,", ""))
 
     else
       render status: :unprocessable_entity, json: { message: "Unrecognized webhook-signature prefix" }

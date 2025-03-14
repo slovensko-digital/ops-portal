@@ -36,6 +36,6 @@ class Connector::Backoffice::WebhooksController < ActionController::API
 
     secret = @tenant.backoffice_webhook_secret
     signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha1"), secret, request.body.read)
-    render status: :forbidden, json: nil if signature != sig_header
+    render status: :forbidden, json: nil unless ActiveSupport::SecurityUtils.secure_compare(signature, sig_header)
   end
 end
