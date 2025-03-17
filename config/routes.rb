@@ -49,5 +49,5 @@ Rails.application.routes.draw do
   mount GoodJob::Engine => "admin/good_job"
 
   # Defines the root path route ("/")
-  root "issues#index"
+  root "issues/drafts#new"
 end

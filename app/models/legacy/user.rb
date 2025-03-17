@@ -86,7 +86,7 @@ module Legacy
         lastname: legacy_record.priezvisko.presence,
         login: legacy_record.login,
         organization: legacy_record.is_organization,
-        password: dummy_password ? generate_dummy_password : legacy_record.password,
+        password_hash: dummy_password ? generate_dummy_password : legacy_record.password,
         phone: legacy_record.telefon,
         resident: legacy_record.residency,
         sex: legacy_record.sex,
