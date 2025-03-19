@@ -18,6 +18,6 @@ class Issues::Drafts::GeosController < ApplicationController
   def geo_params
     params.expect(issues_draft: [ :longitude, :latitude, :address_house_number, :address_road, :address_neighbourhood,
                                   :address_town, :address_suburb, :address_city_district, :address_city, :address_state,
-                                  :address_postcode, :address_country, :address_country_code ])
+                                  :address_postcode, :address_country, :address_country_code, :address_county, :address_village ])
   end
 end

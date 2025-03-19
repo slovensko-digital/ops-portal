@@ -7,7 +7,7 @@ export default class extends Controller {
     static targets = ["latitude", "longitude", "map",
         "address", "addressHouseNumber", "addressRoad", "addressNeighbourhood", "addressTown", "addressSuburb",
         "addressCityDistrict", "addressCity", "addressState", "addressPostcode", "addressCountry", "addressCountryCode",
-        "addressVillage"
+        "addressVillage", "addressCounty"
     ]
 
     connect() {
@@ -69,6 +69,7 @@ export default class extends Controller {
                 this.addressPostcodeTargets.forEach(target => target.value = data.address.postcode || '');
                 this.addressCountryTargets.forEach(target => target.value = data.address.country || '');
                 this.addressCountryCodeTargets.forEach(target => target.value = data.address.country_code || '');
+                this.addressCountyTargets.forEach(target => target.value = data.address.county || '');
                 this.addressVillageTargets.forEach(target => target.value = data.address.village || '');
                 this.addressTargets.forEach(target => target.innerText = data.display_name || '');
             });

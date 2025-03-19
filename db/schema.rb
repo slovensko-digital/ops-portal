@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_13_121252) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -214,7 +214,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_121252) do
     t.bigint "author_id"
     t.bigint "category_id", null: false
     t.bigint "state_id"
-    t.bigint "municipality_id", null: false
+    t.bigint "municipality_id"
     t.integer "legacy_id"
     t.bigint "street_id"
     t.bigint "municipality_district_id"
@@ -222,6 +222,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_121252) do
     t.bigint "subcategory_id"
     t.bigint "subtype_id"
     t.bigint "owner_id"
+    t.string "address_state"
+    t.string "address_county"
+    t.string "address_city"
+    t.string "address_city_district"
+    t.string "address_suburb"
+    t.string "address_village"
+    t.string "address_town"
+    t.string "address_road"
+    t.string "address_house_number"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["legacy_id"], name: "index_issues_on_legacy_id", unique: true
@@ -336,6 +345,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_121252) do
     t.bigint "subcategory_id"
     t.bigint "subtype_id"
     t.bigint "author_id", null: false
+    t.string "address_county"
     t.index ["author_id"], name: "index_issues_drafts_on_author_id"
     t.index ["category_id"], name: "index_issues_drafts_on_category_id"
     t.index ["subcategory_id"], name: "index_issues_drafts_on_subcategory_id"

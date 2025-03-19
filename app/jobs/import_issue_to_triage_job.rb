@@ -4,7 +4,7 @@ class ImportIssueToTriageJob < ApplicationJob
 
     api.check_import_mode!
 
-    issue.author.update!(zammad_identifier: client.create_customer!(issue.author.email)) unless issue.author.zammad_identifier.present?
+    issue.author.update!(zammad_identifier: client.create_customer!(issue.author)) unless issue.author.zammad_identifier.present?
 
     if issue.owner
       issue.owner.update!(zammad_identifier: client.create_agent!(issue.owner.email)) unless issue.owner.zammad_identifier.present?

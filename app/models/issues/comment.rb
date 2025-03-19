@@ -32,4 +32,8 @@ class Issues::Comment < ApplicationRecord
 
     text
   end
+
+  def in_triage_as_internal?
+    false
+  end
 end

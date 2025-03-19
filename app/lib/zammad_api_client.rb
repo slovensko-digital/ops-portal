@@ -3,6 +3,7 @@ class ZammadApiClient
 
   DEFAULT_GROUP = "Incoming"
   DEFAULT_ARTICLE_TYPE = "web"
+  DEFAULT_ORIGIN = "portal"
   DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
   USERS_PER_PAGE = 1000
 
@@ -28,24 +29,48 @@ class ZammadApiClient
     })
   end
 
+  ISSUE_STATE_TO_PROCESS_TYPE = {
+    "Neriešený" => "portal_issue_resolution",
+    "Vyriešený" => "portal_issue_resolution",
+    "V riešení" => "portal_issue_resolution",
+    "Uzavretý" => "portal_issue_resolution",
+    "Čakajúci" => "portal_issue_triage",
+    "Neprijatý" => "portal_issue_triage"
+  }
+
   def create_ticket!(issue, group: DEFAULT_GROUP)
+    issue_type = "issue" # TODO fix in import ... add issue.issue_type
+    process_type = ISSUE_STATE_TO_PROCESS_TYPE.fetch(issue.state.name)
+
     ticket = @client.ticket.create(
-      title: issue.title,
+      process_type: process_type,
+      issue_type: issue_type,
+      title: process_type == "portal_issue_triage" ? "Triáž: #{issue.title}" : issue.title,
       group: group,
       customer_id: issue.author.zammad_identifier,
       origin_by_id: issue.author.zammad_identifier,
       municipality: build_ticket_municipality(issue),
-      street: issue.street&.name,
-      category: find_zammad_category(issue.category),  # TODO add subcategory and subtype once implemented in triage
+      address_county: issue.address_county,
+      address_city: issue.address_city,
+      address_city_district: issue.address_city_district,
+      address_suburb: issue.address_suburb,
+      address_village: issue.address_village,
+      address_town: issue.address_town,
+      address_road: issue.street&.name || issue.address_road,
+      address_house_number: issue.address_house_number,
+      category: issue.category&.triage_external_id || issue.category.name,
+      subcategory: issue.subcategory.name,
+      subtype: issue.subtype.name,
       state: issue.state.name,
-      anonymous: issue.anonymous,
-      responsible_subject: issue.responsible_subject&.legacy_id,  # TODO map to responsible_subjects in triage
+      anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
+      responsible_subject: issue.responsible_subject&.legacy_id, # TODO map to responsible_subjects in triage
       owner_id: issue.owner&.zammad_identifier,
       created_at: issue.reported_at,
-      like_count: issue.legacy_data["like_count"],
+      likes_count: issue.legacy_data ? issue.legacy_data["like_count"] : 999, # TODO handle also non legacy
+      origin: DEFAULT_ORIGIN,
       article: {
         origin_by_id: issue.author.zammad_identifier,
-        body: issue.description,
+        body: issue.description.presence || "(bez popisu)",
         type: DEFAULT_ARTICLE_TYPE,
         attachments: issue.photos.map do |photo|
           {
@@ -70,7 +95,7 @@ class ZammadApiClient
     for key, value in ticket_params
       case key
       when "state"
-        ticket.state = value
+          ticket.state = value
       end
     end
 
@@ -155,14 +180,21 @@ class ZammadApiClient
     user.save
   end
 
-  def create_customer!(email)
+  def create_customer!(user)
     begin
-      zammad_user = @client.user.create(email: email)
+      # TODO what if there is existing non-portal user?
+      zammad_user = @client.user.create(
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        roles: [ "Portal User" ],
+        origin: "portal"
+      )
       zammad_user.id
     rescue RuntimeError => e
       raise e unless e.message.include? "is already used for another user."
 
-      result = find_zammad_user email
+      result = find_zammad_user(user.email)
       raise "Can't find nor create triage zammad user with email: #{email}" unless result
       result
     end
@@ -192,6 +224,7 @@ class ZammadApiClient
   private
 
   def find_zammad_user(email)
+    # TODO use @client.user.search
     (1..).each do |page|
       users_on_page = @client.user.all.page(page, USERS_PER_PAGE) { }.map { |user| { email: user.attributes[:email], id: user.attributes[:id] } }
       zammad_user = users_on_page.select { |user| email == user[:email] }.first
@@ -217,11 +250,12 @@ class ZammadApiClient
     return user if user
 
     u = get_user(user_id)
+    # TODO why are we creating a user from zammad in portal? this should never happen
     User.create!(zammad_identifier: u.id, email: u.email, firstname: u.firstname, lastname: u.lastname)
   end
 
   def find_zammad_category(issue_category)
-    issue_category.triage_external_id
+    issue_category.triage_external_id || issue_category.name
   end
 
   def build_ticket_municipality(issue)

@@ -40,4 +40,8 @@ class Issues::Communication < ApplicationRecord
   def activity_body
     message
   end
+
+  def in_triage_as_internal?
+    true
+  end
 end

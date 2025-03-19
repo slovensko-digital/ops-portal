@@ -25,170 +25,183 @@ class Issues::Draft::GenerateSuggestionsJob < ApplicationJob
     Return empty array `[]` and nothing else if there are no problems on the photo.
 
     Available categories, subcategories, and subtypes (make sure you return the exact same strings):
-    | Category                   | Subcategory          | Subtype             |
-    | -------------------------- | -------------------- | --------------------|
-    | Zeleň a životné prostredie | neporiadok a odpadky | neodpratané lístie |
-    | Zeleň a životné prostredie | neporiadok a odpadky | čierne skládky |
-    | Zeleň a životné prostredie | neporiadok a odpadky | neporiadok vo verejnom priestranstve |
-    | Zeleň a životné prostredie | iné | - |
-    | Zeleň a životné prostredie | strom | suchý |
-    | Zeleň a životné prostredie | strom | chýbajúci |
-    | Zeleň a životné prostredie | strom | neorezaný |
-    | Zeleň a životné prostredie | strom | zlomený konár |
-    | Zeleň a životné prostredie | strom | napadnutý |
-    | Zeleň a životné prostredie | strom | invazívna rastlina |
-    | Zeleň a životné prostredie | strom | poškodená podpera |
-    | Zeleň a životné prostredie | trávnatá plocha | nepokosená |
-    | Zeleň a životné prostredie | trávnatá plocha | vyschnutá |
-    | Zeleň a životné prostredie | trávnatá plocha | vyjazdené koľaje |
-    | Zeleň a životné prostredie | krík | suchý |
-    | Zeleň a životné prostredie | krík | neostrihaný |
-    | Zeleň a životné prostredie | krík | chýbajúci |
-    | Zeleň a životné prostredie | zviera | túlavé |
-    | Zeleň a životné prostredie | zviera | uhynuté |
-    | Zeleň a životné prostredie | zviera | deratizácia |
-    | Zeleň a životné prostredie | znečisťovanie | ovzdušia |
-    | Zeleň a životné prostredie | znečisťovanie | vody |
-    | Zeleň a životné prostredie | znečisťovanie | pôdy |
-    | Mestský mobiliár | lavička | chýbajúca |
-    | Mestský mobiliár | lavička | poškodená |
-    | Mestský mobiliár | lavička | znečistená |
-    | Mestský mobiliár | socha, pamätník | znečistená |
-    | Mestský mobiliár | socha, pamätník | poškodená |
-    | Mestský mobiliár | zastávka MHD | poškodená |
-    | Mestský mobiliár | zastávka MHD | chýbajúca |
-    | Mestský mobiliár | zastávka MHD | znečistená |
-    | Mestský mobiliár | kôš | poškodený |
-    | Mestský mobiliár | kôš | preplnený |
-    | Mestský mobiliár | kôš | chýbajúci |
-    | Mestský mobiliár | kôš | nevhodne umiestnený |
-    | Mestský mobiliár | kôš | chýbajúce sáčky |
-    | Mestský mobiliár | detské ihrisko | poškodené |
-    | Mestský mobiliár | detské ihrisko | chýbajúce |
-    | Mestský mobiliár | detské ihrisko | potrebná údržba |
-    | Mestský mobiliár | cyklostojan | chýbajúci |
-    | Mestský mobiliár | cyklostojan | poškodený |
-    | Mestský mobiliár | cyklostojan | zle umiestnený |
-    | Mestský mobiliár | iné | - |
-    | Mestský mobiliár | fontánka | nefunkčná |
-    | Mestský mobiliár | fontánka | poškodená |
-    | Mestský mobiliár | fontánka | znečistená |
-    | Mestský mobiliár | informačná tabuľa | poškodená |
-    | Mestský mobiliár | informačná tabuľa | zle otočená |
-    | Mestský mobiliár | informačná tabuľa | zle umiestnená |
-    | Mestský mobiliár | informačná tabuľa | chýbajúca |
-    | Mestský mobiliár | kvetináč | poškodený |
-    | Mestský mobiliár | kvetináč | posunutý |
-    | Mestský mobiliár | kvetináč | zanedbaný |
-    | Mestský mobiliár | kvetináč | chýbajúci |
-    | Verejné služby | iné | - |
-    | Verejné služby | MHD | technické problémy |
-    | Verejné služby | MHD | meškanie spojov |
-    | Verejné služby | MHD | poškodené vozidlo |
-    | Verejné služby | MHD | zlé nastavenie cestovného poriadku |
-    | Verejné služby | kanalizácia | upchatá |
-    | Verejné služby | kanalizácia | chýbajúci kanalizačný poklop |
-    | Verejné služby | kanalizácia | havária kanalizačného potrubia |
-    | Verejné služby | kanalizácia | poškodený kanalizačný poklop |
-    | Verejné služby | osvetlenie | nefunkčné |
-    | Verejné služby | osvetlenie | poškodené stĺpy |
-    | Verejné služby | osvetlenie | chýbajúce/nedostatočné |
-    | Verejné služby | osvetlenie | nevhodné (silné a pod.) |
-    | Verejné služby | webová stránka mesta | chýbajúce informácie |
-    | Verejné služby | webová stránka mesta | neaktuálne informácie |
-    | Verejné služby | webová stránka mesta | nesprávne informácie |
-    | Verejné služby | webová stránka mesta | nefunkčná stránka |
-    | Verejné služby | rozvodné siete | poškodená rozvodná skriňa |
-    | Verejné služby | rozvodné siete | nebezpečný kábel |
-    | Verejné služby | zdieľaná mobilita | nevhodne zaparkovaný dopravný prostriedok |
-    | Verejné služby | zdieľaná mobilita | nevhodne umiestnené parkovisko |
-    | Verejné služby | zdieľaná mobilita | obmedzenie rýchlosti v zóne |
-    | Verejné služby | zdieľaná mobilita | iné |
-    | Cesty a chodníky | schody | poškodené |
-    | Cesty a chodníky | schody | neodhrnuté |
-    | Cesty a chodníky | schody | neposypané |
-    | Cesty a chodníky | schody | znečistené |
-    | Cesty a chodníky | cesta | výtlk |
-    | Cesty a chodníky | cesta | rozbitá (väčší úsek) |
-    | Cesty a chodníky | cesta | znečistená |
-    | Cesty a chodníky | cesta | neodhrnutá |
-    | Cesty a chodníky | cesta | neposypaná |
-    | Cesty a chodníky | cesta | rozkopaná |
-    | Cesty a chodníky | cesta | poškodená dlažba |
-    | Cesty a chodníky | chodník | výtlk |
-    | Cesty a chodníky | chodník | znečistený |
-    | Cesty a chodníky | chodník | neodhrnutý |
-    | Cesty a chodníky | chodník | neposypaný |
-    | Cesty a chodníky | chodník | bariérový |
-    | Cesty a chodníky | chodník | rozkopaný |
-    | Cesty a chodníky | chodník | chýbajúci |
-    | Cesty a chodníky | chodník | poškodená dlažba |
-    | Cesty a chodníky | chodník | bariéra na chodníku |
-    | Cesty a chodníky | cyklotrasa | poškodená |
-    | Cesty a chodníky | cyklotrasa | chýbajúca |
-    | Cesty a chodníky | cyklotrasa | neoznačená |
-    | Cesty a chodníky | cyklotrasa | znečistená |
-    | Cesty a chodníky | cyklotrasa | neodhrnutá |
-    | Cesty a chodníky | cyklotrasa | neposypaná |
-    | Cesty a chodníky | zábradlie | chýbajúce |
-    | Cesty a chodníky | zábradlie | poškodené |
-    | Cesty a chodníky | zábradlie | zhrdzavené |
-    | Cesty a chodníky | oplotenie | chýbajúce |
-    | Cesty a chodníky | oplotenie | poškodené |
-    | Cesty a chodníky | oplotenie | zhrdzavené |
-    | Cesty a chodníky | iné | - |
-    | Verejný poriadok | stavby a budovy | neohlásené stavebné úpravy |
-    | Verejný poriadok | stavby a budovy | prekračovanie limitov hluku |
-    | Verejný poriadok | stavby a budovy | prekračovanie limitov prašnosti |
-    | Verejný poriadok | stavby a budovy | opustená budova |
-    | Verejný poriadok | stavby a budovy | zlý stav budovy |
-    | Verejný poriadok | vandalizmus | graffiti |
+    | category | subcategory | subtype |
+    | -------- | ----------- | ------- |
+    | Komunikácie | cesta | výtlk |
+    | Komunikácie | cesta | rozbitá cesta (väčší úsek) |
+    | Komunikácie | cesta | znečistená |
+    | Komunikácie | cesta | neodhrnutá |
+    | Komunikácie | cesta | neposypaná |
+    | Komunikácie | cesta | rozkopaná |
+    | Komunikácie | cesta | poškodená dlažba |
+    | Komunikácie | chodník | výtlk |
+    | Komunikácie | chodník | znečistený |
+    | Komunikácie | chodník | neodhrnutý |
+    | Komunikácie | chodník | neposypaný |
+    | Komunikácie | chodník | rozkopaný |
+    | Komunikácie | chodník | chýbajúci |
+    | Komunikácie | chodník | poškodená dlažba |
+    | Komunikácie | chodník | bariéra na chodníku |
+    | Komunikácie | cyklotrasa | poškodená |
+    | Komunikácie | cyklotrasa | chýbajúca |
+    | Komunikácie | cyklotrasa | neoznačená |
+    | Komunikácie | cyklotrasa | znečistená |
+    | Komunikácie | cyklotrasa | neodhrnutá |
+    | Komunikácie | cyklotrasa | neposypaná |
+    | Komunikácie | cyklotrasa | výtlk |
+    | Komunikácie | schody | poškodená |
+    | Komunikácie | schody | znečistená |
+    | Komunikácie | schody | neodhrnutá |
+    | Komunikácie | schody | neposypaná |
+    | Komunikácie | schody | bariérové |
+    | Komunikácie | podjazd/podchod | potrebná údržba |
+    | Komunikácie | most/lávka | poškodená |
+    | Komunikácie | most/lávka | chýbajúca |
+    | Komunikácie | most/lávka | nevhodne umiestnená |
+    | Mobiliár | kôš | poškodený |
+    | Mobiliár | kôš | preplnený |
+    | Mobiliár | kôš | chýbajúci |
+    | Mobiliár | kôš | nevhodne umiestnený |
+    | Mobiliár | kôš | chýbajúce sáčky |
+    | Mobiliár | kvetináč | poškodený |
+    | Mobiliár | kvetináč | posunutý |
+    | Mobiliár | kvetináč | zanedbaný |
+    | Mobiliár | kvetináč | chýbajúci |
+    | Mobiliár | cyklostojan | chýbajúci |
+    | Mobiliár | cyklostojan | poškodený |
+    | Mobiliár | cyklostojan | zle umiestnený |
+    | Mobiliár | rozvodná skriňa | poškodená rozvodná skriňa |
+    | Mobiliár | rozvodná skriňa | nebezpečný kábel |
+    | Mobiliár | zábradlie/oplotenie | chýbajúce |
+    | Mobiliár | zábradlie/oplotenie | poškodené |
+    | Mobiliár | zábradlie/oplotenie | zhrdzavené |
+    | Mobiliár | socha/pamätník/pietne miesto | znečistené |
+    | Mobiliár | socha/pamätník/pietne miesto | poškodené |
+    | Mobiliár | pitná fontána | nefunkčná |
+    | Mobiliár | pitná fontána | poškodená |
+    | Mobiliár | pitná fontána | znečistená |
+    | Mobiliár | fontána | nefunkčná |
+    | Mobiliár | fontána | poškodená |
+    | Mobiliár | fontána | znečistená |
+    | Mobiliár | informačná/smerová tabuľa | chýbajúca |
+    | Mobiliár | informačná/smerová tabuľa | poškodená |
+    | Mobiliár | informačná/smerová tabuľa | zle otočená |
+    | Mobiliár | informačná/smerová tabuľa | zle umiestnená |
+    | Mobiliár | výťah | chýbajúci |
+    | Mobiliár | výťah | poškodený |
+    | Mobiliár | výťah | znečistený |
+    | Mobiliár | lavička | chýbajúca |
+    | Mobiliár | lavička | poškodená |
+    | Mobiliár | lavička | znečistená |
+    | Mobiliár | verejná toaleta | znečistená |
+    | Mobiliár | verejná toaleta | nefunkčná |
+    | Mobiliár | verejná toaleta | uzavretá |
+    | Značenie | vodorovné dopravné značenie | chýbajúce |
+    | Značenie | vodorovné dopravné značenie | neaktuálne |
+    | Značenie | vodorovné dopravné značenie | zle viditeľné |
+    | Značenie | zvislé dopravné značenie | poškodené |
+    | Značenie | zvislé dopravné značenie | neaktuálne |
+    | Značenie | zvislé dopravné značenie | chýbajúce |
+    | Značenie | zvislé dopravné značenie | vyblednuté |
+    | Značenie | zvislé dopravné značenie | zle otočené |
+    | Značenie | semafor | nefunkčný |
+    | Značenie | semafor | zle nastavený |
+    | Značenie | semafor | chýbajúci |
+    | Značenie | spomaľovač | chýbajúci |
+    | Značenie | spomaľovač | poškodený |
+    | Značenie | dopravné zrkadlo | chýbajúce |
+    | Značenie | dopravné zrkadlo | poškodené |
+    | Značenie | dopravné zrkadlo | zle natočené |
+    | Značenie | priechod pre chodcov | chýbajúci |
+    | Značenie | priechod pre chodcov | zle viditeľný |
+    | Značenie | priechod pre chodcov | bariérový |
+    | Značenie | protiparkovacia zábrana/stĺpik/biskupský klobúk | chýbajúca |
+    | Značenie | protiparkovacia zábrana/stĺpik/biskupský klobúk | poškodená |
+    | Značenie | protiparkovacia zábrana/stĺpik/biskupský klobúk | posunutá |
+    | Osvetlenie | osvetlenie | nefunknčné |
+    | Osvetlenie | osvetlenie | poškodený stĺp |
+    | Osvetlenie | osvetlenie | chýbajúce |
+    | Osvetlenie | osvetlenie | nedostatočné |
+    | Osvetlenie | osvetlenie | nevhodné (silné a pod.) |
+    | Kanalizácia | kanalizáčná vpusť | upchatá |
+    | Kanalizácia | kanalizáčná vpusť | chýbajúci kanalizačný poklop |
+    | Kanalizácia | kanalizáčná vpusť | poškodený kanalizačný poklop |
+    | Kanalizácia | kanalizáčná vpusť | havária kanalizačného potrubia |
+    | Kanalizácia | kanalizáčná mriežka | upchatá |
+    | Kanalizácia | kanalizáčná mriežka | poškodená |
+    | Kanalizácia | kanalizáčná mriežka | chýbajúca |
+    | Mestská hromadná doprava | služby hromadnej dopravy | meškanie spojov |
+    | Mestská hromadná doprava | grafikon / zlé nastavenie cestovného poriadku | poškodenie vozidla |
+    | Mestská hromadná doprava | MHD zastávka | poškodená |
+    | Mestská hromadná doprava | MHD zastávka | chýbajúca |
+    | Mestská hromadná doprava | MHD zastávka | znečistená |
+    | Ihrisko | športové ihrisko | poškodené |
+    | Ihrisko | športové ihrisko | chýbajúce |
+    | Ihrisko | športové ihrisko | potrebná údržba |
+    | Ihrisko | detské ihrisko | poškodené |
+    | Ihrisko | detské ihrisko | chýbajúce |
+    | Ihrisko | detské ihrisko | potrebná údržba |
+    | Verejný poriadok | reklama | nelegálna reklama |
+    | Verejný poriadok | reklama | nevhodne umiestnená |
+    | Verejný poriadok | reklama | nebezpečná (na spadnutie a pod) |
+    | Verejný poriadok | neporiadok vo verejnom priestranstve | neodpratané lístie |
+    | Verejný poriadok | neporiadok vo verejnom priestranstve | neporiadok vo verejnom priestore |
     | Verejný poriadok | vandalizmus | rušenie nočného pokoja |
-    | Verejný poriadok | vandalizmus | pitie alkoholu na verejnosti |
-    | Verejný poriadok | reklama | vizuálny smog |
-    | Verejný poriadok | reklama | nevhodne umiestnená (na chodníku a pod.) |
-    | Verejný poriadok | reklama | vylepené plagáty |
-    | Verejný poriadok | reklama | nebezpečná (na spadnutie a pod.) |
-    | Verejný poriadok | iné | - |
-    | Dopravné značenie | priechod pre chodcov | chýbajúci |
-    | Dopravné značenie | priechod pre chodcov | zle viditeľný |
-    | Dopravné značenie | semafor | nefunkčný |
-    | Dopravné značenie | semafor | zle nastavený |
-    | Dopravné značenie | semafor | chýbajúci |
-    | Dopravné značenie | dopravné zrkadlo | chýbajúce |
-    | Dopravné značenie | dopravné zrkadlo | zle natočené |
-    | Dopravné značenie | dopravné zrkadlo | poškodené |
-    | Dopravné značenie | vodorovná značka | chýbajúca |
-    | Dopravné značenie | vodorovná značka | neaktuálna |
-    | Dopravné značenie | vodorovná značka | zle viditeľná |
-    | Dopravné značenie | riešenie dopravnej situácie | nebezpečné |
-    | Dopravné značenie | riešenie dopravnej situácie | dopravu spomaľujúce |
-    | Dopravné značenie | riešenie dopravnej situácie | nedodržiavanie dopravných predpisov |
-    | Dopravné značenie | iné | - |
-    | Dopravné značenie | zvislá značka | poškodená |
-    | Dopravné značenie | zvislá značka | neaktuálna |
-    | Dopravné značenie | zvislá značka | chýbajúca |
-    | Dopravné značenie | zvislá značka | vyblednutá |
-    | Dopravné značenie | zvislá značka | zle otočená |
-    | Dopravné značenie | spomaľovač | chýbajúci |
-    | Dopravné značenie | spomaľovač | poškodený |
-    | Dopravné značenie | betónová zábrana (biskupský klobúk) | chýbajúca |
-    | Dopravné značenie | betónová zábrana (biskupský klobúk) | posunutá |
-    | Dopravné značenie | betónová zábrana (biskupský klobúk) | poškodená |
-    | Dopravné značenie | stĺpik | chýbajúci |
-    | Dopravné značenie | stĺpik | poškodený |
-    | Dopravné značenie | stĺpik | nadbytočný |
-    | Automobily | dlhodobo odstavené vozidlá | vozidlo s EČV, s platnou TK a EK |
-    | Automobily | dlhodobo odstavené vozidlá | vozidlo bez EČV,  s platnou TK a EK |
-    | Automobily | dlhodobo odstavené vozidlá | vozidlo bez EČV, bez platnej TK a EK |
-    | Automobily | dlhodobo odstavené vozidlá | vozidlo s EČV, bez platnej TK a EK |
-    | Automobily | dlhodobo odstavené vozidlá | nezistené EČV a TK a EK |
-    | Automobily | dlhodobo odstavené vozidlá | zahraničné vozidlo |
-    | Automobily | parkovanie | problémové |
-    | Automobily | parkovanie | chýbajúce miesta |
-    | Automobily | parkovanie | nevyznačené miesta |
-    | Automobily | iné | - |
-
+    | Verejný poriadok | vandalizmus | pitie alkoholu na verejnom priestore |
+    | Dopravné riešenie | nebezpečné | návrh na riešenie |
+    | Dopravné riešenie | dopravu spomaľujúce | návrh na riešenie |
+    | Dopravné riešenie | obchádzková trasa | bariérová |
+    | Dopravné riešenie | obchádzková trasa | zle vyznačená |
+    | Dopravné riešenie | obchádzková trasa | nebezpečná |
+    | Zdieľaná mikromobilita | bicykle | nevhodne zaparkovaný dopravný prostriedok |
+    | Zdieľaná mikromobilita | bicykle | nevhodne umiestnené parkovisko |
+    | Zdieľaná mikromobilita | kolobežky | nevhodne zaparkovaný dopravný prostriedok |
+    | Zdieľaná mikromobilita | kolobežky | nevhodne umiestnené parkovisko |
+    | Zeleň a znečisťovanie | kosenie | nepravidelne |
+    | Zeleň a znečisťovanie | strom | suchý |
+    | Zeleň a znečisťovanie | strom | chýbajúci |
+    | Zeleň a znečisťovanie | strom | neorezaný |
+    | Zeleň a znečisťovanie | strom | zlomený konár |
+    | Zeleň a znečisťovanie | strom | napadnutý |
+    | Zeleň a znečisťovanie | strom | invazívna rastlina |
+    | Zeleň a znečisťovanie | strom | poškodená podpera |
+    | Zeleň a znečisťovanie | krík | suchý |
+    | Zeleň a znečisťovanie | krík | chýbajúci |
+    | Zeleň a znečisťovanie | krík | neorezaný |
+    | Zeleň a znečisťovanie | výsadba | chýbajúca |
+    | Zeleň a znečisťovanie | výsadba | neudržiavaná |
+    | Zeleň a znečisťovanie | ostatná starostlivosť | iné |
+    | Zeleň a znečisťovanie | znečisťovanie | voda, pôda, ovzdušie |
+    | Stavby | budova | poškodená |
+    | Stavby | budova | grafiti |
+    | Stavby | budova | nevyužívaná |
+    | Stavby | most | poškodený |
+    | Stavby | most | grafiti |
+    | Stavby | stánok | poškodený |
+    | Stavby | stánok | grafiti |
+    | Stavby | stánok | nevyužívaný |
+    | Stavby | letná terasa | preverenie povolenia |
+    | Zvieratá | zver v meste | premnožené hlodavce |
+    | Zvieratá | výbehy pre zvieratá | lesná zver |
+    | Zvieratá | výbehy pre zvieratá | túlavé mačky/psy |
+    | Zvieratá | výbehy pre zvieratá | hmyz |
+    | Zvieratá | domáce zvieratá | výbehy pre zvieratá |
+    | Zvieratá | domáce zvieratá | majitelia - neplnenie povinností |
+    | Zvieratá | mŕtvy živočích | - |
+    | Skládky a vraky | nelegálne skládky | - |
+    | Skládky a vraky | vraky motorových vozidiel | - |
+    | Skládky a vraky | kontajnerové stanovištia | chýbajúce |
+    | Skládky a vraky | kompostovanie | chýbajúce komunitné kompostovisko |
+    | Skládky a vraky | kompostovanie | domácnosti |
+    | Kontakt so samosprávou | webová stránka mesta | chýbajúca informácia |
+    | Kontakt so samosprávou | webová stránka mesta | neaktuálne informácie |
+    | Kontakt so samosprávou | webová stránka mesta | nefunkčná stránka |
+    | Kontakt so samosprávou | mobilná aplikácia mesta | chýbajúca informácia |
+    | Kontakt so samosprávou | mobilná aplikácia mesta | neaktuálne informácie |
+    | Kontakt so samosprávou | mobilná aplikácia mesta | nefunkčná aplikácia |
+    | Kontakt so samosprávou | verejný rozhlas | chýbajúci |
+    | Kontakt so samosprávou | verejný rozhlas | pokazený |
+    | Iné | iné | - |
   LLM
 
   def generate_suggestions(draft)
