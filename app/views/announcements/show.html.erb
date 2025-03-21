@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto">
+<div class="max-w-3xl mx-auto p-6">
   <%= link_to "← Back to Announcements", :back, class: "text-blue-600 hover:underline flex items-center mb-4" %>
   <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @announcement.title %></h1>
   <p class="text-gray-500 text-sm mb-4">Published on <%= format_date @announcement.created_at %></p>
