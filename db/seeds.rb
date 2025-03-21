@@ -92,7 +92,7 @@ def generate_fake_announcements
 
     Announcement.find_or_create_by!(slug: title.parameterize) do |announcement|
       announcement.title = title
-      announcement.text = 5.times.map { Faker::Lorem.paragraph_by_chars }.map{ |par| "<p>#{par}</p>" }.join("\n")
+      announcement.text = 5.times.map { Faker::Lorem.paragraph_by_chars }.map { |par| "<p>#{par}</p>" }.join("\n")
       announcement.created_at = DateTime.now - (40 - n).day
       announcement.updated_at = DateTime.now - (40 - n).day
     end

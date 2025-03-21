@@ -62,7 +62,7 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  gem 'faker'
+  gem "faker"
 end
 
 group :development do
@@ -100,4 +100,4 @@ gem "tilt", "~> 2.4"
 gem "kamal", "~> 2.5"
 
 # pagination
-gem 'kaminari'
+gem "kaminari"
