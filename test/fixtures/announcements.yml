@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+new_portal:
+  title: New portal
+  slug: new-portal
+  text: "<p>We have launched the new version</p>"
+  raw: {}
+
+holiday_notice:
+  title: Holiday Hours Notice
+  slug: holiday-hours-notice
+  text: "<p>Check out our adjusted operating hours for the upcoming holiday season</p>"
+  raw: {}

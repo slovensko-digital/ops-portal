@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :announcements, only: [ :index, :show ]
+
   resources :issues, only: [ :index, :show, :destroy ]
 
   namespace :issues do

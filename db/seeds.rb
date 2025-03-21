@@ -85,3 +85,78 @@ end
 
   cat.save!
 end
+
+def generate_fake_announcements
+  25.times do |n|
+    title = Faker::Lorem.sentence
+
+    Announcement.find_or_create_by!(slug: title.parameterize) do |announcement|
+      announcement.title = title
+      announcement.text = 5.times.map { Faker::Lorem.paragraph_by_chars }.map{ |par| "<p>#{par}</p>" }.join("\n")
+      announcement.created_at = DateTime.now - (40 - n).day
+      announcement.updated_at = DateTime.now - (40 - n).day
+    end
+  end
+
+  Announcement.find_or_create_by!(
+    slug: "new-portal"
+  ) do |announcement|
+    announcement.title = "New Portal!"
+    announcement.text = "<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>" * 4
+    announcement.created_at = DateTime.now - 7.days
+    announcement.updated_at = DateTime.now - 7.days
+  end
+
+  Announcement.find_or_create_by!(slug: "community-guidelines") do |announcement|
+    announcement.title = "Updated Community Guidelines"
+    announcement.text = "<p>We’ve updated our community guidelines to ensure a safer environment for all.</p>" * 4
+    announcement.created_at = DateTime.now - 6.days
+    announcement.updated_at = DateTime.now - 6.days
+  end
+
+  Announcement.find_or_create_by!(
+    slug: "dark-mode"
+  ) do |announcement|
+    announcement.title = "Dark Mode is Here!"
+    announcement.text = "<p><strong>Great news!</strong> Dark Mode has been added to improve your experience and reduce eye strain. You can enable it in your settings and enjoy a sleeker, more comfortable interface.</p>" * 4
+    announcement.created_at = DateTime.now - 5.days
+    announcement.updated_at = DateTime.now - 5.days
+  end
+
+  Announcement.find_or_create_by!(slug: "holiday-hours") do |announcement|
+    announcement.title = "Holiday Hours Notice"
+    announcement.text = "<p>Check out our adjusted operating hours for the upcoming holiday season.</p>" * 4
+    announcement.created_at = DateTime.now - 4.days
+    announcement.updated_at = DateTime.now - 4.days
+  end
+
+  Announcement.find_or_create_by!(
+    slug: "system-maintenance"
+  ) do |announcement|
+    announcement.title = "System Maintenance Scheduled"
+    announcement.text = "<p><strong>Attention!</strong> Our team will conduct routine maintenance to enhance security and performance. During this time, some services may be temporarily unavailable. We apologize for any inconvenience and appreciate your patience.</p>" * 4
+    announcement.created_at = DateTime.now - 3.days
+    announcement.updated_at = DateTime.now - 3.days
+  end
+
+  Announcement.find_or_create_by!(
+    slug: "mobile-app-release"
+  ) do |announcement|
+    announcement.title = "Our Mobile App is Live!"
+    announcement.text = "<p><strong>Great news!</strong> Our brand-new mobile app is now available for download on iOS and Android. Enjoy a seamless experience with enhanced features, push notifications, and improved performance. Get it today and stay connected on the go!</p>" * 4
+    announcement.created_at = DateTime.now - 2.days
+    announcement.updated_at = DateTime.now - 2.days
+  end
+
+  Announcement.find_or_create_by!(
+    slug: "dashboard-upgrade"
+  ) do |announcement|
+    announcement.title = "New and Improved User Dashboard!"
+    announcement.text = "<p><strong>Exciting updates!</strong> Your user dashboard just got a major upgrade. We’ve improved navigation, added new analytics tools, and enhanced performance to make your experience smoother and more efficient. Log in now to explore the new design!</p>" * 4
+    announcement.created_at = DateTime.now - 1.days
+    announcement.updated_at = DateTime.now - 1.days
+  end
+end
+
+# uncomment to generate
+# generate_fake_announcements()

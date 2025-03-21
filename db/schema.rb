@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_21_101726) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -43,6 +43,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "announcements", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.text "text", null: false
+    t.jsonb "raw", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "clients", force: :cascade do |t|
@@ -219,9 +228,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
     t.bigint "street_id"
     t.bigint "municipality_district_id"
     t.bigint "responsible_subject_id"
+    t.bigint "owner_id"
     t.bigint "subcategory_id"
     t.bigint "subtype_id"
-    t.bigint "owner_id"
     t.string "address_state"
     t.string "address_county"
     t.string "address_city"
