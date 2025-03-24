@@ -35,7 +35,7 @@ class Connector::WebhooksController < ActionController::API
     timestamp = request.headers["webhook-timestamp"]
     hook_id = request.headers["webhook-id"]
     signature = request.headers["webhook-signature"]
-    render status: :unauthorized, json: nil and return unless signature.present? && hook_id.present? && timestamp.present?
+    render(status: :unauthorized, json: nil) and return unless signature.present? && hook_id.present? && timestamp.present?
 
     data_string = "#{hook_id}.#{timestamp}.#{request.body.read}"
 

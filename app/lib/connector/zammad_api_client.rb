@@ -3,8 +3,10 @@ module Connector
     attr :client
 
     # TODO
-    ANONYMOUS_USER_ID = 2
+    ANONYMOUS_USER_ID = 1
     DEFAULT_GROUP = "Incoming"
+    DEFAULT_STATE = "new"
+    OPS_ORIGIN = "ops"
 
     def initialize(tenant)
       @token = tenant.backoffice_api_token
@@ -30,7 +32,7 @@ module Connector
         # TODO add more attributes
         case key
         when "state"
-          ticket.state = value
+          ticket.ops_state = value
         end
       end
       ticket.save
@@ -102,17 +104,32 @@ module Connector
 
       article = issue["activities"].first
       tmp_body = {
-        state: issue["state"],
+        state: DEFAULT_STATE,
         group: DEFAULT_GROUP,
+        origin: OPS_ORIGIN,
         title: issue["title"],
+        ops_state: issue["state"],
         origin_by_id: create_or_find_customer(issue["author"]),
         customer_id: create_or_find_customer(issue["author"]),
         triage_identifier: issue["triage_identifier"],
+        issue_type: issue["issue_type"],
+        ops_category: issue["category"],
+        ops_subcategory: issue["subcategory"],
+        ops_subtype: issue["subtype"],
+        address_state: issue["address_state"],
+        address_county: issue["address_county"],
+        address_city: issue["address_city"],
+        address_city_district: issue["address_city_district"],
+        address_suburb: issue["address_suburb"],
+        address_road: issue["address_road"],
+        address_house_number: issue["address_house_number"],
+        ops_likes_count: issue["likes_count"],
+        created_at: issue["created_at"],
+        updated_at: issue["updated_at"],
         article: {
           origin_by_id: create_or_find_customer(article["author"]),
-          triage_identifier: article["triage_identifier"],
           content_type: article["content_type"],
-          body: article["body"],
+          body: article["body"].gsub(/\[\[zodpovedny\]\]/, ""),
           type: article["type"],
           triage_created_at: article["created_at"],
           attachments: article["attachments"].map do |attachment|
@@ -139,7 +156,6 @@ module Connector
 
       new_article = ticket.article(
         origin_by_id: create_or_find_customer(activity["author"]),
-        triage_identifier: activity["triage_identifier"],
         content_type: activity["content_type"],
         body: activity["body"],
         type: activity["type"],

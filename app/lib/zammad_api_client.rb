@@ -24,7 +24,8 @@ class ZammadApiClient
     return result unless expand
 
     result.merge({
-      activities: ticket.articles.map { |article| build_article_response(ticket, article) }.compact
+      activities: [ build_article_response(ticket, ticket.articles.first, first_article: true) ] +
+        ticket.articles[1..].map { |article| build_article_response(ticket, article) }.compact
     })
   end
 
@@ -239,13 +240,25 @@ class ZammadApiClient
       title: ticket.title,
       author: get_author(ticket.customer_id, anonymous: ticket.anonymous),
       responsible_subject_identifier: ticket.responsible_subject,
+      issue_type: ticket.issue_type,
+      category: ticket.category,
+      subcategory: ticket.subcategory,
+      subtype: ticket.subtype,
+      address_state: ticket.address_state,
+      address_county: ticket.address_county,
+      address_city: ticket.address_city || ticket.address_village,
+      address_city_district: ticket.address_city_district,
+      address_suburb: ticket.address_suburb,
+      address_road: ticket.address_road,
+      address_house_number: ticket.address_house_number,
+      likes_count: ticket.likes_count,
       created_at: ticket.created_at,
       updated_at: ticket.updated_at
     }
   end
 
-  def build_article_response(ticket, article)
-    return nil unless article.body.include? "[[zodpovedny]]"
+  def build_article_response(ticket, article, first_article: false)
+    return nil unless first_article || article.body.include?("[[zodpovedny]]")
 
     {
       author: get_author(article.origin_by_id || article.created_by_id, anonymous: (ticket.anonymous && article.created_by == ticket.customer)),
