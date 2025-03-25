@@ -15,6 +15,9 @@ class SyncIssueToTriageJob < ApplicationJob
 
     if issue.triage_external_id.present?
       client.update_ticket!(issue.triage_external_id, issue.attributes.merge!({ "title" => title }))
+      issue.update!(
+        last_synced_at: Time.now
+      )
     else
       issue_type = "issue" # TODO fix in import ... add issue.issue_type
       # TODO map non-legacy responsible subjects by ID?
@@ -30,14 +33,14 @@ class SyncIssueToTriageJob < ApplicationJob
         responsible_subject: responsible_subject,
         likes_count: likes_count
       )
+
+      raise unless ticket_id
+
+      issue.update!(
+        last_synced_at: Time.now,
+        triage_external_id: ticket_id
+      )
     end
-
-    raise unless ticket_id
-
-    issue.update!(
-      last_synced_at: Time.now,
-      triage_external_id: ticket_id
-    )
   end
 
   def find_or_create_triage_portal_user!(user, client, customer: true)

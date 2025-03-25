@@ -1,7 +1,7 @@
 require "test_helper"
 
 class SyncIssueToTriageJobTest < ActiveJob::TestCase
-  test "creates issue in triage zammad and sets its external ID" do
+  test "creates issue in triage zammad and sets its external ID if not yet created" do
     issue = issues(:without_triage_external_id)
 
     triage_zammad_client_mock = Minitest::Mock.new
@@ -22,7 +22,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     assert_equal 99, issue.reload.triage_external_id
   end
 
-  test "creates issue with its author in triage zammad and sets external IDs" do
+  test "creates issue with its author in triage zammad and sets external IDs if not yet created" do
     issue = issues(:without_triage_external_id)
     issue.update!(author: users(:two))
 
@@ -46,7 +46,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     assert_equal 99, issue.reload.triage_external_id
   end
 
-  test "creates issue with its owner in triage zammad and sets external IDs" do
+  test "creates issue with its owner in triage zammad and sets external IDs if not yet created" do
     issue = issues(:without_triage_external_id)
     issue.update!(owner: legacy_agents(:two))
 
@@ -74,5 +74,19 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
 
     assert_equal 9, issue.owner.reload.zammad_identifier
     assert_equal 99, issue.reload.triage_external_id
+  end
+
+  test "updates existing issue attributes" do
+    issue = issues(:one)
+    issue_last_synced_at = issue.last_synced_at
+
+    triage_zammad_client_mock = Minitest::Mock.new
+    triage_zammad_client_mock.expect :update_ticket!, nil, [ issue.triage_external_id, issue.attributes.merge!({ "title" => "Triáž: MyString" }) ]
+
+    ZammadApiClient.stub :new, triage_zammad_client_mock do
+      SyncIssueToTriageJob.perform_now(issue, client: triage_zammad_client_mock)
+    end
+
+    assert_not_equal issue_last_synced_at, issue.last_synced_at
   end
 end
