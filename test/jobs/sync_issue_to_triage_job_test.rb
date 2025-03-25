@@ -5,7 +5,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     issue = issues(:without_triage_external_id)
 
     triage_zammad_client_mock = Minitest::Mock.new
-    triage_zammad_client_mock.expect :create_ticket!, 99, [issue],
+    triage_zammad_client_mock.expect :create_ticket!, 99, [ issue ],
       **{
         issue_type: "issue",
         process_type: "portal_issue_triage",
@@ -27,8 +27,8 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     issue.update!(author: users(:two))
 
     triage_zammad_client_mock = Minitest::Mock.new
-    triage_zammad_client_mock.expect :create_customer!, 9, [issue.author]
-    triage_zammad_client_mock.expect :create_ticket!, 99, [issue],
+    triage_zammad_client_mock.expect :create_customer!, 9, [ issue.author ]
+    triage_zammad_client_mock.expect :create_ticket!, 99, [ issue ],
       **{
         issue_type: "issue",
         process_type: "portal_issue_triage",
@@ -51,14 +51,14 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     issue.update!(owner: legacy_agents(:two))
 
     triage_zammad_client_mock = Minitest::Mock.new
-    triage_zammad_client_mock.expect :create_agent!, 9, [issue.owner]
+    triage_zammad_client_mock.expect :create_agent!, 9, [ issue.owner ]
     triage_zammad_client_mock.expect :get_groups, [
       OpenStruct.new(name: "Dobrovoľníci::Nitra"),
       OpenStruct.new(name: "Dobrovoľníci::Trenčín"),
       OpenStruct.new(name: "Dobrovoľníci::Prešov")
     ]
-    triage_zammad_client_mock.expect :add_user_to_group, nil, [9, "Dobrovoľníci::Trenčín"]
-    triage_zammad_client_mock.expect :create_ticket!, 99, [issue],
+    triage_zammad_client_mock.expect :add_user_to_group, nil, [ 9, "Dobrovoľníci::Trenčín" ]
+    triage_zammad_client_mock.expect :create_ticket!, 99, [ issue ],
       **{
         issue_type: "issue",
         process_type: "portal_issue_triage",
