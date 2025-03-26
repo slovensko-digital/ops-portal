@@ -42,7 +42,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
       SyncIssueToTriageJob.perform_now(issue, client: triage_zammad_client_mock)
     end
 
-    assert_equal 9, issue.author.reload.zammad_identifier
+    assert_equal 9, issue.author.reload.external_id
     assert_equal 99, issue.reload.triage_external_id
   end
 
@@ -72,7 +72,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
       SyncIssueToTriageJob.perform_now(issue, client: triage_zammad_client_mock)
     end
 
-    assert_equal 9, issue.owner.reload.zammad_identifier
+    assert_equal 9, issue.owner.reload.external_id
     assert_equal 99, issue.reload.triage_external_id
   end
 

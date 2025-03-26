@@ -1,6 +1,6 @@
 one:
   email: firstname.lastname@example.org
-  zammad_identifier: 1
+  external_id: 1
   firstname: Firstname
   lastname: Lastname
   password_hash: <%= RodauthApp.rodauth.allocate.password_hash("password") %>

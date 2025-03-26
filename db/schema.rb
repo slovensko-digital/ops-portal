@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_26_052916) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
   end
 
   create_table "connector_users", force: :cascade do |t|
-    t.integer "zammad_identifier"
+    t.integer "external_id"
     t.uuid "uuid"
     t.string "firstname"
     t.string "lastname"
@@ -99,7 +99,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
     t.datetime "updated_at", null: false
     t.bigint "connector_tenant_id", null: false
     t.index ["connector_tenant_id"], name: "index_connector_users_on_connector_tenant_id"
-    t.index ["zammad_identifier"], name: "index_connector_users_on_zammad_identifier", unique: true
+    t.index ["external_id"], name: "index_connector_users_on_external_id", unique: true
   end
 
   create_table "districts", force: :cascade do |t|
@@ -418,7 +418,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
     t.string "firstname"
     t.string "lastname"
     t.integer "legacy_id"
-    t.integer "zammad_identifier"
+    t.integer "external_id"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.boolean "banned", default: false
     t.string "login"
@@ -448,9 +448,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
     t.boolean "email_notifiable", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["external_id"], name: "index_legacy_agents_on_external_id", unique: true
     t.index ["municipality_id"], name: "index_legacy_agents_on_municipality_id"
     t.index ["street_id"], name: "index_legacy_agents_on_street_id"
-    t.index ["zammad_identifier"], name: "index_legacy_agents_on_zammad_identifier", unique: true
   end
 
   create_table "municipalities", force: :cascade do |t|
@@ -635,7 +635,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
     t.citext "email", null: false
     t.string "firstname"
     t.string "lastname"
-    t.integer "zammad_identifier"
+    t.integer "external_id"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.boolean "banned", default: false
     t.string "login"
@@ -667,10 +667,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_203813) do
     t.integer "legacy_id"
     t.integer "status", default: 1, null: false
     t.index ["email"], name: "index_users_on_email", unique: true, where: "(status = ANY (ARRAY[1, 2]))"
+    t.index ["external_id"], name: "index_users_on_external_id", unique: true
     t.index ["legacy_id"], name: "index_users_on_legacy_id", unique: true
     t.index ["municipality_id"], name: "index_users_on_municipality_id"
     t.index ["street_id"], name: "index_users_on_street_id"
-    t.index ["zammad_identifier"], name: "index_users_on_zammad_identifier", unique: true
     t.check_constraint "email ~ '^[^,;@ \r\n]+@[^,@; \r\n]+\\.[^,@; \r\n]+$'::citext", name: "valid_email"
   end
 

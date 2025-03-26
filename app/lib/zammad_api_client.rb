@@ -36,8 +36,8 @@ class ZammadApiClient
       issue_type: issue_type,
       title: title,
       group: group,
-      customer_id: issue.author.zammad_identifier,
-      origin_by_id: issue.author.zammad_identifier,
+      customer_id: issue.author.external_id,
+      origin_by_id: issue.author.external_id,
       municipality: build_ticket_municipality(issue),
       address_county: issue.address_county,
       address_city: issue.address_city,
@@ -53,12 +53,12 @@ class ZammadApiClient
       state: issue.state.name,
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: responsible_subject,
-      owner_id: issue.owner&.zammad_identifier,
+      owner_id: issue.owner&.external_id,
       created_at: issue.reported_at,
       likes_count: likes_count,
       origin: DEFAULT_ORIGIN,
       article: {
-        origin_by_id: issue.author.zammad_identifier,
+        origin_by_id: issue.author.external_id,
         body: description,
         type: DEFAULT_ARTICLE_TYPE,
         attachments: issue.photos.map do |photo|
@@ -110,7 +110,7 @@ class ZammadApiClient
     ticket = @client.ticket.find(issue_id)
 
     article = ticket.article(
-      origin_by_id: activity_object.author&.zammad_identifier,
+      origin_by_id: activity_object.author&.external_id,
       content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
       body: activity_object.activity_body,
       type: "web",
@@ -241,12 +241,12 @@ class ZammadApiClient
   end
 
   def find_or_create_user(user_id)
-    user = User.find_by(zammad_identifier: user_id)
+    user = User.find_by(external_id: user_id)
     return user if user
 
     u = get_user(user_id)
     # TODO why are we creating a user from zammad in portal? this should never happen
-    User.create!(zammad_identifier: u.id, email: u.email, firstname: u.firstname, lastname: u.lastname)
+    User.create!(external_id: u.id, email: u.email, firstname: u.firstname, lastname: u.lastname)
   end
 
   def find_zammad_category(issue_category)

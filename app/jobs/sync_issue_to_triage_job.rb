@@ -1,13 +1,13 @@
 class SyncIssueToTriageJob < ApplicationJob
   def perform(issue, client: TriageZammadEnvironment.client)
     # TODO actually do a sync (insert/update & handle triage_process/resolution_process)
-    find_or_create_triage_portal_user!(issue.author, client) unless issue.author.zammad_identifier
+    find_or_create_triage_portal_user!(issue.author, client) unless issue.author.external_id
 
     if issue.owner
-      find_or_create_triage_portal_user!(issue.owner, client, customer: false) unless issue.owner.zammad_identifier
+      find_or_create_triage_portal_user!(issue.owner, client, customer: false) unless issue.owner.external_id
 
       zammad_group = find_municipality_group(issue, client)
-      client.add_user_to_group(issue.owner.zammad_identifier, zammad_group.name)
+      client.add_user_to_group(issue.owner.external_id, zammad_group.name)
     end
 
     process_type = ISSUE_STATE_TO_PROCESS_TYPE.fetch(issue.state.name)
@@ -44,9 +44,9 @@ class SyncIssueToTriageJob < ApplicationJob
   end
 
   def find_or_create_triage_portal_user!(user, client, customer: true)
-    return user if user.zammad_identifier
+    return user if user.external_id
 
-    user.zammad_identifier = if customer
+    user.external_id = if customer
      client.create_customer!(user)
     else
      client.create_agent!(user)
