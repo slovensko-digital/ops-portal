@@ -81,12 +81,30 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     issue_last_synced_at = issue.last_synced_at
 
     triage_zammad_client_mock = Minitest::Mock.new
-    triage_zammad_client_mock.expect :update_ticket!, nil, [ issue.triage_external_id, issue.attributes.merge!({ "title" => "Triáž: MyString" }) ]
+    triage_zammad_client_mock.expect :update_ticket_from_issue!, nil, [ issue.triage_external_id, issue],
+      **{
+        title: "Triáž: MyString",
+        likes_count: 999
+      }
 
     ZammadApiClient.stub :new, triage_zammad_client_mock do
       SyncIssueToTriageJob.perform_now(issue, client: triage_zammad_client_mock)
     end
 
     assert_not_equal issue_last_synced_at, issue.last_synced_at
+  end
+
+  test "import fails if zammad not in import mode" do
+    issue = issues(:without_triage_external_id)
+
+    triage_zammad_api_mock = Minitest::Mock.new
+    triage_zammad_api_mock.expect :check_import_mode!, StandardError.new("Import mode OFF")
+    ZammadApi.stub :new, triage_zammad_api_mock do
+      assert_raise do
+        SyncIssueToTriageJob.perform_now(issue, api: triage_zammad_api_mock)
+      end
+    end
+
+    assert_equal nil, issue.triage_external_id
   end
 end
