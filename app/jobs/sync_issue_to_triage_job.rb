@@ -12,9 +12,10 @@ class SyncIssueToTriageJob < ApplicationJob
 
     process_type = ISSUE_STATE_TO_PROCESS_TYPE.fetch(issue.state.name)
     title = process_type == "portal_issue_triage" ? "Triáž: #{issue.title}" : issue.title
+    likes_count = issue.legacy_data ? issue.legacy_data["like_count"] : 999 # TODO handle also non legacy
 
     if issue.triage_external_id.present?
-      client.update_ticket!(issue.triage_external_id, issue.attributes.merge!({ "title" => title }))
+      client.update_ticket_from_issue!(issue.triage_external_id, issue, title: title, likes_count: likes_count)
       issue.update!(
         last_synced_at: Time.now
       )
@@ -22,7 +23,6 @@ class SyncIssueToTriageJob < ApplicationJob
       issue_type = "issue" # TODO fix in import ... add issue.issue_type
       # TODO map non-legacy responsible subjects by ID?
       responsible_subject = issue.responsible_subject&.legacy_id || issue.responsible_subject&.id # TODO map to responsible_subjects in triage
-      likes_count = issue.legacy_data ? issue.legacy_data["like_count"] : 999 # TODO handle also non legacy
 
       ticket_id = client.create_ticket_from_issue!(
         issue,

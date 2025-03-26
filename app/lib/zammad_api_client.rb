@@ -91,6 +91,29 @@ class ZammadApiClient
     ticket.save
   end
 
+  def update_ticket_from_issue!(ticket_id, issue, title:, likes_count:)
+    ticket = @client.ticket.find(ticket_id)
+
+    ticket.title = title
+    ticket.municipality = build_ticket_municipality(issue)
+    ticket.address_county = issue.address_county
+    ticket.address_city = issue.address_city
+    ticket.address_city_district = issue.address_city_district
+    ticket.address_suburb = issue.address_suburb
+    ticket.address_village = issue.address_village
+    ticket.address_town = issue.address_town
+    ticket.address_road = issue.street&.name || issue.address_road
+    ticket.address_house_number = issue.address_house_number
+    ticket.state = issue.state.name
+    ticket.likes_count = likes_count
+
+    ticket.save
+
+    article = ticket.articles.first
+    article.body = issue.description
+    article.save
+  end
+
   def get_article(ticket_id, article_id)
     begin
       ticket = @client.ticket.find(ticket_id)
