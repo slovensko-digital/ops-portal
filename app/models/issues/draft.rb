@@ -64,6 +64,7 @@ class Issues::Draft < ApplicationRecord
       address_town: address_town,
       address_road: address_road,
       address_house_number: address_house_number,
+      address_postcode: address_postcode,
       category: category,
       subcategory: subcategory,
       subtype: subtype,
