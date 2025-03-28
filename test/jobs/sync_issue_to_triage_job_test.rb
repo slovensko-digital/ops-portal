@@ -16,6 +16,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
         process_type: "portal_issue_triage",
         title: "Triáž: New issue",
         description: "New issue description",
+        portal_url: "#{ENV.fetch("APP_HOST")}/issues/#{issue.id}",
         responsible_subject: nil,
         likes_count: 999,
         group: "Dobrovoľníci::Trenčín"
@@ -45,6 +46,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
         process_type: "portal_issue_triage",
         title: "Triáž: New issue",
         description: "New issue description",
+        portal_url: "#{ENV.fetch("APP_HOST")}/issues/#{issue.id}",
         responsible_subject: nil,
         likes_count: 999,
         group: "Dobrovoľníci::Trenčín"
@@ -76,6 +78,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
         process_type: "portal_issue_triage",
         title: "Triáž: New issue",
         description: "New issue description",
+        portal_url: "#{ENV.fetch("APP_HOST")}/issues/#{issue.id}",
         responsible_subject: nil,
         likes_count: 999,
         group: "Dobrovoľníci::Trenčín"

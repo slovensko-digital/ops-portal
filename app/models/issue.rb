@@ -19,7 +19,6 @@
 #  latitude                 :float
 #  legacy_data              :jsonb
 #  longitude                :float
-#  portal_url               :string
 #  reported_at              :datetime         not null
 #  title                    :string           not null
 #  created_at               :datetime         not null
@@ -59,10 +58,6 @@ class Issue < ApplicationRecord
 
   # TODO even during initial import?
   after_create :schedule_sync_to_triage
-
-  after_create do
-    self.update!(portal_url: Rails.application.routes.url_helpers.issue_url(self, host: ENV.fetch("APP_HOST")))
-  end
 
   def schedule_sync_to_triage
     SyncIssueToTriageJob.perform_later(self)

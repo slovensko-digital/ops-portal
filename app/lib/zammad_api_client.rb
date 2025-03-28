@@ -30,7 +30,7 @@ class ZammadApiClient
     })
   end
 
-  def create_ticket_from_issue!(issue, process_type:, issue_type:, title:, description:, responsible_subject:, likes_count:, group: DEFAULT_GROUP)
+  def create_ticket_from_issue!(issue, process_type:, issue_type:, title:, description:, portal_url:, responsible_subject:, likes_count:, group: DEFAULT_GROUP)
     ticket = @client.ticket.create(
       process_type: process_type,
       issue_type: issue_type,
@@ -55,7 +55,7 @@ class ZammadApiClient
       subcategory: issue.subcategory&.name,
       subtype: issue.subtype&.name,
       state: issue.state.name,
-      portal_url: issue.portal_url,
+      portal_url: portal_url,
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: responsible_subject,
       owner_id: issue.owner&.external_id,

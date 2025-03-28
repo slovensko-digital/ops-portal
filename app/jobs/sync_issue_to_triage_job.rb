@@ -32,6 +32,7 @@ class SyncIssueToTriageJob < ApplicationJob
         process_type: process_type,
         title: title,
         description: issue.description.presence || "(bez popisu)",
+        portal_url: Rails.application.routes.url_helpers.issue_url(issue, host: ENV.fetch("APP_HOST")),
         responsible_subject: responsible_subject,
         likes_count: likes_count,
         group: zammad_group.name
