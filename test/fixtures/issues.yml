@@ -31,3 +31,4 @@ without_triage_external_id:
   category: one
   state: zero
   municipality: tn
+  responsible_subject: one
