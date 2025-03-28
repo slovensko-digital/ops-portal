@@ -10,7 +10,7 @@ class Cms::PagesTest < ApplicationSystemTestCase
 
   test "visiting page the index" do
     visit cms_page_path(@category.slug)
-    assert_selector "h1", text: "Novinky"
+    assert_selector "h1", text: "Aktuality"
 
     assert_text "New portal"
     assert_text "Holiday Hours Notice"
