@@ -114,9 +114,9 @@ class ZammadApiClient
     ticket.address_suburb = issue.address_suburb
     ticket.address_village = issue.address_village
     ticket.address_town = issue.address_town
-    ticket.address_road = issue.street&.name || issue.address_road
+    ticket.address_street =  issue.address_road
     ticket.address_house_number = issue.address_house_number
-    ticket.ops_state = issue.state.name
+    ticket.ops_state = issue.state.key
     ticket.likes_count = likes_count
 
     ticket.save
