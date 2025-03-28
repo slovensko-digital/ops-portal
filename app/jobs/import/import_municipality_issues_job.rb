@@ -61,6 +61,7 @@ module Import
               organization_unit_id2: legacy_record.organizational_unit_id2
             },
             longitude: legacy_record.map_x,
+            portal_url: "", # TODO value
             reported_at: convert_timestamp_value(legacy_record.posted_time),
             title: legacy_record.heading,
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),

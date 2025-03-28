@@ -39,21 +39,23 @@ class ZammadApiClient
       customer_id: issue.author.external_id,
       origin_by_id: issue.author.external_id,
       address_state: issue.address_state,
-      address_county: issue.address_county,
-      address_city: issue.address_city,
+      address_county: issue.address_county || issue.municipality&.district&.name,
+      address_city: issue.address_city || issue.municipality,
       address_city_district: issue.address_city_district,
+      address_postcode: issue.address_postcode,
       address_suburb: issue.address_suburb,
       address_village: issue.address_village,
-      address_town: issue.address_town, # TODO no such attribute in triage zammad
-      address_road: issue.street&.name || issue.address_road,
+      address_town: issue.address_town || issue.municipality_district, # TODO no such attribute in triage zammad
+      address_road: issue.address_road || issue.legacy_data["street"],
       address_house_number: issue.address_house_number,
       address_lat: issue.latitude,
       address_lon: issue.longitude,
       municipality: build_ticket_municipality(issue),
       category: issue.category&.triage_external_id || issue.category.name,
-      subcategory: issue.subcategory.name,
-      subtype: issue.subtype.name,
+      subcategory: issue.subcategory&.name,
+      subtype: issue.subtype&.name,
       state: issue.state.name,
+      portal_url: issue.portal_url,
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: responsible_subject,
       owner_id: issue.owner&.external_id,
@@ -104,6 +106,7 @@ class ZammadApiClient
     ticket.address_county = issue.address_county
     ticket.address_city = issue.address_city
     ticket.address_city_district = issue.address_city_district
+    ticket.address_postcode = issue.address_postcode
     ticket.address_suburb = issue.address_suburb
     ticket.address_village = issue.address_village
     ticket.address_town = issue.address_town
@@ -213,7 +216,7 @@ class ZammadApiClient
       raise e unless e.message.include? "is already used for another user."
 
       result = find_zammad_user(user.email)
-      raise "Can't find nor create triage zammad user with email: #{email}" unless result
+      raise "Can't find nor create triage zammad user with email: #{user.email}" unless result
       result
     end
   end
@@ -230,8 +233,8 @@ class ZammadApiClient
     rescue RuntimeError => e
       raise e unless e.message.include? "is already used for another user."
 
-      result = find_zammad_user email
-      raise "Can't find nor create triage zammad user with email: #{email}" unless result
+      result = find_zammad_user(user.email)
+      raise "Can't find nor create triage zammad user with email: #{user.email}" unless result
       result
     end
   end
@@ -318,6 +321,7 @@ class ZammadApiClient
       address_county: ticket.address_county,
       address_city: ticket.address_city || ticket.address_village,
       address_city_district: ticket.address_city_district,
+      address_postcode: ticket.address_postcode,
       address_suburb: ticket.address_suburb,
       address_road: ticket.address_road,
       address_house_number: ticket.address_house_number,

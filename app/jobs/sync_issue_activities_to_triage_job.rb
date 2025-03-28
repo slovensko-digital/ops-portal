@@ -5,7 +5,7 @@ class SyncIssueActivitiesToTriageJob < ApplicationJob
     issue.activities.includes(:activity_object).find_each do |activity|
       next if activity.activity_object.triage_external_id.present?
 
-      find_or_create_triage_portal_user!(activity.activity_object.author, client) unless activity.activity_object.author&.external_id
+      find_or_create_triage_portal_user!(activity.activity_object.author, client) if activity.activity_object.author && !activity.activity_object.author&.external_id
 
       article_id = client.create_article!(issue.triage_external_id, activity.activity_object)
 

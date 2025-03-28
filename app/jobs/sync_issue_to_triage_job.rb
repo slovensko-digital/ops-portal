@@ -5,10 +5,10 @@ class SyncIssueToTriageJob < ApplicationJob
     # TODO actually do a sync (insert/update & handle triage_process/resolution_process)
     find_or_create_triage_portal_user!(issue.author, client) unless issue.author.external_id
 
+    zammad_group = find_municipality_group(issue, client)
+
     if issue.owner
       find_or_create_triage_portal_user!(issue.owner, client, customer: false) unless issue.owner.external_id
-
-      zammad_group = find_municipality_group(issue, client)
       client.add_user_to_group(issue.owner.external_id, zammad_group.name)
     end
 
@@ -33,7 +33,8 @@ class SyncIssueToTriageJob < ApplicationJob
         title: title,
         description: issue.description.presence || "(bez popisu)",
         responsible_subject: responsible_subject,
-        likes_count: likes_count
+        likes_count: likes_count,
+        group: zammad_group.name
       )
 
       raise unless ticket_id

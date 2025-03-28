@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_26_052916) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_28_070742) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -217,7 +217,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_052916) do
     t.bigint "state_id"
     t.bigint "municipality_id"
     t.integer "legacy_id"
-    t.bigint "street_id"
     t.bigint "municipality_district_id"
     t.bigint "responsible_subject_id"
     t.bigint "subcategory_id"
@@ -232,6 +231,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_052916) do
     t.string "address_town"
     t.string "address_road"
     t.string "address_house_number"
+    t.string "portal_url"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["legacy_id"], name: "index_issues_on_legacy_id", unique: true
@@ -240,7 +240,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_052916) do
     t.index ["owner_id"], name: "index_issues_on_owner_id"
     t.index ["responsible_subject_id"], name: "index_issues_on_responsible_subject_id"
     t.index ["state_id"], name: "index_issues_on_state_id"
-    t.index ["street_id"], name: "index_issues_on_street_id"
     t.index ["subcategory_id"], name: "index_issues_on_subcategory_id"
     t.index ["subtype_id"], name: "index_issues_on_subtype_id"
   end
@@ -687,7 +686,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_052916) do
   add_foreign_key "issues", "legacy_agents", column: "owner_id"
   add_foreign_key "issues", "municipality_districts"
   add_foreign_key "issues", "responsible_subjects"
-  add_foreign_key "issues", "streets"
   add_foreign_key "issues", "users", column: "author_id"
   add_foreign_key "issues_activities", "issues"
   add_foreign_key "issues_comments", "issues_activities", column: "activity_id"

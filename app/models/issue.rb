@@ -18,6 +18,7 @@
 #  latitude                 :float
 #  legacy_data              :jsonb
 #  longitude                :float
+#  portal_url               :string
 #  reported_at              :datetime         not null
 #  title                    :string           not null
 #  created_at               :datetime         not null
@@ -30,7 +31,6 @@
 #  owner_id                 :bigint
 #  responsible_subject_id   :bigint
 #  state_id                 :bigint
-#  street_id                :bigint
 #  subcategory_id           :bigint
 #  subtype_id               :bigint
 #  triage_external_id       :integer
@@ -44,7 +44,6 @@ class Issue < ApplicationRecord
   belongs_to :subtype, class_name: "Issues::Subtype", optional: true
   belongs_to :municipality, optional: true
   belongs_to :municipality_district, optional: true
-  belongs_to :street, optional: true
   belongs_to :responsible_subject, optional: true
   belongs_to :state, class_name: "Issues::State", optional: true
 
@@ -57,6 +56,7 @@ class Issue < ApplicationRecord
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
 
+  # TODO even during initial import?
   after_create :schedule_sync_to_triage
 
   def schedule_sync_to_triage
