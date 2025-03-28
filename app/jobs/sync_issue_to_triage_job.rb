@@ -23,8 +23,6 @@ class SyncIssueToTriageJob < ApplicationJob
       )
     else
       issue_type = "issue" # TODO fix in import ... add issue.issue_type
-      # TODO map non-legacy responsible subjects by ID?
-      responsible_subject = issue.responsible_subject&.legacy_id || issue.responsible_subject&.id # TODO map to responsible_subjects in triage
 
       ticket_id = client.create_ticket_from_issue!(
         issue,
@@ -33,7 +31,8 @@ class SyncIssueToTriageJob < ApplicationJob
         title: title,
         description: issue.description.presence || "(bez popisu)",
         portal_url: Rails.application.routes.url_helpers.issue_url(issue, host: ENV.fetch("APP_HOST")),
-        responsible_subject: responsible_subject,
+        responsible_subject_name: issue.responsible_subject&.subject_name,
+        responsible_subject_id: issue.responsible_subject&.legacy_id || issue.responsible_subject&.id,
         likes_count: likes_count,
         group: zammad_group.name
       )
