@@ -30,7 +30,7 @@ class ZammadApiClient
     })
   end
 
-  def create_ticket_from_issue!(issue, process_type:, issue_type:, title:, description:, portal_url:, responsible_subject_name:, responsible_subject_id:, likes_count:, group: DEFAULT_GROUP)
+  def create_ticket_from_issue!(issue, process_type:, issue_type:, title:, description:, portal_url:, responsible_subject:, likes_count:, group: DEFAULT_GROUP)
     ticket = @client.ticket.create(
       process_type: process_type,
       issue_type: issue_type,
@@ -46,7 +46,7 @@ class ZammadApiClient
       address_suburb: issue.address_suburb,
       address_village: issue.address_village,
       address_town: issue.address_town, # TODO no such attribute in triage zammad
-      address_road: issue.address_road,
+      address_street: issue.address_road,
       address_house_number: issue.address_house_number,
       address_lat: issue.latitude,
       address_lon: issue.longitude,
@@ -54,12 +54,13 @@ class ZammadApiClient
       category: issue.category&.triage_external_id || issue.category.name,
       subcategory: issue.subcategory&.name,
       subtype: issue.subtype&.name,
-      ops_state: issue.state.name,
+      ops_state: issue.state.key,
+      state: issue.state.name,
       portal_url: portal_url,
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: {
-        "label"=> responsible_subject_name,
-        "value"=> responsible_subject_id
+        "label"=> responsible_subject&.subject_name,
+        "value"=> responsible_subject&.id
       },
       owner_id: issue.owner&.external_id,
       created_at: issue.reported_at,

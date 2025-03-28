@@ -17,8 +17,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
         title: "Triáž: New issue",
         description: "New issue description",
         portal_url: "#{ENV.fetch("APP_HOST")}/issues/#{issue.id}",
-        responsible_subject_name: "MÚ Staré Mesto",
-        responsible_subject_id: responsible_subjects(:one).id,
+        responsible_subject: responsible_subjects(:one),
         likes_count: 999,
         group: "Dobrovoľníci::Trenčín"
       }
@@ -48,8 +47,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
         title: "Triáž: New issue",
         description: "New issue description",
         portal_url: "#{ENV.fetch("APP_HOST")}/issues/#{issue.id}",
-        responsible_subject_name: "MÚ Staré Mesto",
-        responsible_subject_id: responsible_subjects(:one).id,
+        responsible_subject: responsible_subjects(:one),
         likes_count: 999,
         group: "Dobrovoľníci::Trenčín"
       }
@@ -81,8 +79,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
         title: "Triáž: New issue",
         description: "New issue description",
         portal_url: "#{ENV.fetch("APP_HOST")}/issues/#{issue.id}",
-        responsible_subject_name: "MÚ Staré Mesto",
-        responsible_subject_id: responsible_subjects(:one).id,
+        responsible_subject: responsible_subjects(:one),
         likes_count: 999,
         group: "Dobrovoľníci::Trenčín"
       }
