@@ -37,14 +37,14 @@ class Cms::Page < ApplicationRecord
       page = category.find_page_with_slug(slugs.last)
       return nil if page.nil?
 
-      { category: category, page: page }
+      [ category, page ]
     elsif slugs.count == 1
       category = Cms::Category.find_by(parent_category_id: root_category, slug: slugs.first)
-      return { category: category, page: nil } if category
+      return [ category, nil ] if category
 
       page = root_category.find_page_with_slug(slugs.first)
       if page
-        { category: nil, page: page }
+        [ nil, page ]
       else
         nil
       end
