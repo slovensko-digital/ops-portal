@@ -7,6 +7,7 @@
 #  address_city_district    :string
 #  address_county           :string
 #  address_house_number     :string
+#  address_postcode         :string
 #  address_road             :string
 #  address_state            :string
 #  address_suburb           :string

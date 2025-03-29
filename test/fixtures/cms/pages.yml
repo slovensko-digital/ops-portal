@@ -3,7 +3,7 @@
 kontakt:
   title: Kontakt
   slug: kontakt
-  category: cms
+  category_id: <%= ENV["CMS_ROOT_CATEGORY_ID"] %>
   text: "<p>Ask any question</p>"
   tags: ["published"]
   raw: {}

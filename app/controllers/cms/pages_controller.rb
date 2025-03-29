@@ -7,27 +7,18 @@ class Cms::PagesController < ApplicationController
 
     root_category = Cms::Category.root_cms
 
-    if slugs.count == 2
-      @category = Cms::Category.find_by(parent_category_id: root_category, slug: slugs.first)
-      @page = load_page(@category, slugs.last)
+    result = Cms::Page.find_by_path(root_category, slugs)
 
-      raise_not_found if @page.nil? || @category.nil?
-
-      render "cms/pages/show"
-    elsif slugs.count == 1
-      @category = Cms::Category.find_by(parent_category_id: root_category, slug: slugs.first)
-      @page = load_page(root_category, slugs.first)
-
-      if @category
-        @pages = load_pages(@category)
-        render "cms/pages/index"
-      elsif @page
-        render "cms/pages/show"
-      else
-        raise_not_found
-      end
-    else
+    if result.nil?
       raise_not_found
+    else
+      @category, @page = result.values_at(:category, :page)
+    end
+
+    if @page
+      render "cms/pages/show"
+    else
+      @pages = load_pages(@category)
     end
   end
 

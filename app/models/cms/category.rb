@@ -17,7 +17,11 @@ class Cms::Category < ApplicationRecord
   has_many :pages, class_name: "Cms::Page"
 
   def self.root_cms
-    find_by(slug: "cms") || raise(Exception.new("Missing required data: Cms::Category with `cms` slug."))
+    find_by(id: ENV["CMS_ROOT_CATEGORY_ID"]) || raise(Exception.new("Missing required cms root category"))
+  end
+
+  def find_page_with_slug(slug)
+    pages.published.find_by(slug: slug)
   end
 
   def to_param

@@ -1,6 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 cms:
+  id: <%= ENV["CMS_ROOT_CATEGORY_ID"] %>
   name: CMS
   slug: cms
   raw: {}
@@ -8,5 +9,5 @@ cms:
 aktuality:
   name: Aktuality
   slug: aktuality
-  parent_category: cms
+  parent_category_id: <%= ENV["CMS_ROOT_CATEGORY_ID"] %>
   raw: {}

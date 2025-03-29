@@ -87,14 +87,13 @@ end
 end
 
 cms_root = Cms::Category.find_or_create_by!(
-  id: 15,
+  id: ENV["CMS_ROOT_CATEGORY_ID"],
   slug: "cms",
 ) do |category|
   category.name = "CMS"
 end
 
 cms_novinky = Cms::Category.find_or_create_by!(
-  id: 16,
   slug: "aktuality",
   parent_category_id: cms_root.id,
 ) do |category|
