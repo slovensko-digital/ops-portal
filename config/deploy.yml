@@ -60,6 +60,9 @@ registry:
 builder:
   arch: amd64
   remote: ssh://kamal@dev.slovensko.digital
+  cache:
+    type: registry
+    options: mode=max,image-manifest=true,oci-mediatypes=true
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
