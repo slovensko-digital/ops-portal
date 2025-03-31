@@ -1,0 +1,17 @@
+<div class="max-w-7xl mx-auto p-6">
+  <h1 class="text-3xl font-bold text-gray-900 mb-6"><%= @category.name %></h1>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <% @pages.each do |page| %>
+      <!-- News Box -->
+      <%= link_to cms_page_path([@category.slug, page.slug]), title: page.title, class: "bg-white p-6 shadow rounded-lg block transition duration-300 hover:bg-gray-100 group" do %>
+        <p class="text-gray-500 text-sm"><%= format_date page.created_at %></p>
+        <h3 class="text-lg font-bold text-gray-900 mt-2 transition duration-300 group-hover:underline"><%= page.title %></h3>
+        <div class="mt-4 flex items-center justify-start">
+          <span class="w-10 h-10 bg-blue-100 text-gray-900 rounded-full flex items-center justify-center text-xl transition duration-300 group-hover:bg-blue-600 group-hover:text-white">→</span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%= ops_paginate @pages %>
+</div>

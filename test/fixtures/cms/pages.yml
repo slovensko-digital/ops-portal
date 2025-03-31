@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+kontakt:
+  title: Kontakt
+  slug: kontakt
+  category_id: <%= ENV["CMS_ROOT_CATEGORY_ID"] %>
+  text: "<p>Ask any question</p>"
+  tags: ["published"]
+  raw: {}
+
+new_portal:
+  title: New portal
+  slug: new-portal
+  category: aktuality
+  text: "<p>We have launched the new version</p>"
+  tags: ["published"]
+  raw: {}
+
+holiday_notice:
+  title: Holiday Hours Notice
+  slug: holiday-hours-notice
+  category: aktuality
+  text: "<p>Check out our adjusted operating hours for the upcoming holiday season</p>"
+  tags: ["published"]
+  raw: {}
+
+older_post:
+  title: Not published post
+  slug: not-published-post
+  category: aktuality
+  text: "<p>This is obsolete and should not be displayed</p>"
+  tags: []
+  raw: {}

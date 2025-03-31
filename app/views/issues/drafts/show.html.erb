@@ -1,33 +1,35 @@
-<div id="<%= dom_id @draft %>">
-  <h1 class="my-5 text-2xl"><%= @draft.title %></h1>
+<div class="mx-auto md:w-2/3 w-full p-6">
+  <div id="<%= dom_id @draft %>">
+    <h1 class="my-5 text-2xl"><%= @draft.title %></h1>
 
-  <p class="my-5">
-    <%= @draft.description %>
-  </p>
+    <p class="my-5">
+      <%= @draft.description %>
+    </p>
 
-  <p class="my-5">
-    <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= @draft.category.name %></span>
-    <% if @draft.subcategory.present? %><span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= @draft.subcategory.name %></span><% end %>
-    <% if @draft.subtype.present? %><span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= @draft.subtype.name %></span><% end %>
-  </p>
+    <p class="my-5">
+      <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= @draft.category.name %></span>
+      <% if @draft.subcategory.present? %><span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= @draft.subcategory.name %></span><% end %>
+      <% if @draft.subtype.present? %><span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= @draft.subtype.name %></span><% end %>
+    </p>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Adresa:</strong>
-    <%= [@draft.address_city, @draft.address_city_district, @draft.address_road].compact.join(', ') %>
-  </p>
+    <p class="my-5">
+      <strong class="block font-medium mb-1">Adresa:</strong>
+      <%= [@draft.address_city, @draft.address_city_district, @draft.address_road].compact.join(', ') %>
+    </p>
 
-  <div class="my-5">
-    <% @draft.photos.each do |photo| %>
-      <div><%= image_tag photo.variant(:thumb), class: 'border shadow rounded-md' %></div>
-    <% end %>
+    <div class="my-5">
+      <% @draft.photos.each do |photo| %>
+        <div><%= image_tag photo.variant(:thumb), class: 'border shadow rounded-md' %></div>
+      <% end %>
+    </div>
+
+    <p class="my-5">
+      <strong class="block font-medium mb-1">Author:</strong>
+      <%= "#{@draft.author.firstname} #{@draft.author.lastname}" %>
+    </p>
   </div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Author:</strong>
-    <%= "#{@draft.author.firstname} #{@draft.author.lastname}" %>
-  </p>
-</div>
-
-<div class="mt-20">
-  <%= link_to "Vytvoriť nový podnet", new_issues_draft_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+  <div class="mt-20">
+    <%= link_to "Vytvoriť nový podnet", new_issues_draft_path, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+  </div>
 </div>

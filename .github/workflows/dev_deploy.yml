@@ -55,5 +55,6 @@ jobs:
           FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
           GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          CMS_ROOT_CATEGORY_ID: ${{ vars.CMS_ROOT_CATEGORY_ID }}
 
         run: kamal deploy -d staging

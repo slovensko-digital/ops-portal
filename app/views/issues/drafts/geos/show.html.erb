@@ -1,44 +1,46 @@
-<h1 class="font-bold text-4xl">Geo</h1>
-<%= form_with(model: @draft, class: "contents", url: issues_draft_geo_path(@draft), data: { controller: :geo }) do |form| %>
-  <div class="my-5">
-    <%= button_tag "Load current position", type: :button, data: { action: "geo#locate" }, class: "rounded-lg py-3 px-5 bg-gray-600 text-white inline-block font-medium cursor-pointer" %>
-  </div>
-
-  <div data-geo-target="map" class="my-5 h-3/4 block shadow rounded-md border border-gray-400 outline-none">
-    <div class="top-1/2 left-1/2 w-8 -ml-4 h-8 -mt-4 leading-8 relative z-50 text-4xl text-center align-middle">&#8982;</div>
-  </div>
-
-  <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
-  <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
-  <%= form.hidden_field :address_house_number, data: { "geo-target": "addressHouseNumber" } %>
-
-  <%= form.hidden_field :address_neighbourhood, data: { "geo-target": "addressNeighbourhood" } %>
-
-  <%= form.hidden_field :address_suburb, data: { "geo-target": "addressSuburb" } %>
-  <%= form.hidden_field :address_city_district, data: { "geo-target": "addressCityDistrict" } %>
-  <%= form.hidden_field :address_town, data: { "geo-target": "addressTown" } %>
-
-  <%= form.hidden_field :address_village, data: { "geo-target": "addressVillage" } %>
-  <%= form.hidden_field :address_county, data: { "geo-target": "addressCounty" } %>
-
-  <%= form.hidden_field :address_state, data: { "geo-target": "addressState" } %>
-  <%= form.hidden_field :address_postcode, data: { "geo-target": "addressPostcode" } %>
-  <%= form.hidden_field :address_country, data: { "geo-target": "addressCountry" } %>
-  <%= form.hidden_field :address_country_code, data: { "geo-target": "addressCountryCode" } %>
-
-  <div class="grid md:grid-cols-3 gap-3">
-    <div>
-      <%= form.text_field :address_city, readonly: :readonly, data: { "geo-target": "addressCity" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
+<div class="mx-auto md:w-2/3 w-full p-6">
+  <h1 class="font-bold text-4xl">Geo</h1>
+  <%= form_with(model: @draft, class: "contents", url: issues_draft_geo_path(@draft), data: { controller: :geo }) do |form| %>
+    <div class="my-5">
+      <%= button_tag "Load current position", type: :button, data: { action: "geo#locate" }, class: "rounded-lg py-3 px-5 bg-gray-600 text-white inline-block font-medium cursor-pointer" %>
     </div>
-    <div>
-      <%= form.text_field :address_city_district, readonly: :readonly, data: { "geo-target": "addressCityDistrict" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
-    </div>
-    <div>
-      <%= form.text_field :address_road, readonly: :readonly, data: { "geo-target": "addressRoad" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
-    </div>
-  </div>
 
-  <div class="my-5">
-    <%= form.submit "Odoslať", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-  </div>
-<% end %>
+    <div data-geo-target="map" class="my-5 h-3/4 block shadow rounded-md border border-gray-400 outline-none">
+      <div class="top-1/2 left-1/2 w-8 -ml-4 h-8 -mt-4 leading-8 relative z-50 text-4xl text-center align-middle">&#8982;</div>
+    </div>
+
+    <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
+    <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
+    <%= form.hidden_field :address_house_number, data: { "geo-target": "addressHouseNumber" } %>
+
+    <%= form.hidden_field :address_neighbourhood, data: { "geo-target": "addressNeighbourhood" } %>
+
+    <%= form.hidden_field :address_suburb, data: { "geo-target": "addressSuburb" } %>
+    <%= form.hidden_field :address_city_district, data: { "geo-target": "addressCityDistrict" } %>
+    <%= form.hidden_field :address_town, data: { "geo-target": "addressTown" } %>
+
+    <%= form.hidden_field :address_village, data: { "geo-target": "addressVillage" } %>
+    <%= form.hidden_field :address_county, data: { "geo-target": "addressCounty" } %>
+
+    <%= form.hidden_field :address_state, data: { "geo-target": "addressState" } %>
+    <%= form.hidden_field :address_postcode, data: { "geo-target": "addressPostcode" } %>
+    <%= form.hidden_field :address_country, data: { "geo-target": "addressCountry" } %>
+    <%= form.hidden_field :address_country_code, data: { "geo-target": "addressCountryCode" } %>
+
+    <div class="grid md:grid-cols-3 gap-3">
+      <div>
+        <%= form.text_field :address_city, readonly: :readonly, data: { "geo-target": "addressCity" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
+      </div>
+      <div>
+        <%= form.text_field :address_city_district, readonly: :readonly, data: { "geo-target": "addressCityDistrict" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
+      </div>
+      <div>
+        <%= form.text_field :address_road, readonly: :readonly, data: { "geo-target": "addressRoad" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
+      </div>
+    </div>
+
+    <div class="my-5">
+      <%= form.submit "Odoslať", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    </div>
+  <% end %>
+</div>

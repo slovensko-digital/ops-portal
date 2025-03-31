@@ -26,6 +26,7 @@ env:
     - CONNECTOR__OPS_API_URL
     - CONNECTOR_WEBHOOK_URL
     - CONNECTOR__ZAMMAD_URL
+    - CMS_ROOT_CATEGORY_ID
     - TRIAGE_ZAMMAD_URL
     - DATABASE_URL
     - ANTHROPIC_API_KEY
@@ -59,6 +60,9 @@ registry:
 builder:
   arch: amd64
   remote: ssh://kamal@dev.slovensko.digital
+  cache:
+    type: registry
+    options: mode=max,image-manifest=true,oci-mediatypes=true
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old

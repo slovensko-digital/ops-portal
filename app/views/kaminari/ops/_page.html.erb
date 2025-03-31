@@ -1,0 +1,15 @@
+<%# Link showing page number
+  - available local variables
+    page:          a page object for "this" page
+    url:           url to this page
+    current_page:  a page object for the currently displayed page
+    total_pages:   total number of pages
+    per_page:      number of items to fetch per page
+    remote:        data-remote
+-%>
+
+<%
+  css_classes = page.current? ? "text-white bg-gray-900 hover:text-gray-900 hover:bg-cyan-300" : "text-gray-900 hover:bg-cyan-300"
+%>
+
+<%= link_to page, url, class: "min-w-[44px] h-[44px] px-[14px] flex items-center justify-center border border-gray-900 rounded-full #{css_classes}", remote: remote, rel: page.rel %>

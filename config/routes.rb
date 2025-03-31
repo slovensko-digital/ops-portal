@@ -55,4 +55,6 @@ Rails.application.routes.draw do
   root "issues/drafts#new"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+
+  get "*cms_slugs" => "cms/pages#index", as: :cms_page
 end
