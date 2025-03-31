@@ -238,6 +238,19 @@ class ZammadApiClient
     end
   end
 
+  def create_responsible_subject!(responsible_subject)
+    begin
+      zammad_user = @client.user.create(
+        firstname: responsible_subject.subject_name,
+        roles: [ "Zodpovedný subjekt" ]
+      )
+      zammad_user.id
+    rescue RuntimeError => e
+      raise e unless e.message.include? "is already used for another user."
+      raise "Can't create triage zammad user for responsible subject email: #{responsible_subject.subject_name}"
+    end
+  end
+
   def get_groups
     @client.group.all
   end
