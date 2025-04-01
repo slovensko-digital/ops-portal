@@ -242,7 +242,7 @@ class ZammadApiClient
     begin
       zammad_user = @client.user.create(
         firstname: responsible_subject.subject_name,
-        roles: [ "Zodpovedný subjekt" ]
+        roles: [ "Zodpovedný Subjekt" ]
       )
       zammad_user.id
     rescue RuntimeError => e

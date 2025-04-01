@@ -4,6 +4,7 @@
 #
 #  id                       :bigint           not null, primary key
 #  added_at                 :datetime
+#  author_type              :string
 #  confirmation_needed      :boolean
 #  email                    :string
 #  from_responsible_subject :boolean
@@ -22,6 +23,7 @@
 #  updated_at               :datetime         not null
 #  activity_id              :bigint           not null
 #  admin_id                 :integer
+#  author_id                :bigint
 #  legacy_id                :integer
 #  person_id                :integer
 #  triage_external_id       :integer
@@ -29,13 +31,10 @@
 #
 class Issues::Communication < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity"
+  belongs_to :author, polymorphic: true, optional: true
 
   has_many_attached :attachments
 
-  # TODO who is author?
-  def author
-    nil
-  end
 
   def activity_body
     message

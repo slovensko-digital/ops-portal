@@ -17,15 +17,14 @@ class SyncIssueActivitiesToTriageJob < ApplicationJob
     end
   end
 
-  def find_or_create_triage_portal_user!(user, client, customer: true)
+  def find_or_create_triage_portal_user!(user, client)
     return user if user.external_id
 
-    user.external_id = if customer
-     client.create_customer!(user)
-    else
-     client.create_agent!(user)
+    if user.is_a?(Legacy::Agent)
+      user.update!(external_id: client.create_agent!(user))
+    elsif user.is_a?(ResponsibleSubjects::User)
+      user.responsible_subject.update!(external_id: client.create_responsible_subject!(user.responsible_subject)) if user.responsible_subject
     end
-    user.save!
 
     user
   end

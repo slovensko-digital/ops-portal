@@ -66,10 +66,10 @@ module Import
               organization_unit_id2: legacy_record.organizational_unit_id2
             },
             longitude: legacy_record.map_y,
-            reported_at: convert_timestamp_value(legacy_record.posted_time),
+            reported_at: convert_timestamp_value(legacy_record.posted_time), # TODO dolezity udaj pre triaz podnetu
             title: legacy_record.heading,
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),
-            owner: Legacy::User.find_or_create_agent(legacy_record.riesitel_new || legacy_record.riesitel),
+            owner: Legacy::User.find_or_create_agent(legacy_record.riesitel_new&.nonzero?.presence || legacy_record.riesitel),
             category: category,
             subcategory: subcategory,
             subtype: subtype,
