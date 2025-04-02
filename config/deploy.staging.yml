@@ -13,6 +13,12 @@ env:
   clear:
     RAILS_ENV: production
     RAILS_LOG_LEVEL: debug
+    LEGACY_PORTAL_URL: <%= ENV.fetch("LEGACY_PORTAL_URL") %>
+    CONNECTOR__OPS_API_URL: <%= ENV.fetch("CONNECTOR__OPS_API_URL") %>
+    CONNECTOR_WEBHOOK_URL: <%= ENV.fetch("CONNECTOR_WEBHOOK_URL") %>
+    CMS_ROOT_CATEGORY_ID: <%= ENV.fetch("CMS_ROOT_CATEGORY_ID") %>
+    TRIAGE_ZAMMAD_URL: <%= ENV.fetch("TRIAGE_ZAMMAD_URL") %>
+    APP_HOST: ops.dev.slovensko.digital
 
 proxy:
   host: ops.dev.slovensko.digital
