@@ -101,3 +101,5 @@ gem "kamal", "~> 2.5"
 
 # pagination
 gem "kaminari"
+
+gem "discourse_api"
