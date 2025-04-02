@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_31_190007) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_01_094510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -336,6 +336,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_31_190007) do
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
     t.integer "triage_external_id"
+    t.bigint "author_id"
+    t.string "author_type"
     t.index ["activity_id"], name: "index_issues_communications_on_activity_id"
     t.index ["legacy_id"], name: "index_issues_communications_on_legacy_id", unique: true
   end

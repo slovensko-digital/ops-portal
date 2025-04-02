@@ -6,8 +6,15 @@ module Import
       Legacy::GenericModel.set_table_name("communication")
       Legacy::GenericModel.where(alert: issue.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
+          communication_author = if legacy_record.user.to_i.nonzero?
+           ::ResponsibleSubjects::User.find_by(legacy_id: legacy_record.user)
+          elsif legacy_record.admin.to_i.nonzero?
+            ::Legacy::Agent.find_by(legacy_id: legacy_record.admin)
+          end
+
           communication = ::Issues::Communication.find_or_initialize_by(
             legacy_id: legacy_record.id,
+            author: communication_author,
             added_at: convert_timestamp_value(legacy_record.ts),
             confirmation_needed: legacy_record.need_confirmation,
             email: Legacy::User.generate_dummy_email(legacy_record.user), # TODO skip emails for now
