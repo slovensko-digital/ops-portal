@@ -18,12 +18,24 @@ module Legacy
       self.create_agent_from_legacy_record(legacy_record) if legacy_record
     end
 
+    def self.find_or_create_responsible_subjects_user(legacy_id)
+      return ResponsibleSubjects::User.find_by(legacy_id: legacy_id) if ResponsibleSubjects::User.find_by(legacy_id: legacy_id)
+
+      Legacy::GenericModel.set_table_name("municipality_users")
+      legacy_record = Legacy::GenericModel.find_by_id(legacy_id)
+      self.create_user_from_legacy_record(legacy_record) if legacy_record
+    end
+
     def self.create_user_from_legacy_record(legacy_record)
       ::User.find_or_create_by!(self.user_params(legacy_record))
     end
 
     def self.create_agent_from_legacy_record(legacy_record)
       Legacy::Agent.find_or_create_by!(self.user_params(legacy_record).merge!({ rights: convert_legacy_rights_value(legacy_record.rights) }))
+    end
+
+    def self.create_responsible_subjects_user_from_legacy_record(legacy_record)
+      ::ResponsibleSubjects::User.find_or_create_by!(self.responsible_subjects_user_params(legacy_record))
     end
 
     def self.user_params(legacy_record, dummy_email: true, dummy_password: true)
@@ -38,7 +50,6 @@ module Legacy
         birth: legacy_record.birth,
         created_from_app: legacy_record.created_from_app,
         email: dummy_email ? self.generate_dummy_email(legacy_record.id) : legacy_record.email, # TODO skip emails for now
-        # email: legacy_record.email, # TODO skip emails for now
         email_notifiable: legacy_record.email_notification,
         exp: legacy_record.exp,
         fcm_token: legacy_record.fcm_token,
@@ -58,6 +69,24 @@ module Legacy
         city_id: legacy_record.cityid,
         municipality: ::Municipality.find_by(legacy_id: legacy_record.mesto),
         street: ::Street.find_by(legacy_id: legacy_record.streetid)
+      }
+    end
+
+    def self.responsible_subjects_user_params(legacy_record, dummy_email: true, dummy_password: true)
+      {
+        legacy_id: legacy_record.id,
+        deleted_at: legacy_record.deleted_at,
+        email: dummy_email ? self.generate_dummy_email(legacy_record.id) : legacy_record.email, # TODO skip emails for now
+        gdpr_accepted: legacy_record.gdpr_accepted,
+        login: legacy_record.login,
+        name: legacy_record.name,
+        password_hash: dummy_password ? generate_dummy_password : legacy_record.password,
+        photo: legacy_record.photo,
+        token: legacy_record.remember_token,
+        tooltips: legacy_record.tooltips,
+        organization_unit: ::ResponsibleSubjects::OrganizationUnit.find_by(legacy_id: legacy_record.org_unit_id),
+        responsible_subject: ::ResponsibleSubject.find_by(legacy_id: legacy_record.zodpovednost_id),
+        role: ::ResponsibleSubjects::UserRole.find_by(legacy_id: legacy_record.role_id)
       }
     end
 

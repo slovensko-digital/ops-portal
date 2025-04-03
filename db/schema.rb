@@ -336,10 +336,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_140951) do
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
     t.integer "triage_external_id"
-    t.bigint "author_id"
-    t.string "author_type"
+    t.bigint "legacy_agent_author_id"
+    t.bigint "responsible_subjects_user_author_id"
     t.index ["activity_id"], name: "index_issues_communications_on_activity_id"
+    t.index ["legacy_agent_author_id"], name: "index_issues_communications_on_legacy_agent_author_id"
     t.index ["legacy_id"], name: "index_issues_communications_on_legacy_id", unique: true
+    t.index ["responsible_subjects_user_author_id"], name: "idx_on_responsible_subjects_user_author_id_de553d894d"
   end
 
   create_table "issues_drafts", force: :cascade do |t|
@@ -720,6 +722,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_140951) do
   add_foreign_key "issues_comments", "issues_activities", column: "activity_id"
   add_foreign_key "issues_comments", "users", column: "author_id"
   add_foreign_key "issues_communications", "issues_activities", column: "activity_id"
+  add_foreign_key "issues_communications", "legacy_agents", column: "legacy_agent_author_id"
+  add_foreign_key "issues_communications", "responsible_subjects_users", column: "responsible_subjects_user_author_id"
   add_foreign_key "issues_drafts", "issues_categories", column: "category_id"
   add_foreign_key "issues_drafts", "issues_subcategories", column: "subcategory_id"
   add_foreign_key "issues_drafts", "issues_subtypes", column: "subtype_id"
