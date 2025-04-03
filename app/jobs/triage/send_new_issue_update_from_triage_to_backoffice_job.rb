@@ -7,8 +7,5 @@ class Triage::SendNewIssueUpdateFromTriageToBackofficeJob < ApplicationJob
 
     client = Client.find_by!(responsible_subject: responsible_subject)
     webhook_client.new(client).issue_updated(ticket_id)
-
-    # TODO this should update whole issue, not just state
-    UpdatePortalIssueStateFromTriageJob.perform_later(Issue.find_by(triage_external_id: ticket_id))
   end
 end

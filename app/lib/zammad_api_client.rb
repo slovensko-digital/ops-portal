@@ -19,7 +19,7 @@ class ZammadApiClient
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
   end
 
-  def get_ticket(ticket_id, expand: false)
+  def get_ticket(ticket_id, include_customer_articles, expand: false)
     begin
       ticket = @client.ticket.find(ticket_id)
     rescue => e
@@ -34,7 +34,7 @@ class ZammadApiClient
 
     result.merge({
       activities: [ build_article_response(ticket, ticket.articles.first, first_article: true) ] +
-        ticket.articles[1..].map { |article| build_article_response(ticket, article) }.compact
+        ticket.articles[1..].map { |article| build_article_response(ticket, article, include_customer_articles: include_customer_articles) }.compact
     })
   end
 
@@ -354,8 +354,11 @@ class ZammadApiClient
     }
   end
 
-  def build_article_response(ticket, article, first_article: false)
-    return nil unless first_article || article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
+  def build_article_response(ticket, article, first_article: false, include_customer_articles: false)
+    unless first_article
+      return nil if article.internal
+      return nil unless article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG) || (include_customer_articles && article.sender == "Customer")
+    end
 
     if article.sender == "Agent"
       author = DEFAULT_OPS_ADMIN_USER

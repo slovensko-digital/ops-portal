@@ -1,12 +1,24 @@
 class Triage::WebhooksController < ActionController::API
   before_action :authenticate
 
-  def webhook
+  def portal
     event_type = webhook_params.require :type
 
     case event_type
+    when "ticket.updated"
+      Triage::UpdatePortalIssueFromTriageJob.perform_later(data.require(:ticket_id))
+    when "article.created"
+      Triage::CreateNewPortalActivityFromTriageJob.perform_later(data.require(:ticket_id), data.require(:article_id))
+    else
+      render json: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
+    end
+  end
+
+  def responsible_subject
+    event_type = webhook_params.require :type
+    case event_type
     when "ticket.created"
-      Triage::SendNewIssueFromTriageToBackofficeJob.perform_later(data.require(:ticket_id))
+      Triage::SendNewIssueFromTriageToBackofficeJob.perform_later(data.require(:ticket_id), data[:include_customer_articles] == "true")
     when "article.created"
       Triage::ProcessNewActivityFromTriageJob.perform_later(data.require(:ticket_id), data.require(:article_id))
     when "ticket.updated"
@@ -23,7 +35,7 @@ class Triage::WebhooksController < ActionController::API
   end
 
   def data
-    params.require(:data).permit(:ticket_id, :article_id)
+    params.require(:data).permit(:ticket_id, :article_id, :include_customer_articles)
   end
 
   def authenticate
