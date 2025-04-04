@@ -13,6 +13,6 @@ class Triage::ProcessNewActivityFromTriageJob < ApplicationJob
     return unless responsible_subject.pro?
 
     client = Client.find_by!(responsible_subject: responsible_subject)
-    webhook_client.new(client).activity_created(ticket_id, article_id, !article[:body].include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG))
+    webhook_client.new(client).activity_created(ticket_id, article_id, customer_activity: !article[:body].include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG))
   end
 end
