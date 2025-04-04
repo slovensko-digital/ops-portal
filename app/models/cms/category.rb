@@ -23,4 +23,12 @@ class Cms::Category < ApplicationRecord
   def to_param
     slug
   end
+
+  def discourse_slug
+    if parent_category.nil?
+      "#{slug}/#{id}"
+    else
+      "#{parent_category.slug}/#{slug}/#{id}"
+    end
+  end
 end
