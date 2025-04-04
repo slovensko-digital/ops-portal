@@ -38,5 +38,4 @@ class DiscourseApiClient
 
     topics.flatten
   end
-
 end
