@@ -52,7 +52,9 @@ class Issue < ApplicationRecord
   has_many :communication_activities, class_name: "Issues::CommunicationActivity", dependent: :destroy
   has_many :update_activities, class_name: "Issues::UpdateActivity", dependent: :destroy
 
-  has_many_attached :photos
+  has_many_attached :photos do |photo|
+    photo.variant :small, resize_to_limit: [ 800, 600 ], preprocessed: true
+  end
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
 end

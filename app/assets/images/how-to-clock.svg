@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 500 620">
+  <!-- Generator: Adobe Illustrator 29.3.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 151)  -->
+  <circle cx="250" cy="358.63" r="220" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <path d="M470,332.25c0-121.5-98.5-220-220-220S30,210.75,30,332.25v47.51c0,121.5,98.5,220,220,220s220-98.5,220-220v-47.51Z" fill="#00a07f" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <circle cx="250" cy="382.39" r="220" fill="#00e59e" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <circle cx="250" cy="382.39" r="185.26" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <g>
+    <path d="M270.84,30.25c0-6.98-9.33-12.64-20.84-12.64s-20.84,5.66-20.84,12.64v104.43c0,6.98,9.33,12.64,20.84,12.64s20.84-5.66,20.84-12.64V30.25Z" fill="#00e59e" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <path d="M292.08,43.12c0-14.09-18.84-25.51-42.08-25.51s-42.08,11.42-42.08,25.51v25.51c0,14.09,18.84,25.51,42.08,25.51s42.08-11.42,42.08-25.51v-25.51Z" fill="#00e59e" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <ellipse cx="250" cy="43.12" rx="42.08" ry="25.51" fill="#00a07f" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  </g>
+  <g>
+    <path d="M385.61,139.97c2.94-6.33-3.14-15.39-13.58-20.24-10.44-4.85-21.29-3.65-24.23,2.68-.97,2.09-11.37,24.46-12.34,26.55-2.94,6.33,3.14,15.39,13.58,20.24s21.29,3.65,24.23-2.68c.97-2.09,11.37-24.46,12.34-26.55Z" fill="#00e59e" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <ellipse cx="366.71" cy="131.19" rx="12.64" ry="20.84" transform="translate(93.22 408.48) rotate(-65.08)" fill="#00a07f" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  </g>
+  <g>
+    <path d="M114.39,139.97c-2.94-6.33,3.14-15.39,13.58-20.24,10.44-4.85,21.29-3.65,24.23,2.68.97,2.09,11.37,24.46,12.34,26.55,2.94,6.33-3.14,15.39-13.58,20.24-10.44,4.85-21.29,3.65-24.23-2.68-.97-2.09-11.37-24.46-12.34-26.55Z" fill="#00e59e" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <ellipse cx="133.29" cy="131.19" rx="20.84" ry="12.64" transform="translate(-42.87 68.38) rotate(-24.92)" fill="#00a07f" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  </g>
+  <g>
+    <line x1="250" y1="567.65" x2="250" y2="534" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="157.36" y1="542.86" x2="174.21" y2="513.73" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="89.53" y1="475.03" x2="118.66" y2="458.18" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="64.74" y1="382.39" x2="98.39" y2="382.39" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="89.53" y1="289.74" x2="118.66" y2="306.6" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="157.36" y1="221.92" x2="174.21" y2="251.04" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="250" y1="197.12" x2="250" y2="230.77" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="342.64" y1="221.92" x2="325.79" y2="251.04" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="410.47" y1="289.74" x2="381.34" y2="306.6" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="435.26" y1="382.39" x2="401.61" y2="382.39" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="410.47" y1="475.03" x2="381.34" y2="458.18" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <line x1="342.64" y1="542.86" x2="325.79" y2="513.73" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  </g>
+  <g>
+    <line x1="270.51" y1="417.92" x2="187.15" y2="273.47" fill="#fff" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <circle cx="250" cy="382.39" r="11.78" fill="#ff4761" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  </g>
+</svg>

@@ -23,9 +23,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :issues, only: [ :index, :show, :destroy ]
-
-  namespace :issues do
+  resources :issues, path: "dopyty"
+  namespace :issues, path: "dopyty" do
     resources :drafts do
       post :confirm
       scope module: :drafts do
@@ -41,6 +40,9 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :questions, path: "otazky", path_names: { new: "nova" }
+  resources :praises, path: "pochvaly", path_names: { new: "nova" }
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -52,9 +54,9 @@ Rails.application.routes.draw do
   mount GoodJob::Engine => "admin/good_job"
 
   # Defines the root path route ("/")
-  root "issues/drafts#new"
+  root "homepage#show"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
-  get "*cms_slugs" => "cms/pages#index", as: :cms_page
+  get "*cms_slugs" => "cms/pages#index", as: :cms_page, constraints: { cms_slugs: /(?!rails).*/ }
 end

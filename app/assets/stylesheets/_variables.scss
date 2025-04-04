@@ -1,0 +1,9 @@
+// px to em
+@function em($pixels, $browser-context) {
+  @return calc($pixels / $browser-context) * 1em;
+}
+
+// px to %
+@function per($pixels, $viewport) {
+  @return calc($pixels / $viewport)*100%;
+}

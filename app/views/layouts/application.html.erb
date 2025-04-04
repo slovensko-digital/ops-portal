@@ -19,26 +19,26 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= render "layouts/header" %>
+  <%= render "shared/header" %>
 
     <div class="w-1/2 mt-4 mx-auto">
       <% if notice %>
         <%= render "layouts/notice" %>
       <% end %>
-      
+
       <% if alert %>
         <%= render "layouts/alert" %>
       <% end %>
     </div>
 
-    <main class="flex">
-      <%= yield %>
-    </main>
+    <%= yield %>
+
+  <%= render "shared/footer" %>
   </body>
 </html>
