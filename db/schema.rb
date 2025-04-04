@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_02_140951) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_04_093651) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -111,6 +111,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_140951) do
     t.string "backoffice_url"
     t.string "backoffice_api_token"
     t.string "backoffice_webhook_secret"
+    t.boolean "receive_customer_activities", default: false, null: false
   end
 
   create_table "connector_users", force: :cascade do |t|

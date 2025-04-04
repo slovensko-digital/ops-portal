@@ -7,9 +7,9 @@ class Connector::WebhooksController < ActionController::API
 
     case event_type
     when "issue.created"
-      Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id), data[:include_customer_activities] == "true")
+      Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     when "activity.created"
-      Connector::CreateNewBackofficeActivityFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:activity_id))
+      Connector::CreateNewBackofficeActivityFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:activity_id), customer_activity: data[:customer_activity] == "true")
     when "issue.updated"
       Connector::UpdateBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     else
@@ -20,11 +20,11 @@ class Connector::WebhooksController < ActionController::API
   private
 
   def webhook_params
-    params.permit(:type, :timestamp, data: [ :subject_id, :issue_id, :activity_id ])
+    params.permit(:type, :timestamp, data: [ :subject_id, :issue_id, :activity_id, :customer_activity ])
   end
 
   def data
-    params.require(:data).permit(:subject_id, :issue_id, :activity_id, :include_customer_activities)
+    params.require(:data).permit(:subject_id, :issue_id, :activity_id, :customer_activity)
   end
 
   def set_tenant

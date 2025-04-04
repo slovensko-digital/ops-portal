@@ -18,7 +18,7 @@ class Triage::WebhooksController < ActionController::API
     event_type = webhook_params.require :type
     case event_type
     when "ticket.created"
-      Triage::SendNewIssueFromTriageToBackofficeJob.perform_later(data.require(:ticket_id), data[:include_customer_articles] == "true")
+      Triage::SendNewIssueFromTriageToBackofficeJob.perform_later(data.require(:ticket_id))
     when "article.created"
       Triage::ProcessNewActivityFromTriageJob.perform_later(data.require(:ticket_id), data.require(:article_id))
     when "ticket.updated"
@@ -35,7 +35,7 @@ class Triage::WebhooksController < ActionController::API
   end
 
   def data
-    params.require(:data).permit(:ticket_id, :article_id, :include_customer_articles)
+    params.require(:data).permit(:ticket_id, :article_id)
   end
 
   def authenticate

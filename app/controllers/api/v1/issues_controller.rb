@@ -8,6 +8,7 @@ class Api::V1::IssuesController < ApiController
 
   def update
     head :not_found unless @zammad_client.update_ticket!(params.require(:id), issue_params)
+    head :ok
   end
 
   private
