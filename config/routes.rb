@@ -56,5 +56,7 @@ Rails.application.routes.draw do
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
-  get "*cms_slugs" => "cms/pages#index", as: :cms_page
+  constraints lambda { |req| !req.xhr? && req.format.html? && (req.path =~ %r{^/(rails|assets)/}).nil? } do
+    get "*cms_slugs" => "cms/pages#index", as: :cms_page
+  end
 end
