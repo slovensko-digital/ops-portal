@@ -1,4 +1,6 @@
 class Cms::WebhooksController < ActionController::API
+  before_action :authenticate
+
   def webhook
     if params[:post]
       # we care only about the first post
@@ -17,6 +19,17 @@ class Cms::WebhooksController < ActionController::API
   end
 
   private
+
+  def authenticate
+    payload = request.raw_post
+    header_signature = request.headers['X-Discourse-Event-Signature']
+    secret = ENV['DISCOURSE_WEBHOOK_SECRET']
+
+    render status: :unauthorized, json: nil and return unless header_signature&.start_with?('sha256=')
+
+    expected_signature = 'sha256=' + OpenSSL::HMAC.hexdigest('SHA256', secret, payload)
+    render status: :forbidden, json: nil unless ActiveSupport::SecurityUtils.secure_compare(expected_signature, header_signature)
+  end
 
   def importing_category_ids
     ENV["DISCOURSE_IMPORT_CATEGORY_IDS"].split(",").map(&:to_i)
