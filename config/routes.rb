@@ -53,7 +53,7 @@ Rails.application.routes.draw do
   root "issues/drafts#new"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
-  mount GoodJob::Engine => "admin/good_job"
+  mount GoodJob::Engine => "admin/good_job" # TODO authenticate!
 
   constraints lambda { |req| !req.xhr? && req.format.html? && (req.path =~ %r{^/(rails|assets)/}).nil? } do
     get "*path" => "cms/pages#index", as: :cms_page
