@@ -12,7 +12,11 @@ module Import
       import_communications_job: Issues::ImportIssueCommunicationsJob
     )
       Legacy::GenericModel.set_table_name("alerts")
-      Legacy::GenericModel.where(mesto: municipality.legacy_id).where(mestska_cast: municipality_district&.legacy_id).where("posted_time >= ?", import_since.to_i).find_in_batches do |group|
+      Legacy::GenericModel
+        .where(mesto: municipality.legacy_id)
+        .where(mestska_cast: municipality_district&.legacy_id)
+        .where(is_manual: 0) # !! DO NOT ever delete this condition !!
+        .where("posted_time >= ?", import_since.to_i).find_in_batches do |group|
         group.each do |legacy_record|
           subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
           subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
