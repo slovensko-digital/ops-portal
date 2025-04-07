@@ -53,12 +53,13 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  mount GoodJob::Engine => "admin/good_job"
-
   # Defines the root path route ("/")
   root "issues/drafts#new"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount GoodJob::Engine => "admin/good_job" # TODO authenticate!
 
-  get "*cms_slugs" => "cms/pages#index", as: :cms_page
+  constraints lambda { |req| !req.xhr? && req.format.html? && (req.path =~ %r{^/(rails|assets)/}).nil? } do
+    get "*path" => "cms/pages#index", as: :cms_page
+  end
 end

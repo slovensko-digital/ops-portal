@@ -3,7 +3,7 @@ class Cms::PagesController < ApplicationController
   # /:page_slug
   # /:category_slug/:page_slug
   def index
-    slugs = params[:cms_slugs].split("/")
+    slugs = params[:path].split("/")
 
     root_category = Cms::Category.find_by(id: ENV["CMS_ROOT_CATEGORY_ID"])
 
