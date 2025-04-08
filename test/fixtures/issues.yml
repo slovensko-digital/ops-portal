@@ -8,6 +8,8 @@ one:
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 1
   category: one
+  subcategory: one
+  subtype: one
   state: zero
   municipality: one
 

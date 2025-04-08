@@ -2,7 +2,7 @@ require "test_helper"
 
 class PraisesControllerTest < ActionDispatch::IntegrationTest
   test "should get new" do
-    get praises_new_url
+    get new_praise_url
     assert_response :success
   end
 end
