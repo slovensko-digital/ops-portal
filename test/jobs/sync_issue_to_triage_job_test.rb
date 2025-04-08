@@ -15,7 +15,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
       **{
         process_type: "portal_issue_triage",
         group: "Dobrovoľníci::Trenčín",
-        owner_id: nil,
+        owner_id: nil
       }
 
     ZammadApiClient.stub :new, triage_zammad_client_mock do
