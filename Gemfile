@@ -20,9 +20,9 @@ gem "stimulus-rails"
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
 gem "tailwindcss-rails", "~> 3.3.1"
 
-gem 'rails-i18n', '~> 8.0.0'
+gem "rails-i18n", "~> 8.0.0"
 
-gem 'dartsass-rails' # temporarily use sass
+gem "dartsass-rails" # temporarily use sass
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"

@@ -19,7 +19,7 @@ module Ops
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
 
     config.i18n.default_locale = :sk
-    config.i18n.available_locales = [:en, :sk]
+    config.i18n.available_locales = [ :en, :sk ]
 
     # Configuration for the application, engines, and railties goes here.
     #
