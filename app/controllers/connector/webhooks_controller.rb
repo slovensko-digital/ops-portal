@@ -9,6 +9,7 @@ class Connector::WebhooksController < ActionController::API
     when "issue.created"
       Connector::CreateNewBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
     when "activity.created"
+      return unless [ "true", true, "1", 1 ].exclude?(data[:customer_activity]) || @tenant.receive_customer_activities?
       Connector::CreateNewBackofficeActivityFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:activity_id))
     when "issue.updated"
       Connector::UpdateBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
@@ -20,11 +21,11 @@ class Connector::WebhooksController < ActionController::API
   private
 
   def webhook_params
-    params.permit(:type, :timestamp, data: [ :subject_id, :issue_id, :activity_id ])
+    params.permit(:type, :timestamp, data: [ :subject_id, :issue_id, :activity_id, :customer_activity ])
   end
 
   def data
-    params.require(:data).permit(:subject_id, :issue_id, :activity_id)
+    params.require(:data).permit(:subject_id, :issue_id, :activity_id, :customer_activity)
   end
 
   def set_tenant

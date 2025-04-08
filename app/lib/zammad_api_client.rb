@@ -13,28 +13,28 @@ class ZammadApiClient
     uuid: "11111111-1111-1111-1111-111111111111"
   }
   RESPONSIBLE_SUBJECT_ARTICLE_TAG = ENV.fetch("RESPONSIBLE_SUBJECT_ARTICLE_TAG", "[[pre zodpovedny subjekt]]")
-  OPS_PORTAL_ARTICLE_FROM_BACKOFFICE_TAG = ENV.fetch("OPS_PORTAL_ARTICLE_FROM_BACKOFFICE_TAG", "[[ops portal]]")
+  OPS_PORTAL_ARTICLE_TAG = ENV.fetch("OPS_PORTAL_ARTICLE_TAG", "[[ops portal]]")
 
   def initialize(url:, http_token:)
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
   end
 
-  def get_ticket(ticket_id, expand: false)
+  def get_ticket(ticket_id, include_customer_articles: false, expand: false)
     begin
       ticket = @client.ticket.find(ticket_id)
     rescue => e
       raise e unless e.message.include?("Couldn't find Ticket with")
-      return nil
+      return
     end
 
     result = build_ticket_response(ticket)
 
-    return nil unless result.present?
+    return unless result.present?
     return result unless expand
 
     result.merge({
-      activities: [ build_article_response(ticket, ticket.articles.first, first_article: true) ] +
-        ticket.articles[1..].map { |article| build_article_response(ticket, article) }.compact
+      activities: [ build_article_response(ticket, ticket.articles.first, force: true) ] +
+        ticket.articles[1..].map { |article| build_article_response(ticket, article, force: include_customer_articles) }.compact
     })
   end
 
@@ -139,12 +139,12 @@ class ZammadApiClient
       article = ticket.articles.find { |a| a.id == article_id.to_i }
     rescue RuntimeError => e
       raise e unless e.message.include?("Couldn't find Ticket with") || e.message.include?("Couldn't find Article with")
-      puts "Couldn't find article with id: #{article_id} in ticket with id: #{ticket_id}"
-      return nil
+      Rails.logger.info("Couldn't find article with id: #{article_id} in ticket with id: #{ticket_id}")
+      return
     end
 
     result = build_article_response(ticket, article)
-    return nil unless result.present?
+    return unless result.present?
     result
   end
 
@@ -294,12 +294,12 @@ class ZammadApiClient
       zammad_user = users_on_page.select { |user| email == user[:email] }.first
 
       return zammad_user[:id] if zammad_user
-      return nil unless users_on_page == USERS_PER_PAGE
+      return unless users_on_page == USERS_PER_PAGE
     end
   end
 
   def get_author(user_id, anonymous: false)
-    return nil if anonymous
+    return if anonymous
 
     user = find_or_create_user(user_id)
     {
@@ -354,8 +354,19 @@ class ZammadApiClient
     }
   end
 
-  def build_article_response(ticket, article, first_article: false)
-    return nil unless first_article || article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
+  def build_article_response(ticket, article, force: false, system: false)
+    # hide all internal articles
+    return if article.internal
+
+    # TODO revise this logic based on SGI feedback - BA-02 in DFS
+
+    responsible_subject_tag = article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
+    ops_portal_tag = article.body.include?(OPS_PORTAL_ARTICLE_TAG)
+
+    # hide all agent public articles without a tag
+    return if article.sender == "Agent" && !responsible_subject_tag && !ops_portal_tag
+
+    return unless force || responsible_subject_tag
 
     if article.sender == "Agent"
       author = DEFAULT_OPS_ADMIN_USER
@@ -370,8 +381,9 @@ class ZammadApiClient
       author: author,
       triage_identifier: article.id,
       content_type: article.content_type,
-      body: article.body,
+      body: article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, ""),
       type: article.type,
+      customer_activity: !responsible_subject_tag,
       created_at: article.created_at,
       updated_at: article.updated_at,
       attachments: article.attachments.map do |attachment|

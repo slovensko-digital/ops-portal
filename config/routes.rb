@@ -9,7 +9,10 @@ Rails.application.routes.draw do
   end
 
   namespace :triage do
-    post "webhook" => "webhooks#webhook"
+    namespace :webhooks do
+      post :portal
+      post :responsible_subject
+    end
   end
 
   namespace :cms do

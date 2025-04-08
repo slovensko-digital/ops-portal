@@ -7,7 +7,6 @@ module Connector
     DEFAULT_GROUP = "Incoming"
     DEFAULT_STATE = "new"
     OPS_ORIGIN = "ops"
-    RESPONSIBLE_SUBJECT_ARTICLE_TAG = ENV.fetch("RESPONSIBLE_SUBJECT_ARTICLE_TAG", "[[pre zodpovedny subjekt]]")
 
     def initialize(tenant)
       @token = tenant.backoffice_api_token
@@ -157,7 +156,7 @@ module Connector
         article: {
           origin_by_id: create_or_find_customer(article["author"]),
           content_type: article["content_type"],
-          body: article["body"].gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, ""),
+          body: article["body"],
           type: article["type"],
           triage_created_at: article["created_at"],
           attachments: article["attachments"].map do |attachment|
@@ -185,7 +184,7 @@ module Connector
       new_article = ticket.article(
         origin_by_id: create_or_find_customer(activity["author"]),
         content_type: activity["content_type"],
-        body: activity["body"].gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, ""),
+        body: activity["body"],
         type: activity["type"],
         internal: false,
         triage_created_at: activity["created_at"],
