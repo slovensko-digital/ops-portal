@@ -1,0 +1,27 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Basic Auth",
+      "warning_code": 9,
+      "fingerprint": "c4718deab3712b04df0c8afb7b58436abfd058dadbd25a64338bc2242a3bec6e",
+      "check_name": "BasicAuth",
+      "message": "Basic authentication password stored in source code",
+      "file": "app/controllers/application_controller.rb",
+      "line": 5,
+      "link": "https://brakemanscanner.org/docs/warning_types/basic_auth/",
+      "code": "http_basic_authenticate_with(:name => \"ops\", :password => \"odkazprestarostu\")",
+      "render_path": null,
+      "location": {
+        "type": "controller",
+        "controller": "ApplicationController"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "cwe_id": [
+        259
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.0.2"
+}
