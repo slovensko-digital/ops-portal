@@ -53,3 +53,8 @@ form .error-message {
 .flash.notice {
     background-color: #ffd400;
 }
+
+.sr-only {
+    display: none;
+}
+

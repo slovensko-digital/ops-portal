@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   namespace :issues, path: "dopyty" do
     resources :drafts do
       post :confirm
+      delete :destroy_photo
       scope module: :drafts do
         resource :suggestions do
           get :generate

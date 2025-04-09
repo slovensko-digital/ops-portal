@@ -45,7 +45,7 @@ class User < ApplicationRecord
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true
   has_many :issues
-  has_many :issues_drafts, class_name: "Issues::Draft"
+  has_many :issues_drafts, class_name: "Issues::Draft", foreign_key: :author_id
 
   enum :sex, m: 1, f: 2
   enum :status, { unverified: 1, verified: 2, closed: 3 }
