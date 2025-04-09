@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_03_124709) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_07_140405) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -454,7 +454,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_03_124709) do
     t.integer "rights"
     t.string "admin_name"
     t.string "phone"
-    t.string "password"
+    t.string "password_hash"
     t.string "about"
     t.boolean "organization"
     t.datetime "timestamp"
