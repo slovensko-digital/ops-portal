@@ -28,3 +28,28 @@ article .lightbox .meta {
 em, i {
     font-style: italic;
 }
+
+strong, b {
+    font-weight: bold;
+}
+
+form .error-message {
+    background-color: #FFD2E6;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.flash {
+    padding: 10px;
+    border-radius: 6px;
+    margin: 2em auto;
+    width: 20em;
+}
+
+.flash.alert {
+    background-color: #ff4761;
+}
+
+.flash.notice {
+    background-color: #ffd400;
+}

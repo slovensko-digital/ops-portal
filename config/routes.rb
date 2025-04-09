@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "profile/show"
   resources :clients
 
   namespace :connector do
@@ -49,6 +50,8 @@ Rails.application.routes.draw do
 
   resources :questions, path: "otazky", path_names: { new: "nova" }
   resources :praises, path: "pochvaly", path_names: { new: "nova" }
+
+  resource :profile
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

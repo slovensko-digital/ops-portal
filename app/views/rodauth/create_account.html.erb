@@ -1,69 +1,61 @@
-<div class="space-y-4 flex flex-col items-center">
-  <div class="w-full max-w-2xl">
+<section class="forms-container report">
+  <h1>Vytvoriť účet</h1>
+
+  <div class="form-other-con">
+    <div class="form-description">Polia označené * sú povinné.</div>
 
     <%= form_with url: rodauth.create_account_path, method: :post, data: { turbo: false }, html: { novalidate: true } do |form| %>
-      <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-        <div class="col-span-full">
-          <%= form.label "login", "#{rodauth.login_label} *", class: "block text-sm/6 font-medium text-gray-900" %>
-          <div class="mt-2">
-            <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 #{rodauth.field_error(rodauth.login_param) ? "border-red-600 focus:ring-red-600 focus:border-red-600" : "border-gray-500" }", require: true, aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
-            <%= content_tag(:span, rodauth.field_error(rodauth.login_param), class: "block mt-1 text-red-600 text-xs", id: "login_error_message") if rodauth.field_error(rodauth.login_param) %>
-          </div>
+      <div class="form-items-con">
+        <div class="form-item-wrapper">
+          <%= form.label "login", "#{rodauth.login_label}*" %>
+          <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", require: true, aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
+          <%= content_tag(:span, rodauth.field_error(rodauth.login_param), class: "error-message", id: "login_error_message") if rodauth.field_error(rodauth.login_param) %>
         </div>
 
         <% if rodauth.create_account_set_password? %>
-          <div class="sm:col-span-3">
-            <%= form.label "password", "#{rodauth.password_label} *", class: "block text-sm/6 font-medium text-gray-900" %>
-            <%= form.password_field rodauth.password_param, value: "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 #{rodauth.field_error(rodauth.password_param) ? "border-red-600 focus:ring-red-600 focus:border-red-600" : "border-gray-500" }", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
-            <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "block mt-1 text-red-600 text-xs", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
+          <div class="form-item-wrapper">
+            <%= form.label "password", "#{rodauth.password_label}*" %>
+            <%= form.password_field rodauth.password_param, value: "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
+            <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "error-message", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
           </div>
 
           <% if rodauth.require_password_confirmation? %>
-            <div class="sm:col-span-3">
-              <%= form.label "password-confirm", "#{rodauth.password_confirm_label} *", class: "block text-sm/6 font-medium text-gray-900" %>
-              <%= form.password_field rodauth.password_confirm_param, value: "", id: "password-confirm", autocomplete: "new-password", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 #{rodauth.field_error(rodauth.password_confirm_param) ? "border-red-600 focus:ring-red-600 focus:border-red-600" : "border-gray-500" }", aria: ({ invalid: true, describedby: "password-confirm_error_message" } if rodauth.field_error(rodauth.password_confirm_param)) %>
-              <%= content_tag(:span, rodauth.field_error(rodauth.password_confirm_param), class: "block mt-1 text-red-600 text-xs", id: "password-confirm_error_message") if rodauth.field_error(rodauth.password_confirm_param) %>
+            <div class="form-item-wrapper">
+              <%= form.label "password-confirm", "#{rodauth.password_confirm_label}*" %>
+              <%= form.password_field rodauth.password_confirm_param, value: "", id: "password-confirm", autocomplete: "new-password", aria: ({ invalid: true, describedby: "password-confirm_error_message" } if rodauth.field_error(rodauth.password_confirm_param)) %>
+              <%= content_tag(:span, rodauth.field_error(rodauth.password_confirm_param), class: "error-message", id: "password-confirm_error_message") if rodauth.field_error(rodauth.password_confirm_param) %>
             </div>
           <% end %>
         <% end %>
 
-        <div class="sm:col-span-3">
-          <%= form.label :firstname, "First name *", class: "block text-sm/6 font-medium text-gray-900" %>
-          <div class="mt-2">
-            <%= form.text_field :firstname, value: params["firstname"], id: "firstname", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 #{rodauth.field_error("firstname") ? "border-red-600 focus:ring-red-600 focus:border-red-600" : "border-gray-500" }", aria: ({ invalid: true, describedby: "firstname_error_message" } if rodauth.field_error("firstname")) %>
-            <%= content_tag(:span, rodauth.field_error("firstname"), class: "block mt-1 text-red-600 text-xs", id: "firstname_error_message") if rodauth.field_error("firstname") %>
-          </div>
+        <div class="form-item-wrapper">
+          <%= form.label :firstname, "Meno*" %>
+          <%= form.text_field :firstname, value: params["firstname"], id: "firstname", aria: ({ invalid: true, describedby: "firstname_error_message" } if rodauth.field_error("firstname")) %>
+          <%= content_tag(:span, rodauth.field_error("firstname"), class: "error-message", id: "firstname_error_message") if rodauth.field_error("firstname") %>
         </div>
 
-        <div class="sm:col-span-3">
-          <%= form.label :lastname, "Last name", class: "block text-sm/6 font-medium text-gray-900" %>
-          <div class="mt-2">
-            <%= form.text_field :lastname, value: params["lastname"], id: "lastname", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 #{rodauth.field_error("lastname") ? "border-red-600 focus:ring-red-600 focus:border-red-600" : "border-gray-500" }", aria: ({ invalid: true, describedby: "lastname_error_message" } if rodauth.field_error("lastname")) %>
-            <%= content_tag(:span, rodauth.field_error("lastname"), class: "block mt-1 text-red-600 text-xs", id: "lastname_error_message") if rodauth.field_error("lastname") %>
-          </div>
+        <div class="form-item-wrapper">
+          <%= form.label :lastname, "Priezvisko" %>
+          <%= form.text_field :lastname, value: params["lastname"], id: "lastname", aria: ({ invalid: true, describedby: "lastname_error_message" } if rodauth.field_error("lastname")) %>
+          <%= content_tag(:span, rodauth.field_error("lastname"), id: "lastname_error_message") if rodauth.field_error("lastname") %>
         </div>
 
-        <div class="sm:col-span-3">
-          <%= form.label :municipality_id, "Municipality", class: "block text-sm/6 font-medium text-gray-900" %>
-          <div class="mt-2">
-            <%= form.select :municipality_id,
-                            options_for_select(
-                              Municipality.where(active: true).order(:name).map { |m| ["#{m.name} (#{m.category&.titleize})", m.id] },
-                              params["municipality_id"]
-                            ),
-                            { include_blank: "Select Municipality" },
-                            { id: "municipality_id", class: "block w-full rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 #{rodauth.field_error("municipality_id") ? "border-red-600 focus:ring-red-600 focus:border-red-600" : "border-gray-500" }",
-                              aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
-            <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
-          </div>
+        <div class="form-item-wrapper">
+          <%= form.label :municipality_id, "Mesto alebo obec" %>
+
+          <%= form.select :municipality_id,
+                          options_for_select(
+                            Municipality.where(active: true).order(:name).map { |m| [ "#{m.name} (#{m.category&.titleize})", m.id ] },
+                            params["municipality_id"]
+                          ),
+                          { include_blank: "Select Municipality" },
+                          { id: "municipality_id", aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
+          <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
+
         </div>
 
-        <div class="sm:col-span-3">&nbsp;</div>
-      </div>
-
-      <div class="flex justify-between mt-8">
-        <%= form.submit rodauth.create_account_button, name: "create_account", class: "px-6 py-3 cursor-pointer font-semibold text-sm rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" %>
+        <%= form.submit rodauth.create_account_button, class: "button" %>
       </div>
     <% end %>
   </div>
-</div>
+</section>

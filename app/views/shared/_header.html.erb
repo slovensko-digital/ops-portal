@@ -63,13 +63,23 @@
               <path d="M15,15l5,5" fill="none" stroke-miterlimit="10" />
             </svg>
           </a>
-          <a href="./../moj-ucet.html" class="icon login">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <circle cx="12" cy="8" r="4" fill="none"/>
-              <path d="M19,21v-1c0-2.21-1.79-4-4-4h-6c-2.21,0-4,1.79-4,4v1" fill="none"/>
-            </svg>
-            <span class="logged">František</span>
-          </a>
+          <% if logged_in? %>
+            <%= link_to profile_path, class: "icon login" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4" fill="none"/>
+                <path d="M19,21v-1c0-2.21-1.79-4-4-4h-6c-2.21,0-4,1.79-4,4v1" fill="none"/>
+              </svg>
+              <span class="logged"><%= current_user.firstname %> <%= current_user.lastname %></span>
+            <% end %>
+          <% else %>
+            <%= link_to rodauth.login_path, class: "icon login" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4" fill="none"/>
+                <path d="M19,21v-1c0-2.21-1.79-4-4-4h-6c-2.21,0-4,1.79-4,4v1" fill="none"/>
+              </svg>
+              <span class="logged">Prihlásiť</span>
+            <% end %>
+          <% end %>
           <a class="menu-button">
             <span></span>
             <span></span>
@@ -112,10 +122,6 @@
         </div>
       </div>
     </div>
-
-
-
-
 
   </nav>
 
