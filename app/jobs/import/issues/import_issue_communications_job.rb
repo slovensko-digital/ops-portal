@@ -4,7 +4,8 @@ module Import
 
     def perform(issue:, import_attachments_job: Issues::ImportIssueCommunicationAttachmentsJob)
       Legacy::GenericModel.set_table_name("communication")
-      Legacy::GenericModel.where(alert: issue.legacy_id).find_in_batches do |group|
+      # !! DO NOT ever delete the internal attribute condition !!
+      Legacy::GenericModel.where(alert: issue.legacy_id).where(internal: 0).find_in_batches do |group|
         group.each do |legacy_record|
           communication_author = if legacy_record.user.to_i.nonzero?
            ::ResponsibleSubjects::User.find_by(legacy_id: legacy_record.user)
