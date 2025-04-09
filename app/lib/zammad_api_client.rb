@@ -46,6 +46,7 @@ class ZammadApiClient
       process_type: process_type,
       issue_type: issue.issue_type,
       title: issue.title,
+      triage_ticket_description: issue.description,
       group: group,
       customer_id: issue.author.external_id,
       origin_by_id: issue.author.external_id,
@@ -207,7 +208,7 @@ class ZammadApiClient
     article.id
   end
 
-  def create_system_article!(ticket_id, body)
+  def create_internal_system_note!(ticket_id, body)
     ticket = @client.ticket.find(ticket_id)
 
     article = ticket.article(
@@ -306,14 +307,14 @@ class ZammadApiClient
     raise "Import mode OFF" unless import_mode_on
   end
 
-  def link_tickets!(first_ticket_id, second_ticket_id)
-    second_ticket_number = @client.ticket.find(second_ticket_id).number
+  def link_tickets!(parent_ticket_id:, child_ticket_id:)
+    child_ticket_number = @client.ticket.find(child_ticket_id).number
     raw_api_request(:post, "links/add", {
-      link_type: "normal",
+      link_type: "child",
       link_object_target: "Ticket",
-      link_object_target_value: first_ticket_id,
+      link_object_target_value: parent_ticket_id,
       link_object_source: "Ticket",
-      link_object_source_number: second_ticket_number
+      link_object_source_number: child_ticket_number
     })
   end
 
@@ -371,10 +372,6 @@ class ZammadApiClient
     User.create!(external_id: u.id, email: u.email, firstname: u.firstname, lastname: u.lastname)
   end
 
-  def find_zammad_category(issue_category)
-    issue_category.triage_external_id || issue_category.name
-  end
-
   def build_ticket_municipality(issue)
     if issue.municipality_district.present?
       "#{issue.municipality&.name}::#{issue.municipality_district.name}"
@@ -384,21 +381,34 @@ class ZammadApiClient
   end
 
   def build_ticket_response(ticket)
+    municipality = Municipality.find_by!(name: ticket.address_municipality.split("::").first)
+    municipality_district = municipality&.municipality_districts&.find_by(name: ticket.address_municipality.split("::").last)
+
+    category = Issues::Category.find_by!(name: ticket.category)
+    subcategory = category&.subcategories&.find_by!(name: ticket.subcategory)
+    subtype = subcategory&.subtypes&.find_by!(name: ticket.subtype)
+
+    ops_state = Issues::State.find_by!(key: ticket.ops_state)
+
+    responsible_subject = ticket.responsible_subject[:value] ? ResponsibleSubject.find(ticket.responsible_subject[:value]) : nil
+
     {
       triage_identifier: ticket.id,
       triage_group: ticket.group,
       triage_owner_id: ticket.owner_id,
-      ops_state: ticket.ops_state,
+      ops_state: ops_state,
       title: ticket.title,
+      description: ticket.triage_ticket_description,
       author: get_author(ticket.customer_id, anonymous: ticket.anonymous),
-      responsible_subject: ResponsibleSubject.find(ticket.responsible_subject[:value]),
+      responsible_subject: responsible_subject,
       issue_type: ticket.issue_type,
-      category: ticket.category,
-      subcategory: ticket.subcategory,
-      subtype: ticket.subtype,
+      category: category,
+      subcategory: subcategory,
+      subtype: subtype,
       address_state: ticket.address_state,
       address_county: ticket.address_county,
-      address_municipality: ticket.address_municipality,
+      municipality: municipality,
+      municipality_district: municipality_district,
       address_postcode: ticket.address_postcode,
       address_street: ticket.address_street,
       address_lat: ticket.address_lat,

@@ -29,4 +29,83 @@
     <%= issue.state.name %>
   </p>
 
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Address City:</strong>
+    <%= issue.address_city %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Address Street:</strong>
+    <%= issue.address_street %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Latitude:</strong>
+    <%= issue.latitude %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Longitude:</strong>
+    <%= issue.longitude %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Anonymous:</strong>
+    <%= issue.anonymous %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Issue Type:</strong>
+    <%= issue.issue_type %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Last Synced At:</strong>
+    <%= issue.last_synced_at %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Resolution External ID:</strong>
+    <%= issue.resolution_external_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Created At:</strong>
+    <%= issue.created_at %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Updated At:</strong>
+    <%= issue.updated_at %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Category:</strong>
+    <%= issue.category.name if issue.category %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Subcategory:</strong>
+    <%= issue.subcategory.name if issue.subcategory %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Subtype:</strong>
+    <%= issue.subtype.name if issue.subtype %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Municipality:</strong>
+    <%= issue.municipality.name if issue.municipality %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Municipality District:</strong>
+    <%= issue.municipality_district.name if issue.municipality_district %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Responsible Subject:</strong>
+    <%= issue.responsible_subject.name if issue.responsible_subject %>
+  </p>
 </div>
