@@ -68,7 +68,7 @@ class RodauthMain < Rodauth::Rails::Auth
     login_label "Email"
     login_confirm_param "email-confirm"
     # password_confirm_param "confirm_password"
-    login_minimum_length 0
+    login_minimum_length 5
 
     # Redirect back to originally requested location after authentication.
     # login_return_to_requested_location? true

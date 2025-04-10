@@ -1,0 +1,112 @@
+// 1280px
+
+@media only screen and (min-width: 80em) {
+	
+	// General
+	section { padding: em(50,16) per(60,1280); }
+	
+	// Header
+	header {
+		//padding: 0 per(60,1280);
+	}
+	header nav .nav-wrapper {
+		padding: 0 per(60,1280);
+	}
+	header nav .nav-wrap-main {
+		padding: 0 per(60,1280);
+	}
+	
+	
+	// Home Main
+	section.main {
+		display: grid;
+		gap: 0 20px;
+		grid-template-columns: 1fr 1fr;
+	}
+	section.main .report-suggestion-block {
+		gap: 0 20px;
+		grid-template-columns: auto 40%;
+		padding: per(35,570);
+	}
+	section.main .report-suggestion-block .title {
+		font-size: em(36,16);
+		line-height: em(44,36);
+	}
+	section.main .report-suggestion-block .subtitle {
+		font-size: em(22,16);
+		line-height: em(30,22);
+	}
+	section.main .how-to-block {
+		padding: per(35,570);
+	}
+	section.main .how-to-block .how-to-con {
+		gap: 0 20px;
+		grid-template-columns: auto 40%;
+	}
+	section.main .how-to-block .title {
+		font-size: em(36,16);
+		line-height: em(44,36);
+	}
+	section.main .how-to-block .subtitle {
+		font-size: em(22,16);
+		line-height: em(30,22);
+	}
+	section.main .how-to-block .images-block figure {
+		max-width: 180px;
+		width: 100%;
+	}
+	
+	
+	
+	
+	
+	// Home Suggestions
+	section.home-suggestions .home-suggestions-con {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+	section.home-suggestions a.podnet-block:last-child {
+		display: block;
+	}
+	
+	// Home News
+	section.home-news .home-news-con {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+	section.home-news a.news-block:last-child {
+		display: grid;
+	}
+	
+	// Aktuality
+	section.news .news-con {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+	
+	// Podnety
+	section.podnety .podnet-block-con {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+	section.profile .podnet-block-con {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+	.profil-nav-con {
+		grid-column-end: 4;
+	}
+	// Štatistika
+	.statistics-con {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+	
+	// Podnet
+	section.podnet .podnet-pictures-con figure.big-picture {
+		padding-bottom: 75%;
+	}
+	section.podnet .podnet-con {
+		grid-template-columns: auto per(420,1160);
+	}
+	
+	// Footer
+	footer {
+		padding: em(60,16) per(60,1280);
+	}
+	
+}

@@ -1,32 +1,41 @@
-<div id="<%= dom_id issue %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Title:</strong>
-    <%= issue.title %>
-  </p>
+<%= link_to issue_path(issue), class: "podnet-block" do %>
+  <%= render partial: "issues/issue_type_#{issue.issue_type}", locals: { issue: issue } %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Description:</strong>
-    <%= issue.description %>
-  </p>
+  <div class="info-con">
+    <div class="state-con">
+      <% if issue.issue_type == 'issue' %>
+        <div class="state done"><%= issue.state.name %></div>
+      <% end %>
+      <div class="icon-con">
+        <% if issue.votes.count > 0 %>
+          <div class="icon-block">
+            <div class="icon-like">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M10,19.24l-7.98-7.94c-1.14-1.13-1.77-2.64-1.77-4.24s.63-3.11,1.77-4.24c2.18-2.17,5.62-2.32,7.98-.47,2.36-1.85,5.81-1.7,7.99.47,1.14,1.13,1.76,2.64,1.76,4.24s-.63,3.11-1.76,4.24l-7.99,7.94ZM6.27,2.57c-1.16,0-2.32.44-3.2,1.32-.85.85-1.32,1.98-1.32,3.18s.47,2.33,1.32,3.18l6.93,6.89,6.93-6.89c.85-.85,1.32-1.98,1.32-3.18s-.47-2.33-1.32-3.18c-1.76-1.75-4.63-1.75-6.4,0l-.53.53-.53-.53c-.88-.88-2.04-1.32-3.2-1.32Z" fill="#1c3054"/>
+              </svg>
+            </div>
+            <%= issue.votes.count %>
+          </div>
+        <% end %>
+        <% if issue.comment_activities.count > 0 %>
+          <div class="icon-block">
+            <div class="icon-comment">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M20,19.23l-5.41-1.45c-1.46.74-3.09,1.13-4.75,1.13C4.42,18.91,0,14.84,0,9.84S4.42.77,9.84.77s9.84,4.07,9.84,9.07c0,1.44-.38,2.87-1.09,4.15l1.4,5.24ZM9.84,2.29C5.25,2.29,1.51,5.68,1.51,9.84s3.74,7.56,8.33,7.56c1.51,0,2.99-.38,4.3-1.09l.27-.15,3.45.93-.89-3.32.17-.28c.68-1.11,1.04-2.37,1.04-3.64,0-4.17-3.74-7.56-8.33-7.56Z"/>
+              </svg>
+            </div>
+            <%= issue.comment_activities.count %>
+          </div>
+        <% end %>
+      </div>
+    </div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Author:</strong>
-    <%= issue.author.fullname %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Reported at:</strong>
-    <%= issue.reported_at %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Zammad ID:</strong>
-    <%= issue.triage_external_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Status:</strong>
-    <%= issue.state.name %>
-  </p>
-
-</div>
+    <div class="description-con">
+      <div class="description">
+        <div class="title"><%= issue.title %></div>
+        <div class="address"><%= "#{issue.municipality&.name}, #{issue.municipality_district&.name}" %></div>
+        <div class="date"><%= l issue.reported_at.to_date, format: :long %></div>
+      </div>
+    </div>
+  </div>
+<% end %>

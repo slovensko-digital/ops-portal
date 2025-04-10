@@ -1,0 +1,2806 @@
+// Sassy
+// Import other files
+@import "reset.scss";
+@import "variables.scss";
+@import "mixins.scss";
+@import "fonts.scss";
+
+// Fonts
+$headline: "CabinetGrotesk-Variable";
+$general: "GeneralSans-Variable";
+$normal: 400;
+$medium: 500;
+$semibold: 600;
+$bold: 700;
+$extrabold: 800;
+
+// Colors
+
+$beige: rgba(242, 234, 231, 1); // #f8f3f1
+$black: rgba(28, 48, 84, 1); // #1C3054
+$black-light: rgba(28, 48, 84, 0.5); // #1C3054
+$black-ten: rgba(28, 48, 84, 0.1); // #1C3054
+$blue: rgba(57, 232, 255, 1); // #39E8FF
+$blue-light: rgba(57, 232, 255, 0.3); // #39E8FF
+$blue-dark: rgba(10, 9, 73, 1); // #0A0949
+$green: rgba(0, 229, 158, 1); // #00E59E
+$green-light: rgba(0, 229, 158, 0.2); // #00E59E
+$pink: rgba(255, 210, 230, 1); // #ffd2e6
+$red: rgba(255, 71, 97, 1); // #ff4761
+$yellow: rgba(255, 212, 0, 1); // #ffd400
+$white: rgba(255, 255, 255, 1); // #FFFFFF
+
+$line: rgba(28, 48, 84, 0.1); // #1C3054
+
+// Farby podnetov
+$zaslane: rgba(57, 232, 255, 1);
+$riesene: rgba(57, 232, 255, 1);
+$vyriesene: rgba(0, 229, 158, 1);
+$neriesene: rgba(255, 171, 201, 1);
+$zamietnute: rgba(0, 0, 0, 0.2);
+$odstupene: rgba(151, 71, 255, 0.7);
+$cakajuce: rgba(255, 203, 37, 1);
+$uzavrete: rgba(220, 188, 189, 1);
+
+
+// General
+body {
+  //background: rgba(242, 234, 231, 0.3);
+  color: $black;
+  font-family: $general;
+  font-size: 100%;
+  margin-top: 60px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+section {
+  margin: 0 auto;
+  max-width: 1600px;
+  padding: em(40,16) per(20,320);
+  position: relative;
+  overflow: visible;
+}
+img {
+  display: block;
+  width: 100%;
+}
+h1 {
+  color: $black;
+  display: inline-block;
+  font-family: $headline;
+  font-size: em(26,16);
+  font-weight: $extrabold;
+  line-height: em(36,26);
+  margin-bottom: 40px;
+}
+svg {
+  display: block;
+  width: 100%;
+}
+::-moz-selection {
+  //color: $white;
+  //background: $blue;
+}
+::selection {
+  //color: $white;
+  //background: $blue;
+}
+
+
+// Icons
+.icon {
+  stroke-width: 2;
+}
+
+// Buttons
+.button {
+  align-items: center;
+  background: $black;
+  box-sizing: border-box;
+  color: $white;
+  cursor: pointer;
+  display: flex;
+  gap: 0 10px;
+  fill: $white;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+  height: 50px;
+  justify-content: center;
+  padding: 0 18px;
+  //stroke: $white;
+  text-align: center;
+  width: fit-content;
+  @include rounded(25px);
+  @include transition(all);
+}
+.button:hover {
+  background: $blue;
+  color: $black;
+  fill: $black;
+}
+.button svg {
+  height: 20px;
+  //stroke-width: 2;
+  width: auto;
+}
+.button-transparent {
+  background: transparent;
+  border: 1px solid $black;
+  color: $black;
+  fill: $black;
+  //stroke: $black;
+}
+.button-transparent:hover {
+  background: $blue;
+  color: $black;
+}
+
+// Close Button
+.button-close-gen {
+  display: block;
+  cursor: pointer;
+  height: 26px;
+  position: relative;
+  width: 26px;
+  @include rotate(45);
+}
+.button-close-gen:hover span {
+  border-color: $red;
+}
+.button-close-gen span {
+  border: 1px solid $black;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 24px;
+  //@include rotate(45);
+}
+.button-close-gen span:last-child {
+  left: 0%;
+  @include rotate(90);
+}
+
+.zaslane { background: $zaslane; }
+.riesene { background: $riesene; }
+.vyriesene { background: $vyriesene; }
+.neriesene { background: $neriesene; }
+.zamietnute { background: $zamietnute; }
+.odstupene { background: $odstupene; }
+.cakajuce { background: $cakajuce; }
+.uzavrete { background: $uzavrete; }
+
+
+
+// Pagination
+nav.pagination {
+  display: flex;
+  gap: 0 10px;
+  margin-top: 40px;
+  justify-content: center;
+  width: 100%;
+}
+nav.pagination .pages-con {
+  align-items: center;
+  display: none;
+  gap: 0 10px;
+}
+nav.pagination a.button-pagination {
+  align-items: center;
+  border: 1px solid $black;
+  box-sizing: border-box;
+  color: $black;
+  display: flex;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+  height: 50px;
+  justify-content: center;
+  padding: 0 14px;
+  min-width: 50px;
+  stroke: $black;
+  stroke-width: 1.5;
+  @include rounded(25px);
+}
+nav.pagination a.button-pagination:hover,
+nav.pagination a.button-pagination.active {
+  background: $blue;
+}
+nav.pagination .dash {
+  border-top: 1px solid $black;
+  height: 1px;
+  width: 30px;
+}
+nav.pagination .button-arrow {
+  padding: 0 !important;
+}
+nav.pagination svg {
+  width: 22px;
+}
+nav.pagination .button-left {
+  rotate: 180deg;
+}
+
+// Header
+.shadow {
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.2);
+}
+header {
+  background: $white;
+  display: flex;
+  justify-content: center;
+  padding: 0 per(20,320);
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 10001;
+}
+header nav {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  //height: 60px;
+  //justify-content: space-between;
+  //max-width: 1600px;
+  width: 100%;
+}
+header nav .nav-wrapper {
+  //align-items: center;
+  box-sizing: border-box;
+  //display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+header nav .nav-con-up {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 60px;
+  justify-content: space-between;
+  max-width: 1600px;
+  width: 100%;
+}
+header nav .nav-con-head {
+  align-items: center;
+  display: flex;
+  gap: 0 30px;
+}
+// Mobile Navigation
+.open-nav-body {
+  overflow: hidden;
+}
+.open-nav-body .nav-wrap-head {
+  background: $white;
+  bottom: 0;
+  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column;
+  row-gap: 20px;
+  height: 100%;
+  left: 0;
+  padding: per(30,320);
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+
+header nav .nav-wrap-head a.menu-button-close {
+  align-self: flex-end;
+  display: block;
+  cursor: pointer;
+  height: 26px;
+  position: relative;
+  width: 26px;
+  @include rotate(45);
+}
+header nav .nav-wrap-head a.menu-button-close:hover span {
+  border-color: $red;
+}
+header nav .nav-wrap-head a.menu-button-close span {
+  border: 1px solid $black;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 24px;
+  //@include rotate(45);
+}
+header nav .nav-wrap-head a.menu-button-close span:last-child {
+  left: 0%;
+  @include rotate(90);
+}
+header nav .nav-wrap-head {
+  //display: fixed;
+  //align-items: center;
+  display: none;
+  //gap: 0 20px;
+  //transition: transform 330ms ease-in-out;
+}
+header nav .nav-wrap-head a.account {
+  align-items: center;
+  column-gap: 14px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 80px auto 20px;
+  //justify-content: space-between;
+  margin-bottom: 20px;
+  width: 100%;
+}
+header nav .nav-wrap-head a.account figure {
+  //border: 2px solid $black;
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  width: 80px;
+  @include rounded(50px);
+}
+header nav .nav-wrap-head a.account figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+header nav .nav-wrap-head a.account figure picture img {
+  object-fit: cover;
+}
+header nav .nav-wrap-head a.account .name {
+  font-family: $general;
+  font-size: em(18,28);
+  font-weight: $semibold;
+  line-height: em(26,18);
+}
+header nav .mobile-buttons-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+}
+header nav .mobile-buttons-nav a.button {
+
+}
+
+
+// Desktop
+header nav .nav-wrap-head a {
+  //color: $black;
+  //font-family: $general;
+  //font-size: em(16,16);
+  //font-weight: $medium;
+  //line-height: em(16,16);
+  //@include transition(all);
+}
+
+
+
+
+
+header nav .nav-wrap-head {
+  //align-items: center;
+  //display: none;
+  //gap: 0 20px;
+}
+header nav .nav-wrap-head a {
+  color: $black;
+  font-family: $general;
+  font-size: em(28,16);
+  font-weight: $medium;
+  line-height: em(28,28);
+  @include transition(all);
+}
+header nav .nav-wrap-head a:hover {
+  color: $red;
+}
+header nav a.nav-logo {
+  fill: $black;
+  width: 66px;
+  overflow: visible;
+  @include transition(all);
+}
+header nav a.nav-logo .hand {
+  @include transition(all);
+}
+header nav a.nav-logo:hover .hand {
+  fill: $red;
+}
+header nav .buttons-con {
+  //align-content: center;
+  align-items: center;
+  display: flex;
+  column-gap: calc(4% + 2px);
+  justify-content: flex-end;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+header nav a.search {
+  stroke: $black;
+  @include transition(all);
+}
+header nav a.search:hover {
+  stroke: $red;
+}
+header nav a.login {
+  stroke: $black;
+  @include transition(all);
+}
+header nav a.login:hover {
+  stroke: $red;
+}
+header nav a.login .logged {
+  display: none;
+  @include transition(all);
+}
+header nav a.add-button {
+  align-items: center;
+  background: $red;
+  color: $white;
+  display: flex;
+  flex-wrap: nowrap;
+  font-family: $general;
+  font-size: em(12,16);
+  font-weight: $medium;
+  line-height: em(12,12);
+  padding: 13px 14px;
+  text-align: center;
+  @include rounded(19px);
+  @include transition(all);
+}
+header nav a.add-button:hover {
+  background: $black;
+}
+header nav a.menu-button {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  @include transition(all);
+}
+header nav a.menu-button:hover span {
+  border-color: $red;
+}
+header nav a.menu-button span {
+  border: 1px solid $black;
+  display: block;
+  width: 22px;
+  @include transition(all);
+}
+
+
+
+header nav .nav-con-main {
+  display: none;
+}
+
+header nav .language {
+  display: none;
+}
+
+
+
+
+
+// Main
+section.main {
+  display: grid;
+  gap: 40px 0;
+}
+section.main .report-suggestion-block {
+  background: $green;
+  display: grid;
+  gap: 30px 0;
+  padding: per(20,280);
+  @include rounded(15px);
+}
+section.main .report-suggestion-block .report-suggestion-con {
+
+}
+section.main .report-suggestion-block .title {
+  color: $black;
+  font-family: $headline;
+  font-size: em(30,16);
+  font-weight: $extrabold;
+  line-height: em(36,30);
+}
+section.main .report-suggestion-block .subtitle {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(26,18);
+  margin-top: 10px;
+}
+section.main .report-suggestion-block a.button-report-suggestion-block {
+  background: $red;
+  margin-top: 20px;
+  width: 100%;
+}
+section.main .report-suggestion-block a.button-report-suggestion-block:hover {
+  background: $black;
+  color: $white;
+}
+section.main .report-suggestion-block .images-block {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+section.main .report-suggestion-block .images-block figure {
+  width: per(160,240);
+}
+section.main .how-to-block {
+  background: $yellow;
+  display: grid;
+  gap: 30px 0;
+  padding: per(20,280);
+  @include rounded(15px);
+}
+section.main .how-to-block .how-to-con {
+  display: grid;
+  gap: 30px 0;
+}
+section.main .how-to-block .title {
+  color: $black;
+  font-family: $headline;
+  font-size: em(30,16);
+  font-weight: $extrabold;
+  line-height: em(36,30);
+}
+section.main .how-to-block .subtitle {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(26,18);
+  margin-top: 10px;
+}
+section.main .how-to-block .how-to-button-con {
+  align-items: flex-end;
+  display: flex;
+  fill: $black;
+  gap: 0 10px;
+  justify-content: flex-end;
+}
+section.main .how-to-block .how-to-button-con .button-how-to {
+  align-items: center;
+  background: $white;
+  display: flex;
+  height: 50px;
+  justify-content: center;
+  width: 50px;
+  @include rounded(50%);
+  @include transition(all);
+}
+section.main .how-to-block .how-to-button-con .button-how-to:hover {
+  background: $red;
+}
+section.main .how-to-block .how-to-button-con .inactive {
+  background: rgba(255,255,255, 0.5);
+}
+section.main .how-to-block .how-to-button-con .inactive:hover {
+  background: rgba(255,255,255, 0.5);
+}
+section.main .how-to-block .how-to-button-con .button-how-to svg {
+  height: 20px;
+  width: 12px;
+}
+section.main .how-to-block .how-to-button-con .button-back {
+  rotate: 180deg;
+}
+section.main .how-to-block .images-block {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+section.main .how-to-block .images-block figure {
+  width: per(150,240);
+}
+
+
+// Home
+section.home {
+  align-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 40px 0;
+  justify-content: flex-start;
+}
+section.home .button-read-more-home {
+  width: 100%;
+}
+section.home h1 {
+  margin: 0;
+}
+// Home Suggestions
+section.home-suggestions {
+
+}
+section.home-suggestions .home-suggestions-con {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+// Home News
+section.home-news {
+  align-content: flex-start;
+  //display: flex;
+  //flex-direction: column;
+  justify-content: flex-start;
+}
+section.home-news .home-news-con {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+
+// News Block
+a.news-block {
+  align-content: flex-start;
+  display: grid;
+  gap: 16px 0;
+  @include transition(all);
+}
+a.news-block .date {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(14,14);
+}
+a.news-block h2 {
+  color: $black;
+  font-family: $headline;
+  font-size: em(22,16);
+  font-weight: $extrabold;
+  line-height: em(32,22);
+  @include transition(all);
+}
+a.news-block .button-read-more-news {
+  align-items: center;
+  background: $blue-light;
+  display: flex;
+  height: 50px;
+  justify-content: center;
+  stroke: $black;
+  stroke-width: 2;
+  width: 50px;
+  @include rounded(25px);
+  @include transition(all);
+}
+a.news-block .button-read-more-news svg {
+  height: 20px;
+  width: 22px;
+}
+
+
+
+// Aktuality
+section.news .news-con {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+a.news-block:hover .news-block-title {
+  text-decoration: underline;
+}
+a.news-block:hover .button-read-more-news {
+  background: $pink !important;
+}
+
+
+
+// Article
+section.article {
+  margin: 0 auto;
+  max-width: 550px;
+}
+article {
+
+}
+article .date {
+  color: $black-light;
+  display: block;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(14,14);
+  margin-bottom: 40px;
+}
+article h1 {
+  color: $black;
+  font-family: $headline;
+  font-size: em(28,16);
+  font-weight: $extrabold;
+  line-height: em(38,28);
+}
+article h2 {
+  color: $black;
+  font-family: $general;
+  font-size: em(22,16);
+  font-weight: $semibold;
+  line-height: em(32,22);
+  margin-bottom: 30px;
+}
+article h3 {
+  color: $black;
+  font-family: $general;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(28,18);
+  margin-bottom: 30px;
+}
+article p {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(28,18);
+  margin-bottom: 30px;
+}
+article strong {
+  font-weight: $semibold;
+}
+article a {
+  color: $black;
+  text-decoration: underline;
+  text-decoration-color: $blue;
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.1em;
+  @include transition(all);
+}
+article a:hover {
+  color: $red;
+  text-decoration-color: $red;
+}
+article ul {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(28,18);
+  margin: 0 0 30px 15px;
+}
+article ul li {
+  padding-left: 30px;
+  text-indent: -30px;
+  margin-bottom: 15px;
+}
+article ul li::before {
+
+  color: $blue;
+  content: "—";
+  font-family: $general;
+  font-weight: $medium;
+  margin-right: 17px;
+}
+article figure {
+  margin-bottom: 30px;
+}
+article figure figcaption {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $normal;
+  line-height: em(26,14);
+  margin-top: 6px;
+}
+
+
+
+// Profil
+section.profile {
+
+}
+section.profile .profile-con {
+  display: grid;
+  row-gap: 60px;
+}
+section.profile .profile-con a.button {
+  width: 100%;
+}
+section.profile .profile-wrapper {
+  background: $blue-light;
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+  padding: per(20,280);
+  @include rounded(15px);
+}
+section.profile .profile-wrapper .profile-info-panel {
+  border-bottom: 1px solid $black-ten;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  justify-content: center;
+  padding-bottom: 40px;
+}
+section.profile .profile-wrapper .profile-info-panel figure {
+  height: 180px;
+  //margin-bottom: 10px;
+  overflow: hidden;
+  position: relative;
+  width: 180px;
+  @include rounded(100px);
+}
+section.profile .profile-wrapper .profile-info-panel figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}section.profile .profile-wrapper .profile-info-panel figure picture img {
+   object-fit: cover;
+ }
+section.profile .profile-wrapper .profile-name {
+  color: $black;
+  font-family: $general;
+  font-size: em(22,16);
+  font-weight: $semibold;
+  line-height: em(30,22);
+}
+section.profile .profile-wrapper .profile-since {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(24,16);
+  text-align: center;
+  max-width: 200px;
+}
+section.profile .podnet-block-con {
+  display: grid;
+  gap: 30px 0;
+  grid-template-columns: 1fr;
+}
+
+
+
+// Results
+section.profile .profile-results-con {
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+}
+section.profile .profile-results-con .title-results {
+  color: $black;
+  font-family: $general;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(20,20);
+  margin-bottom: 20px;
+}
+section.profile .profile-results-con .results-line-info {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+  margin-bottom: 10px;
+}
+section.profile .profile-results-con .results-line-back {
+  background: $black-ten;
+  padding: 4px;
+  @include rounded(10px);
+}
+section.profile .profile-results-con .results-line {
+  background: $green;
+  height: 12px;
+  width: 83%;
+  @include rounded(6px);
+}
+
+// Button
+.profil-nav-con {
+  box-sizing: border-box;
+  margin-bottom: 30px;
+  width: 100%;
+
+}
+.profil-nav-con ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.profil-nav-con a.button.active {
+  color: $white;
+  background: $black;
+}
+
+
+
+
+
+
+// Report
+section.report {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 400px;
+}
+section.report .button {
+  background: $blue;
+  color: $black;
+  margin-top: 30px;
+  width: 100%;
+}
+section.report .button:hover {
+  background: $green;
+}
+section.report .notice {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(22,14);
+  margin-top: 20px;
+
+}
+section.report h1 {
+  margin-bottom: 30px;
+}
+section.report .report-suggestion-description {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(26,18);
+  margin-bottom: 30px;
+}
+
+
+// Add Pictures
+.report-suggestion-add-pictures-con {
+  align-items: center;
+  border: 2px solid $black;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+  @include rounded(15px);
+}
+.report-suggestion-add-pictures-wrapper {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+  justify-content: center;
+  padding: 30px;
+}
+.report-suggestion-add-pictures-wrapper .button-add-picture {
+  align-items: center;
+  border: 2px solid $black;
+  box-sizing: border-box;
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  stroke: $black;
+  stroke-width: 2;
+  width: 60px;
+  @include rounded(30px);
+  @include transition(all);
+}
+.report-suggestion-add-pictures-wrapper .button-add-picture:hover {
+  background: $green;
+}
+.report-suggestion-add-pictures-wrapper .button-add-picture svg {
+  height: 28px;
+  width: 28px;
+}
+.report-suggestion-add-pictures-wrapper .info-title {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+}
+
+.report-suggestion-pictures-block {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+.report-suggestion-pictures-block figure {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  position: relative;
+  width: 100%;
+  @include rounded(10px);
+}
+.report-suggestion-pictures-block figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.report-suggestion-pictures-block figure .lens-image {
+  box-sizing: border-box;
+  cursor: pointer;
+  //bottom: 50%;
+  fill: $white;
+  height: 38px;
+  left: 14px;
+  //margin: 0 -19px -19px 0;
+  position: absolute;
+  opacity: 0.6;
+  //right: 50%;
+  top: 14px;
+  width: 38px;
+  z-index: 2;
+  @include transition(all);
+}
+.report-suggestion-pictures-block figure a.lens-image:hover {
+  opacity: 1;
+}
+section.report .report-map-con {
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+}
+section.report .report-map-con .report-map {
+  border: 2px solid $black;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  @include rounded(15px);
+}
+section.report .report-map-con iframe {
+  display: block;
+  height: 100% !important;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100% !important;
+}
+
+
+
+
+section.report .report-map-con .search-con {
+  display: flex;
+  width: 100%;
+}
+section.report .report-map-con .search-con form {
+  position: relative;
+  width: 100%;
+}
+section.report .report-map-con .search-con input {
+  border: 2px solid $black;
+  box-sizing: border-box;
+  color: $black;
+  display: flex;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+  height: 50px;
+  padding: 0 50px 0 20px;
+  width: 100%;
+  @include rounded(25px);
+}
+
+section.report .report-map-con .search-con input::placeholder {
+  color: $black;
+  font-weight: $normal;
+  opacity: 0.5;
+}
+section.report .report-map-con .search-con form button {
+  stroke: $black;
+  stroke-width: 2;
+  width: 24px;
+  position: absolute;
+  right: 20px;
+  top: 12px;
+  @include transition(all);
+}
+section.report .report-map-con .search-con form button:hover {
+  cursor: pointer;
+  stroke: $red;
+  @include transition(all);
+}
+
+
+section.report .report-summary-block-con {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+section.report .button-report-summary {
+  text-align: left;
+  width: 100%;
+  align-items: center;
+  border: 2px solid $black;
+  box-sizing: border-box;
+  display: grid;
+  gap: 0 20px;
+  grid-template-columns: auto 12px;
+  justify-content: space-between;
+  padding: 16px;
+  @include rounded(10px);
+  @include transition(all);
+}
+section.report .report-summary-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px 0;
+}
+section.report .button-report-summary .icon-arrow {
+  width: 12px;
+}
+section.report .button-report-summary:hover,
+section.report .button-report-summary.active {
+  background: $blue-light;
+}
+section.report .title {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $semibold;
+  line-height: em(26,18);
+}
+section.report .description {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(20,13);
+}
+section.report .labels-con {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+section.report .labels-con .label {
+  align-items: center;
+  background: $blue;
+  color: $black;
+  display: flex;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(14,14);
+  height: 26px;
+  justify-content: center;
+  padding: 0 12px;
+  @include rounded(13px);
+}
+section.report .button-back {
+  align-items: center;
+  color: $black;
+  display: flex;
+  gap: 0 10px;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+  margin-bottom: 30px;
+  stroke: $black;
+  @include transition(all);
+}
+section.report .button-back svg {
+  rotate: 180deg;
+  width: 12px;
+}
+section.report .button-back:hover {
+  color: $red;
+  stroke: $red;
+}
+section.report .button-category {
+  padding: 12px 16px !important;
+}
+section.report .button-category .report-summary-wrapper {
+  gap: 0 !important;
+}
+
+section.report .report-warning {
+  background: $pink;
+  display: flex;
+  gap: 20px 0;
+  flex-direction: column;
+  padding: 16px 20px;
+  @include rounded(15px);
+}
+section.report .report-warning .title {
+  color: $black;
+  font-family: $headline;
+  font-size: em(26,16);
+  font-weight: $extrabold;
+  line-height: em(34,26);
+}
+section.report .report-warning .description {
+  color: $black;
+  display: flex;
+  gap: 20px 0;
+  flex-direction: column;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(26,18);
+}
+section.report .button-transparent {
+  background: transparent !important;
+}
+section.report .button-transparent:hover {
+  background: $blue !important;
+}
+
+
+section.report .report-summary-edit-pictures {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+.report-summary-edit-pictures figure {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  position: relative;
+  width: 100%;
+  @include rounded(10px);
+}
+.report-summary-edit-pictures figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.report-summary-edit-pictures figure picture img {
+  height: 100%;
+  object-fit: cover;
+}
+section.report .sent-picture {
+  padding: per(20,280);
+  margin-bottom: 30px;
+}
+
+.sent-picture figure {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  position: relative;
+  width: 100%;
+  @include rounded(50%);
+}
+.sent-picture figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.sent-picture figure picture img {
+  height: 100%;
+  object-fit: cover;
+}
+
+
+
+
+
+
+section.report .report-summary-edit {
+  border: 2px solid $black;
+  box-sizing: border-box;
+  display: flex;
+  gap: 14px 0;
+  flex-direction: column;
+  padding: 16px;
+  @include rounded(10px);
+  @include transition(all);
+}
+section.report .report-summary-edit .button-edit {
+  margin-top: 10px !important;
+  width: fit-content !important;
+}
+
+
+
+// Forms
+.form-items-con {
+  display: flex;
+  gap: 20px 0;
+  flex-direction: column;
+}
+.form-item-wrapper {
+  display: flex;
+  gap: 6px 0;
+  flex-direction: column;
+}
+label {
+  color: $black;
+  display: block;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(24,16);
+}
+input {
+  background: $white;
+  border: 1px solid $black;
+  box-sizing: border-box;
+  color: $black;
+  display: block;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+  height: 50px;
+  padding: 0 14px;
+  width: 100%;
+  @include rounded(6px);
+}
+input::placeholder {
+  color: $black-light;
+  font-weight: $normal;
+}
+textarea {
+  border: 1px solid $black;
+  box-sizing: border-box;
+  color: $black;
+  display: block;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(26,18);
+  min-height: 180px;
+  padding: 10px 14px;
+  width: 100%;
+  @include rounded(6px);
+}
+textarea::placeholder {
+  color: $black-light;
+  font-weight: $normal;
+}
+input.button {
+  border: none;
+}
+.form-description {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(28,18);
+}
+.form-description a {
+  color: $black;
+  text-decoration: underline;
+  @include transition(all);
+}
+.form-description a:hover {
+  color: $red;
+}
+section.forms-container .button {
+  //border: none !important;
+  width: 100% !important;
+}
+.form-other-con {
+  display: flex;
+  flex-direction: column;
+  gap: 40px 0;
+}
+.form-notice {
+  color: $black-light;
+  display: block;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(24,16);
+  width: 100%;
+}
+.form-notice a {
+  color: $black-light;
+}
+.form-notice a:hover {
+  color: $red;
+}
+.form-or-notice {
+  color: $black-light;
+  display: block;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+  text-align: center;
+  width: 100%;
+}
+.form-check-box-con {
+  align-items: center;
+  color: $black;
+  display: grid;
+  gap: 0 10px;
+  grid-template-columns: 30px auto;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(24,16);
+}
+.form-check-box-con-start {
+  align-items: start !important;
+}
+.form-check-box-con-start span {
+  margin-top: -5px;
+}
+.form-check-box {
+  align-items: center;
+  border: 1px solid $black;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+  @include rounded(4px);
+}
+.form-check-box svg {
+  display: none;
+  width: 16px;
+}
+.form-check-box.active svg {
+  display: block;
+}
+.form-check-box:hover svg {
+  display: block;
+}
+.form-check-box svg.active {
+  display: block;
+}
+section.report .button {
+  font-size: em(18,16) !important;
+  height: 50px;
+}
+.form-radio-button-wrapper {
+  align-items: center;
+  display: flex;
+  gap: 0 20px;
+}
+.form-radio-button-con {
+  align-items: center;
+  color: $black;
+  display: grid;
+  gap: 0 10px;
+  grid-template-columns: 30px auto;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+}
+.form-radio-button {
+  align-items: center;
+  box-sizing: border-box;
+  border: 1px solid $black;
+  cursor: pointer;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+  @include rounded(50%);
+}
+.form-radio-button-active {
+  display: none;
+  background: $black;
+  box-sizing: border-box;
+  height: 20px;
+  width: 20px;
+  @include rounded(50%);
+}
+.form-radio-button:hover .form-radio-button-active {
+  display: block;
+}
+.form-radio-button.active .form-radio-button-active {
+  display: block;
+}
+.dropdown-button {
+  background: $white;
+  border: 1px solid $black;
+  box-sizing: border-box;
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+  gap: 0 10px;
+  grid-template-columns: auto 14px;
+  height: 50px;
+  justify-content: space-between;
+  padding: 0 14px;
+  @include rounded(6px);
+}
+.dropdown-button svg {
+  fill: $black;
+}
+ul.dropdown-list {
+  background: $white;
+  border: 1px solid $black;
+  box-sizing: border-box;
+  height: 194px;
+  overflow-y: scroll;
+  @include rounded(6px);
+}
+ul.dropdown-list li {
+  color: $black;
+  cursor: pointer;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+  padding: 12px 14px;
+}
+ul.dropdown-list li:hover {
+  background: $line;
+}
+ul.dropdown-list li.check-box {
+  align-items: center;
+  display: grid;
+  gap: 0 4px;
+  grid-template-columns: 30px auto;
+}
+ul.dropdown-list li.check-box .form-check-box {
+  height: 24px;
+  width: 24px;
+}
+ul.dropdown-list li.check-box svg {
+  //width: 16px;
+}
+ul.dropdown-list li.check-box:hover svg {
+  display: block;
+}
+ul.dropdown-list li.active .form-check-box {
+  background: $blue;
+}
+ul.dropdown-list li.active svg {
+  display: block;
+}
+.podnety-filter-con .dropdown-button {
+  font-size: em(16,16) !important;
+  line-height: em(16,16) !important;
+}
+.podnety-filter-con input {
+  font-size: em(16,16) !important;
+  line-height: em(16,16) !important;
+}
+.podnety-filter-con ul.dropdown-list li {
+  font-size: em(16,16) !important;
+  line-height: em(16,16) !important;
+}
+.form-picture-con {
+  align-items: center;
+  display: grid;
+  gap: 0 20px;
+  grid-template-columns: 100px auto;
+}
+.form-picture-con figure {
+  height: 100px;
+  overflow: hidden;
+  position: relative;
+  width: 100px;
+  @include rounded(50%);
+}
+.form-picture-con picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.form-picture-con img {
+  height: 100%;
+  object-fit: cover;
+}
+.form-picture-con a.button {
+  margin-top: 0 !important;
+  width: fit-content !important;
+}
+.reset-margin {
+  margin: 0 !important
+}
+.gray-text {
+  color: $black-light;
+}
+
+// Account
+section.account {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 400px;
+}
+section.account .button {
+  width: 100%;
+}
+section.account .account-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 30px 0;
+}
+section.account .account-info-con {
+  background: $blue-light;
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+  padding: 20px;
+  @include rounded(15px);
+}
+section.account .account-info-con .title {
+  color: $black;
+  font-family: $general;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(20,20);
+}
+section.account .account-info-con .account-item-con {
+  display: flex;
+  flex-direction: column;
+  gap: 5px 0;
+}
+section.account .account-info-con .description {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(24,16);
+}
+section.account .account-info-con .item-title {
+  color: $black;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(24,16);
+}
+section.account .button {
+  margin-top: 0 !important;
+}
+section.account .account-delete {
+  background: $pink !important;
+}
+section.account .account-item-subject {
+  align-items: center;
+  display: grid;
+  gap: 0 10px;
+  grid-template-columns: 65px auto;
+}
+section.account .account-item-subject figure {
+  height: 65px;
+  overflow: hidden;
+  position: relative;
+  width: 65px;
+  @include rounded(50%);
+}
+section.account .account-item-subject figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+section.account .account-item-subject figure img {
+  height: 100%;
+  object-fit: cover;
+}
+
+// Loading
+.loading-con {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  padding: per(60,280) 0;
+  width: 100%;
+}
+.loading-con figure {
+  width: per(200,280);
+}
+
+
+
+
+
+
+
+
+
+
+
+// Podnety
+section.podnety nav.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+section.podnety nav.suggestions .button-location {
+  //fill: $black;
+  //stroke: $black;
+}
+
+
+// Filter
+.podnety-filter-con {
+  background: rgba(0, 0, 0, 0.5);
+  bottom: 0;
+  display: none;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 10002;
+}
+.podnety-filter-wrapper {
+  background: $white;
+  bottom: 0;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  padding: 20px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 280px;
+}
+.podnety-filter-secondary-wrapper {
+  display: grid;
+  gap: 40px 0;
+}
+.open-podnety-filter-con {
+  display: block !important;
+}
+.open-podnety-filter-wrapper {
+  //display: grid;
+  animation: open-smooth-podnety-filter-wrapper 0.5s ease;
+}
+@keyframes open-smooth-podnety-filter-wrapper {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0%); }
+}
+.podnety-filter-wrapper .filter-title-con {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.podnety-filter-wrapper .filter-title-con .filter-title {
+  color: $black;
+  font-family: $general;
+  font-size: em(24,16);
+  font-weight: $semibold;
+  line-height: em(24,24);
+}
+.podnety-filter-wrapper .filter-select-buttons-con {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.podnety-filter-wrapper .filter-select-buttons-con .filter-select-button {
+  gap: 0 8px;
+  height: 36px;
+  padding: 0 14px;
+}
+
+
+
+
+
+
+
+
+// Štatistika
+.statistics-con {
+  display: grid;
+  gap: 20px;
+}
+.statistics-con .statistics-block {
+  box-sizing: border-box;
+  padding: 18px 20px;
+  @include rounded(15px);
+}
+.statistics-con .statistics-block .general-value-con {
+  display: flex;
+  flex-direction: column;
+  gap: 10px 0;
+}
+.statistics-con .statistics-block .general-value-con .general-title-con {
+  align-items: flex-start;
+  display: grid;
+  gap: 0 10px;
+  grid-template-columns: auto 24px;
+}
+.statistics-con .statistics-block .general-value-con .general-title {
+  color: $black;
+  font-family: $general;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(26,20);
+}
+.statistics-con .statistics-block .general-value-con .statistics-icon {
+  fill: $black;
+  stroke: $black;
+  width: 24px;
+}
+.statistics-con .statistics-block .general-value-con .general-value {
+  color: $black;
+  font-family: $general;
+  font-size: em(40,16);
+  font-weight: $semibold;
+  line-height: em(40,40);
+}
+.statistics-con .statistics-block .secondary-value-wrapper {
+  border-top: 1px solid $line;
+  display: grid;
+  gap: 5px 0;
+  margin-top: 25px;
+  padding-top: 25px;
+}
+.statistics-con .statistics-block .secondary-value-con {
+  color: $black;
+  display: flex;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $semibold;
+  line-height: em(24,18);
+  gap: 20px 0;
+  justify-content: space-between;
+  opacity: 0.8;
+}
+.statistics-con .statistics-block .secondary-value-con .secondary-title {
+  font-weight: $medium;
+}
+
+.button.button-suggestion.button-suggestion-active {
+  background: $black;
+  color: $white;
+  fill: $white;
+}
+.button.button-suggestion svg {
+  width: auto;
+}
+.hidden-list {
+  display: none;
+}
+/*
+button.button-filter {
+	align-items: center;
+	display: flex;
+	font-size: em(16,16);
+	line-height: em(16,16);
+	gap: 0 10px;
+	height:44px;
+	padding: 0 18px;
+	stroke-width: 1.5;
+	stroke: $white;
+}
+*/
+button.button-filter:hover {
+  //color: $black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.podnet-block-con {
+  display: grid;
+  gap: 30px 0;
+  grid-template-columns: 1fr;
+}
+a.podnet-block {
+  background: $beige;
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+  @include rounded(15px);
+  @include transition(background);
+}
+a.podnet-block:hover {
+  background: $blue-light;
+}
+a.podnet-block .photo figure {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 95%;
+  width: 100%;
+  //@include rounded(15px);
+}
+a.podnet-block .photo figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  //z-index: 1;
+}
+a.podnet-block .photo figure picture img {
+  height: 100%;
+  object-fit: cover;
+}
+a.podnet-block .info-con {
+  display: grid;
+  gap: 14px 0;
+  grid-template-columns: 1fr;
+  padding: 14px;
+}
+a.podnet-block .state-con {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: space-between;
+}
+a.podnet-block .state {
+  background: $white;
+  box-sizing: border-box;
+  color: $black;
+  display: inline-block;
+  font-family: $general;
+  font-size: em(12,16);
+  font-weight: $medium;
+  line-height: em(12,12);
+  padding: 8px 12px;
+  @include rounded(25px);
+}
+a.podnet-block .inside {
+  display: block;
+  margin: 14px;
+  position: absolute;
+  right: 0;
+  z-index: 2;
+}
+a.podnet-block .inside figure {
+  height: 50px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 50px;
+  @include rounded(50%);
+  rotate: 10deg;
+}
+
+a.podnet-block .done {
+  background: $green;
+}
+a.podnet-block .sent {
+  background: $blue;
+}
+a.podnet-block .solving {
+  background: $blue;
+}
+a.podnet-block .unresolved {
+  background: $neriesene;
+}
+a.podnet-block .close {
+  background: $uzavrete;
+}
+a.podnet-block .icon-con {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 0 12px;
+  justify-content: flex-end;
+}
+a.podnet-block .icon-block {
+  align-items: center;
+  color: $black;
+  display: flex;
+  font-size: em(12,16);
+  font-weight: $semibold;
+  line-height: em(12,12);
+  flex-direction: row;
+  gap: 0 6px;
+  justify-content: flex-end;
+}
+a.podnet-block .icon-like {
+  display: inline-block;
+  fill: $black;
+  height: 20px;
+  width: 20px;
+}
+a.podnet-block .icon-comment {
+  display: inline-block;
+  fill: $black;
+  height: 20px;
+  width: 20px;
+}
+
+a.podnet-block .description-con {
+  align-items: center;
+  color: $black;
+  display: flex;
+  flex-direction: row;
+  gap: 0 10px;
+  justify-content: flex-start;
+}
+a.podnet-block .description-con .avatar-image {
+  display: block;
+  max-width: 65px;
+  width: 100%;
+}
+a.podnet-block .description-con .avatar-image figure {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  width: 100%;
+  @include rounded(50%);
+}
+a.podnet-block .description-con .avatar-image figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+a.podnet-block .description-con .avatar-image figure picture img {
+  object-fit: cover;
+}
+a.podnet-block .description-con .description {
+  //align-items: center;
+  color: $black;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: center;
+}
+a.podnet-block .description-con .description .title {
+  color: $black;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(28,20);
+  margin-bottom: 10px;
+}
+a.podnet-block .description-con .description .address {
+  color: $black;
+  font-size: em(14,16);
+  font-weight: $semibold;
+  line-height: em(20,14);
+}
+a.podnet-block .description-con .description .date {
+  color: $black;
+  font-size: em(14,16);
+  font-weight: $normal;
+  line-height: em(20,14);
+}
+
+// Mapa
+.wrapper-map .container-map {
+  @include rounded(15px);
+}
+
+// Podnet
+section.podnet {}
+section.podnet .podnet-con {
+  display: grid;
+  //grid-template-columns: 1fr;
+  gap: 60px 0;
+}
+section.podnet .podnet-esential {
+  align-content: start;
+  display: grid;
+  gap: 30px 0;
+  grid-template-columns: 1fr;
+}
+section.podnet h1 {
+  margin-bottom: 0;
+}
+section.podnet .podnet-description {
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(28,18);
+}
+section.podnet .podnet-pictures-con {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+section.podnet .podnet-pictures-con figure img {
+  height: 100%;
+  object-fit: cover;
+}
+section.podnet .podnet-pictures-con figure.big-picture {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  position: relative;
+  width: 100%;
+  @include rounded(15px);
+}
+section.podnet .podnet-pictures-con figure.big-picture .lens-image {
+  bottom: 20px;
+  fill: $white;
+  position: absolute;
+  opacity: 0.6;
+  right: 20px;
+  width: 38px;
+  z-index: 2;
+}
+section.podnet .podnet-pictures-con figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+section.podnet .podnet-pictures-con figure.small-picture {
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  width: 80px;
+  @include rounded(10px);
+}
+section.podnet .podnet-pictures-con figure.small-picture .lens-image {
+  bottom: 50%;
+  fill: $white;
+  margin: 0 -19px -19px 0;
+  position: absolute;
+  opacity: 0.6;
+  right: 50%;
+  width: 38px;
+  z-index: 2;
+}
+section.podnet .share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+section.podnet .share-buttons a.button-share, a.button-like {
+  fill: transparent;
+}
+section.podnet .share-buttons a.button-share:hover, a.button-like:hover {
+  fill: $black;
+}
+section.podnet .share-buttons a.button-active {
+  fill: $black;
+}
+section.podnet .share-buttons a.button-share-desktop {
+  display: none;
+}
+section.podnet .share-buttons a.button-share-active {
+  fill: $black;
+}
+
+// Podnet Information
+section.podnet .podnet-information {
+  background: $blue-light;
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  padding: per(20,280);
+  @include rounded(15px);
+}
+section.podnet .podnet-information .information-wrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 14px;
+}
+section.podnet .podnet-information .subject-con .name {
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $semibold;
+  line-height: em(26,18);
+}
+section.podnet .podnet-information .subject-con {
+  align-items: center;
+  display: grid;
+  gap: 0 10px;
+  grid-template-columns: 80px auto;
+}
+section.podnet .podnet-information .subject-con figure {
+  box-sizing: border-box;
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  width: 80px;
+  @include rounded(50px);
+}
+section.podnet .podnet-information .subject-con figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+section.podnet .podnet-information .subject-con figure img {
+  height: 100%;
+  object-fit: cover;
+}
+
+section.podnet .podnet-information .map {
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 100%;
+  position:relative;
+  @include rounded(10px);
+}
+section.podnet .podnet-information .map iframe {
+  display: block;
+  height: 100% !important;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100% !important;
+}
+section.podnet .podnet-information .label {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+}
+section.podnet .podnet-information .value {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(18,18);
+}
+section.podnet .podnet-information a.button-status {
+  background: $green;
+  width: 100%;
+}
+section.podnet .podnet-information a {
+  color: $black;
+}
+section.podnet .podnet-information .value-con {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+section.podnet .podnet-information a.value,
+section.podnet .podnet-information span.value,{
+  border: 1px solid $black;
+  color: $black;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+  padding: 6px 11px;
+  @include rounded(25px);
+}
+
+
+section.podnet .podnet-discussion .podnet-discussion-con {
+  display: grid;
+  gap: 40px 0;
+}
+section.podnet .podnet-discussion .comment {
+  border-top: 1px solid $black;
+  display: grid;
+  gap: 30px 0;
+  padding: 30px 20px;
+}
+section.podnet .podnet-discussion .government {
+  background: $blue-light;
+}
+section.podnet .podnet-discussion .confirm-commnet {
+  background: $green-light;
+}
+section.podnet .podnet-discussion .confirm-commnet .confirm-status {
+  background: $green;
+  align-items: center;
+  box-sizing: border-box;
+  color: $black;
+  display: flex;
+  fill: $black;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(14,14);
+  gap: 0 10px;
+  height: 36px;
+  justify-content: center;
+  padding: 0px;
+  width: 116px;
+  @include rounded(25px);
+  @include transition(all);
+}
+section.podnet .podnet-discussion .confirm-commnet .confirm-status svg {
+  width: 18px;
+}
+section.podnet .podnet-discussion .comment:last-child {
+  border-bottom: 1px solid $black;
+}
+section.podnet .podnet-discussion .subject .name {
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $semibold;
+  line-height: em(26,18);
+}
+section.podnet .podnet-discussion .subject {
+  align-items: center;
+  display: grid;
+  gap: 0 10px;
+  grid-template-columns: 65px auto;
+}
+section.podnet .podnet-discussion .subject figure {
+  box-sizing: border-box;
+  height: 65px;
+  overflow: hidden;
+  position: relative;
+  width: 65px;
+  @include rounded(50px);
+}
+section.podnet .podnet-discussion .subject figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+section.podnet .podnet-discussion .subject figure img {
+  height: 100%;
+  object-fit: cover;
+}
+section.podnet .podnet-discussion .date {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(18,18);
+  font-weight: $normal;
+  line-height: em(18,18);
+}
+
+
+
+
+
+section.podnet .podnet-discussion figure img {
+  height: 100%;
+  object-fit: cover;
+}
+section.podnet .podnet-discussion figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+section.podnet .podnet-discussion figure.small-picture {
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  width: 80px;
+  @include rounded(10px);
+}
+section.podnet .podnet-discussion figure.small-picture .lens-image {
+  bottom: 50%;
+  fill: $white;
+  margin: 0 -19px -19px 0;
+  position: absolute;
+  opacity: 0.6;
+  right: 50%;
+  width: 38px;
+  z-index: 2;
+}
+
+section.podnet .podnet-discussion .comment-content {
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(28,18);
+}
+section.podnet .podnet-discussion .add-comment-form-con {
+
+}
+section.podnet .podnet-discussion .add-comment-form {
+  background: $white;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  bottom: 0;
+  box-sizing: border-box;
+  display: grid;
+  gap: 20px 0;
+  //padding: 20px per(20,320) 40px per(20,320);
+  //position: absolute;
+  width: 100%;
+}
+section.podnet .podnet-discussion .add-comment-form .title {
+  font-family: $general;
+  font-size: em(22,16);
+  font-weight: $semibold;
+  line-height: em(22,22);
+}
+section.podnet .podnet-discussion .add-comment-form .description {
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(28,18);
+}
+section.podnet .podnet-discussion .add-comment-form form {
+  display: grid;
+  gap: 20px 0;
+}
+section.podnet .podnet-discussion .add-comment-form form textarea {
+  border: 1px solid $black;
+  box-sizing: border-box;
+  display: block;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(28,18);
+  min-height: 200px;
+  outline: none;
+  padding: 16px 20px;
+  width: 100%;
+  @include rounded(10px);
+}
+section.podnet .podnet-discussion .add-comment-form form textarea::placeholder {
+  color: $black-light;
+}
+section.podnet .podnet-discussion .add-comment-form .pictures-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+section.podnet .podnet-discussion .add-comment-form figure {
+  height: 60px;
+  width: 60px;
+}
+section.podnet .podnet-discussion .add-comment-form form .buttons-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+}
+section.podnet .podnet-discussion .add-comment-form form .button {
+  width: 100%;
+}
+section.podnet .podnet-discussion .add-comment-form form a.button-add-image svg {
+  width: 20px;
+}
+
+
+
+
+
+
+
+
+
+section.podnet .like-dislike-confirm-con {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+}
+
+section.podnet .like-dislike-con {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+section.podnet .like-dislike-con .like-con {
+  display: flex;
+  gap: 0 10px;
+
+}
+section.podnet .like-dislike-con .like {
+  display: inline-block;
+}
+section.podnet .like-dislike-con a.button-share {
+  align-items: center;
+  border: 1px solid $blue-dark;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  fill: transparent;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(14,14);
+  gap: 0 10px;
+  height: 36px;
+  padding: 0 14px;
+  stroke: $blue-dark;
+  width: auto;
+  @include rounded(25px);
+  @include transition(all);
+}
+section.podnet .like-dislike-con a.button-share:hover {
+  fill: $black;
+}
+section.podnet .like-dislike-con a.button-like svg {
+  width: 14px;
+}
+section.podnet .like-dislike-con a.button-share-active {
+  fill: $black;
+  //stroke: $red;
+}
+section.podnet .like-dislike-con a.button-dislike svg {
+  width: 14px;
+}
+section.podnet .like-dislike-con a.button-share-active {
+  fill: $black;
+  //stroke: $red;
+}
+
+
+
+
+
+
+section.podnet .podnet-discussion .like-dislike-con .users-con {
+  display: flex;
+  width: 58px;
+}
+section.podnet .podnet-discussion .like-dislike-con figure {
+  box-sizing: border-box;
+  //border: 1px solid $black;
+  //float: left;
+  height: 36px;
+  margin-right: -25px;
+  overflow: hidden;
+  position: relative;
+  width: 36px;
+  @include rounded(50px);
+}
+section.podnet .podnet-discussion .like-dislike-con figure picture {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+section.podnet .podnet-discussion .like-dislike-con figure img {
+  height: 100%;
+  object-fit: cover;
+}
+
+section.podnet .confirm-button-con {
+  display: inline-block;
+}
+section.podnet a.button-confirm {
+  align-items: center;
+  border: 1px solid $black-light;
+  box-sizing: border-box;
+  color: $black-light;
+  cursor: pointer;
+  display: flex;
+  fill: $black-light;
+  font-family: $general;
+  font-size: em(14,16);
+  font-weight: $medium;
+  line-height: em(14,14);
+  gap: 0 10px;
+  height: 36px;
+  padding: 0 0px 0 10px;
+  width: 174px;
+  @include rounded(25px);
+  @include transition(all);
+}
+section.podnet a.button-confirm svg {
+  width: 18px;
+}
+section.podnet a.button-confirm:hover {
+  background: $pink;
+  border-color: $black;
+  color: $black;
+  fill: $black;
+}
+
+section.podnet .add-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+}
+section.podnet .add-buttons a.button {
+  width: 100%;
+}
+
+
+
+section.podnet .podnet-discussion-wrapper {
+  align-items: center;
+  display: flex;
+  gap: 0 20px;
+  justify-content: space-between;
+}
+
+
+
+
+// Pochvala
+section.compliment {
+  margin: 0 auto;
+  max-width: 550px;
+}
+section.compliment .compliment-con {
+  display: flex;
+  flex-direction: column;
+  gap: 40px 0;
+}
+section.compliment .compliment-title {
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(28,18);
+}
+section.compliment figure {
+  overflow: hidden;
+  @include rounded(15px);
+}
+section.compliment .compliment-buttons-con {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+section.compliment .compliment-buttons-con .button-share-desktop {
+  display: none;
+}
+section.compliment .info-block {
+  align-items: flex-start;
+  background: $blue-light;
+  display: flex;
+  flex-direction: column;
+  gap: 30px 0;
+  overflow: hidden;
+  padding: per(20,280);
+  @include rounded(15px);
+}
+section.compliment .info-block .info-block-item {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 8px 0;
+}
+section.compliment .info-block .info-block-description {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+}
+section.compliment .info-block .info-block-value {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $medium;
+  line-height: em(28,18);
+}
+
+
+
+// Kontakt
+section.contact {
+  margin: 0 auto;
+  max-width: 550px;
+}
+section.contact p {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(28,18);
+  //margin-bottom: 30px;
+}
+section.contact strong {
+  font-weight: $semibold;
+}
+
+
+footer {
+  background: $blue-dark;
+  color: $white;
+  padding: em(30,18) per(20,320);
+}
+footer .footer-wraper {
+  align-items: flex-end;
+  display: grid;
+  gap: 30px 0;
+  grid-template-columns: 1fr;
+  margin: 0 auto;
+  max-width: 1600px;
+}
+footer a {
+  color: $blue;
+  @include transition(color);
+}
+footer a:hover {
+  color: $white;
+}
+footer .footer-nav-top {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+footer a.button {
+  background: transparent;
+  border: 1px solid $white;
+  color: $white;
+  padding: 15px 20px;
+}
+footer a.button:hover {
+  background: $white;
+  color: $blue-dark;
+}
+footer a.donate {
+  background: $white;
+  border: none;
+  color: $blue-dark;
+  padding: 16px 20px;
+}
+footer a.donate:hover {
+  background: $blue;
+}
+footer .social-networks {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0 em(20,16);
+}
+footer .social-networks a.sc-icon {
+  display: inline-block;
+  fill: $blue;
+  width: 40px;
+  @include transition(fill);
+}
+footer .social-networks a.sc-icon:hover {
+  fill: $white;
+}
+footer .copy {
+  color: $blue;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(28,18);
+}
+footer .footer-nav-bottom {
+  color: $blue;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $normal;
+  line-height: em(18,18);
+}
+
+// 368px
+@import "_23em.scss";
+
+// 480px
+@import "_30em.scss";
+
+// 640px
+@import "_40em.scss";
+
+// 768px
+@import "_48em.scss";
+
+// 1024px
+@import "_64em.scss";
+
+// 1280px
+@import "_80em.scss";
+
+// 1440px
+@import "_90em.scss";
+
+// 1600px
+@import "_100em.scss";

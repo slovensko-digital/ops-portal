@@ -18,7 +18,7 @@ class ClientsTest < ApplicationSystemTestCase
     fill_in "Name", with: @client.name
     fill_in "Url", with: @client.url
     fill_in "Webhook private key", with: @client.webhook_private_key
-    click_on "Create Client"
+    click_on "Vytvoriť Client"
 
     assert_text "Client was successfully created"
     click_on "Back"
@@ -32,7 +32,7 @@ class ClientsTest < ApplicationSystemTestCase
     fill_in "Name", with: @client.name
     fill_in "Url", with: @client.url
     fill_in "Webhook private key", with: @client.webhook_private_key
-    click_on "Update Client"
+    click_on "Aktualizovať Client"
 
     assert_text "Client was successfully updated"
     click_on "Back"

@@ -1,0 +1,7 @@
+<div class="photo">
+  <figure>
+    <picture>
+      <%= image_tag issue.photos.first.variant(:small) if issue.photos.attached? %>
+    </picture>
+  </figure>
+</div>

@@ -18,21 +18,13 @@ class Cms::PagesController < ApplicationController
     end
 
     if @page
-      render "cms/pages/show"
+      render :show
     else
-      @pages = load_pages(@category)
+      @pages = @category.pages.published.order(created_at: :desc).page(params[:page]).per(12)
     end
   end
 
   private
-
-  def load_pages(category)
-    category.pages.published.order(created_at: :desc).page(params[:page]).per(12)
-  end
-
-  def load_page(category, slug)
-    category.pages.published.find_by(slug: slug)
-  end
 
   def raise_not_found
     raise ActionController::RoutingError.new("Not Found in Cms")

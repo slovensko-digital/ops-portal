@@ -1,5 +1,7 @@
 import { Application } from "@hotwired/stimulus"
 import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "tailwindcss-stimulus-components"
+import AutoSubmit from "@stimulus-components/auto-submit"
+
 
 const application = Application.start()
 
@@ -18,5 +20,7 @@ application.register('popover', Popover)
 application.register('slideover', Slideover)
 application.register('tabs', Tabs)
 application.register('toggle', Toggle)
+
+application.register('auto-submit', AutoSubmit)
 
 export { application }

@@ -19,6 +19,11 @@ gem "turbo-rails"
 gem "stimulus-rails"
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
 gem "tailwindcss-rails", "~> 3.3.1"
+
+gem "rails-i18n", "~> 8.0.0"
+
+gem "dartsass-rails" # temporarily use sass
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
@@ -84,7 +89,8 @@ gem "good_job"
 gem "rack-cors", "~> 2.0"
 
 # Auth
-gem "rodauth-rails", "~> 2.0"
+gem "rodauth-rails", "~> 2.1"
+gem "rodauth-i18n"
 gem "rodauth-omniauth", "~> 0.6.0"
 gem "omniauth-facebook", "~> 10.0"
 gem "omniauth-google-oauth2", "~> 1.2"

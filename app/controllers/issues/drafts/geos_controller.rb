@@ -7,7 +7,7 @@ class Issues::Drafts::GeosController < ApplicationController
 
   def update
     if @draft.update(geo_params)
-      redirect_to issues_draft_suggestions_path(@draft)
+      redirect_to params[:next] == "summary" ? issues_draft_summary_path(@draft) : issues_draft_suggestions_path(@draft)
     else
       render :show, status: :unprocessable_entity
     end

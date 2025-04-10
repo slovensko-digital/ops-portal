@@ -17,4 +17,6 @@
 #
 class Issues::Category < ApplicationRecord
   has_many :subcategories, class_name: "Issues::Subcategory", dependent: :destroy
+
+  scope :non_legacy, -> { where(legacy_id: nil) }
 end

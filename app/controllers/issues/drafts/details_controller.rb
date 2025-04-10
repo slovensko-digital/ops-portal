@@ -6,7 +6,7 @@ class Issues::Drafts::DetailsController < ApplicationController
 
   def update
     if @draft.update_with_context(details_params, :details_step)
-      redirect_to issues_draft_checks_path(@draft)
+      redirect_to issues_draft_summary_path(@draft)
     else
       render :show, status: :unprocessable_entity
     end
@@ -15,6 +15,6 @@ class Issues::Drafts::DetailsController < ApplicationController
   private
 
   def details_params
-    params.expect(issues_draft: [ :title, :description, :category ])
+    params.expect(issues_draft: [ :title, :description ])
   end
 end

@@ -26,7 +26,7 @@ class SyncIssueToTriageJob < ApplicationJob
 
       ticket_id = client.create_ticket_from_issue!(
         issue,
-        issue_type: issue_type,
+        issue_type: issue.issue_type,
         process_type: process_type,
         title: title,
         description: issue.description.presence || "(bez popisu)",

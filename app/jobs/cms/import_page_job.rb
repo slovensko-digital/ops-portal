@@ -28,7 +28,8 @@ class Cms::ImportPageJob < ApplicationJob
         tags: topic_raw["tags"],
         text: topic_raw.dig("post_stream", "posts", 0, "cooked") || "",
         raw: topic_raw,
-        category: category
+        category: category,
+        created_at: topic_raw["created_at"],
       )
       page.save!
     end

@@ -7,13 +7,6 @@ class IssuesTest < ApplicationSystemTestCase
 
   test "visiting the index" do
     visit issues_url
-    assert_selector "h1", text: "Issues"
-  end
-
-  test "should destroy Issue" do
-    visit issue_url(@issue)
-    click_on "Destroy this issue", match: :first
-
-    assert_text "Issue was successfully destroyed"
+    assert_selector "h1", text: "Nahlásené dopyty"
   end
 end

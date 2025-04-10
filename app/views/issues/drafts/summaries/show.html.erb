@@ -1,0 +1,51 @@
+<%= content_for(:title, 'Kontrola podnetu') %>
+<section class="report">
+  <h1>Zhrnutie podnetu</h1>
+
+  <div class="report-suggestion-description">Skontrolujte údaje podnetu pred odoslaním.</div>
+
+  <div class="report-summary-block-con">
+
+    <div class="report-summary-edit">
+      <div class="description">Fotky</div>
+      <div class="report-summary-edit-pictures">
+        <% if @draft.photos.attached? %>
+          <% @draft.photos.each do |photo| %>
+            <figure>
+              <picture>
+                <%= image_tag photo.variant(:square), alt: "Uploaded photo" %>
+              </picture>
+            </figure>
+          <% end %>
+        <% else %>
+          <div class="no-photos">Žiadne fotky</div>
+        <% end %>
+      </div>
+      <%= link_to "Upraviť", edit_issues_draft_path(@draft, next: :summary), class: "button button-transparent button-edit" %>
+    </div>
+
+    <div class="report-summary-edit">
+      <div class="description">Miesto podnetu</div>
+      <div class="title"><%= @draft.address_city || "Neuvedené" %></div>
+      <%= link_to "Upraviť", issues_draft_geo_path(@draft, next: :summary), class: "button button-transparent button-edit" %>
+    </div>
+
+    <div class="report-summary-edit">
+      <div class="description">Popis podnetu</div>
+      <div class="title"><%= @draft.title %></div>
+      <div class="description"><%= simple_format(@draft.description) %></div>
+      <div class="labels-con">
+        <div class="label"><%= @draft.category.name %></div>
+        <div class="label"><%= @draft.subcategory.name %></div>
+        <% if @draft.subtype.present? %>
+          <div class="label"><%= @draft.subtype.name %></div>
+        <% end %>
+      </div>
+      <%= link_to "Upraviť", issues_draft_category_path(@draft), class: "button button-transparent button-edit" %>
+    </div>
+
+  </div>
+
+  <%= link_to "Ďalej", issues_draft_checks_path(@draft), class: "button" %>
+
+</section>

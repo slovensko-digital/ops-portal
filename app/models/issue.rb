@@ -36,7 +36,9 @@
 #  triage_external_id       :integer
 #
 class Issue < ApplicationRecord
+  enum :issue_type, { issue: 1, question: 2, praise: 3 }, default: :issue
   # TODO add triage_draft_external_id - este premenovat
+
   belongs_to :author, class_name: "User"
   belongs_to :owner, class_name: "Legacy::Agent", optional: true # TODO drop after legacy import
   belongs_to :category, class_name: "Issues::Category"
@@ -52,7 +54,14 @@ class Issue < ApplicationRecord
   has_many :communication_activities, class_name: "Issues::CommunicationActivity", dependent: :destroy
   has_many :update_activities, class_name: "Issues::UpdateActivity", dependent: :destroy
 
-  has_many_attached :photos
+  has_many_attached :photos do |photo|
+    photo.variant :small, resize_to_limit: [ 800, 600 ], preprocessed: true
+  end
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
+
+  def votes
+    # fake it
+    @_votes ||= OpenStruct.new(count: Random.rand(10))
+  end
 end
