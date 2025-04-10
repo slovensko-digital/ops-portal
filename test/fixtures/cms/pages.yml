@@ -7,7 +7,6 @@ kontakt:
   text: "<p>Ask any question</p>"
   raw_text: ""
   tags: ["published"]
-  raw: {}
 
 new_portal:
   title: New portal
@@ -16,7 +15,6 @@ new_portal:
   text: "<p>We have launched the new version</p>"
   raw_text: ""
   tags: ["published"]
-  raw: {}
 
 holiday_notice:
   title: Holiday Hours Notice
@@ -25,7 +23,6 @@ holiday_notice:
   text: "<p>Check out our adjusted operating hours for the upcoming holiday season</p>"
   raw_text: ""
   tags: ["published"]
-  raw: {}
 
 older_post:
   title: Not published post
@@ -34,4 +31,3 @@ older_post:
   text: "<p>This is obsolete and should not be displayed</p>"
   raw_text: ""
   tags: []
-  raw: {}

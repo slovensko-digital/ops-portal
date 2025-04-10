@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_09_202804) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_10_092211) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -61,7 +61,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_09_202804) do
     t.string "name", null: false
     t.string "slug", null: false
     t.bigint "parent_category_id"
-    t.jsonb "raw", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["parent_category_id", "slug"], name: "index_cms_categories_on_parent_category_id_and_slug", unique: true
@@ -71,7 +70,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_09_202804) do
     t.string "title", null: false
     t.string "slug", null: false
     t.text "text", null: false
-    t.jsonb "raw", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "tags", default: [], array: true

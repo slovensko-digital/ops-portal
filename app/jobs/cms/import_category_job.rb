@@ -53,7 +53,6 @@ class Cms::ImportCategoryJob < ApplicationJob
       category.assign_attributes(
         name: category_raw["name"],
         slug: category_raw["slug"],
-        raw: category_raw,
         parent_category_id: parent_category_id
       )
       category.save!
