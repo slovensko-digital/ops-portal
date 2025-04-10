@@ -31,14 +31,16 @@
               <span></span>
               <span></span>
             </a>
-            <%= link_to profile_path, class: "account" do %>
-              <figure>
-                <picture>
-                  <%= image_tag "muz.jpg" %>
-                </picture>
-              </figure>
-              <div class="name"><%= current_user.firstname %></div>
-              <div class="arrow"></div>
+            <% if logged_in? %>
+              <%= link_to profile_path, class: "account" do %>
+                <figure>
+                  <picture>
+                    <%= image_tag "muz.jpg" %>
+                  </picture>
+                </figure>
+                <div class="name"><%= current_user.firstname %></div>
+                <div class="arrow"></div>
+              <% end %>
             <% end %>
 
             <div class="mobile-buttons-nav">
