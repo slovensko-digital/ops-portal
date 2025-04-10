@@ -12,7 +12,7 @@ class Cms::ImportPageJob < ApplicationJob
     # category exists, everything is ok
     category = Cms::Category.find_by(id: topic_result["category_id"])
     if category
-      post_id = topic_result.dig("post_stream", "posts", 0, "id") || null
+      post_id = topic_result.dig("post_stream", "posts", 0, "id")
       post_result = discourse_client.load_post(post_id)
 
       upsert_page(topic_result, post_result, category)
