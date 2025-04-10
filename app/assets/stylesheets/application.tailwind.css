@@ -17,6 +17,10 @@
     cursor: not-allowed;
 }
 
+button {
+    cursor: pointer;
+}
+
 .search-con input[type="search"]::-webkit-search-cancel-button {
     display: none;
 }

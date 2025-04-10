@@ -1,7 +1,7 @@
 <%= content_for(:title, 'Výber kategórie problému') %>
 
 <section class="report">
-  <%= link_to issues_draft_suggestions_path(@draft), class: "button-back" do %>
+  <%= link_to issues_draft_subcategory_path(@draft), class: "button-back" do %>
     <span>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
         <path d="M1,19l9-9L1,1" fill="none" stroke-width="2"/>
@@ -10,17 +10,17 @@
     <span>Späť</span>
   <% end %>
 
-  <h1>Výber kategóriu problému</h1>
+  <h1>Výber typu problému</h1>
 
-  <div class="report-suggestion-description">Vyberte kategóriu problému, ktorý nahlasujete.</div>
+  <div class="report-suggestion-description">Vyberte typ problému, ktorý nahlasujete.</div>
 
   <div class="report-summary-block-con">
-    <% @categories.each do |category| %>
-      <%= button_to issues_draft_category_path(@draft), method: :patch, class: class_names("button-report-summary button-category", active: category == @draft.category) do %>
-        <%= hidden_field_tag :category_id, category.id %>
+    <% @subtypes.each do |sub| %>
+      <%= button_to issues_draft_subtype_path(@draft), method: :patch, class: class_names("button-report-summary button-category", active: sub == @draft.subtype) do %>
+        <%= hidden_field_tag :subtype_id, sub.id %>
         <div class="report-summary-wrapper">
-          <div class="title"><%= category.name %></div>
-          <div class="description"><%= category.description %></div>
+          <div class="title"><%= sub.name %></div>
+          <div class="description"><%= sub.description %></div>
         </div>
         <div class="icon-arrow">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">

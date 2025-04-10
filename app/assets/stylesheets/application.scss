@@ -1138,7 +1138,8 @@ section.report .report-summary-wrapper {
 section.report .button-report-summary .icon-arrow {
   width: 12px;
 }
-section.report .button-report-summary:hover {
+section.report .button-report-summary:hover,
+section.report .button-report-summary.active {
   background: $blue-light;
 }
 section.report .title {

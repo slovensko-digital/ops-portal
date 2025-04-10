@@ -46,3 +46,14 @@ sk:
 
     formats:
       default: "%e. %B %Y"
+
+  errors:
+    messages:
+      blank: "%{attribute} je povinný"
+
+  activerecord:
+    attributes:
+      issues/draft:
+        title: Názov
+        description: Popis
+

@@ -44,7 +44,7 @@ class Issues::Draft < ApplicationRecord
   belongs_to :author, class_name: "User", optional: false
 
   validates_presence_of :photos, on: :photos_step
-  validates_presence_of :title, :description, :category, on: :details_step
+  validates_presence_of :title, :description, on: :details_step
 
   DEFAULT_STATE = Issues::State.find_by(name: "Čakajúci")
 
@@ -70,7 +70,7 @@ class Issues::Draft < ApplicationRecord
       subcategory: subcategory,
       subtype: subtype,
       reported_at: created_at,
-      state: DEFAULT_STATE,
+      state: Issues::State.find_by(name: "Čakajúci"),
       municipality: Municipality.find_by(name: address_city || address_village || address_town) || author.municipality || Municipality.first,
     )
 
@@ -122,7 +122,6 @@ class Issues::Draft < ApplicationRecord
     assign_attributes(suggestions_params)
     if picked_suggestion_index == -1
       self.title = self.description = nil
-      self.category = "1"
     else
       self.title, self.description, category_suggestion, subcategory_suggestion, subtype_suggestion = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
       # TODO fix this - do not create categories from LLM probably

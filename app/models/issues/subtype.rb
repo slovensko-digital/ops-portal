@@ -17,4 +17,6 @@
 #
 class Issues::Subtype < ApplicationRecord
   belongs_to :subcategory, class_name: "Issues::Subcategory"
+
+  scope :non_legacy, -> { where(legacy_id: nil) }
 end

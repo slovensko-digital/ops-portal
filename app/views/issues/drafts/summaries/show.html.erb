@@ -41,7 +41,7 @@
           <div class="label"><%= @draft.subtype.name %></div>
         <% end %>
       </div>
-      <%= link_to "Upraviť", issues_draft_suggestions_path(@draft, next: :summary), class: "button button-transparent button-edit" %>
+      <%= link_to "Upraviť", issues_draft_category_path(@draft), class: "button button-transparent button-edit" %>
     </div>
 
   </div>

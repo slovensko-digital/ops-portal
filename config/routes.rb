@@ -32,7 +32,7 @@ Rails.application.routes.draw do
 
   resources :issues, path: "dopyty"
   namespace :issues, path: "dopyty" do
-    resources :drafts do
+    resources :drafts, path: 'novy-podnet' do
       post :confirm
       delete :destroy_photo
       get :thanks
