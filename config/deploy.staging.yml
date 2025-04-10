@@ -19,6 +19,9 @@ env:
     CMS_ROOT_CATEGORY_ID: <%= ENV.fetch("CMS_ROOT_CATEGORY_ID") %>
     TRIAGE_ZAMMAD_URL: <%= ENV.fetch("TRIAGE_ZAMMAD_URL") %>
     APP_HOST: ops.dev.slovensko.digital
+    NOTIFICATION_SMTP_USERNAME: <%= ENV.fetch("NOTIFICATION_SMTP_USERNAME") %>
+    NOTIFICATION_SMTP_SERVER: <%= ENV.fetch("NOTIFICATION_SMTP_SERVER") %>
+    NOTIFICATION_SMTP_PORT: <%= ENV.fetch("NOTIFICATION_SMTP_PORT") %>
 
 proxy:
   host: ops.dev.slovensko.digital
