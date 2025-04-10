@@ -19,6 +19,9 @@ env:
     CMS_ROOT_CATEGORY_ID: <%= ENV.fetch("CMS_ROOT_CATEGORY_ID") %>
     TRIAGE_ZAMMAD_URL: <%= ENV.fetch("TRIAGE_ZAMMAD_URL") %>
     APP_HOST: ops.dev.slovensko.digital
+    DISCOURSE_URL: <%= ENV.fetch("DISCOURSE_URL") %>
+    DISCOURSE_API_USERNAME: <%= ENV.fetch("DISCOURSE_API_USERNAME") %>
+    DISCOURSE_IMPORT_CATEGORY_IDS: <%= ENV.fetch("DISCOURSE_IMPORT_CATEGORY_IDS") %>
 
 proxy:
   host: ops.dev.slovensko.digital

@@ -49,5 +49,10 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           CMS_ROOT_CATEGORY_ID: ${{ vars.CMS_ROOT_CATEGORY_ID }}
+          DISCOURSE_API_KEY: ${{ secrets.DISCOURSE_API_KEY }}
+          DISCOURSE_WEBHOOK_SECRET: ${{ secrets.DISCOURSE_WEBHOOK_SECRET }}
+          DISCOURSE_URL: ${{ vars.DISCOURSE_URL }}
+          DISCOURSE_API_USERNAME: ${{ vars.DISCOURSE_API_USERNAME }}
+          DISCOURSE_IMPORT_CATEGORY_IDS: ${{ vars.DISCOURSE_IMPORT_CATEGORY_IDS }}
 
         run: kamal deploy -d staging
