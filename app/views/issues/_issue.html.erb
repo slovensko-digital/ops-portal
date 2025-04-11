@@ -33,7 +33,7 @@
     <div class="description-con">
       <div class="description">
         <div class="title"><%= issue.title %></div>
-        <div class="address"><%= "#{issue.municipality&.name}, #{issue.municipality_district&.name}" %></div>
+        <div class="address"><%= format_issue_address(issue) %></div>
         <div class="date"><%= l issue.reported_at.to_date, format: :long %></div>
       </div>
     </div>

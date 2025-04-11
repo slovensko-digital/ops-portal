@@ -75,10 +75,7 @@ h1 {
   line-height: em(36,26);
   margin-bottom: 40px;
 }
-svg {
-  display: block;
-  width: 100%;
-}
+
 ::-moz-selection {
   //color: $white;
   //background: $blue;
@@ -2234,19 +2231,12 @@ section.podnet .podnet-information .subject-con figure img {
 }
 
 section.podnet .podnet-information .map {
-  height: 0;
   overflow: hidden;
-  padding-bottom: 100%;
-  position:relative;
+  position: relative;
   @include rounded(10px);
 }
-section.podnet .podnet-information .map iframe {
-  display: block;
-  height: 100% !important;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100% !important;
+section.podnet .podnet-information .map [data-map-target="map"] {
+  height: 40vh;
 }
 section.podnet .podnet-information .label {
   color: $black-light;
