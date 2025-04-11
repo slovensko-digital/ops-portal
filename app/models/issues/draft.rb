@@ -20,6 +20,7 @@
 #  checks                  :jsonb
 #  description             :string
 #  latitude                :float
+#  latlon_from_exif        :boolean          default(FALSE)
 #  longitude               :float
 #  picked_suggestion_index :integer
 #  suggestions             :jsonb

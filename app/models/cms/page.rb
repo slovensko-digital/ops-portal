@@ -3,7 +3,7 @@
 # Table name: cms_pages
 #
 #  id          :bigint           not null, primary key
-#  raw         :jsonb            not null
+#  raw         :text             not null
 #  slug        :string           not null
 #  tags        :string           default([]), is an Array
 #  text        :text             not null

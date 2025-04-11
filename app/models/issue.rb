@@ -15,6 +15,7 @@
 #  address_village          :string
 #  anonymous                :boolean
 #  description              :string           not null
+#  issue_type               :integer          default("issue")
 #  last_synced_at           :datetime
 #  latitude                 :float
 #  legacy_data              :jsonb

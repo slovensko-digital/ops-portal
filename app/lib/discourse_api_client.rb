@@ -24,6 +24,10 @@ class DiscourseApiClient
     client.topic(topic_id)
   end
 
+  def load_post(post_id)
+    client.get_post(post_id)
+  end
+
   private
 
   def load_all_topics
