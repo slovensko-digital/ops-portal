@@ -264,7 +264,7 @@ class ZammadApiClient
 
       result = find_zammad_user(user.email)
       raise "Can't find nor create triage zammad user with email: #{user.email}" unless result
-      result
+      result.id
     end
   end
 
@@ -282,7 +282,7 @@ class ZammadApiClient
 
       result = find_zammad_user(user.email)
       raise "Can't find nor create triage zammad user with email: #{user.email}" unless result
-      result
+      result.id
     end
   end
 
@@ -295,7 +295,10 @@ class ZammadApiClient
       zammad_user.id
     rescue RuntimeError => e
       raise e unless e.message.include? "is already used for another user."
-      raise "Can't create triage zammad user for responsible subject email: #{responsible_subject.subject_name}"
+
+      result = find_zammad_user(responsible_subject.subject_name)
+      raise "Can't create triage zammad user for responsible subject email: #{responsible_subject.subject_name}" unless result
+      result.id
     end
   end
 
@@ -348,15 +351,9 @@ class ZammadApiClient
 
   private
 
-  def find_zammad_user(email)
-    # TODO use @client.user.search
-    (1..).each do |page|
-      users_on_page = @client.user.all.page(page, USERS_PER_PAGE) { }.map { |user| { email: user.attributes[:email], id: user.attributes[:id] } }
-      zammad_user = users_on_page.select { |user| email == user[:email] }.first
-
-      return zammad_user[:id] if zammad_user
-      return unless users_on_page == USERS_PER_PAGE
-    end
+  def find_zammad_user(query)
+    # searches user by email, firstname, lastname and login
+    @client.user.search(query: query).first
   end
 
   def get_author(user_id, anonymous: false)
@@ -492,14 +489,14 @@ class ZammadApiClient
     return false if article.internal
     return false unless article.sender == "Customer"
 
-    @client.user.search(query: article.origin_by).each { |u| u }.first&.origin == "portal"
+    find_zammad_user(article.origin_by)&.origin == "portal"
   end
 
   def article_from_responsible_subject?(article, responsible_subject)
     return false if article.internal
     return false unless article.sender == "Customer"
 
-    @client.user.search(query: article.origin_by).each { |u| u }.first&.roles.include?("Zodpovedný Subjekt")
+    find_zammad_user(article.origin_by)&.roles&.include?("Zodpovedný Subjekt")
   end
 
   def article_for_this_responsible_subject?(article, ticket, responsible_subject)

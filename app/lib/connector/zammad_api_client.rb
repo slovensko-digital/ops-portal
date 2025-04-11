@@ -108,19 +108,37 @@ module Connector
     def create_or_find_customer(author)
       return ANONYMOUS_USER_ID unless author
 
-      begin
-        user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
-        return user.external_id unless user.new_record?
+      user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
+      return user.external_id unless user.new_record?
 
-        zammad_identifier = @client.user.create(firstname: author["firstname"], lastname: author["lastname"], login: author["uuid"]).id
-        raise unless zammad_identifier
-        user.update(firstname: author["firstname"], lastname: author["lastname"], external_id: zammad_identifier)
-      rescue RuntimeError => e
-        # TODO custom error
-        raise e unless e.message.include? "is already used for another user."
-      end
+      zammad_identifier = find_or_create_user!(
+        firstname: author["firstname"],
+        lastname: author["lastname"],
+        login: author["uuid"],
+        roles: [ "OPS User" ],
+      ).id
+
+      user.update(firstname: author["firstname"], lastname: author["lastname"], external_id: zammad_identifier)
 
       zammad_identifier
+    end
+
+    def find_zammad_user(query)
+      # searches user by email, firstname, lastname and login
+      @client.user.search(query: query).first
+    end
+
+    def find_or_create_user!(user_params)
+      begin
+        zammad_user = @client.user.create(user_params)
+        zammad_user
+      rescue RuntimeError => e
+        raise e unless e.message.include? "is already used for another user."
+
+        zammad_user = find_zammad_user(user_params["email"] || user_params["login"])
+        raise "Can't find nor create zammad user with email: #{user_params["email"]}" unless zammad_user
+        zammad_user
+      end
     end
 
     def find_or_create_ticket!(issue)
