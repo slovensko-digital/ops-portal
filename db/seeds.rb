@@ -9,6 +9,8 @@
 #   end
 
 if Rails.env.development?
+  require_relative "seeds/ai_prompts"
+
   webhook_url = "http://localhost:3000/connector/webhook"
   default_connector_zammad_api_token = "CsnpmnPAlMZCmbaClOoWE7QlFPgCsElVLsfgkJMZQfs"
   default_connector_zammad_webhook_secret = "6fvpqr777ryN9FTqkRH2xYGWFXU1W862R6NUyhQOErN"
@@ -182,8 +184,9 @@ def generate_fake_announcements(category)
   25.times do |n|
     title = Faker::Lorem.sentence
 
-    Cms::Page.find_or_create_by!(slug: title.parameterize, category_id: category.id) do |page|
+    Cms::Page.find_or_create_by!(id: n + 1000, category_id: category.id) do |page|
       page.title = title
+      page.slug = title.parameterize
       page.text = 5.times.map { Faker::Lorem.paragraph_by_chars }.map { |par| "<p>#{par}</p>" }.join("\n")
       page.raw = ""
       page.tags = [ "published" ]
