@@ -3,7 +3,7 @@ class Api::V1::IssuesController < ApiController
   before_action :set_issue, only: [ :show, :update ]
 
   def show
-    @issue = @zammad_client.get_ticket(params.require(:id), include_customer_articles: params[:include_customer_activities] == "true", expand: true)
+    @issue = @zammad_client.get_ticket(params.require(:id), customer_articles: params[:include_customer_activities] == "true", expand: true)
   end
 
   def update

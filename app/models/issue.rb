@@ -30,6 +30,7 @@
 #  municipality_district_id :bigint
 #  municipality_id          :bigint
 #  owner_id                 :bigint
+#  resolution_external_id   :integer
 #  responsible_subject_id   :bigint
 #  state_id                 :bigint
 #  subcategory_id           :bigint
@@ -63,6 +64,15 @@ class Issue < ApplicationRecord
 
   def votes
     # fake it
-    @_votes ||= OpenStruct.new(count: Random.rand(10))
+    @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
+  end
+
+  def should_create_resolution_process?
+    return false if resolution_external_id.present?
+
+    # TODO: revise this logic
+    return true if state.name == "Zaslaný zodpovednému" && responsible_subject.present?
+
+    false
   end
 end

@@ -4,7 +4,7 @@ class Api::V1::Issues::ActivitiesController < ApiController
   before_action :set_activity, only: [ :show ]
 
   def show
-    @activity = @zammad_client.get_article(params.require(:issue_id), params.require(:id))
+    @activity = @article
     head :not_found unless @activity
   end
 
@@ -32,7 +32,7 @@ class Api::V1::Issues::ActivitiesController < ApiController
   end
 
   def set_activity
-    @article = @zammad_client.get_article(params.require(:issue_id), params.require(:id))
+    @article = @zammad_client.get_article(params.require(:issue_id), params.require(:id), responsible_subject: @client.responsible_subject)
 
     head :not_found unless @article
   end

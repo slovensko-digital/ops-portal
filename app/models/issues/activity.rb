@@ -10,4 +10,8 @@
 #
 class Issues::Activity < ApplicationRecord
   belongs_to :issue
+
+  def content
+    "dummy content"
+  end
 end
