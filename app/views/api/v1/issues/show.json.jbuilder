@@ -11,7 +11,7 @@ json.issue_type @issue[:issue_type]
 json.category @issue[:category].name
 json.subcategory @issue[:subcategory]&.name
 json.subtype @issue[:subtype]&.name
-json.address_municipality "#{@issue[:municipality].name}#{@issue[:municipality_district] ? '::' + @issue[:municipality_district].name : ''}"
+json.address_municipality @issue.values_at(:municipality, :municipality_district).compact.pluck(:name).join("::")
 json.address_postcode @issue[:address_postcode]
 json.address_street @issue[:address_street]
 json.address_house_number @issue[:address_house_number]
