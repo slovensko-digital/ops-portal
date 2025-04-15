@@ -22,6 +22,6 @@ class Issues::Drafts::GeosController < ApplicationController
   private
 
   def geo_params
-    params.expect(issues_draft: [ :longitude, :latitude, :address_data ])
+    params.expect(issues_draft: [ :longitude, :latitude ])
   end
 end

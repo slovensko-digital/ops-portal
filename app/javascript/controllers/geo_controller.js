@@ -1,12 +1,10 @@
 import {Controller} from "@hotwired/stimulus"
 import "leaflet"
-import { LocateControl } from "leaflet.locatecontrol";
+import {LocateControl} from "leaflet.locatecontrol";
 
 // Connects to data-controller="geo"
 export default class extends Controller {
-    static targets = ["latitude", "longitude", "map", "search",
-        "addressJSON"
-    ]
+    static targets = ["latitude", "longitude", "map", "search"]
 
     connect() {
         this.map = L.map(this.mapTarget)
@@ -34,22 +32,6 @@ export default class extends Controller {
         this.longitudeTarget.value = pos.lng;
     }
 
-    showOnMap() {
-        const place = [this.latitudeTarget.value, this.longitudeTarget.value];
-        this.map.setView(place, 18);
-    }
-
-    locate() {
-        const options = {
-            enableHighAccuracy: false,
-            maximumAge: 0
-        };
-
-        navigator.geolocation.getCurrentPosition(this.onSuccess.bind(this), this.onError, options);
-
-        this.showOnMap();
-    }
-
     search(event) {
         event.preventDefault();
         fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${this.searchTarget.value}&accept-language=sk`, {
@@ -59,21 +41,11 @@ export default class extends Controller {
                 const place = data[0];
                 this.latitudeTarget.value = place.lat;
                 this.longitudeTarget.value = place.lon;
-                this.addressJSONTarget.value = JSON.stringify(data);
                 this.map.fitBounds([
                     [place.boundingbox[0], place.boundingbox[2]],
                     [place.boundingbox[1], place.boundingbox[3]]
                 ]);
             });
-    }
-
-    onSuccess(location) {
-        this.latitudeTarget.value = location.coords.latitude;
-        this.longitudeTarget.value = location.coords.longitude;
-    }
-
-    onError(error) {
-        console.log(error);
     }
 
     disconnect() {

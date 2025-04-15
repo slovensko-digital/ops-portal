@@ -1,8 +1,7 @@
 module Import
   class Addresses::ImportStreetsJob < ApplicationJob
     def perform
-      Legacy::GenericModel.set_table_name("ulice")
-      Legacy::GenericModel.find_in_batches do |group|
+      Legacy::Street.find_in_batches do |group|
         group.each do |legacy_record|
           Street.find_or_create_by!(
             legacy_id: legacy_record.id,

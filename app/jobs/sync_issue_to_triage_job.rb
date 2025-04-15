@@ -5,11 +5,15 @@ class SyncIssueToTriageJob < ApplicationJob
     # TODO actually do a sync (insert/update & handle triage_process/resolution_process)
     find_or_create_triage_portal_user!(issue.author, client) unless issue.author.external_id
 
-    zammad_group = find_municipality_group(issue, client)
+    zammad_group_name = find_municipality_group(issue, client)
+    if zammad_group_name.nil?
+      raise "Group #{zammad_group_name} not found during import mode" if import
+      zammad_group_name = "Incoming"
+    end
 
     if issue.owner
       find_or_create_triage_portal_user!(issue.owner, client, customer: false) unless issue.owner.external_id
-      client.add_user_to_group(issue.owner.external_id, zammad_group.name)
+      client.add_user_to_group(issue.owner.external_id, zammad_group_name)
     end
 
     process_type = ISSUE_STATE_TO_PROCESS_TYPE.fetch(issue.state.name)
@@ -33,7 +37,7 @@ class SyncIssueToTriageJob < ApplicationJob
         portal_url: Rails.application.routes.url_helpers.issue_url(issue),
         responsible_subject: issue.responsible_subject,
         likes_count: likes_count,
-        group: zammad_group.name
+        group: zammad_group_name
       )
 
       raise unless ticket_id

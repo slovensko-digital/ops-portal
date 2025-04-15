@@ -11,8 +11,7 @@ module Import
       import_comments_job: Issues::ImportIssueCommentsJob,
       import_communications_job: Issues::ImportIssueCommunicationsJob
     )
-      Legacy::GenericModel.set_table_name("alerts")
-      Legacy::GenericModel
+      Legacy::Alert
         .where(mesto: municipality.legacy_id)
         .where(mestska_cast: municipality_district&.legacy_id)
         .where(is_manual: 0) # !! DO NOT ever delete this condition !!
@@ -25,9 +24,9 @@ module Import
           issue = Issue.find_or_create_by!(
             legacy_id: legacy_record.id,
             address_city: Municipality.find_by(legacy_id: legacy_record.mesto)&.name,
-            address_state: Municipality.find_by(legacy_id: legacy_record.mesto)&.district&.name,
+            address_region: Municipality.find_by(legacy_id: legacy_record.mesto)&.district&.name,
             address_street: Street.find_by(legacy_id: legacy_record.ulica)&.name,
-            address_city_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast)&.name,
+            address_municipality: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast)&.name,
             anonymous: legacy_record.anonymous,
             description: legacy_record.description,
             latitude: legacy_record.map_x,

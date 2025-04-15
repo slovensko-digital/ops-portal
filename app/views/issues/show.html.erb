@@ -112,7 +112,7 @@
           <div class="value-con">
             <%= link_to @issue.category.name, issues_path(kategoria: @issue.category.name), class: "value" %>
             <%= link_to @issue.subcategory.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name), class: "value" %>
-            <%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %>
+            <% if @issue.subtype.name.present? %><%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %><% end %>
           </div>
         </div>
 
@@ -131,7 +131,7 @@
           <div class="label">Poloha:</div>
           <div class="value-con">
             <%= link_to @issue.address_street, issues_path(ulica: @issue.address_street), class: "value" %>
-            <a class="value" href=""><%= @issue.address_city_district %></a>
+            <a class="value" href=""><%= @issue.address_municipality %></a>
             <% if @issue.address_city %><a class="value" href=""><%= @issue.address_city %></a><% end %>
           </div>
           <div class="map" data-controller="map" data-map-latitude-value="<%= @issue.latitude %>" data-map-longitude-value="<%= @issue.longitude %>">

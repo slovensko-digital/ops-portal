@@ -50,6 +50,16 @@ class Issues::Draft < ApplicationRecord
   DEFAULT_STATE = Issues::State.find_by(name: "Čakajúci")
 
   def confirm
+    # TODO handle OSM aliases
+    # TODO handle error for unsupported areas
+    if address_city.present?
+      municipality_district = MunicipalityDistrict.joins(:municipality).where(municipality: { name: address_city, active: true }, name: address_municipality).first
+      municipality = municipality_district&.municipality
+    else
+      municipality_district = nil
+      municipality = Municipality.active.find_by_name(address_municipality)
+    end
+
     issue = Issue.create!(
       title: title,
       description: description,
@@ -57,14 +67,13 @@ class Issues::Draft < ApplicationRecord
       anonymous: anonymous,
       latitude: latitude,
       longitude: longitude,
-      address_state: address_state,
-      address_county: address_county,
+      address_country: address_country,
+      address_country_code: address_country_code,
+      address_region: address_region,
+      address_district: address_district,
       address_city: address_city,
-      address_city_district: address_city_district,
-      address_suburb: address_suburb,
-      address_village: address_village,
-      address_town: address_town,
-      address_street: address_road,
+      address_municipality: address_municipality,
+      address_street: address_street,
       address_house_number: address_house_number,
       address_postcode: address_postcode,
       category: category,
@@ -72,7 +81,8 @@ class Issues::Draft < ApplicationRecord
       subtype: subtype,
       reported_at: created_at,
       state: Issues::State.find_by(name: "Čakajúci"),
-      municipality: Municipality.find_by(name: address_city || address_village || address_town) || author.municipality || Municipality.first,
+      municipality: municipality,
+      municipality_district: municipality_district,
     )
 
     # TODO delete draft after success
