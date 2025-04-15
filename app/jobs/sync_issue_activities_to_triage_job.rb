@@ -26,6 +26,8 @@ class SyncIssueActivitiesToTriageJob < ApplicationJob
       user.update!(external_id: client.create_agent!(user))
     elsif user.is_a?(::ResponsibleSubjects::User) && user.responsible_subject
       user.responsible_subject.update!(external_id: client.create_responsible_subject!(user.responsible_subject))
+    elsif user.is_a?(::ResponsibleSubject)
+      user.update!(external_id: client.create_responsible_subject!(user))
     end
 
     user
