@@ -15,7 +15,7 @@ module Import
             login: Legacy::User.generate_dummy_email(legacy_record.id), # TODO skip emails for now
             # login: legacy_record.login, # TODO skip emails for now
             name: legacy_record.name,
-            password_hash: Legacy::User.generate_dummy_password,
+            password: Legacy::User.generate_dummy_password,
             photo: legacy_record.photo,
             token: legacy_record.remember_token,
             tooltips: legacy_record.tooltips,
