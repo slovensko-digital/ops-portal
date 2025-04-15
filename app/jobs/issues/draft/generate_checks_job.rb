@@ -3,6 +3,7 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
 
   def perform(draft)
     draft.checks = llm_generate_checks(draft)
+    draft.save!
   end
 
   private

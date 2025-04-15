@@ -9,5 +9,6 @@ module Issues::DraftScoped
 
   def set_draft
     @draft = current_user.issues_drafts.find(params[:draft_id])
+    redirect_to root_path if @draft.submitted
   end
 end

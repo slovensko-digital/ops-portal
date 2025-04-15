@@ -1,8 +1,20 @@
 <%= content_for :title, "Automatická kontrola podnetu" %>
 
 <section class="report">
-  <%= turbo_frame_tag @draft, src: generate_issues_draft_checks_path(@draft), target: :_top do %>
-    <h1 class="center">Automatická kontrola podnetu</h1>
-    <%= image_tag "loading.gif", style: "width: 10em; margin: 0 auto; display: block;" %>
+  <h1>Podnet má problém</h1>
+
+  <% if @draft.errors[:base].any? %>
+    <div class="report-summary-block-con">
+      <div class="report-warning">
+        <div class="title">Odkaz pre starostu tu ešte nefunguje</div>
+        <div class="description">
+          <p>Snažíte sa nahlásiť podnet na adrese v&nbsp;samospráve, ktorá s projektom <strong>Odkaz pre starostu</strong> ešte nespolupracuje.</p>
+        </div>
+      </div>
+    </div>
+
+    <%= link_to "Upraviť podnet", issues_draft_summary_path(@draft), class: "button button-transparent" %>
+  <% elsif @draft.errors[:checks].any? %>
+    <%= render partial: 'checks', object: @draft.checks %>
   <% end %>
 </section>

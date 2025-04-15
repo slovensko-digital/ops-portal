@@ -47,7 +47,8 @@ class Issues::Draft < ApplicationRecord
   validates_presence_of :photos, on: :photos_step
   validates_presence_of :title, :description, on: :details_step
 
-  DEFAULT_STATE = Issues::State.find_by(name: "Čakajúci")
+  validate :municipality_supported, on: :checks_step
+  validate :checks_passed, on: :checks_step
 
   def confirm
     # TODO handle OSM aliases
@@ -86,6 +87,7 @@ class Issues::Draft < ApplicationRecord
     )
 
     # TODO delete draft after success
+    self.update_attribute(:submitted, true)
 
     photos.each do |photo|
       issue.photos.append photo
@@ -135,12 +137,30 @@ class Issues::Draft < ApplicationRecord
       self.title = self.description = nil
     else
       self.title, self.description, category_suggestion, subcategory_suggestion, subtype_suggestion = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
-      # TODO fix this - do not create categories from LLM probably
-      self.category = Issues::Category.find_or_create_by!(name: category_suggestion)
-      self.subcategory = self.category&.subcategories.find_by(name: subcategory_suggestion) || self.category.subcategories.create!(name: subcategory_suggestion)
-      self.subtype = self.subcategory&.subtypes.find_by(name: subtype_suggestion) || self.subcategory.subtypes.create!(name: subtype_suggestion)
+      self.category = Issues::Category.find_by(name: category_suggestion)
+      self.subcategory = self.category&.subcategories.find_by(name: subcategory_suggestion)
+      self.subtype = self.subcategory&.subtypes.find_by(name: subtype_suggestion)
     end
+    self.checks = nil # reset checks
     save(context: :suggestions_step)
+  end
+
+  private
+
+  def checks_passed
+    errors.add(:checks, :invalid) if checks.any?
+  end
+
+  private
+
+  def municipality_supported
+    if address_city.present?
+      municipality_district = MunicipalityDistrict.joins(:municipality).where(municipality: { name: address_city, active: true }, name: address_municipality).first
+      municipality = municipality_district&.municipality
+    else
+      municipality = Municipality.active.find_by_name(address_municipality)
+    end
+    errors.add(:base, :municipality_unsupported) unless municipality
   end
 
   private
