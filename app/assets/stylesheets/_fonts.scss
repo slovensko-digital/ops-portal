@@ -1,0 +1,34 @@
+@charset "UTF-8";
+
+// Cabinet Grotesk
+@font-face {
+	font-family: 'CabinetGrotesk-Variable';
+	src: url("CabinetGrotesk-Variable.woff2") format('woff2'),
+		url('CabinetGrotesk-Variable.woff') format('woff'),
+		url('CabinetGrotesk-Variable.ttf') format('truetype');
+	font-weight: 100 900;
+	font-display: swap;
+	font-style: normal;
+}
+
+// General Sans
+@font-face {
+	font-family: 'GeneralSans-Variable';
+	src: url('GeneralSans-Variable.woff2') format('woff2'),
+			 url('GeneralSans-Variable.woff') format('woff'),
+			 url('GeneralSans-Variable.ttf') format('truetype');
+	font-weight: 200 700;
+	font-display: swap;
+	font-style: normal;
+}
+
+// General Sans Italic
+@font-face {
+	font-family: 'GeneralSans-Variable';
+	src: url('GeneralSans-VariableItalic.woff2') format('woff2'),
+			 url('GeneralSans-VariableItalic.woff') format('woff'),
+			 url('GeneralSans-VariableItalic.ttf') format('truetype');
+	font-weight: 200 700;
+	font-display: swap;
+	font-style: italic;
+}

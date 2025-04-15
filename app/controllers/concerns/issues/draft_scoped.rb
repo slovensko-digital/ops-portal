@@ -8,6 +8,6 @@ module Issues::DraftScoped
   private
 
   def set_draft
-    @draft = Issues::Draft.find(params[:draft_id])
+    @draft = current_user.issues_drafts.find(params[:draft_id])
   end
 end

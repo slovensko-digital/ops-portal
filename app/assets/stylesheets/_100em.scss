@@ -1,0 +1,19 @@
+// 1600 px
+
+@media only screen and (min-width: 100em) {
+	// Podnety
+	section.podnety .con {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+	// Podnety
+	section.podnety .podnet-block-con {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+	section.profile .podnet-block-con {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+	// Štatistika
+	.statistics-con {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+}

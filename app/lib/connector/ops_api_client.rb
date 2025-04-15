@@ -7,9 +7,9 @@ module Connector
       @provider = provider
     end
 
-    def get_issue(issue_id)
-      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}"), { token: jwt_token })
-      return nil unless response.status == 200
+    def get_issue(issue_id, include_customer_activities: false)
+      response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}"), { token: jwt_token, include_customer_activities: include_customer_activities })
+      return unless response.status == 200
 
       JSON.parse response.body
     end
@@ -21,7 +21,7 @@ module Connector
 
     def get_activity(issue_id, activity_id)
       response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/activities/#{activity_id}"), { token: jwt_token })
-      return nil unless response.status == 200
+      return unless response.status == 200
 
       JSON.parse response.body
     end

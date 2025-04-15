@@ -25,7 +25,7 @@ jobs:
           KAMAL_VERSION=$(ruby -rbundler -e "puts Bundler.locked_gems.specs.find { |s| s.name == 'kamal' }&.version")
           gem install kamal -v $KAMAL_VERSION
 
-      - uses: webfactory/ssh-agent@v0.9.0
+      - uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.DEV_DEPLOY_KEY }}
 
@@ -49,5 +49,15 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           CMS_ROOT_CATEGORY_ID: ${{ vars.CMS_ROOT_CATEGORY_ID }}
+          CMS_AI_CATEGORY_ID: ${{ vars.CMS_AI_CATEGORY_ID }}
+          NOTIFICATION_SMTP_USERNAME: ${{ vars.NOTIFICATION_SMTP_USERNAME }}
+          NOTIFICATION_SMTP_SERVER: ${{ vars.NOTIFICATION_SMTP_SERVER }}
+          NOTIFICATION_SMTP_PORT: ${{ vars.NOTIFICATION_SMTP_PORT }}
+          NOTIFICATION_SMTP_PASSWORD: ${{ secrets.NOTIFICATION_SMTP_PASSWORD }}
+          DISCOURSE_API_KEY: ${{ secrets.DISCOURSE_API_KEY }}
+          DISCOURSE_WEBHOOK_SECRET: ${{ secrets.DISCOURSE_WEBHOOK_SECRET }}
+          DISCOURSE_URL: ${{ vars.DISCOURSE_URL }}
+          DISCOURSE_API_USERNAME: ${{ vars.DISCOURSE_API_USERNAME }}
+          DISCOURSE_IMPORT_CATEGORY_IDS: ${{ vars.DISCOURSE_IMPORT_CATEGORY_IDS }}
 
         run: kamal deploy -d staging

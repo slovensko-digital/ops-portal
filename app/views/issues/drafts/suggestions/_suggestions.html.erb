@@ -1,32 +1,45 @@
-<%= form_with(model: @draft, url: issues_draft_suggestions_path(@draft), class: "my-5") do |form| %>
-  <% suggestions.each_with_index do |suggestion, idx| %>
-    <div class="group -space-y-px rounded-md bg-white">
-      <label class="relative flex cursor-pointer border <%= class_names "rounded-tl-md rounded-tr-md": suggestion == suggestions.first %> p-4 focus:outline-none has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50 has-[:checked]:z-10">
-        <%= form.radio_button :picked_suggestion_index, idx, class: "mt-0.5 h-4 w-4 shrink-0 cursor-pointer border-gray-300 text-indigo-600 focus:ring-indigo-600 active:ring-2 active:ring-indigo-600 active:ring-offset-2 z-10" %>
-        <span class="ml-3 flex flex-col">
-          <span class="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900"><%= suggestion['title'] %></span>
-          <span class="block text-sm text-gray-500 group-has-[:checked]:text-indigo-700"><%= simple_format(suggestion['description']) %></span>
-          <span class="block mt-2">
-            <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= suggestion["category"] %></span>
-            <% if suggestion["subcategory"].present? %><span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= suggestion["subcategory"] %></span><% end %>
-            <% if suggestion["subtype"].present? %><span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 group-has-[:checked]:bg-white"><%= suggestion["subtype"] %></span><% end %>
-          </span>
-        </span>
-      </label>
-    </div>
-  <% end %>
-
-  <div class="mb-5 group -space-y-px rounded-md bg-white">
-    <label class="relative flex cursor-pointer rounded-bl-md rounded-br-md border p-4 focus:outline-none has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50">
-      <%= form.radio_button :picked_suggestion_index, -1, class: "mt-0.5 h-4 w-4 shrink-0 cursor-pointer border-gray-300 text-indigo-600 focus:ring-indigo-600 active:ring-2 active:ring-indigo-600 active:ring-offset-2 z-10" %>
-      <span class="ml-3 flex flex-col">
-        <span class="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900">Vlastný popis</span>
-        <span class="block text-sm text-gray-500 group-has-[:checked]:text-indigo-700">Zadám vlastný popis</span>
-      </span>
-    </label>
-  </div>
-
-  <div class="inline">
-    <%= form.submit "Pokračovať", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+<h1>Popis podnetu</h1>
+<% if suggestions.any? %>
+  <div class="report-suggestion-description">Umelá inteligencia vybrala niekoľko možností popisu podnetu za vás, nižšie
+    prosím vyberte jednu z možností alebo vyberte vlastný popis.
   </div>
 <% end %>
+
+<div class="report-summary-block-con">
+  <% suggestions.each_with_index do |suggestion, idx| %>
+    <%= button_to issues_draft_suggestions_path(@draft, next: params[:next]), method: :patch, class: 'button-report-summary' do %>
+      <%= hidden_field_tag 'issues_draft[picked_suggestion_index]', idx %>
+      <div class="report-summary-wrapper">
+        <div class="title"><%= suggestion['title'] %></div>
+        <div class="description"><%= simple_format(suggestion['description']) %></div>
+        <div class="labels-con">
+          <div class="label"><%= suggestion["category"] %></div>
+          <div class="label"><%= suggestion["subcategory"] %></div>
+          <% if suggestion["subtype"] %>
+            <div class="label"><%= suggestion["subtype"] %></div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="icon-arrow">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
+          <path d="M1,19l9-9L1,1" fill="none" stroke="#1c3054" stroke-width="2"/>
+        </svg>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= button_to issues_draft_suggestions_path(@draft, next: params[:next]), method: :patch, class: 'button-report-summary' do %>
+    <%= hidden_field_tag 'issues_draft[picked_suggestion_index]', -1 %>
+    <div class="report-summary-wrapper">
+      <div class="title">Vlastný popis</div>
+      <div class="description">Zadám vlastny popis</div>
+    </div>
+
+    <div class="icon-arrow">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
+        <path d="M1,19l9-9L1,1" fill="none" stroke="#1c3054" stroke-width="2"/>
+      </svg>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,383 @@
+// 1024px
+
+@media only screen and (min-width: 64em) {
+	
+	// General
+	body { margin-top: 136px; }
+	section { padding: em(40,16) per(40,1024); }
+	h1 {
+		font-size: em(30,16);
+		line-height: em(40,30);
+		margin-bottom: 40px;
+	}
+	// Buttons
+	.button {
+		font-size: em(16,16);
+		line-height: em(16,16);
+		height: 44px;
+	}
+	
+	// Pagination
+	nav.pagination a.button-pagination {
+		height: 44px;
+		padding: 0 14px;
+		min-width: 44px;
+	}
+	nav.pagination svg {
+		width: 20px;
+	}
+	
+	// Header
+	header {
+		//background: $beige;
+		//background: rgba(248, 242, 240, 1);
+		//background: rgba(57, 232, 255, 1);
+		box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+		padding: 0;
+		//position: unset;
+	}
+	header nav .nav-wrap-head {
+		align-items: center;
+		display: flex;
+		gap: 0 20px;
+		
+	}
+	header nav a.add-button {
+		display: none;
+	}
+	header nav .nav-wrap-head a.menu-button-close {
+		display: none;
+	}
+	header nav .nav-wrap-head a.account {
+		display: none;
+	}
+	header nav .nav-wrap-head a {
+		color: $black;
+		font-family: $general;
+		font-size: em(16,16);
+		font-weight: $medium;
+		line-height: em(16,16);
+	}
+	header nav .nav-wrapper {
+		//border: 1px solid $beige;
+		box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+		padding: 0 per(40,1024);
+	}
+	header nav .nav-con-up {
+		//border-bottom: 1px solid $line;
+		margin: 0 auto;
+		//padding: 0 per(40,1024);
+	}
+	header nav .nav-con-main {
+		align-items: center;
+		//border-bottom: 1px solid $line;
+		//box-sizing: border-box;
+		display: flex;
+		height: 76px;
+		
+		gap: 0 10px;
+		//padding: 0 per(40,1024);
+		justify-content: flex-start;
+		margin: 0 auto;
+		max-width: 1600px;
+		width: 100%;
+	}
+	header nav .nav-con-main a {
+		background: $black;
+		//border: 1px solid $black;
+		box-sizing: border-box;
+		color: $white;
+		font-family: $general;
+		font-size: em(16,16);
+		font-weight: $medium;
+		line-height: em(16,16);
+		padding: 14px 18px;
+		
+		@include rounded(25px);
+	}
+	header nav .nav-con-main a.button-main {
+		background: $red;
+		border: none;
+		box-sizing: border-box;
+		color: $white;
+		padding: 14px 18px;
+	}
+	header nav .nav-wrap-main {
+	
+		box-sizing: border-box;
+		padding: 0 per(40,1024);
+		//max-width: 1600px;
+		width: 100%;
+	}
+	header nav a.menu-button {
+		display: none;
+	}
+	header nav a.search {
+		display: none;
+	}
+	header nav .search-con {
+		
+		display: flex;
+		//justify-content: space-between
+		width: 100%;
+	}
+	header nav .search-con form {
+		position: relative;
+		width: 100%;
+	}
+	header nav .search-con input {
+		border: 1px solid $black;
+		box-sizing: border-box;
+		color: $black;
+		display: flex;
+		font-family: $general;
+		font-size: em(16,16);
+		font-weight: $medium;
+		line-height: em(16,16);
+		height: 44px;
+		padding: 0 16px;
+		width: 100%;
+		@include rounded(22px);
+	}
+	
+	header nav .search-con input::placeholder {
+	color: $black;
+	font-weight: $normal;
+	opacity: 0.5;
+	}
+	header nav .search-con form button {
+		stroke: $black;
+		stroke-width: 2px;
+		width: 24px;
+		position: absolute;
+		right: 16px;
+		top: 9px;
+		@include transition(all);
+	}
+	header nav .search-con form button:hover {
+		cursor: pointer;
+		stroke: $red;
+		@include transition(all);
+	}
+	
+	header nav .language {
+		align-items: center;
+		border: 1.5px solid $black;
+		box-sizing: border-box;
+		display: flex;
+		color: $black;
+		font-family: $general;
+		font-size: em(14,16);
+		font-weight: $medium;
+		line-height: em(12,12);
+		gap: 0 8px;
+		height: 24px;
+		padding: 0 8px 0 6px;
+		position: relative;
+		text-transform: uppercase;
+		@include rounded(4px);
+	}
+	header nav .language .dropdown-arrow {
+		//padding-bottom: 5px;
+		//stroke: $black;
+		//stroke-width: 3px;
+		width: 11px;
+		//@include rotate(-180);
+	}
+	header nav .language ul.dropdown {
+		background: $white;
+		visibility: hidden;
+		opacity: 0;
+		position: absolute;
+		left: 0;
+		display: none;
+	}
+	
+	header nav a.login {
+		align-items: center;
+		display: flex;
+		gap: 6px;
+	}
+	header nav a.login:hover .logged {
+		color: $red;
+	}
+	header nav a.login .logged {
+		color: $black;
+		display: flex;
+		font-family: $general;
+		font-size: em(14,16);
+		font-weight: $medium;
+		line-height: em(14,14);
+	}
+	header nav .mobile-buttons-nav {
+		display: none;
+	}
+	
+	// Home Main
+	section.main .report-suggestion-block {
+		gap: 0 20px;
+		grid-template-columns: auto 35%;
+		padding: per(26,462);
+	}
+	section.main .report-suggestion-block .title {
+		font-size: em(30,16);
+		line-height: em(36,30);
+	}
+	section.main .report-suggestion-block .subtitle {
+		font-size: em(18,16);
+		line-height: em(26,18);
+	}
+	section.main .report-suggestion-block a.button-report-suggestion-block {
+		padding-left: 30px;
+		padding-right: 30px;
+		width: fit-content;
+	}
+	section.main .report-suggestion-block .images-block figure {
+		max-width: 210px;
+		width: 100%;
+	}
+	section.main .how-to-block {
+		padding: per(26,462);
+	}
+	section.main .how-to-block .how-to-con {
+		display: grid;
+		gap: 0 20px;
+		grid-template-columns: auto 40%;
+	}
+	section.main .how-to-block .images-block {
+		grid-column-start: 2;
+		grid-column-end: 2;
+		grid-row-start: 1;
+		grid-row-end: span 2;
+	}
+	section.main .how-to-block .images-block figure {
+		width: 150px;
+	}
+	section.main .how-to-block .how-to-button-con {
+		justify-content: flex-start;
+	}
+	
+	
+	// Home Suggestions
+	section.home-suggestions .home-suggestions-con {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+	section.home-suggestions a.podnet-block:last-child {
+		display: none;
+	}
+	// Home News
+	section.home-news .home-news-con {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+	section.home-news a.news-block:last-child {
+		display: none;
+	}
+	
+	
+	// Aktuality
+	section.news .news-con {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+	
+	
+	
+	
+	// Podnety
+	section.podnety .podnety-general-con {
+		display: grid;
+		grid-template-columns: 280px auto;
+		gap: 0 40px;
+	}
+	section.podnety .wrapper-list {
+		//display: grid;
+		gap: 0 30px;
+		grid-template-columns: 200px auto;
+	}
+	section.podnety .podnet-block-con {
+		//grid-template-columns: 1fr 1fr 1fr;
+	}
+	.wrapper-map .container-map {
+		padding-bottom: 55%;
+	}
+	button.button-filter {
+		display: none;
+	}
+	
+	
+	// Report
+	section.report .report-summary-edit .button-edit {
+		width: fit-content !important;
+	}
+	
+	// Profil
+	section.profile .profile-con {
+		grid-template-columns: 300px auto;
+		gap: 0 40px;
+	}
+	
+	// Filter
+	.podnety-filter-con {
+		background: transparent;
+		bottom: unset;
+		display: block;
+		left: unset;
+		position: unset;
+		right: unset;
+		top: unset;
+		width: 100%;
+		z-index: unset;
+	}
+	.podnety-filter-wrapper {
+		background: $blue-light;
+		bottom: unset;
+		display: grid;
+		gap: 20px 0;
+		overflow: auto;
+		padding: 20px;
+		position: unset;
+		right: unset;
+		top: unset;
+		width: unset;
+		@include rounded(15px);
+	}
+	.close-filter {
+		display: none !important;
+	}
+	
+	
+	
+	// Podnet
+	section.podnet .podnet-con {
+		align-content: start;
+		gap: 80px 40px;
+		display: grid;
+		grid-template-columns: auto 360px;
+		grid-template-rows: auto 1fr;
+	}
+	section.podnet .podnet-information-con {
+		grid-row: 1 / 3;
+		grid-column: 2;
+	}
+	section.podnet .podnet-information {
+		padding: per(20,360);
+	}
+	section.podnet .share-buttons a.button-share-mobile {
+		display: none;
+	}
+	section.podnet .share-buttons a.button-share-desktop {
+		display: flex;
+	}
+	
+	// Footer
+	footer {
+		padding: em(60,16) per(40,1024);
+	}
+	
+}
+
+
+
+
+
+
+

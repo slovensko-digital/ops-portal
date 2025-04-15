@@ -1,0 +1,34 @@
+<%= content_for(:title, 'Výber kategórie problému') %>
+
+<section class="report">
+  <%= link_to issues_draft_subcategory_path(@draft), class: "button-back" do %>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
+        <path d="M1,19l9-9L1,1" fill="none" stroke-width="2"/>
+      </svg>
+    </span>
+    <span>Späť</span>
+  <% end %>
+
+  <h1>Výber typu problému</h1>
+
+  <div class="report-suggestion-description">Vyberte typ problému, ktorý nahlasujete.</div>
+
+  <div class="report-summary-block-con">
+    <% @subtypes.each do |sub| %>
+      <%= button_to issues_draft_subtype_path(@draft), method: :patch, class: class_names("button-report-summary button-category", active: sub == @draft.subtype) do %>
+        <%= hidden_field_tag :subtype_id, sub.id %>
+        <div class="report-summary-wrapper">
+          <div class="title"><%= sub.name %></div>
+          <div class="description"><%= sub.description %></div>
+        </div>
+        <div class="icon-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
+            <path d="M1,19l9-9L1,1" fill="none" stroke="#1c3054" stroke-width="2"/>
+          </svg>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+</section>

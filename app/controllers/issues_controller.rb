@@ -3,7 +3,9 @@ class IssuesController < ApplicationController
 
   # GET /issues or /issues.json
   def index
-    @issues = Issue.order(created_at: :desc).limit(2)
+    @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
+
+    @issues = search_issues.limit(12)
   end
 
   # GET /issues/1 or /issues/1.json
@@ -26,5 +28,16 @@ class IssuesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def issue_params
     params.expect(issue: [ :title, :description, :author, :reported_at ])
+  end
+
+  private
+  def search_issues
+    scope = Issue
+    scope = scope.joins(:category).where(issues_categories: { name: params[:kategoria] }) if params[:kategoria].present?
+    scope = scope.joins(:subcategory).where(issues_subcategories: { name: params[:subkategoria] }) if params[:subkategoria].present?
+    scope = scope.joins(:subtype).where(issues_subtypes: { name: params[:typ] }) if params[:typ].present?
+
+    scope = scope.order(reported_at: :desc) # TODO
+    scope
   end
 end

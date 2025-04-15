@@ -1,14 +1,43 @@
-<div class="mx-auto md:w-2/3 w-full p-6">
-  <h1 class="font-bold text-4xl">Geo</h1>
-  <%= form_with(model: @draft, class: "contents", url: issues_draft_geo_path(@draft), data: { controller: :geo }) do |form| %>
-    <div class="my-5">
-      <%= button_tag "Load current position", type: :button, data: { action: "geo#locate" }, class: "rounded-lg py-3 px-5 bg-gray-600 text-white inline-block font-medium cursor-pointer" %>
+<section class="report" data-controller="geo">
+  <%= link_to edit_issues_draft_path(@draft), class: "button-back" do %>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
+        <path d="M1,19l9-9L1,1" fill="none" stroke-width="2"/>
+      </svg>
+    </span>
+    <span>Späť</span>
+  <% end %>
+
+  <h1>Urči miesto podnetu</h1>
+
+  <% if @draft.latlon_from_exif? %>
+    <div class="report-suggestion-description">Na lokalizovanie miesta podnetu bola požitá geolokácia z fotky. Ak nie je
+      určenie polohy správne, použite prosím vyhľadávanie alebo mapu nižšie.
+    </div>
+  <% end %>
+  <!-- Mapa -->
+  <div class="report-map-con">
+
+    <div class="search-con">
+      <form action="">
+        <button>
+          <svg viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7.77818" cy="8.27818" r="6.77818"/>
+            <path d="M13 13.5L18 18.5"/>
+          </svg>
+        </button>
+        <input type="text" placeholder="Napíš adresu" data-geo-target="addressFull">
+      </form>
     </div>
 
-    <div data-geo-target="map" class="my-5 h-3/4 block shadow rounded-md border border-gray-400 outline-none">
-      <div class="top-1/2 left-1/2 w-8 -ml-4 h-8 -mt-4 leading-8 relative z-50 text-4xl text-center align-middle">&#8982;</div>
+    <div class="report-map">
+      <div class="issues-draft-map" data-geo-target="map">
+        <div class="issues-draft-map-pointer">&#8982;</div>
+      </div>
     </div>
+  </div>
 
+  <%= form_with(model: @draft, url: issues_draft_geo_path(@draft, next: params[:next])) do |form| %>
     <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
     <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
     <%= form.hidden_field :address_house_number, data: { "geo-target": "addressHouseNumber" } %>
@@ -26,21 +55,10 @@
     <%= form.hidden_field :address_postcode, data: { "geo-target": "addressPostcode" } %>
     <%= form.hidden_field :address_country, data: { "geo-target": "addressCountry" } %>
     <%= form.hidden_field :address_country_code, data: { "geo-target": "addressCountryCode" } %>
+    <%= form.hidden_field :address_city, data: { "geo-target": "addressCity" } %>
+    <%= form.hidden_field :address_city_district, data: { "geo-target": "addressCityDistrict" } %>
+    <%= form.hidden_field :address_road, data: { "geo-target": "addressRoad" } %>
 
-    <div class="grid md:grid-cols-3 gap-3">
-      <div>
-        <%= form.text_field :address_city, readonly: :readonly, data: { "geo-target": "addressCity" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
-      </div>
-      <div>
-        <%= form.text_field :address_city_district, readonly: :readonly, data: { "geo-target": "addressCityDistrict" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
-      </div>
-      <div>
-        <%= form.text_field :address_road, readonly: :readonly, data: { "geo-target": "addressRoad" }, class: "shadow rounded-md border border-gray-400 outline-none px-3 py-2 w-full" %>
-      </div>
-    </div>
-
-    <div class="my-5">
-      <%= form.submit "Odoslať", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-    </div>
+    <%= form.submit "Ďalej", class: "button" %>
   <% end %>
-</div>
+</section>

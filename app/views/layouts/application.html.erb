@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Ops" %></title>
+    <title><%= content_for?(:title) ? "#{content_for(:title)} | Odkaz pre starostu" : "Odkaz pre starostu"  %></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,31 +14,40 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <!-- Favicons -->
+    <%= favicon_link_tag "favicon-16.png", type: "image/png", sizes: "16x16" %>
+    <%= favicon_link_tag "favicon-32.png", type: "image/png", sizes: "32x32" %>
+    <%= favicon_link_tag "favicon-64.png", type: "image/png", sizes: "64x64" %>
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <!-- iOS -->
+    <%= favicon_link_tag "apple-touch-icons/apple-touch-icon-16.png", rel: "apple-touch-icon", sizes: "16x16" %>
+    <%= favicon_link_tag "apple-touch-icons/apple-touch-icon-32.png", rel: "apple-touch-icon", sizes: "32x32" %>
+    <%= favicon_link_tag "apple-touch-icons/apple-touch-icon-64.png", rel: "apple-touch-icon", sizes: "64x64" %>
+    <%= favicon_link_tag "apple-touch-icons/apple-touch-icon-128.png", rel: "apple-touch-icon", sizes: "128x128" %>
+    <%= favicon_link_tag "apple-touch-icons/apple-touch-icon-256.png", rel: "apple-touch-icon", sizes: "256x256" %>
+    <%= favicon_link_tag "apple-touch-icons/apple-touch-icon-512.png", rel: "apple-touch-icon", sizes: "512x512" %>
+    <%= favicon_link_tag "apple-touch-icons/apple-touch-icon-1024.png", rel: "apple-touch-icon", sizes: "1024x1024" %>
+
+
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= render "layouts/header" %>
+  <body data-controller="navigation" data-navigation-target="toggler">
+  <%= render "shared/header" %>
 
-    <div class="w-1/2 mt-4 mx-auto">
-      <% if notice %>
-        <%= render "layouts/notice" %>
-      <% end %>
-      
-      <% if alert %>
-        <%= render "layouts/alert" %>
-      <% end %>
+  <% if notice %>
+    <div class="flash notice">
+      <%= flash[:notice] %>
     </div>
+  <% elsif alert %>
+    <div class="flash alert">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
 
-    <main class="flex">
-      <%= yield %>
-    </main>
+  <%= yield %>
+
+  <%= render "shared/footer" %>
   </body>
 </html>

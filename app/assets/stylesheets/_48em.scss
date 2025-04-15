@@ -1,0 +1,148 @@
+// 768px
+
+@media only screen and (min-width: 48em) {
+	
+	// General
+	body {
+		margin-top: 70px;
+	}
+	section { padding: em(60,16) per(40,768); }
+	
+	// Pagination
+	nav.pagination {
+		justify-content: center;
+	}
+	nav.pagination .pages-con {
+		display: flex;
+	}
+	
+	
+	
+	// Header
+	header {
+		padding: 0 per(40,768);
+	}
+	header nav {
+	}
+	header nav .buttons-con {
+		column-gap: 20px;
+		width: auto;
+	}
+	
+	
+	// Home Main
+	section.main	{
+		display: grid;
+		gap: 0 20px;
+		grid-template-columns: 1fr 1fr;
+	}
+	section.home {
+		padding-top: 0;
+	}
+	section.home .button-read-more-home {
+		padding-left: 60px;
+		padding-right: 60px;
+		width: fit-content;
+	}
+	
+	// Home Suggestions
+	section.home-suggestions .home-suggestions-con {
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+	}
+	// Home News
+	section.home-news .home-news-con {
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+	}
+	
+	// Aktuality
+	section.news .news-con {
+		grid-template-columns: 1fr 1fr;
+		gap: 40px 20px;
+	}
+	
+	
+	// Podnety
+	.view-switch {
+		align-items: center;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.list {
+		//order: 2;
+	}
+	section.podnety .podnet-block-con {
+		gap: 20px;
+		grid-template-columns: 1fr 1fr;
+	}
+	.wrapper-map .container-map {
+		padding-bottom: 100%;
+	}
+	
+	article h1 {
+		font-size: em(40,16);
+		line-height: em(50,40);
+	}
+	
+	// Profil
+	section.profile .podnet-block-con {
+		gap: 20px;
+		grid-template-columns: 1fr 1fr;
+	}
+	
+	// Podnet
+	section.podnet .podnet-information {
+		padding: 30px;
+	}
+	section.podnet .add-buttons a.button {
+		order: 2;
+		width: auto;
+	}
+	section.podnet .add-buttons a.button-transparent {
+		order: 1;
+	}
+	section.podnet .podnet-discussion .add-comment-form form .buttons-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 30px;
+		justify-content: space-between;
+	}
+	section.podnet .podnet-discussion .add-comment-form form .button {
+		width:fit-content !important;
+	}
+	section.podnet .podnet-discussion .add-comment-form form a.button-add-image svg {
+		width: 20px;
+	}
+	
+	// Pochvala
+	section.compliment .compliment-buttons-con .button-share-mobile {
+		display: none;
+	}
+	section.compliment .compliment-buttons-con .button-share-desktop {
+		display: flex;
+	}
+	
+	// Štatistika
+	.statistics-con {
+		grid-template-columns: 1fr 1fr;
+	}
+	
+	// Footer
+	footer {
+		padding: em(60,16) per(40,768);
+	}
+	footer .footer-wraper {
+		gap: 40px 10%;
+		grid-template-columns: auto auto;
+	}
+	footer .footer-nav-top {
+		grid-column-start: 1;
+		grid-column-end: 3;
+	}
+	footer .social-networks {
+		grid-column: 2;
+		grid-row: 2;
+		justify-content: flex-end;
+	}
+}

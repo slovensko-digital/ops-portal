@@ -68,7 +68,7 @@ class RodauthMain < Rodauth::Rails::Auth
     login_label "Email"
     login_confirm_param "email-confirm"
     # password_confirm_param "confirm_password"
-    login_minimum_length 0
+    login_minimum_length 5
 
     # Redirect back to originally requested location after authentication.
     # login_return_to_requested_location? true
@@ -88,6 +88,8 @@ class RodauthMain < Rodauth::Rails::Auth
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }
     end
+
+    email_from ENV["NOTIFICATION_SMTP_USERNAME"] # this is actually also the email
 
     # ==> Flash
     # Match flash keys with ones already used in the Rails app.

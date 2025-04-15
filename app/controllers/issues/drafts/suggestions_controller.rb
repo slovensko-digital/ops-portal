@@ -12,7 +12,9 @@ class Issues::Drafts::SuggestionsController < ApplicationController
 
   def update
     if @draft.pick_suggestion(suggestions_params)
-      redirect_to issues_draft_details_path(@draft)
+      redirect_to issues_draft_summary_path(@draft) and return if params[:next] == "summary" || params[:issues_draft][:picked_suggestion_index] != "-1"
+
+      redirect_to issues_draft_category_path(@draft)
     else
       render :show, status: :unprocessable_entity
     end

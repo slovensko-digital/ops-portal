@@ -61,7 +61,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_070745) do
     t.string "name", null: false
     t.string "slug", null: false
     t.bigint "parent_category_id"
-    t.jsonb "raw", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["parent_category_id", "slug"], name: "index_cms_categories_on_parent_category_id_and_slug", unique: true
@@ -71,11 +70,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_070745) do
     t.string "title", null: false
     t.string "slug", null: false
     t.text "text", null: false
-    t.jsonb "raw", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "tags", default: [], array: true
     t.bigint "category_id", null: false
+    t.text "raw", null: false
     t.index ["category_id", "slug"], name: "index_cms_pages_on_category_id_and_slug", unique: true
   end
 
@@ -111,6 +110,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_070745) do
     t.string "backoffice_url"
     t.string "backoffice_api_token"
     t.string "backoffice_webhook_secret"
+    t.boolean "receive_customer_activities", default: false, null: false
   end
 
   create_table "connector_users", force: :cascade do |t|
@@ -254,6 +254,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_070745) do
     t.string "address_street"
     t.string "address_house_number"
     t.string "address_postcode"
+    t.integer "issue_type", default: 1
+    t.integer "resolution_external_id"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["legacy_id"], name: "index_issues_on_legacy_id", unique: true
@@ -342,6 +344,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_070745) do
     t.bigint "subtype_id"
     t.bigint "author_id", null: false
     t.string "address_county"
+    t.boolean "latlon_from_exif", default: false
     t.index ["author_id"], name: "index_issues_drafts_on_author_id"
     t.index ["category_id"], name: "index_issues_drafts_on_category_id"
     t.index ["subcategory_id"], name: "index_issues_drafts_on_subcategory_id"

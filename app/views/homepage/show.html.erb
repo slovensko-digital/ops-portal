@@ -1,0 +1,39 @@
+<!--Main -->
+<section class="main">
+  <div class="report-suggestion-block">
+    <div class="report-suggestion-con">
+      <div class="title">Je v tvojom okolí potrebné niečo vyriešiť?</div>
+      <div class="subtitle">Odfoť, odošli a sleduj riešenie podnetu samosprávou.</div>
+      <%= link_to "Nahlás podnet", new_issues_draft_path, class: "button button-report-suggestion-block" %>
+    </div>
+    <div class="images-block">
+      <figure>
+        <%= image_tag 'report-suggestion.svg' %>
+      </figure>
+    </div>
+  </div>
+
+  <!-- Ako na to -->
+  <%= render "carousel" %>
+
+</section>
+
+<!-- Podnety -->
+<section class="home home-suggestions">
+
+  <h1>Vyriešené podnety</h1>
+  <div class="home-suggestions-con">
+    <%= render @issues %>
+  </div>
+  <%= link_to "Pozrieť viac", issues_path, class: "button button-transparent button-read-more-home" %>
+</section>
+
+<% if @news.length > 0 %>
+  <section class="home home-news">
+    <h1>Aktuality</h1>
+    <div class="home-news-con">
+      <%= render @news %>
+    </div>
+    <%= link_to "Pozrieť viac", "/aktuality", class: "button button-transparent button-read-more-home" %>
+  </section>
+<% end %>

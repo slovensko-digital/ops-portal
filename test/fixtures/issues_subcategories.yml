@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+_fixture:
+  model_class: Issues::Subcategory
+
+one:
+  catch_all: false
+  category: one
+  name: Strom
+  name_hu: Sromabo
+  alias: strom
+  description: stromy, neporiadok, znečisťovanie
+  description_hu: fák, rendetlenség, szennyezés
+  weight: 900

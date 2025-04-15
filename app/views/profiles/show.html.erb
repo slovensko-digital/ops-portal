@@ -1,0 +1,70 @@
+<% content_for(:title, 'Môj účet') %>
+
+<section class="account">
+  <h1>Môj účet</h1>
+
+  <div class="account-wrapper">
+    <div class="account-info-con">
+      <div class="title">Prihlasovacie údaje</div>
+
+      <div class="account-item-con">
+        <div class="description">Email</div>
+        <div class="item-title"><%= current_user.email %></div>
+      </div>
+
+      <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
+      <%= link_to "Zmeniť heslo", rodauth.change_password_path, class: "button button-transparent" %>
+      <%= link_to "Zmeniť email", rodauth.change_login_path, class: "button button-transparent" %>
+    </div>
+
+    <div class="account-info-con">
+      <div class="title">Osobné údaje</div>
+
+      <div class="account-item-subject">
+        <figure>
+          <picture>
+            <%= image_tag "ops-avatar-blue.png", alt: "" %>
+          </picture>
+        </figure>
+        <div class="item-title"><%= current_user.firstname %> <%= current_user.lastname %></div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Mesto</div>
+        <div class="item-title">Bratislava</div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Ulica</div>
+        <div class="item-title">Sasinkova</div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Vek</div>
+        <div class="item-title">68</div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Pohlavie</div>
+        <div class="item-title">Muž</div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Ide o miesto Vášho trvalého bydliska?</div>
+        <div class="item-title">Áno</div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Chcete dostávať emailové notifikácie k podnetom?</div>
+        <div class="item-title">Áno</div>
+      </div>
+
+      <a href="./osobne-udaje.html" class="button button-transparent not-implemented">Zmeniť</a>
+    </div>
+
+    <div class="account-info-con account-delete">
+      <div class="title">Vymazať účet</div>
+      <%= link_to "Vymazať", rodauth.close_account_path, class: "button button-transparent" %>
+    </div>
+  </div>
+</section>

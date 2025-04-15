@@ -1,26 +1,52 @@
-<div class="mx-auto md:w-2/3 w-full p-6">
-  <h1 class="font-bold text-4xl">New issue</h1>
+<section class="report">
+  <h1>Nový podnet</h1>
 
-  <%= form_with(model: @draft, class: "contents") do |form| %>
-    <% if @draft.errors.any? %>
-      <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-        <h2><%= pluralize(@draft.errors.count, "error") %> prohibited this issue from being saved:</h2>
+  <div class="report-suggestion-description">Nahrajte fotografiu k podnetu. Ak používate mobil, odporúčame zapnúť lokalizáciu GPS.</div>
 
-        <ul>
-          <% @draft.errors.each do |error| %>
-            <li><%= error.full_message %></li>
-          <% end %>
-        </ul>
+  <div class="report-suggestion-add-pictures-con">
+    <%= form_with(model: @draft, data: { controller: 'auto-submit' }) do |form| %>
+      <div class="report-suggestion-add-pictures-wrapper">
+        <%= form.label :photos, class: "button-add-picture" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+            <line y1="14" x2="28" y2="14" fill="none" stroke-miterlimit="10"/>
+            <line x1="14" x2="14" y2="28" fill="none" stroke-miterlimit="10"/>
+          </svg>
+        <% end %>
+        <div class="info-title">Nahrať fotku</div>
+        <%= form.file_field :photos, multiple: true, accept: "capture=camera;image/*", class: 'sr-only', data: { action: 'auto-submit#submit' } %>
+        <%= hidden_field_tag :next, params[:next] %>
       </div>
+      <%= form.submit data: { "turbo_submits_with": "Nahrávam..." }, class: "sr-only" %>
     <% end %>
 
-    <div class="my-5">
-      <%= form.label :photos %>
-      <%= form.file_field :photos, multiple: true, accept: "image/*;capture=camera", class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-5 mt-2 w-full" %>
-    </div>
+    <% if @draft.photos.attached? %>
+      <div class="report-suggestion-pictures-block">
+        <% @draft.photos.each do |photo| %>
+          <figure>
+            <%= button_to issues_draft_destroy_photo_path(@draft, photo_id: photo.id, next: params[:next]), class: 'lens-image', method: :delete, data: {'turbo-confirm': 'Určite chcete túto fotku odstrániť?'} do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
+                <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
+              </svg>
+            <% end %>
+            <picture>
+              <%= image_tag photo.variant(:square), alt: "Uploaded photo" %>
+            </picture>
+          </figure>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 
-    <div class="inline">
-      <%= form.submit data: { "turbo_submits_with": "Submitting..." }, class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
-    </div>
+  <div class="notice">Nahrajte obrázky, ktoré podnet dokumentujú. Povolené formáty pre obrázky sú: jpg, gif a png.
+    Maximálna veľkosť: 7MB
+  </div>
+  <% if @draft.valid?(:photos_step) %>
+    <% if params[:next] == 'summary' %>
+      <%= link_to 'Uložiť', issues_draft_summary_path(@draft), class: 'button' %>
+    <% else %>
+      <%= link_to 'Ďalej', issues_draft_geo_path(@draft), class: 'button' %>
+    <% end %>
+
   <% end %>
-</div>
+</section>

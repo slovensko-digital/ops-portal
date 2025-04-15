@@ -1,5 +1,5 @@
 json.triage_identifier @issue[:triage_identifier]
-json.ops_state @issue[:ops_state]
+json.ops_state @issue[:ops_state].key
 json.title @issue[:title]
 json.responsible_subject {
   json.label @issue[:responsible_subject]&.subject_name
@@ -8,10 +8,10 @@ json.responsible_subject {
 json.responsible_subject_changed_at @issue[:responsible_subject_changed_at]
 json.author @issue[:author]
 json.issue_type @issue[:issue_type]
-json.category @issue[:category]
-json.subcategory @issue[:subcategory]
-json.subtype @issue[:subtype]
-json.address_municipality @issue[:address_municipality]
+json.category @issue[:category].name
+json.subcategory @issue[:subcategory]&.name
+json.subtype @issue[:subtype]&.name
+json.address_municipality @issue.values_at(:municipality, :municipality_district).compact.pluck(:name).join("::")
 json.address_postcode @issue[:address_postcode]
 json.address_street @issue[:address_street]
 json.address_house_number @issue[:address_house_number]
@@ -27,6 +27,7 @@ json.activities @issue[:activities] do |activity|
   json.content_type activity[:content_type]
   json.body activity[:body]
   json.type activity[:type]
+  json.customer_activity activity[:customer_activity]
   json.created_at activity[:created_at]
   json.updated_at activity[:updated_at]
   json.attachments activity[:attachments] do |attachment|

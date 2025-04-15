@@ -18,4 +18,6 @@
 class Issues::Subcategory < ApplicationRecord
   belongs_to :category, class_name: "Issues::Category"
   has_many :subtypes, class_name: "Issues::Subtype", dependent: :destroy
+
+  scope :non_legacy, -> { where(legacy_id: nil) }
 end

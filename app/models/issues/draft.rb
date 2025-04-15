@@ -20,6 +20,7 @@
 #  checks                  :jsonb
 #  description             :string
 #  latitude                :float
+#  latlon_from_exif        :boolean          default(FALSE)
 #  longitude               :float
 #  picked_suggestion_index :integer
 #  suggestions             :jsonb
@@ -35,6 +36,7 @@ class Issues::Draft < ApplicationRecord
   has_many_attached :photos do |photo|
     photo.variant :llm, resize_to_limit: [ 800, 600 ], preprocessed: true
     photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
+    photo.variant :square, resize_to_fill: [ 320, 320 ], preprocessed: true
   end
 
   belongs_to :category, class_name: "Issues::Category", optional: true
@@ -43,7 +45,7 @@ class Issues::Draft < ApplicationRecord
   belongs_to :author, class_name: "User", optional: false
 
   validates_presence_of :photos, on: :photos_step
-  validates_presence_of :title, :description, :category, on: :details_step
+  validates_presence_of :title, :description, on: :details_step
 
   DEFAULT_STATE = Issues::State.find_by(name: "Čakajúci")
 
@@ -69,7 +71,7 @@ class Issues::Draft < ApplicationRecord
       subcategory: subcategory,
       subtype: subtype,
       reported_at: created_at,
-      state: DEFAULT_STATE,
+      state: Issues::State.find_by(name: "Čakajúci"),
       municipality: Municipality.find_by(name: address_city || address_village || address_town) || author.municipality || Municipality.first,
     )
 
@@ -84,6 +86,10 @@ class Issues::Draft < ApplicationRecord
 
   def schedule_calculate_suggestions
     ::Issues::Draft::GenerateSuggestionsJob.perform_later(self)
+  end
+
+  def needs_editing?
+    checks.any? { |check| check["action"] == "back" }
   end
 
   def geo
@@ -101,6 +107,7 @@ class Issues::Draft < ApplicationRecord
     if gps && gps[:gps_latitude] && gps[:gps_longitude]
       self.latitude = gps_to_float(gps[:gps_latitude])
       self.longitude = gps_to_float(gps[:gps_longitude])
+      self.latlon_from_exif = true
     end
   end
 
@@ -116,7 +123,6 @@ class Issues::Draft < ApplicationRecord
     assign_attributes(suggestions_params)
     if picked_suggestion_index == -1
       self.title = self.description = nil
-      self.category = "1"
     else
       self.title, self.description, category_suggestion, subcategory_suggestion, subtype_suggestion = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
       # TODO fix this - do not create categories from LLM probably

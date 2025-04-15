@@ -1,0 +1,96 @@
+en:
+  rodauth:
+    already_an_account_with_this_login_message: already an account with this login
+    attempt_to_create_unverified_account_error_flash: The account you tried to create is currently awaiting verification
+    attempt_to_login_to_unverified_account_error_flash: The account you tried to login with is currently awaiting verification
+    change_login_button: Change Login
+    change_login_error_flash: There was an error changing your login
+    change_login_needs_verification_notice_flash: An email has been sent to you with a link to verify your login change
+    change_login_notice_flash: Your login has been changed
+    change_login_page_title: Change Login
+    change_password_button: Change Password
+    change_password_error_flash: There was an error changing your password
+    change_password_notice_flash: Your password has been changed
+    change_password_page_title: Change Password
+    close_account_button: Close Account
+    close_account_error_flash: There was an error closing your account
+    close_account_notice_flash: Your account has been closed
+    close_account_page_title: Close Account
+    contains_null_byte_message: contains null byte
+    create_account_button: Create Account
+    create_account_error_flash: There was an error creating your account
+    create_account_link_text: Create a New Account
+    create_account_notice_flash: Your account has been created
+    create_account_page_title: Create Account
+    email_subject_prefix: ''
+    input_field_label_suffix: ''
+    invalid_password_message: invalid password
+    login_button: Login
+    login_confirm_label: Confirm %{login_label}
+    login_error_flash: There was an error logging in
+    login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">Other Options</h2>
+    login_label: Login
+    login_not_valid_email_message: not a valid email address
+    login_notice_flash: You have been logged in
+    login_page_title: Login
+    logins_do_not_match_message: logins do not match
+    logout_button: Logout
+    logout_notice_flash: You have been logged out
+    logout_page_title: Logout
+    multi_phase_login_page_title: Login
+    need_password_notice_flash: Login recognized, please enter your password
+    new_password_label: New Password
+    no_matching_login_message: no matching login
+    no_matching_reset_password_key_error_flash: 'There was an error resetting your password: invalid or expired password reset key'
+    no_matching_verify_account_key_error_flash: 'There was an error verifying your account: invalid verify account key'
+    no_matching_verify_login_change_key_error_flash: 'There was an error verifying your login change: invalid verify login change key'
+    omniauth_failure_error_flash: There was an error logging in with the external provider
+    omniauth_login_no_matching_account_error_flash: There is no existing account matching the external identity
+    omniauth_login_unverified_account_error_flash: The account matching the external identity is currently awaiting verification
+    password_confirm_label: Confirm %{password_label}
+    password_label: Password
+    passwords_do_not_match_message: passwords do not match
+    remember_button: Change Remember Setting
+    remember_disable_label: Disable Remember Me
+    remember_error_flash: There was an error updating your remember setting
+    remember_forget_label: Forget Me
+    remember_notice_flash: Your remember setting has been updated
+    remember_page_title: Change Remember Setting
+    remember_remember_label: Remember Me
+    require_login_error_flash: Please login to continue
+    resend_verify_account_page_title: Resend Verification Email
+    reset_password_button: Reset Password
+    reset_password_email_recently_sent_error_flash: An email has recently been sent to you with a link to reset your password
+    reset_password_email_sent_notice_flash: An email has been sent to you with a link to reset the password for your account
+    reset_password_email_subject: Reset Password
+    reset_password_error_flash: There was an error resetting your password
+    reset_password_explanatory_text: "<p>If you have forgotten your password, you can request a password reset:</p>"
+    reset_password_notice_flash: Your password has been reset
+    reset_password_page_title: Reset Password
+    reset_password_request_button: Request Password Reset
+    reset_password_request_error_flash: There was an error requesting a password reset
+    reset_password_request_link_text: Forgot Password?
+    reset_password_request_page_title: Request Password Reset
+    same_as_current_login_message: same as current login
+    same_as_existing_password_message: invalid password, same as current password
+    strftime_format: "%F %T"
+    unverified_account_message: unverified account, please verify account before logging in
+    unverified_change_login_error_flash: Please verify this account before changing the login
+    verify_account_button: Verify Account
+    verify_account_email_recently_sent_error_flash: An email has recently been sent to you with a link to verify your account
+    verify_account_email_sent_notice_flash: An email has been sent to you with a link to verify your account
+    verify_account_email_subject: Verify Account
+    verify_account_error_flash: Unable to verify account
+    verify_account_notice_flash: Your account has been verified
+    verify_account_page_title: Verify Account
+    verify_account_resend_button: Send Verification Email Again
+    verify_account_resend_error_flash: Unable to resend verify account email
+    verify_account_resend_explanatory_text: "<p>If you no longer have the email to verify the account, you can request that it be resent to you:</p>"
+    verify_account_resend_link_text: Resend Verify Account Information
+    verify_login_change_button: Verify Login Change
+    verify_login_change_duplicate_account_error_flash: Unable to change login as there is already an account with the new login
+    verify_login_change_email_subject: Verify Login Change
+    verify_login_change_error_flash: Unable to verify login change
+    verify_login_change_notice_flash: Your login change has been verified
+    verify_login_change_page_title: Verify Login Change
+    new_password_confirm_label: ""

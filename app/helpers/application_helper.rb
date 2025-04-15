@@ -5,11 +5,11 @@ module ApplicationHelper
 
   def ops_paginate(scope)
     config = if scope.first_page?
-      { window: 1, left: 4, right: 1 }
+      { window: 1, left: 3, right: 1 }
     elsif scope.last_page?
-      { window: 1, left: 1, right: 4 }
+      { window: 1, left: 1, right: 3 }
     else
-      { window: 2, outer_window: 1 }
+      { window: 1, outer_window: 1 }
     end
 
     raw(

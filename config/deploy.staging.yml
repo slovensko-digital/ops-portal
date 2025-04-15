@@ -10,15 +10,23 @@ x-load-env:
   - "<% require 'dotenv'; Dotenv.load('.env.staging') %>"
 
 env:
+  # The dummy values are used to ensure that kamal can parse the config when calling exec commands from developer machines without the real values.
   clear:
     RAILS_ENV: production
     RAILS_LOG_LEVEL: debug
-    LEGACY_PORTAL_URL: <%= ENV.fetch("LEGACY_PORTAL_URL") %>
-    CONNECTOR__OPS_API_URL: <%= ENV.fetch("CONNECTOR__OPS_API_URL") %>
-    CONNECTOR_WEBHOOK_URL: <%= ENV.fetch("CONNECTOR_WEBHOOK_URL") %>
-    CMS_ROOT_CATEGORY_ID: <%= ENV.fetch("CMS_ROOT_CATEGORY_ID") %>
-    TRIAGE_ZAMMAD_URL: <%= ENV.fetch("TRIAGE_ZAMMAD_URL") %>
+    LEGACY_PORTAL_URL: <%= ENV.fetch("LEGACY_PORTAL_URL", "dummy") %>
+    CONNECTOR__OPS_API_URL: <%= ENV.fetch("CONNECTOR__OPS_API_URL", "dummy") %>
+    CONNECTOR_WEBHOOK_URL: <%= ENV.fetch("CONNECTOR_WEBHOOK_URL", "dummy") %>
+    CMS_ROOT_CATEGORY_ID: <%= ENV.fetch("CMS_ROOT_CATEGORY_ID", "dummy") %>
+    CMS_AI_CATEGORY_ID: <%= ENV.fetch("CMS_AI_CATEGORY_ID", "dummy") %>
+    TRIAGE_ZAMMAD_URL: <%= ENV.fetch("TRIAGE_ZAMMAD_URL", "dummy") %>
     APP_HOST: ops.dev.slovensko.digital
+    NOTIFICATION_SMTP_USERNAME: <%= ENV.fetch("NOTIFICATION_SMTP_USERNAME", "dummy") %>
+    NOTIFICATION_SMTP_SERVER: <%= ENV.fetch("NOTIFICATION_SMTP_SERVER", "dummy") %>
+    NOTIFICATION_SMTP_PORT: <%= ENV.fetch("NOTIFICATION_SMTP_PORT", "dummy") %>
+    DISCOURSE_URL: <%= ENV.fetch("DISCOURSE_URL", "dummy") %>
+    DISCOURSE_API_USERNAME: <%= ENV.fetch("DISCOURSE_API_USERNAME", "dummy") %>
+    DISCOURSE_IMPORT_CATEGORY_IDS: <%= ENV.fetch("DISCOURSE_IMPORT_CATEGORY_IDS", "dummy") %>
 
 proxy:
   host: ops.dev.slovensko.digital

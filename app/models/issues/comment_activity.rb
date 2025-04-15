@@ -10,4 +10,8 @@
 #
 class Issues::CommentActivity < Issues::Activity
   has_one :activity_object, class_name: "Issues::Comment", foreign_key: :activity_id
+
+  def content
+    activity_object.text
+  end
 end

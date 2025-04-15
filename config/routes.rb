@@ -9,6 +9,13 @@ Rails.application.routes.draw do
   end
 
   namespace :triage do
+    namespace :webhooks do
+      post :portal
+      post :responsible_subject
+    end
+  end
+
+  namespace :cms do
     post "webhook" => "webhooks#webhook"
   end
 
@@ -23,11 +30,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :issues, only: [ :index, :show, :destroy ]
-
-  namespace :issues do
-    resources :drafts do
+  resources :issues, path: "dopyty"
+  namespace :issues, path: "dopyty" do
+    resources :drafts, path: "novy-podnet" do
       post :confirm
+      delete :destroy_photo
+      get :thanks
       scope module: :drafts do
         resource :suggestions do
           get :generate
@@ -37,9 +45,18 @@ Rails.application.routes.draw do
         resource :checks do
           get :generate
         end
+        resource :summary
+        resource :category
+        resource :subcategory
+        resource :subtype
       end
     end
   end
+
+  resources :questions, path: "otazky", path_names: { new: "nova" }
+  resources :praises, path: "pochvaly", path_names: { new: "nova" }
+
+  resource :profile
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -49,12 +66,13 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  mount GoodJob::Engine => "admin/good_job"
-
   # Defines the root path route ("/")
-  root "issues/drafts#new"
+  root "homepage#show"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  mount GoodJob::Engine => "admin/good_job" # TODO authenticate!
 
-  get "*cms_slugs" => "cms/pages#index", as: :cms_page
+  constraints lambda { |req| !req.xhr? && req.format.html? && (req.path =~ %r{^/(rails|assets)/}).nil? } do
+    get "*path" => "cms/pages#index", as: :cms_page
+  end
 end
