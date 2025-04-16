@@ -5,7 +5,7 @@ class IssuesController < ApplicationController
   def index
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
-    @issues = search_issues.limit(12)
+    @issues = search_issues.limit(24)
   end
 
   # GET /issues/1 or /issues/1.json
@@ -31,13 +31,18 @@ class IssuesController < ApplicationController
   end
 
   private
+
   def search_issues
     scope = Issue
     scope = scope.joins(:category).where(issues_categories: { name: params[:kategoria] }) if params[:kategoria].present?
     scope = scope.joins(:subcategory).where(issues_subcategories: { name: params[:subkategoria] }) if params[:subkategoria].present?
     scope = scope.joins(:subtype).where(issues_subtypes: { name: params[:typ] }) if params[:typ].present?
+    scope = scope.joins(:state).where.not(state: { name: 'Čakajúci' })
 
     scope = scope.order(reported_at: :desc) # TODO
+
+    scope = scope.with_attached_photos.includes(:state) # optimize N+1
+
     scope
   end
 end

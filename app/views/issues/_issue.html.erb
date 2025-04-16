@@ -4,7 +4,7 @@
   <div class="info-con">
     <div class="state-con">
       <% if issue.issue_type == 'issue' %>
-        <div class="state done"><%= issue.state.name %></div>
+        <div class="state state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
       <% end %>
       <div class="icon-con">
         <% if issue.votes.count > 0 %>

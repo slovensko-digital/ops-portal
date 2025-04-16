@@ -1981,13 +1981,13 @@ a.podnet-block .inside figure {
   rotate: 10deg;
 }
 
-a.podnet-block .done {
+a.podnet-block .state-vyrieseny {
   background: $green;
 }
 a.podnet-block .sent {
   background: $blue;
 }
-a.podnet-block .solving {
+a.podnet-block .state-v-rieseni {
   background: $blue;
 }
 a.podnet-block .unresolved {

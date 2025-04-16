@@ -19,7 +19,7 @@
           </picture>
         </figure>
         <% if @issue.photos.count > 1 %>
-          <%= @issue.photos[1..].each do |photo| %>
+          <% @issue.photos[1..].each do |photo| %>
             <figure class="small-picture">
               <div class="lens-image">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
