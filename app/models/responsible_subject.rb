@@ -31,8 +31,4 @@ class ResponsibleSubject < ApplicationRecord
       where("unaccent(lower(subject_name)) LIKE unaccent(lower(?))", "% #{query}%")
     )
   end
-
-  def self.find_by_legacy_id(legacy_id)
-    find_by(legacy_id: legacy_id).presence || find_by(subject_name: "Iný subjekt")
-  end
 end
