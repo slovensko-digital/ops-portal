@@ -10,6 +10,7 @@
 
 if Rails.env.development?
   require_relative "seeds/ai_prompts"
+  require_relative "seeds/categories"
 
   webhook_url = "http://localhost:3000/connector/webhook"
   default_connector_zammad_api_token = "CsnpmnPAlMZCmbaClOoWE7QlFPgCsElVLsfgkJMZQfs"
