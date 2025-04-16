@@ -4,15 +4,14 @@
 #
 #  id                       :bigint           not null, primary key
 #  address_city             :string
-#  address_city_district    :string
-#  address_county           :string
+#  address_country          :string
+#  address_country_code     :string
+#  address_district         :string
 #  address_house_number     :string
+#  address_municipality     :string
 #  address_postcode         :string
-#  address_state            :string
+#  address_region           :string
 #  address_street           :string
-#  address_suburb           :string
-#  address_town             :string
-#  address_village          :string
 #  anonymous                :boolean
 #  description              :string           not null
 #  issue_type               :integer          default("issue")

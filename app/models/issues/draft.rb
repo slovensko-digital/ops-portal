@@ -4,18 +4,15 @@
 #
 #  id                      :bigint           not null, primary key
 #  address_city            :string
-#  address_city_district   :string
 #  address_country         :string
 #  address_country_code    :string
-#  address_county          :string
+#  address_data            :jsonb
+#  address_district        :string
 #  address_house_number    :string
-#  address_neighbourhood   :string
+#  address_municipality    :string
 #  address_postcode        :string
-#  address_road            :string
-#  address_state           :string
-#  address_suburb          :string
-#  address_town            :string
-#  address_village         :string
+#  address_region          :string
+#  address_street          :string
 #  anonymous               :boolean
 #  checks                  :jsonb
 #  description             :string
@@ -23,6 +20,7 @@
 #  latlon_from_exif        :boolean          default(FALSE)
 #  longitude               :float
 #  picked_suggestion_index :integer
+#  submitted               :boolean          default(FALSE), not null
 #  suggestions             :jsonb
 #  title                   :string
 #  created_at              :datetime         not null
