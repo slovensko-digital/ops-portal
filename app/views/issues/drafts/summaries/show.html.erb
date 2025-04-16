@@ -26,7 +26,7 @@
 
     <div class="report-summary-edit">
       <div class="description">Miesto podnetu</div>
-      <div class="title"><%= @draft.address_city || "Neuvedené" %></div>
+      <div class="title"><%= format_draft_address(@draft) %></div>
       <%= link_to "Upraviť", issues_draft_geo_path(@draft, next: :summary), class: "button button-transparent button-edit" %>
     </div>
 
@@ -46,6 +46,6 @@
 
   </div>
 
-  <%= link_to "Ďalej", issues_draft_checks_path(@draft), class: "button" %>
+  <%= button_to "Ďalej", issues_draft_checks_path(@draft), class: "button" %>
 
 </section>

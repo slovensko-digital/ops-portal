@@ -17,6 +17,7 @@ module Ops
     config.autoload_lib(ignore: %w[assets tasks])
 
     config.assets.paths << Rails.root.join("app", "assets", "fonts")
+    config.assets.paths << Rails.root.join("vendor", "stylesheets")
 
     config.i18n.default_locale = :sk
     config.i18n.available_locales = [ :en, :sk ]

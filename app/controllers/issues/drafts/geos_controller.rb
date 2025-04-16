@@ -7,7 +7,13 @@ class Issues::Drafts::GeosController < ApplicationController
 
   def update
     if @draft.update(geo_params)
-      redirect_to params[:next] == "summary" ? issues_draft_summary_path(@draft) : issues_draft_suggestions_path(@draft)
+      if params[:next] == "summary"
+        Issues::Draft::FetchAddressDetailsJob.perform_now(@draft)
+        redirect_to issues_draft_summary_path(@draft)
+      else
+        Issues::Draft::FetchAddressDetailsJob.perform_later(@draft)
+        redirect_to issues_draft_suggestions_path(@draft)
+      end
     else
       render :show, status: :unprocessable_entity
     end
@@ -16,8 +22,6 @@ class Issues::Drafts::GeosController < ApplicationController
   private
 
   def geo_params
-    params.expect(issues_draft: [ :longitude, :latitude, :address_house_number, :address_road, :address_neighbourhood,
-                                  :address_town, :address_suburb, :address_city_district, :address_city, :address_state,
-                                  :address_postcode, :address_country, :address_country_code, :address_county, :address_village ])
+    params.expect(issues_draft: [ :longitude, :latitude ])
   end
 end

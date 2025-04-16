@@ -1,25 +1,19 @@
-<% if @draft.checks.empty? %>
-  <%= form_with url: issues_draft_confirm_path(@draft), data: { controller: :fakesubmit, 'fakesubmit-target': :form } %>
-<% else %>
-  <h1>Podnet má problém</h1>
+<p class="report-suggestion-description">Automatická kontrola našla v tomto podnete problém. Skúste podnet pred
+  odoslaním ešte upraviť.
+</p>
 
-  <p class="report-suggestion-description">Automatická kontrola našla v tomto podnete problém. Skúste podnet pred
-    odoslaním ešte upraviť.
-  </p>
-
-  <div class="report-summary-block-con">
-    <% @draft.checks.each do |check| %>
-      <div class="report-warning">
-        <div class="title"><%= check['title'] %></div>
-        <div class="description"><%= check['description'] %></div>
-      </div>
-    <% end %>
-  </div>
-
-  <% if @draft.needs_editing? %>
-    <%= link_to "Upraviť podnet", issues_draft_summary_path(@draft), class: "button button-transparent" %>
-  <% else %>
-    <%= link_to "Upraviť podnet", issues_draft_summary_path(@draft), class: "button button-transparent" %>
-    <%= button_to "Odoslať podnet aj tak", issues_draft_confirm_path(@draft), class: "button" %>
+<div class="report-summary-block-con">
+  <% @draft.checks.each do |check| %>
+    <div class="report-warning">
+      <div class="title"><%= check['title'] %></div>
+      <div class="description"><%= check['description'] %></div>
+    </div>
   <% end %>
+</div>
+
+<% if @draft.needs_editing? %>
+  <%= link_to "Upraviť podnet", issues_draft_summary_path(@draft), class: "button button-transparent" %>
+<% else %>
+  <%= link_to "Upraviť podnet", issues_draft_summary_path(@draft), class: "button button-transparent" %>
+  <%= button_to "Odoslať podnet aj tak", issues_draft_confirm_path(@draft), class: "button" %>
 <% end %>

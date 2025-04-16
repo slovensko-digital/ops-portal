@@ -3,6 +3,7 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
 
   def perform(draft)
     draft.checks = llm_generate_checks(draft)
+    draft.save!
   end
 
   private
@@ -18,7 +19,7 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
              #{draft.description}
 
              Address:
-             #{[ draft.address_city, draft.address_city_district, draft.address_road ].compact.join(', ')}
+             #{[ draft.address_city, draft.address_municipality, draft.address_street ].compact.join(', ')}
     LLM
 
     Gemini.generate(

@@ -11,7 +11,7 @@
   <h1>Urči miesto podnetu</h1>
 
   <% if @draft.latlon_from_exif? %>
-    <div class="report-suggestion-description">Na lokalizovanie miesta podnetu bola požitá geolokácia z fotky. Ak nie je
+    <div class="report-suggestion-description">Na lokalizovanie miesta podnetu bola použitá geolokácia z fotografie. Ak nie je
       určenie polohy správne, použite prosím vyhľadávanie alebo mapu nižšie.
     </div>
   <% end %>
@@ -19,14 +19,14 @@
   <div class="report-map-con">
 
     <div class="search-con">
-      <form action="">
+      <form action="" data-action="submit->geo#search">
         <button>
           <svg viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="7.77818" cy="8.27818" r="6.77818"/>
             <path d="M13 13.5L18 18.5"/>
           </svg>
         </button>
-        <input type="text" placeholder="Napíš adresu" data-geo-target="addressFull">
+        <input type="search" placeholder="Napíš adresu" data-geo-target="search">
       </form>
     </div>
 
@@ -40,25 +40,7 @@
   <%= form_with(model: @draft, url: issues_draft_geo_path(@draft, next: params[:next])) do |form| %>
     <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
     <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
-    <%= form.hidden_field :address_house_number, data: { "geo-target": "addressHouseNumber" } %>
-
-    <%= form.hidden_field :address_neighbourhood, data: { "geo-target": "addressNeighbourhood" } %>
-
-    <%= form.hidden_field :address_suburb, data: { "geo-target": "addressSuburb" } %>
-    <%= form.hidden_field :address_city_district, data: { "geo-target": "addressCityDistrict" } %>
-    <%= form.hidden_field :address_town, data: { "geo-target": "addressTown" } %>
-
-    <%= form.hidden_field :address_village, data: { "geo-target": "addressVillage" } %>
-    <%= form.hidden_field :address_county, data: { "geo-target": "addressCounty" } %>
-
-    <%= form.hidden_field :address_state, data: { "geo-target": "addressState" } %>
-    <%= form.hidden_field :address_postcode, data: { "geo-target": "addressPostcode" } %>
-    <%= form.hidden_field :address_country, data: { "geo-target": "addressCountry" } %>
-    <%= form.hidden_field :address_country_code, data: { "geo-target": "addressCountryCode" } %>
-    <%= form.hidden_field :address_city, data: { "geo-target": "addressCity" } %>
-    <%= form.hidden_field :address_city_district, data: { "geo-target": "addressCityDistrict" } %>
-    <%= form.hidden_field :address_road, data: { "geo-target": "addressRoad" } %>
-
+    <%= form.hidden_field :address_json, data: { "geo-target": "addressJSON" } %>
     <%= form.submit "Ďalej", class: "button" %>
   <% end %>
 </section>

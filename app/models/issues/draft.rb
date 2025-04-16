@@ -4,18 +4,15 @@
 #
 #  id                      :bigint           not null, primary key
 #  address_city            :string
-#  address_city_district   :string
 #  address_country         :string
 #  address_country_code    :string
-#  address_county          :string
+#  address_data            :jsonb
+#  address_district        :string
 #  address_house_number    :string
-#  address_neighbourhood   :string
+#  address_municipality    :string
 #  address_postcode        :string
-#  address_road            :string
-#  address_state           :string
-#  address_suburb          :string
-#  address_town            :string
-#  address_village         :string
+#  address_region          :string
+#  address_street          :string
 #  anonymous               :boolean
 #  checks                  :jsonb
 #  description             :string
@@ -23,6 +20,7 @@
 #  latlon_from_exif        :boolean          default(FALSE)
 #  longitude               :float
 #  picked_suggestion_index :integer
+#  submitted               :boolean          default(FALSE), not null
 #  suggestions             :jsonb
 #  title                   :string
 #  created_at              :datetime         not null
@@ -47,9 +45,20 @@ class Issues::Draft < ApplicationRecord
   validates_presence_of :photos, on: :photos_step
   validates_presence_of :title, :description, on: :details_step
 
-  DEFAULT_STATE = Issues::State.find_by(name: "Čakajúci")
+  validate :municipality_supported, on: :checks_step
+  validate :checks_passed, on: :checks_step
 
   def confirm
+    # TODO handle OSM aliases
+    # TODO handle error for unsupported areas
+    if address_city.present?
+      municipality_district = MunicipalityDistrict.joins(:municipality).where(municipality: { name: address_city, active: true }, name: address_municipality).first
+      municipality = municipality_district&.municipality
+    else
+      municipality_district = nil
+      municipality = Municipality.active.find_by_name(address_municipality)
+    end
+
     issue = Issue.create!(
       title: title,
       description: description,
@@ -57,14 +66,13 @@ class Issues::Draft < ApplicationRecord
       anonymous: anonymous,
       latitude: latitude,
       longitude: longitude,
-      address_state: address_state,
-      address_county: address_county,
+      address_country: address_country,
+      address_country_code: address_country_code,
+      address_region: address_region,
+      address_district: address_district,
       address_city: address_city,
-      address_city_district: address_city_district,
-      address_suburb: address_suburb,
-      address_village: address_village,
-      address_town: address_town,
-      address_street: address_road,
+      address_municipality: address_municipality,
+      address_street: address_street,
       address_house_number: address_house_number,
       address_postcode: address_postcode,
       category: category,
@@ -72,10 +80,12 @@ class Issues::Draft < ApplicationRecord
       subtype: subtype,
       reported_at: created_at,
       state: Issues::State.find_by(name: "Čakajúci"),
-      municipality: Municipality.find_by(name: address_city || address_village || address_town) || author.municipality || Municipality.first,
+      municipality: municipality,
+      municipality_district: municipality_district,
     )
 
     # TODO delete draft after success
+    self.update_attribute(:submitted, true)
 
     photos.each do |photo|
       issue.photos.append photo
@@ -125,12 +135,30 @@ class Issues::Draft < ApplicationRecord
       self.title = self.description = nil
     else
       self.title, self.description, category_suggestion, subcategory_suggestion, subtype_suggestion = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
-      # TODO fix this - do not create categories from LLM probably
-      self.category = Issues::Category.find_or_create_by!(name: category_suggestion)
-      self.subcategory = self.category&.subcategories.find_by(name: subcategory_suggestion) || self.category.subcategories.create!(name: subcategory_suggestion)
-      self.subtype = self.subcategory&.subtypes.find_by(name: subtype_suggestion) || self.subcategory.subtypes.create!(name: subtype_suggestion)
+      self.category = Issues::Category.find_by(name: category_suggestion)
+      self.subcategory = self.category&.subcategories&.find_by(name: subcategory_suggestion)
+      self.subtype = self.subcategory&.subtypes&.find_by(name: subtype_suggestion)
     end
+    self.checks = nil # reset checks
     save(context: :suggestions_step)
+  end
+
+  private
+
+  def checks_passed
+    errors.add(:checks, :invalid) if checks.any?
+  end
+
+  private
+
+  def municipality_supported
+    if address_city.present?
+      municipality_district = MunicipalityDistrict.joins(:municipality).where(municipality: { name: address_city, active: true }, name: address_municipality).first
+      municipality = municipality_district&.municipality
+    else
+      municipality = Municipality.active.find_by_name(address_municipality)
+    end
+    errors.add(:base, :municipality_unsupported) unless municipality
   end
 
   private

@@ -57,8 +57,8 @@ class ZammadApiClient
       group: group,
       customer_id: issue.author.external_id,
       origin_by_id: issue.author.external_id,
-      address_state: issue.address_state,
-      address_county: issue.address_county,
+      address_state: issue.address_region, # TODO rename this?
+      address_county: issue.address_district, # TODO rename this?
       address_municipality: build_ticket_municipality(issue),
       address_postcode: issue.address_postcode,
       address_street: issue.address_street,

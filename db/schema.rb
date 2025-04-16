@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_10_092823) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_15_181958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -244,17 +244,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_10_092823) do
     t.bigint "subcategory_id"
     t.bigint "subtype_id"
     t.bigint "owner_id"
-    t.string "address_state"
-    t.string "address_county"
+    t.string "address_region"
     t.string "address_city"
-    t.string "address_city_district"
-    t.string "address_suburb"
-    t.string "address_village"
-    t.string "address_town"
+    t.string "address_municipality"
     t.string "address_street"
     t.string "address_house_number"
     t.string "address_postcode"
     t.integer "issue_type", default: 1
+    t.string "address_country"
+    t.string "address_country_code"
+    t.string "address_district"
     t.integer "resolution_external_id"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
@@ -356,23 +355,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_10_092823) do
     t.integer "picked_suggestion_index"
     t.jsonb "checks"
     t.string "address_house_number"
-    t.string "address_road"
-    t.string "address_neighbourhood"
-    t.string "address_town"
-    t.string "address_suburb"
-    t.string "address_city_district"
+    t.string "address_street"
+    t.string "address_municipality"
     t.string "address_city"
-    t.string "address_state"
     t.string "address_postcode"
     t.string "address_country"
     t.string "address_country_code"
-    t.string "address_village"
     t.bigint "category_id"
     t.bigint "subcategory_id"
     t.bigint "subtype_id"
     t.bigint "author_id", null: false
-    t.string "address_county"
+    t.string "address_region"
     t.boolean "latlon_from_exif", default: false
+    t.jsonb "address_data"
+    t.string "address_district"
+    t.boolean "submitted", default: false, null: false
     t.index ["author_id"], name: "index_issues_drafts_on_author_id"
     t.index ["category_id"], name: "index_issues_drafts_on_category_id"
     t.index ["subcategory_id"], name: "index_issues_drafts_on_subcategory_id"

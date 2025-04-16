@@ -2,16 +2,12 @@ class Issues::Drafts::SuggestionsController < ApplicationController
   include Issues::DraftScoped
 
   def show
-  end
-
-  def generate
-    unless @draft.suggestions.present?
-      Issues::Draft::GenerateSuggestionsJob.perform_now(@draft)
-    end
+    Issues::Draft::GenerateSuggestionsJob.perform_now(@draft) unless @draft.suggestions
   end
 
   def update
     if @draft.pick_suggestion(suggestions_params)
+      Issues::Draft::GenerateChecksJob.perform_now(@draft)
       redirect_to issues_draft_summary_path(@draft) and return if params[:next] == "summary" || params[:issues_draft][:picked_suggestion_index] != "-1"
 
       redirect_to issues_draft_category_path(@draft)

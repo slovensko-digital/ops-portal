@@ -5,16 +5,14 @@ module Legacy
     def self.find_or_create_user(legacy_id)
       return ::User.find_by(legacy_id: legacy_id) if ::User.find_by(legacy_id: legacy_id)
 
-      Legacy::GenericModel.set_table_name("users")
-      legacy_record = Legacy::GenericModel.find_by_id(legacy_id)
+      legacy_record = Legacy::OldUser.find_by_id(legacy_id)
       self.create_user_from_legacy_record(legacy_record) if legacy_record
     end
 
     def self.find_or_create_agent(legacy_id)
       return Legacy::Agent.find_by(legacy_id: legacy_id) if Legacy::Agent.find_by(legacy_id: legacy_id)
 
-      Legacy::GenericModel.set_table_name("users")
-      legacy_record = Legacy::GenericModel.find_by_id(legacy_id)
+      legacy_record = Legacy::OldUser.find_by_id(legacy_id)
       self.create_agent_from_legacy_record(legacy_record) if legacy_record
     end
 
@@ -47,7 +45,7 @@ module Legacy
         lastname: legacy_record.priezvisko.presence,
         login: legacy_record.login,
         organization: legacy_record.is_organization,
-        password_hash: dummy_password ? generate_dummy_password : legacy_record.password,
+        # password_hash: dummy_password ? generate_dummy_password : legacy_record.password,
         phone: legacy_record.telefon,
         resident: legacy_record.residency,
         sex: legacy_record.sex,

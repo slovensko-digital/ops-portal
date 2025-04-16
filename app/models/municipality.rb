@@ -27,6 +27,8 @@ class Municipality < ApplicationRecord
   has_many :municipality_districts
   has_many :streets
 
+  scope :active, -> { where(active: true) }
+
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # TODO Pomenovanie ciselnych hodnot iba podla nasho usudku
 end

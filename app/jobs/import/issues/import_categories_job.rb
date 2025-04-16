@@ -1,8 +1,6 @@
 module Import
   class Issues::ImportCategoriesJob < ApplicationJob
     def perform
-      Legacy::GenericModel.set_table_name("alerts_categories")
-
       import_categories!
       import_subcategories!
       import_subtypes!
@@ -11,7 +9,7 @@ module Import
     private
 
     def import_categories!
-      Legacy::GenericModel.where(parent: nil).find_in_batches do |group|
+      Legacy::Alerts::Category.where(parent: nil).find_in_batches do |group|
         group.each do |legacy_record|
           ::Issues::Category.find_or_create_by!(
             legacy_id: legacy_record.id,
@@ -28,7 +26,7 @@ module Import
     end
 
     def import_subcategories!
-      Legacy::GenericModel.joins("INNER JOIN alerts_categories AS pc ON alerts_categories.parent = pc.id")
+      Legacy::Alerts::Category.joins("INNER JOIN alerts_categories AS pc ON alerts_categories.parent = pc.id")
         .where("pc.parent IS NULL")
         .where.not(parent: nil)
         .find_in_batches do |group|
@@ -49,7 +47,7 @@ module Import
     end
 
     def import_subtypes!
-      Legacy::GenericModel.joins("INNER JOIN alerts_categories AS pc ON alerts_categories.parent = pc.id")
+      Legacy::Alerts::Category.joins("INNER JOIN alerts_categories AS pc ON alerts_categories.parent = pc.id")
         .where("pc.parent IS NOT NULL")
         .find_in_batches do |group|
         group.each do |legacy_record|

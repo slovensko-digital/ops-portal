@@ -1,8 +1,7 @@
 module Import
   class ResponsibleSubjects::ImportUserRolesJob < ApplicationJob
     def perform(import_types_job: ResponsibleSubjects::ImportTypesJob, chain_import: false)
-      Legacy::GenericModel.set_table_name("roles")
-      Legacy::GenericModel.find_in_batches do |group|
+      Legacy::Role.find_in_batches do |group|
         group.each do |legacy_record|
           ::ResponsibleSubjects::UserRole.find_or_create_by!(
             legacy_id: legacy_record.id,

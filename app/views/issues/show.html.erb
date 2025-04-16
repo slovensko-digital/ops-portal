@@ -112,7 +112,7 @@
           <div class="value-con">
             <%= link_to @issue.category.name, issues_path(kategoria: @issue.category.name), class: "value" %>
             <%= link_to @issue.subcategory.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name), class: "value" %>
-            <%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %>
+            <% if @issue.subtype.name.present? %><%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %><% end %>
           </div>
         </div>
 
@@ -130,12 +130,12 @@
         <div class="information-wrapper">
           <div class="label">Poloha:</div>
           <div class="value-con">
-            <a class="value" href="">Sasinkova 14</a>
-            <a class="value" href="">Staré mesto</a>
-            <a class="value" href="">Bratislava</a>
+            <%= link_to @issue.address_street, issues_path(ulica: @issue.address_street), class: "value" %>
+            <a class="value" href=""><%= @issue.address_municipality %></a>
+            <% if @issue.address_city %><a class="value" href=""><%= @issue.address_city %></a><% end %>
           </div>
-          <div class="map">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2661.9686848554074!2d17.120227465765883!3d48.14940894609162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476c89487e51d8ef%3A0x14889cbccbdbb8ba!2sSasinkova%202631%2F12%2C%20811%2008%20Bratislava!5e0!3m2!1ssk!2ssk!4v1734441853713!5m2!1ssk!2ssk" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div class="map" data-controller="map" data-map-latitude-value="<%= @issue.latitude %>" data-map-longitude-value="<%= @issue.longitude %>">
+            <div data-map-target="map"></div>
           </div>
         </div>
 

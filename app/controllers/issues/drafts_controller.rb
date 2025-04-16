@@ -1,6 +1,6 @@
 class Issues::DraftsController < ApplicationController
   before_action :require_user
-  before_action :load_draft, except: [ :new, :create ]
+  before_action :load_draft, except: [ :new, :create, :thanks ]
 
   def new
     @draft = Issues::Draft.new
@@ -15,7 +15,7 @@ class Issues::DraftsController < ApplicationController
     @draft.author = current_user
     if @draft.save(context: :photos_step)
       @draft.schedule_calculate_suggestions # TODO move somehow to after_save
-      redirect_to edit_issues_draft_path(@draft)
+      redirect_to issues_draft_geo_path(@draft)
     else
       render :new, status: :unprocessable_entity
     end
@@ -33,14 +33,6 @@ class Issues::DraftsController < ApplicationController
   def destroy_photo
     @draft.photos.find(params[:photo_id]).purge
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
-  end
-
-  def show
-  end
-
-  def confirm
-    @draft.confirm
-    redirect_to issues_draft_thanks_path
   end
 
   def thanks
