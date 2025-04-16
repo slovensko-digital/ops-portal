@@ -3,6 +3,7 @@ class Issues::Drafts::SubtypesController < ApplicationController
 
   def show
     @subtypes = Issues::Subtype.non_legacy.where(subcategory_id: @draft.subcategory_id).all
+    redirect_to issues_draft_details_path(@draft) if @subtypes.empty?
   end
 
   def update

@@ -138,8 +138,8 @@ class Issues::Draft < ApplicationRecord
     else
       self.title, self.description, category_suggestion, subcategory_suggestion, subtype_suggestion = suggestions[picked_suggestion_index]&.values_at("title", "description", "category", "subcategory", "subtype")
       self.category = Issues::Category.find_by(name: category_suggestion)
-      self.subcategory = self.category&.subcategories.find_by(name: subcategory_suggestion)
-      self.subtype = self.subcategory&.subtypes.find_by(name: subtype_suggestion)
+      self.subcategory = self.category&.subcategories&.find_by(name: subcategory_suggestion)
+      self.subtype = self.subcategory&.subtypes&.find_by(name: subtype_suggestion)
     end
     self.checks = nil # reset checks
     save(context: :suggestions_step)

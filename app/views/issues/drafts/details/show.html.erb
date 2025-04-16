@@ -1,5 +1,5 @@
 <section class="report">
-  <%= link_to issues_draft_subtype_path(@draft), class: 'button-back' do %>
+  <%= link_to @draft.subtype ? issues_draft_subtype_path(@draft) : issues_draft_subcategory_path(@draft), class: 'button-back' do %>
 			<span>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
 					<path d="M1,19l9-9L1,1" fill="none" stroke-width="2"/>
