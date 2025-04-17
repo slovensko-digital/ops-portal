@@ -1,8 +1,12 @@
 module Import
   class ImportResponsibleSubjectsJob < ApplicationJob
-    def perform(import_categories_job: ResponsibleSubjects::ImportCategoriesJob, import_organization_units_job: ResponsibleSubjects::ImportOrganizationUnitsJob, import_users_job: ResponsibleSubjects::ImportUsersJob, chain_import: false)
-      Legacy::GenericModel.set_table_name("zodpovednost")
-      Legacy::GenericModel.where.not(nazov: [ "Iné", "Iný subjekt" ]).find_in_batches do |group|
+    def perform(
+      import_categories_job: ResponsibleSubjects::ImportCategoriesJob,
+      import_organization_units_job: ResponsibleSubjects::ImportOrganizationUnitsJob,
+      import_users_job: ResponsibleSubjects::ImportUsersJob,
+      chain_import: false
+    )
+      Legacy::OldResponsibleSubject.where.not(nazov: [ "Iné", "Iný subjekt" ]).find_in_batches do |group|
         group.each do |legacy_record|
           Legacy::ResponsibleSubject.create_responsible_subject_from_legacy_record(legacy_record)
         end
