@@ -6,7 +6,9 @@ module Import
           ::Issues::State.find_or_initialize_by(name: legacy_record.status).tap do |state|
             state.legacy_id = legacy_record.id
             state.color = legacy_record.color
-          end.save!
+
+            state.save!
+          end
         end
       end
     end

@@ -21,9 +21,9 @@ module Import
           subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
           category = subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
           owner = if legacy_record.riesitel_new.nil? || legacy_record.riesitel_new == 0
-            ::User.find_or_create_agent(legacy_record.riesitel)
+            Legacy::User.find_or_create_agent(legacy_record.riesitel)
           else
-            ::User.find_or_create_agent(legacy_record.riesitel_new)
+            Legacy::User.find_or_create_agent(legacy_record.riesitel_new)
           end
 
           issue = Issue.find_or_create_by!(
