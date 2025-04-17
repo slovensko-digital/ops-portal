@@ -21,6 +21,11 @@ module Import
           subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
           subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
           category = subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
+          owner = if legacy_record.riesitel_new.nil? || legacy_record.riesitel_new == 0
+            ::User.find_or_create_agent(legacy_record.riesitel)
+          else
+            ::User.find_or_create_agent(legacy_record.riesitel_new)
+          end
 
           issue = Issue.find_or_create_by!(
             legacy_id: legacy_record.id,
@@ -73,7 +78,7 @@ module Import
             reported_at: convert_timestamp_value(legacy_record.posted_time), # TODO dolezity udaj pre triaz podnetu
             title: legacy_record.heading,
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),
-            owner: Legacy::User.find_or_create_agent(legacy_record.riesitel_new&.nonzero?.presence || legacy_record.riesitel),
+            owner: owner,
             category: category,
             subcategory: subcategory,
             subtype: subtype,

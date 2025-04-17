@@ -35,10 +35,10 @@ module Import
             )
             communication.activity ||= issue.comment_activities.create!
           else
-            communication_type = if legacy_record.user&.to_i&.nonzero?
-               "Legacy::Issues::ResponsibleSubjectInternalCommunication"
+            communication_type = if legacy_record.user.nil? || legacy_record.user == 0
+              "Legacy::Issues::AgentInternalCommunication"
             else
-               "Legacy::Issues::AgentInternalCommunication"
+              "Legacy::Issues::ResponsibleSubjectInternalCommunication"
             end
 
             communication = ::Legacy::Issues::Communication.find_or_initialize_by(
