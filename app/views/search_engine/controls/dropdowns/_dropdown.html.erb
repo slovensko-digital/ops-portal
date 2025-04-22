@@ -1,7 +1,7 @@
 <div class="form-item-wrapper" data-controller="toggle">
-  <label for="title"><%= visible_filter_result.label %></label>
+  <label><%= dropdown.control.label %></label>
   <div class="dropdown-button" data-action="click->toggle#toggle">
-    <% selected = visible_filter_result.items.select(&:selected?) %>
+    <% selected = dropdown.items.select(&:selected?) %>
     <% if selected.any? %>
       <span title="<%= selected.map(&:label).join(', ') %>"><%= selected.map(&:label).join(', ') %></span>
     <% else %>
@@ -12,7 +12,7 @@
     </svg>
   </div>
   <ul class="dropdown-list none" data-toggle-target="toggleable" data-toggle-class="none">
-    <% visible_filter_result.items.each do |item| %>
+    <% dropdown.items.each do |item| %>
       <li class="<%= class_names("check-box", active: item.selected?) %>">
         <%= link_to item.selected? ? item.remove_params : item.add_params, class: '' do %>
           <div class="form-check-box">

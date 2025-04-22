@@ -1,0 +1,11 @@
+<%= form_tag issues_path, method: :get do %>
+  <div class="form-item-wrapper">
+    <% if @search_results %>
+      <% @search_results.search_params.except(search_field.control.param_name).each do |k, v| %>
+        <%= hidden_field_tag k, v %>
+      <% end %>
+    <% end %>
+    <%= label_tag search_field.control.param_name, search_field.control.label %>
+    <%= search_field_tag :q, search_field.value, autocomplete: "off" %>
+  </div>
+<% end %>

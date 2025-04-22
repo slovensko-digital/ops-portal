@@ -46,8 +46,10 @@ class IssuesController < ApplicationController
   def search_engine
     SearchEngine.new(
       filters: [
-        SearchEngine::SimpleFilter.new(
-          :dopyt,
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :dopyt,
+          label: "Typ dopytu",
+          items: %w[Podnet Otázka Pochvala],
           filter: ->(scope, params) do
             map = {
               "Podnet" => :issue,
@@ -57,53 +59,80 @@ class IssuesController < ApplicationController
 
             scope.where(issue_type: map.values_at(*Array(params[:dopyt])))
           end,
-          visible_filter_label: "Typ dopytu",
-          items_finder: %w[Podnet Otázka Pochvala]
         ),
 
-        SearchEngine::SimpleFilter.new(
-          :stav,
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :stav,
+          label: "Stav podnetu",
+          items: -> { Issues::State.order(:name).pluck(:name) - %w[Čakajúci Neprijatý] },
           filter: ->(scope, params) { scope.joins(:state).where(state: { name: params[:stav] }) },
-          visible_filter_label: "Stav podnetu",
-          items_finder: -> { Issues::State.order(:name).pluck(:name) - %w[Čakajúci Neprijatý] },
         ),
-        SearchEngine::SimpleFilter.new(
-          :kategoria,
+
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :kategoria,
+          label: "Kategória",
+          items: -> { Issues::Category.order(:name).pluck(:name) },
           filter: ->(scope, params) { scope.joins(:category).where(issues_categories: { name: params[:kategoria] }) },
-          visible_filter_label: "Kategória",
-          items_finder: -> { Issues::Category.order(:name).pluck(:name) },
         ),
-        SearchEngine::SimpleFilter.new(
-          :podkategoria,
+
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :podkategoria,
+          label: "Podkategória",
+          items: ->(params) do
+            return [] unless params[:kategoria]
+
+            Issues::Subcategory.joins(:category)
+              .where(issues_categories: { name: params[:kategoria] })
+              .order(:name)
+              .pluck(:name)
+              .uniq
+          end,
           filter: ->(scope, params) { scope.joins(:subcategory).where(issues_subcategories: { name: params[:podkategoria] }) }
         ),
-        SearchEngine::SimpleFilter.new(
-          :typ,
+
+        SearchEngine::Controls::Hidden.new(
+          param_name: :typ,
           filter: ->(scope, params) { scope.joins(:subtype).where(issues_subtypes: { name: params[:typ] }) }
         ),
-        SearchEngine::SimpleFilter.new(
-          :zodpovedny,
+
+        SearchEngine::Controls::Hidden.new(
+          param_name: :zodpovedny,
           filter: ->(scope, params) { scope.joins(:responsible_subject).where(responsible_subject: { subject_name: params[:zodpovedny] }) }
         ),
-        SearchEngine::SimpleFilter.new(
-          :ulica,
+
+        SearchEngine::Controls::Hidden.new(
+          param_name: :ulica,
           filter: ->(scope, params) { scope.where(address_street: params[:ulica]) }
         ),
-        SearchEngine::SimpleFilter.new(
-          :cast,
-          filter: ->(scope, params) { scope.joins(:municipality_district).where(municipality_districts: { name: params[:cast] }) }
-        ),
-        SearchEngine::SimpleFilter.new(
-          :obec,
+
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :obec,
+          label: "Obec",
+          items: -> { Municipality.active.order(:name).pluck(:name) },
           filter: ->(scope, params) { scope.joins(:municipality).where(municipalities: { name: params[:obec] }) }
         ),
 
-        SearchEngine::SimpleFilter.new(
-          :q,
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :cast,
+          label: "Mestská časť",
+          items: ->(params) do
+            return [] unless params[:obec].present?
+
+            MunicipalityDistrict.joins(:municipality)
+              .where(municipalities: { name: params[:obec], active: true })
+              .order(:name)
+              .pluck(:name)
+          end,
+          filter: ->(scope, params) { scope.joins(:municipality_district).where(municipality_districts: { name: params[:cast] }) }
+        ),
+
+        SearchEngine::Controls::SearchField.new(
+          param_name: :q,
           label: "Textové vyhľadávanie",
-          filter: ->(scope, params) { scope.fulltext_search(params[:q]) }
+          filter: ->(scope, params) { scope.fulltext_search(params[:q]) },
         )
       ],
+
       per_page: 12,
     )
   end
