@@ -5,6 +5,10 @@ module SearchEngine
 
       attr_reader :param_name, :label
 
+      Filled = Struct.new(:control, :value, keyword_init: true) do
+        delegate :to_partial_path, to: :control
+      end
+
       def initialize(param_name:, label:, filter:)
         @param_name = param_name
         @label = label
@@ -32,7 +36,7 @@ module SearchEngine
       end
 
       def add_visible_filter(results)
-        results.visible_filters << ControlWithValue.new(
+        results.visible_filters << Filled.new(
           control: self,
           value: results.search_params[@param_name]
         )

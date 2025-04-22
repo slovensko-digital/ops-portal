@@ -56,7 +56,7 @@ module SearchEngine
       results.stats = {
         by_state: scope.group("state").order("count_all DESC").async_count,
         by_category: scope.group("category").order("count_all DESC").async_count,
-        by_responsible_subject: scope.group("responsible_subject").order("count_all DESC").async_count,
+        by_responsible_subject: scope.group("responsible_subject").order("count_all DESC").async_count
       }
 
       @filters.each do |filter|

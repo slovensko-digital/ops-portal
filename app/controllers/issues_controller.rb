@@ -7,14 +7,14 @@ class IssuesController < ApplicationController
 
     scope = Issue.publicly_visible
     case @tab
-      when "list"
+    when "list"
         scope = scope.order(reported_at: :desc) # TODO
         scope = scope.with_attached_photos.includes(:state)
 
         @search_results = search_engine.search(scope, params)
-      when "map"
+    when "map"
         @search_results = search_engine.search(scope, params)
-      when "stats"
+    when "stats"
         @search_results = search_engine.stats(scope, params)
     end
   end

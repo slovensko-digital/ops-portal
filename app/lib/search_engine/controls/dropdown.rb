@@ -12,9 +12,7 @@ module SearchEngine
       end
 
       Filled = Struct.new(:control, :value, :items, keyword_init: true) do
-        def to_partial_path
-          control.to_partial_path
-        end
+        delegate :to_partial_path, to: :control
       end
 
       def initialize(param_name:, label:, items:, filter:, filter_label: -> { _1 })
