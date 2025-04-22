@@ -1,6 +1,6 @@
 module SearchEngine
   class Results
-    attr_accessor :hits, :applied_filters, :visible_filters, :search_params
+    attr_accessor :hits, :stats, :applied_filters, :visible_filters, :search_params
 
     def initialize
       @hits = []

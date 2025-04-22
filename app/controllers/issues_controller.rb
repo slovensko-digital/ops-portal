@@ -6,10 +6,17 @@ class IssuesController < ApplicationController
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
     scope = Issue.publicly_visible
-    scope = scope.order(reported_at: :desc) # TODO
-    scope = scope.with_attached_photos.includes(:state)
+    case @tab
+      when "list"
+        scope = scope.order(reported_at: :desc) # TODO
+        scope = scope.with_attached_photos.includes(:state)
 
-    @search_results = search_engine.search(scope, params)
+        @search_results = search_engine.search(scope, params)
+      when "map"
+        @search_results = search_engine.search(scope, params)
+      when "stats"
+        @search_results = search_engine.stats(scope, params)
+    end
   end
 
   # GET /issues/1 or /issues/1.json
