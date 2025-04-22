@@ -114,7 +114,7 @@
         <div class="search-con">
           <%= form_tag issues_path, method: :get do %>
             <% if @search_results %>
-              <% @search_results.search_params.each do |k, v| %>
+              <% @search_results.search_params.except(:q).each do |k, v| %>
                 <%= hidden_field_tag k, v %>
               <% end %>
             <% end %>

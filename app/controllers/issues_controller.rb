@@ -13,7 +13,7 @@ class IssuesController < ApplicationController
 
         @search_results = search_engine.search(scope, params)
     when "map"
-        @search_results = search_engine.search(scope, params)
+        @search_results = search_engine.search(scope, params) # TODO
     when "stats"
         @search_results = search_engine.stats(scope, params)
     end
@@ -134,6 +134,7 @@ class IssuesController < ApplicationController
       ],
 
       per_page: 12,
+      default_permitted_params: [ "tab" ]
     )
   end
 end
