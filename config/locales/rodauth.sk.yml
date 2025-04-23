@@ -54,8 +54,8 @@ sk:
     new_password_confirm_label: Nové heslo (znova)
     no_matching_login_message: Účet s týmto emailom neexistuje.
     no_matching_reset_password_key_error_flash: 'There was an error resetting your password: invalid or expired password reset key'
-    no_matching_verify_account_key_error_flash: 'There was an error verifying your account: invalid verify account key'
-    no_matching_verify_login_change_key_error_flash: 'There was an error verifying your login change: invalid verify login change key'
+    no_matching_verify_account_key_error_flash: 'Pri overovaní účtu nastala chyba: Neplatný overovací klúč.'
+    no_matching_verify_login_change_key_error_flash: 'Pri overovaní zmeny prihlasovacieho emailu nastala chyba: neplatný overovací klúč.'
     old_password_label: Aktuálne heslo
     omniauth_failure_error_flash: There was an error logging in with the external provider
     omniauth_login_no_matching_account_error_flash: There is no existing account matching the external identity
@@ -72,12 +72,12 @@ sk:
     remember_notice_flash: Your remember setting has been updated
     remember_page_title: Change Remember Setting
     remember_remember_label: Zapamätať si prihlásenie
-    require_login_error_flash: Please login to continue
+    require_login_error_flash: Aby ste mohli pokračovať sa musíte prihlásiť.
     resend_verify_account_page_title: Preposlať overovací email
     reset_password_button: Nastaviť nové heslo
-    reset_password_email_recently_sent_error_flash: An email has recently been sent to you with a link to reset your password
+    reset_password_email_recently_sent_error_flash: Prednedávnom sme Vám zaslali email s odkazom na zmenu hesla.
     reset_password_email_sent_notice_flash: Zaslali sme Vám email s odkazom na zmenu hesla.
-    reset_password_email_subject: Reset Password
+    reset_password_email_subject: Zmena hesla
     reset_password_error_flash: Pri zmene hesla nastala chyba.
     reset_password_explanatory_text: "<p>Ak ste zabudli svoje heslo, môžete si vyžiadať jeho zmenu.</p>"
     reset_password_notice_flash: Heslo bolo úspešne zmenené.
@@ -104,7 +104,7 @@ sk:
     verify_account_resend_link_text: Resend Verify Account Information
     verify_login_change_button: Zmeniť email
     verify_login_change_duplicate_account_error_flash: Unable to change login as there is already an account with the new login
-    verify_login_change_email_subject: Verify Login Change
+    verify_login_change_email_subject: Potvrdenie zmeny prihlasovacieho emailu
     verify_login_change_error_flash: Unable to verify login change
     verify_login_change_notice_flash: Zmena prihlasovacieho emailu bola úspešná.
     verify_login_change_page_title: Zmena emailu
