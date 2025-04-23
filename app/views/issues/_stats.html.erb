@@ -1,230 +1,119 @@
 <!-- Štatistika -->
+<h2 class="stats-heading">Podľa stavu riešenia</h2>
 <div class="wrapper-statistics">
   <div class="statistics-con">
-    <!-- Zaslané samospráve -->
-    <div class="statistics-block zaslane">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">Zaslané samospráve</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
+    <% if @search_results.stats[:by_state].value.count > 1 %>
+      <div class="statistics-block total">
+        <div class="general-value-con">
+          <div class="general-title-con">
+            <div class="general-title">Spolu</div>
+            <div class="statistics-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
+                <circle cx="22" cy="6" r="2" stroke="none"/>
+                <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
+                <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
+                <circle cx="2" cy="18" r="2" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="general-value"><%= @search_results.stats[:by_state].value.values.sum %></div>
+        </div>
+        <!--<div class="secondary-value-wrapper">
+          <div class="secondary-value-con">
+            <div class="secondary-title">Nitra</div>
+            <div class="secondary-value">450</div>
+          </div>
+          <div class="secondary-value-con">
+            <div class="secondary-title">Iný subjekt</div>
+            <div class="secondary-value">205</div>
           </div>
         </div>
-        <div class="general-value">655</div>
+        -->
       </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">450</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">205</div>
-        </div>
-      </div>
-    </div>
-    <!-- V riešení -->
-    <div class="statistics-block riesene">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">V riešení</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
-          </div>
-        </div>
-        <div class="general-value">1817</div>
-      </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">1811</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">6</div>
-        </div>
-      </div>
-    </div>
-    <!-- Vyriešené -->
-    <div class="statistics-block vyriesene">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">Vyriešené</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
-          </div>
-        </div>
-        <div class="general-value">4407</div>
-      </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">4260</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">147</div>
-        </div>
-      </div>
-    </div>
-    <!-- Neriešené -->
-    <div class="statistics-block neriesene">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">Neriešené</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
-          </div>
-        </div>
-        <div class="general-value">16</div>
-      </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">1</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">15</div>
-        </div>
-      </div>
-    </div>
-    <!-- Zamietnuté -->
-    <div class="statistics-block zamietnute">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">Zamietnuté</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
-          </div>
-        </div>
-        <div class="general-value">48</div>
-      </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">38</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">10</div>
-        </div>
-      </div>
-    </div>
-    <!-- Odstúpený -->
-    <div class="statistics-block odstupene">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">Odstúpené</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
-          </div>
-        </div>
-        <div class="general-value">124</div>
-      </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">83</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">41</div>
-        </div>
-      </div>
-    </div>
-    <!-- Čakajúci -->
-    <div class="statistics-block cakajuce">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">Čakajúce</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
-          </div>
-        </div>
-        <div class="general-value">26</div>
-      </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">23</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">3</div>
-        </div>
-      </div>
-    </div>
-    <!-- Uzavreté -->
-    <div class="statistics-block uzavrete">
-      <div class="general-value-con">
-        <div class="general-title-con">
-          <div class="general-title">Uzavreté</div>
-          <div class="statistics-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
-              <circle cx="22" cy="6" r="2" stroke="none"/>
-              <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
-              <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
-              <circle cx="2" cy="18" r="2" stroke="none"/>
-            </svg>
-          </div>
-        </div>
-        <div class="general-value">531</div>
-      </div>
-      <div class="secondary-value-wrapper">
-        <div class="secondary-value-con">
-          <div class="secondary-title">Nitra</div>
-          <div class="secondary-value">527</div>
-        </div>
-        <div class="secondary-value-con">
-          <div class="secondary-title">Iný subjekt</div>
-          <div class="secondary-value">4</div>
-        </div>
-      </div>
-    </div>
+    <% end %>
 
+    <% @search_results.stats[:by_state].value.each do |status, count| %>
+      <div class="statistics-block state-<%= status.name.parameterize %>">
+        <div class="general-value-con">
+          <div class="general-title-con">
+            <div class="general-title"><%= link_to status.name, search_issues_path(stav: status.name, tab: :list) %></div>
+            <div class="statistics-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
+                <circle cx="22" cy="6" r="2" stroke="none"/>
+                <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
+                <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
+                <circle cx="2" cy="18" r="2" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="general-value"><%= count %></div>
+        </div>
+        <!--<div class="secondary-value-wrapper">
+          <div class="secondary-value-con">
+            <div class="secondary-title">Nitra</div>
+            <div class="secondary-value">450</div>
+          </div>
+          <div class="secondary-value-con">
+            <div class="secondary-title">Iný subjekt</div>
+            <div class="secondary-value">205</div>
+          </div>
+        </div>
+        -->
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<h2 class="stats-heading">Podľa kategórie</h2>
+<div class="wrapper-statistics">
+  <div class="statistics-con">
+    <% @search_results.stats[:by_category].value.each do |category, count| %>
+      <div class="statistics-block statistics-block-category-<%= category.name.parameterize %>">
+        <div class="general-value-con">
+          <div class="general-title-con">
+            <div class="general-title"><%= link_to category.name, search_issues_path(kategoria: category.name, tab: :list) %></div>
+            <div class="statistics-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
+                <circle cx="22" cy="6" r="2" stroke="none"/>
+                <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
+                <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
+                <circle cx="2" cy="18" r="2" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="general-value"><%= count %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<h2 class="stats-heading">Podľa zodpovedného subjektu</h2>
+<div class="wrapper-statistics">
+  <div class="statistics-con">
+    <% @search_results.stats[:by_responsible_subject].value.each do |responsible_subject, count| %>
+      <div class="statistics-block statistics-block-undefined">
+        <div class="general-value-con">
+          <div class="general-title-con">
+            <div class="general-title"><%= link_to responsible_subject.subject_name, search_issues_path(zodpovedny: responsible_subject.subject_name, tab: :list) %></div>
+            <div class="statistics-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
+                <circle cx="22" cy="6" r="2" stroke="none"/>
+                <circle cx="15.33" cy="14.62" r="2" stroke="none"/>
+                <circle cx="8.67" cy="8.9" r="2" stroke="none"/>
+                <circle cx="2" cy="18" r="2" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="general-value"><%= count %></div>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

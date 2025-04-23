@@ -1,4 +1,5 @@
-<header>
+<div data-intercept-target="anchor"></div>
+<header data-intercept-target="interceptable">
 
   <!-- Navigation -->
   <nav>
@@ -113,13 +114,18 @@
         <%= link_to "Dajte&nbsp;pochvalu".html_safe, new_praise_path %>
         <div class="search-con">
           <%= form_tag issues_path, method: :get do %>
+            <% if @search_results %>
+              <% @search_results.search_params.except(:q).each do |k, v| %>
+                <%= hidden_field_tag k, v %>
+              <% end %>
+            <% end %>
             <button>
               <svg viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.77818" cy="8.27818" r="6.77818"/>
                 <path d="M13 13.5L18 18.5"/>
               </svg>
             </button>
-            <%= search_field_tag :q, params[:q], placeholder: "Hľadaj obec alebo kľúčové slovo" %>
+            <%= search_field_tag :q, params[:q], id: nil, placeholder: "Hľadaj obec alebo kľúčové slovo" %>
           <% end %>
         </div>
       </div>

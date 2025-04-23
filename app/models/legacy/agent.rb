@@ -20,7 +20,7 @@
 #  lastname         :string
 #  login            :string
 #  organization     :boolean
-#  password         :string
+#  password_hash    :string
 #  phone            :string
 #  resident         :boolean
 #  rights           :integer

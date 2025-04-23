@@ -37,6 +37,8 @@
 #  triage_external_id       :integer
 #
 class Issue < ApplicationRecord
+  include PgSearch::Model
+
   enum :issue_type, { issue: 1, question: 2, praise: 3 }, default: :issue
   # TODO add triage_draft_external_id - este premenovat
 
@@ -52,7 +54,7 @@ class Issue < ApplicationRecord
 
   has_many :activities, class_name: "Issues::Activity", dependent: :destroy
   has_many :comment_activities, class_name: "Issues::CommentActivity", dependent: :destroy
-  has_many :communication_activities, class_name: "Issues::CommunicationActivity", dependent: :destroy
+  has_many :legacy_communication_activities, class_name: "Legacy::Issues::CommunicationActivity", dependent: :destroy
   has_many :update_activities, class_name: "Issues::UpdateActivity", dependent: :destroy
 
   has_many_attached :photos do |photo|
@@ -60,6 +62,9 @@ class Issue < ApplicationRecord
   end
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
+
+  pg_search_scope :fulltext_search, against: [ :title, :description, :legacy_id ], ignoring: :accents
+  scope :publicly_visible, -> { joins(:state).where.not(state: { name: [ "Čakajúci", "Neprijatý" ] }) }
 
   def votes
     # fake it

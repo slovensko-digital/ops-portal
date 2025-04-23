@@ -3,10 +3,14 @@ module Import
     include ImportMethods
 
     def perform(comment:)
-      Legacy::GenericModel.set_table_name("media_comments")
-      Legacy::GenericModel.where(comment_id: comment.legacy_id).find_in_batches do |group|
+      Legacy::Alerts::CommentAttachment.where(comment_id: comment.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
-          comment.attachments.attach(io: download_from_ops_portal(legacy_record.href), filename: File.basename(legacy_record.href))
+          attachment_content = download_from_ops_portal(legacy_record.href)
+          attachment_name = legacy_record.href
+
+          persisted = attachment_persisted?(name: attachment_name, content: attachment_content, persisted_records: comment.attachments)
+
+          comment.attachments.attach(io: attachment_content, filename: attachment_name) unless persisted
         end
       end
     end

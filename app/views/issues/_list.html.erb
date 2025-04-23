@@ -1,7 +1,7 @@
 <!-- Zoznam podnetov -->
 <div class="wrapper-list">
   <div class="podnet-block-con">
-    <%= render @issues %>
+    <%= render @search_results.hits %>
   </div>
-  <!-- TODO pagination -->
+  <%= ops_paginate @search_results.hits %>
 </div>

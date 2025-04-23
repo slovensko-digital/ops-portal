@@ -19,7 +19,7 @@
           </picture>
         </figure>
         <% if @issue.photos.count > 1 %>
-          <%= @issue.photos[1..].each do |photo| %>
+          <% @issue.photos[1..].each do |photo| %>
             <figure class="small-picture">
               <div class="lens-image">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
@@ -99,7 +99,7 @@
 
         <div class="information-wrapper">
           <div class="label">Dátum:</div>
-          <div class="value"><%= l @issue.created_at.to_date, format: :long %></div>
+          <div class="value"><%= l @issue.reported_at.to_date, format: :long %></div>
         </div>
 
         <div class="information-wrapper">
@@ -120,7 +120,7 @@
           <div class="label">Vybavuje:</div>
           <div class="value-con">
             <% if @issue.responsible_subject.present? %>
-              <a class="value" href=""><%= @issue.responsible_subject.subject_name %></a>
+              <%= link_to @issue.responsible_subject.subject_name, issues_path(zodpovedny: @issue.responsible_subject.subject_name), class: "value" %>
             <% else %>
               <span class="value">Nikto</span>
             <% end %>
@@ -130,9 +130,9 @@
         <div class="information-wrapper">
           <div class="label">Poloha:</div>
           <div class="value-con">
-            <%= link_to @issue.address_street, issues_path(ulica: @issue.address_street), class: "value" %>
-            <a class="value" href=""><%= @issue.address_municipality %></a>
-            <% if @issue.address_city %><a class="value" href=""><%= @issue.address_city %></a><% end %>
+            <%= link_to @issue.address_street, issues_path(ulica: @issue.address_street, cast: @issue.municipality_district&.name, obec: @issue.municipality&.name), class: "value" %>
+            <% if @issue.municipality_district %><%= link_to @issue.municipality_district.name, issues_path(cast: @issue.municipality_district.name, obec: @issue.municipality.name), class: "value" %><% end %>
+            <%= link_to @issue.municipality.name, issues_path(obec: @issue.municipality.name), class: "value" %>
           </div>
           <div class="map" data-controller="map" data-map-latitude-value="<%= @issue.latitude %>" data-map-longitude-value="<%= @issue.longitude %>">
             <div data-map-target="map"></div>

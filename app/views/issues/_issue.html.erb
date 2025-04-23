@@ -4,7 +4,7 @@
   <div class="info-con">
     <div class="state-con">
       <% if issue.issue_type == 'issue' %>
-        <div class="state done"><%= issue.state.name %></div>
+        <div class="state state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
       <% end %>
       <div class="icon-con">
         <% if issue.votes.count > 0 %>
@@ -34,7 +34,7 @@
       <div class="description">
         <div class="title"><%= issue.title %></div>
         <div class="address"><%= format_issue_address(issue) %></div>
-        <div class="date"><%= l issue.reported_at.to_date, format: :long %></div>
+        <div class="date"><%= l issue.reported_at.to_date %></div>
       </div>
     </div>
   </div>

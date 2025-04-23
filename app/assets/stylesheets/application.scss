@@ -162,14 +162,42 @@ h1 {
   @include rotate(90);
 }
 
-.zaslane { background: $zaslane; }
-.riesene { background: $riesene; }
-.vyriesene { background: $vyriesene; }
-.neriesene { background: $neriesene; }
-.zamietnute { background: $zamietnute; }
-.odstupene { background: $odstupene; }
-.cakajuce { background: $cakajuce; }
-.uzavrete { background: $uzavrete; }
+.total { background: $cakajuce; }
+.state-zaslane { background: $zaslane; }
+.state-v-rieseni { background: $riesene; }
+.state-vyrieseny { background: $vyriesene; }
+.state-nerieseny { background: $neriesene; }
+.state-zamietnute { background: $zamietnute; }
+.state-odstupeny { background: $odstupene; }
+.state-cakajuci { background: $cakajuce; }
+.state-uzavrety { background: $uzavrete; }
+
+.statistics-block-category-komunikacie,
+.statistics-block-category-cesty-a-chodniky { background: #C4F8FF; }
+.statistics-block-category-mobiliar,
+.statistics-block-category-mestsky-mobiliar { background: #88F1FF; }
+.statistics-block-category-znacenie { background: #39E8FF; }
+.statistics-block-category-osvetlenie { background: #B3F7E2; }
+.statistics-block-category-kanalizacia { background: #66EFC5; }
+.statistics-block-category-mhd { background: #00E59E; }
+.statistics-block-category-ihrisko { background: #FFEFBE; }
+.statistics-block-category-verejny-poriadok,
+.statistics-block-category-verejne-sluzby { background: #FFE07C; }
+.statistics-block-category-dopravne-riesenie,
+.statistics-block-category-dopravne-znacenie { background: #FFCB25; }
+.statistics-block-category-zdielana-mikromobilita { background: #E0C8FF; }
+.statistics-block-category-zelen-a-znecistovanie,
+.statistics-block-category-zelen-a-zivotne-prostredie { background: #C191FF; }
+.statistics-block-category-stavby { background: #9747FF; }
+.statistics-block-category-zvierata { background: #FFE6EF; }
+.statistics-block-category-skladky-a-vraky,
+.statistics-block-category-automobily { background: #FFCDDF; }
+.statistics-block-category-kontakt-so-samospravou { background: #FFABC9; }
+.statistics-block-category-ine { background: #EAD7D7; }
+.statistics-block-category-napad-na-zlepsenie { background: #DCBCBD; }
+
+
+.statistics-block-undefined { background: #EAD7D7; }
 
 
 
@@ -1540,11 +1568,12 @@ ul.dropdown-list li {
 ul.dropdown-list li:hover {
   background: $line;
 }
-ul.dropdown-list li.check-box {
+ul.dropdown-list li.check-box a {
   align-items: center;
   display: grid;
   gap: 0 4px;
   grid-template-columns: 30px auto;
+  color: $black;
 }
 ul.dropdown-list li.check-box .form-check-box {
   height: 24px;
@@ -1751,10 +1780,12 @@ section.podnety nav.suggestions .button-location {
   display: grid;
   gap: 40px 0;
 }
-.open-podnety-filter-con {
+
+[data-toggle-open-value="true"] .podnety-filter-con {
   display: block !important;
 }
-.open-podnety-filter-wrapper {
+
+[data-toggle-open-value="true"] .podnety-filter-wrapper {
   //display: grid;
   animation: open-smooth-podnety-filter-wrapper 0.5s ease;
 }
@@ -1802,6 +1833,10 @@ section.podnety nav.suggestions .button-location {
   padding: 18px 20px;
   @include rounded(15px);
 }
+.statistics-con .statistics-block .general-title a {
+  color: $black;
+}
+
 .statistics-con .statistics-block .general-value-con {
   display: flex;
   flex-direction: column;
@@ -1981,19 +2016,20 @@ a.podnet-block .inside figure {
   rotate: 10deg;
 }
 
-a.podnet-block .done {
+a.podnet-block .state-vyrieseny {
   background: $green;
 }
 a.podnet-block .sent {
   background: $blue;
 }
-a.podnet-block .solving {
+a.podnet-block .state-v-rieseni {
   background: $blue;
 }
-a.podnet-block .unresolved {
+a.podnet-block .state-nerieseny {
   background: $neriesene;
 }
-a.podnet-block .close {
+a.podnet-block .state-uzavrety,
+a.podnet-block .state-neprijaty {
   background: $uzavrete;
 }
 a.podnet-block .icon-con {

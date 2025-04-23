@@ -317,6 +317,9 @@ GEM
       racc
     patron (0.13.4)
     pg (1.5.9)
+    pg_search (2.3.7)
+      activerecord (>= 6.1)
+      activesupport (>= 6.1)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -568,6 +571,7 @@ DEPENDENCIES
   omniauth-google-oauth2 (~> 1.2)
   open-uri
   pg (~> 1.1)
+  pg_search
   propshaft
   pry (~> 0.15.0)
   puma (>= 5.0)

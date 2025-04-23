@@ -1,5 +1,5 @@
 .not-implemented {
-    cursor: not-allowed;
+    cursor: not-allowed !important;
 }
 
 button,
@@ -7,7 +7,7 @@ button,
     cursor: pointer;
 }
 
-.search-con input[type="search"]::-webkit-search-cancel-button {
+.search-con input[type="search"]::-webkit-search-cancel-button, {
     display: none;
 }
 
@@ -77,4 +77,19 @@ form[aria-busy='true'] .button-add-picture {
 
 .nav-logo svg {
     display: block;
+}
+
+.none {
+    display: none;
+}
+
+.stats-heading {
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 600;
+    margin: 1.5em 0 1em 0;
+}
+
+.form-item-wrapper input[type="search"]::-webkit-search-cancel-button {
+    display: none;
 }

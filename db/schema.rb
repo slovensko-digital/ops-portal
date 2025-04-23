@@ -292,55 +292,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_181958) do
 
   create_table "issues_comments", force: :cascade do |t|
     t.bigint "activity_id", null: false
-    t.bigint "author_id"
     t.string "author_name"
     t.string "author_email"
     t.datetime "added_at"
-    t.boolean "state"
-    t.boolean "published"
     t.string "text"
-    t.string "link"
-    t.string "image"
-    t.string "embed"
     t.inet "ip"
     t.integer "verification"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
     t.integer "triage_external_id"
+    t.bigint "user_author_id"
+    t.bigint "agent_author_id"
+    t.bigint "responsible_subject_author_id"
+    t.boolean "hidden", default: false
+    t.jsonb "legacy_data"
+    t.string "type"
     t.index ["activity_id"], name: "index_issues_comments_on_activity_id"
-    t.index ["author_id"], name: "index_issues_comments_on_author_id"
+    t.index ["agent_author_id"], name: "index_issues_comments_on_agent_author_id"
     t.index ["legacy_id"], name: "index_issues_comments_on_legacy_id", unique: true
-  end
-
-  create_table "issues_communications", force: :cascade do |t|
-    t.bigint "activity_id", null: false
-    t.boolean "from_responsible_subject"
-    t.string "subject"
-    t.string "message"
-    t.integer "admin_id"
-    t.integer "person_id"
-    t.integer "user_id"
-    t.string "text"
-    t.string "solved_by"
-    t.string "solved_in"
-    t.boolean "solved"
-    t.boolean "solution_rejected"
-    t.string "email"
-    t.datetime "added_at"
-    t.inet "ip"
-    t.boolean "internal"
-    t.boolean "confirmation_needed"
-    t.string "plain_message"
-    t.string "signature"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "legacy_id"
-    t.integer "triage_external_id"
-    t.bigint "author_id"
-    t.string "author_type"
-    t.index ["activity_id"], name: "index_issues_communications_on_activity_id"
-    t.index ["legacy_id"], name: "index_issues_communications_on_legacy_id", unique: true
+    t.index ["responsible_subject_author_id"], name: "index_issues_comments_on_responsible_subject_author_id"
+    t.index ["user_author_id"], name: "index_issues_comments_on_user_author_id"
   end
 
   create_table "issues_drafts", force: :cascade do |t|
@@ -450,7 +422,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_181958) do
     t.integer "rights"
     t.string "admin_name"
     t.string "phone"
-    t.string "password"
+    t.string "password_hash"
     t.string "about"
     t.boolean "organization"
     t.datetime "timestamp"
@@ -476,6 +448,39 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_181958) do
     t.index ["external_id"], name: "index_legacy_agents_on_external_id", unique: true
     t.index ["municipality_id"], name: "index_legacy_agents_on_municipality_id"
     t.index ["street_id"], name: "index_legacy_agents_on_street_id"
+  end
+
+  create_table "legacy_issues_communications", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.boolean "from_responsible_subject"
+    t.string "subject"
+    t.string "message"
+    t.integer "admin_id"
+    t.integer "person_id"
+    t.integer "user_id"
+    t.string "text"
+    t.string "solved_by"
+    t.string "solved_in"
+    t.boolean "solved"
+    t.boolean "solution_rejected"
+    t.string "email"
+    t.datetime "added_at"
+    t.inet "ip"
+    t.boolean "internal"
+    t.boolean "confirmation_needed"
+    t.string "plain_message"
+    t.string "signature"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "legacy_id"
+    t.integer "triage_external_id"
+    t.bigint "agent_author_id"
+    t.bigint "responsible_subjects_user_author_id"
+    t.string "type"
+    t.index ["activity_id"], name: "index_legacy_issues_communications_on_activity_id"
+    t.index ["agent_author_id"], name: "index_legacy_issues_communications_on_agent_author_id"
+    t.index ["legacy_id"], name: "index_legacy_issues_communications_on_legacy_id", unique: true
+    t.index ["responsible_subjects_user_author_id"], name: "idx_on_responsible_subjects_user_author_id_dc50bfe063"
   end
 
   create_table "municipalities", force: :cascade do |t|
@@ -718,8 +723,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_181958) do
   add_foreign_key "issues", "users", column: "author_id"
   add_foreign_key "issues_activities", "issues"
   add_foreign_key "issues_comments", "issues_activities", column: "activity_id"
-  add_foreign_key "issues_comments", "users", column: "author_id"
-  add_foreign_key "issues_communications", "issues_activities", column: "activity_id"
+  add_foreign_key "issues_comments", "legacy_agents", column: "agent_author_id"
+  add_foreign_key "issues_comments", "responsible_subjects", column: "responsible_subject_author_id"
+  add_foreign_key "issues_comments", "users", column: "user_author_id"
   add_foreign_key "issues_drafts", "issues_categories", column: "category_id"
   add_foreign_key "issues_drafts", "issues_subcategories", column: "subcategory_id"
   add_foreign_key "issues_drafts", "issues_subtypes", column: "subtype_id"
@@ -731,6 +737,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_15_181958) do
   add_foreign_key "issues_updates", "users", column: "confirmed_by_id"
   add_foreign_key "legacy_agents", "municipalities"
   add_foreign_key "legacy_agents", "streets"
+  add_foreign_key "legacy_issues_communications", "issues_activities", column: "activity_id"
+  add_foreign_key "legacy_issues_communications", "legacy_agents", column: "agent_author_id"
+  add_foreign_key "legacy_issues_communications", "responsible_subjects_users", column: "responsible_subjects_user_author_id"
   add_foreign_key "municipalities", "districts"
   add_foreign_key "municipality_districts", "municipalities"
   add_foreign_key "responsible_subjects", "districts"

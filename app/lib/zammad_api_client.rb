@@ -1,6 +1,7 @@
 class ZammadApiClient
   attr :client
 
+  DEFAULT_SENDER = "Customer"
   DEFAULT_GROUP = "Incoming"
   DEFAULT_PROCESS_TYPE = "portal_issue_triage"
   DEFAULT_ARTICLE_TYPE = "web"
@@ -48,7 +49,7 @@ class ZammadApiClient
     })
   end
 
-  def create_ticket_from_issue!(issue, process_type: DEFAULT_PROCESS_TYPE, group: DEFAULT_GROUP, owner_id: nil)
+  def create_ticket_from_issue!(issue, process_type: DEFAULT_PROCESS_TYPE, group: DEFAULT_GROUP, sender: DEFAULT_SENDER, owner_id: nil)
     ticket = @client.ticket.create(
       process_type: process_type,
       issue_type: issue.issue_type,
@@ -90,6 +91,7 @@ class ZammadApiClient
             "mime-type" => photo.content_type
           }
         end,
+        sender: sender,
         created_at: issue.reported_at
       },
     )
@@ -168,7 +170,7 @@ class ZammadApiClient
     result
   end
 
-  def create_article!(issue_id, activity_object)
+  def create_article!(issue_id, activity_object, sender:)
     ticket = @client.ticket.find(issue_id)
 
     article = ticket.article(
@@ -184,6 +186,7 @@ class ZammadApiClient
         }
       end,
       created_at: activity_object.added_at,
+      sender: sender
     )
 
     # TODO custom error

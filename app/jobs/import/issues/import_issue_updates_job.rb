@@ -3,8 +3,7 @@ module Import
     include ImportMethods
 
     def perform(issue:, import_photos_job: Issues::ImportIssueUpdateAttachmentsJob)
-      Legacy::GenericModel.set_table_name("alerts_updates")
-      Legacy::GenericModel.where(alert: issue.legacy_id).find_in_batches do |group|
+      Legacy::Alerts::Update.where(alert: issue.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
           update = ::Issues::Update.find_or_initialize_by(
             legacy_id: legacy_record.id,

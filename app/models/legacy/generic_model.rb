@@ -8,10 +8,6 @@ module Legacy
       :reading
     end
 
-    def self.set_table_name(name)
-      self.table_name = name
-    end
-
     def readonly?
       true
     end

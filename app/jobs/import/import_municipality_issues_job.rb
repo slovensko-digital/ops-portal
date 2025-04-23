@@ -20,6 +20,11 @@ module Import
           subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
           subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
           category = subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
+          owner = if legacy_record.riesitel_new.nil? || legacy_record.riesitel_new == 0
+            Legacy::User.find_or_create_agent(legacy_record.riesitel)
+          else
+            Legacy::User.find_or_create_agent(legacy_record.riesitel_new)
+          end
 
           issue = Issue.find_or_create_by!(
             legacy_id: legacy_record.id,
@@ -66,19 +71,20 @@ module Import
               organizational_unit_id: legacy_record.organizational_unit_id,
               ended_at: legacy_record.end_date,
               parent_id: legacy_record.parent_id,
-              organization_unit_id2: legacy_record.organizational_unit_id2
+              organization_unit_id2: legacy_record.organizational_unit_id2,
+              legacy_responsible_subject_id: legacy_record.zodpovednost
             },
             longitude: legacy_record.map_y,
             reported_at: convert_timestamp_value(legacy_record.posted_time), # TODO dolezity udaj pre triaz podnetu
             title: legacy_record.heading,
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),
-            owner: Legacy::User.find_or_create_agent(legacy_record.riesitel_new&.nonzero?.presence || legacy_record.riesitel),
+            owner: owner,
             category: category,
             subcategory: subcategory,
             subtype: subtype,
             municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
             municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
-            responsible_subject: ResponsibleSubject.find_by(legacy_id: legacy_record.zodpovednost),
+            responsible_subject: Legacy::ResponsibleSubject.find_or_create_responsible_subject(legacy_record.zodpovednost),
             state: ::Issues::State.find_by(legacy_id: legacy_record.status)
           )
 

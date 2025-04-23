@@ -3,10 +3,14 @@ module Import
     include ImportMethods
 
     def perform(update:)
-      Legacy::GenericModel.set_table_name("media_updates")
-      Legacy::GenericModel.where(update_id: update.legacy_id).find_in_batches do |group|
+      Legacy::Alerts::UpdateImage.where(update_id: update.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
-          update.attachments.attach(io: download_from_ops_portal(legacy_record.href), filename: File.basename(legacy_record.href))
+          attachment_content = download_from_ops_portal(legacy_record.href)
+          attachment_name = File.basename(legacy_record.href)
+
+          persisted = attachment_persisted?(name: attachment_name, content: attachment_content, persisted_records: update.attachments)
+
+          update.attachments.attach(io: attachment_content, filename: attachment_name) unless persisted
         end
       end
     end

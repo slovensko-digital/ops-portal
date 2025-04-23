@@ -23,4 +23,28 @@ application.register('toggle', Toggle)
 
 application.register('auto-submit', AutoSubmit)
 
+document.addEventListener('turbo:before-cache', function({ target}) {
+    const setOpenAsFalse = (attribute) => {
+        const element = target.querySelector(`[${attribute}="true"]`)
+        element?.setAttribute(attribute, "false")
+    }
+
+    const queryAllAndModify = (selector, modify) => {
+        target.querySelectorAll(selector).forEach(modify)
+    }
+
+    const addHiddenClass = () => {
+        queryAllAndModify("[data-turbo-temporary-hide]", (elm) => {
+            if (!elm.classList.contains('hidden')) {
+                elm.classList.add('hidden')
+            }
+        })
+    }
+
+    addHiddenClass()
+    setOpenAsFalse('data-slideover-open-value')
+    setOpenAsFalse('data-dropdown-open-value')
+    setOpenAsFalse('data-toggle-open-value')
+})
+
 export { application }
