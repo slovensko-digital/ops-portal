@@ -7,7 +7,7 @@
     </div>
 
     <%= form_with url: rodauth.login_path, method: :post, data: { turbo: false }, html: { novalidate: true } do |form| %>
-     <div class="form-items-con">
+      <div class="form-items-con">
         <div class="form-item-wrapper">
           <%= form.label "login", rodauth.login_label %>
           <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: rodauth.login_field_autocomplete_value, required: true, aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>

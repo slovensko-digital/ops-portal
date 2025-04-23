@@ -8,11 +8,11 @@
     <span>Späť</span>
   <% end %>
 
-  <h1>Urči miesto podnetu</h1>
+  <h1>Lokalizácia podnetu</h1>
 
   <% if @draft.latlon_from_exif? %>
-    <div class="report-suggestion-description">Na lokalizovanie miesta podnetu bola použitá geolokácia z fotografie. Ak nie je
-      určenie polohy správne, použite prosím vyhľadávanie alebo mapu nižšie.
+    <div class="report-suggestion-description"><p>Na lokalizovanie miesta podnetu bola použitá geolokácia z fotografie.</p>
+      <p>Ak nie je určenie polohy správne, použite vyhľadávanie a mapu nižšie.</p>
     </div>
   <% end %>
   <!-- Mapa -->
@@ -26,7 +26,7 @@
             <path d="M13 13.5L18 18.5"/>
           </svg>
         </button>
-        <input type="search" placeholder="Napíš adresu" data-geo-target="search">
+        <input type="search" placeholder="Napíšte adresu, ulicu, mesto" data-geo-target="search">
       </form>
     </div>
 
@@ -40,7 +40,10 @@
   <%= form_with(model: @draft, url: issues_draft_geo_path(@draft, next: params[:next])) do |form| %>
     <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
     <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
-    <%= form.hidden_field :address_json, data: { "geo-target": "addressJSON" } %>
-    <%= form.submit "Ďalej", class: "button" %>
+    <% if params[:next] == 'summary' %>
+      <%= form.submit "Uložiť", class: "button" %>
+    <% else %>
+      <%= form.submit "Pokračovať", class: "button" %>
+    <% end %>
   <% end %>
 </section>
