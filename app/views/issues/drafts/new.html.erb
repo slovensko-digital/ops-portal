@@ -38,14 +38,13 @@
     <% end %>
   </div>
 
-  <div class="notice">Nahrajte obrázky, ktoré podnet dokumentujú. Povolené formáty pre obrázky sú: jpg, gif a png.
-    Maximálna veľkosť: 7MB
+  <div class="notice">Nahrajte fotografie, ktoré podnet najlepšie dokumentujú. Maximálna veľkosť: 7MB.
   </div>
   <% if @draft.valid?(:photos_step) %>
     <% if params[:next] == 'summary' %>
-      <%= link_to 'Uložiť', issues_draft_summary_path(@draft), class: 'button' %>
+      <%= link_to 'Upraviť', issues_draft_summary_path(@draft), class: 'button' %>
     <% else %>
-      <%= link_to 'Ďalej', issues_draft_geo_path(@draft), class: 'button' %>
+      <%= link_to 'Pokračovať', issues_draft_geo_path(@draft), class: 'button' %>
     <% end %>
 
   <% end %>

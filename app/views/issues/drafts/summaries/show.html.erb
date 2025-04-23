@@ -31,9 +31,7 @@
     </div>
 
     <div class="report-summary-edit">
-      <div class="description">Popis podnetu</div>
-      <div class="title"><%= @draft.title %></div>
-      <div class="description"><%= simple_format(@draft.description) %></div>
+      <div class="description">Kategória podnetu</div>
       <div class="labels-con">
         <div class="label"><%= @draft.category.name %></div>
         <div class="label"><%= @draft.subcategory.name %></div>
@@ -41,11 +39,18 @@
           <div class="label"><%= @draft.subtype.name %></div>
         <% end %>
       </div>
-      <%= link_to "Upraviť", issues_draft_category_path(@draft), class: "button button-transparent button-edit" %>
+      <%= link_to "Upraviť", issues_draft_category_path(@draft, next: :summary), class: "button button-transparent button-edit" %>
+    </div>
+
+    <div class="report-summary-edit">
+      <div class="description">Popis podnetu</div>
+      <div class="title"><%= @draft.title %></div>
+      <div class="description"><%= simple_format(@draft.description) %></div>
+      <%= link_to "Upraviť", issues_draft_details_path(@draft, next: :summary), class: "button button-transparent button-edit" %>
     </div>
 
   </div>
 
-  <%= button_to "Ďalej", issues_draft_checks_path(@draft), class: "button" %>
+  <%= button_to "Odoslať podnet", issues_draft_checks_path(@draft), class: "button" %>
 
 </section>

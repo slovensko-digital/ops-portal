@@ -18,6 +18,7 @@
     <% @categories.each do |category| %>
       <%= button_to issues_draft_category_path(@draft), method: :patch, class: class_names("button-report-summary button-category", active: category == @draft.category) do %>
         <%= hidden_field_tag :category_id, category.id %>
+        <%= hidden_field_tag :next, params[:next] %>
         <div class="report-summary-wrapper">
           <div class="title"><%= category.name %></div>
           <div class="description"><%= category.description %></div>

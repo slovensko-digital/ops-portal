@@ -31,8 +31,8 @@
   <%= button_to issues_draft_suggestions_path(@draft, next: params[:next]), method: :patch, class: 'button-report-summary' do %>
     <%= hidden_field_tag 'issues_draft[picked_suggestion_index]', -1 %>
     <div class="report-summary-wrapper">
-      <div class="title">Vlastný popis</div>
-      <div class="description">Zadám vlastny popis</div>
+      <div class="title">Vlastný nadpis podnetu</div>
+      <div class="description">Vlastný dlhší opis problému, ktorý nahlasujem.</div>
     </div>
 
     <div class="icon-arrow">

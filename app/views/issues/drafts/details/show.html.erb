@@ -10,25 +10,31 @@
 
   <h1>Popis podnetu</h1>
 
-  <div class="report-suggestion-description">Vecne a čo najvýstižnejšie popíšte v čom spočíva problém.</div>
+  <div class="report-suggestion-description">Slušne, vecne a jasne popíšte v čom je problém. Nahlasujte
+    <strong>len jeden problém naraz</strong>.
+  </div>
 
   <%= form_with(model: @draft, url: issues_draft_details_path(@draft)) do |form| %>
     <div class="report-summary-block-con">
       <div class="form-item-wrapper">
         <%= form.label :title, "Názov" %>
-        <%= form.text_field :title, placeholder: "Sem napíš názov",
+        <%= form.text_field :title, placeholder: "Výstižný názov podnetu",
                             aria: ({ invalid: true, describedby: "title_error_message" } if @draft.errors[:title].any?) %>
         <%= content_tag(:span, @draft.errors[:title].first, class: "error-message", id: "title_error_message") if @draft.errors[:title].any? %>
       </div>
       <div class="form-item-wrapper">
         <%= form.label :description, "Popis" %>
-        <%= form.text_area :description, placeholder: "Sem napíš popis",
+        <%= form.text_area :description, placeholder: "Slušný, vecný a dostatočne jasný opis problému.",
                            aria: ({ invalid: true, describedby: "description_error_message" } if @draft.errors[:description].any?) %>
         <%= content_tag(:span, @draft.errors[:description].first, class: "error-message", id: "description_error_message") if @draft.errors[:description].any? %>
       </div>
     </div>
 
-    <%= form.submit "Ďalej", class: "button" %>
+    <% if params[:next] == 'summary' %>
+      <%= form.submit "Upraviť", class: "button" %>
+    <% else %>
+      <%= form.submit "Pokračovať", class: "button" %>
+    <% end %>
   <% end %>
 
 </section>
