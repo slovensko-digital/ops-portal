@@ -93,6 +93,16 @@ class RodauthMain < Rodauth::Rails::Auth
 
     email_from ENV["NOTIFICATION_SMTP_USERNAME"] # this is actually also the email
 
+    create_verify_account_email do
+      RodauthMailer.verify_account(self.class.configuration_name, account_id, verify_account_key_value)
+    end
+    create_reset_password_email do
+      RodauthMailer.reset_password(self.class.configuration_name, account_id, reset_password_key_value)
+    end
+    create_verify_login_change_email do |_login|
+      RodauthMailer.verify_login_change(self.class.configuration_name, account_id, verify_login_change_key_value)
+    end
+
     # ==> Flash
     # Match flash keys with ones already used in the Rails app.
     # flash_notice_key :success # default is :notice

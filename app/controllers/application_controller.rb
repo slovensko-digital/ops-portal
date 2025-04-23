@@ -21,9 +21,6 @@ class ApplicationController < ActionController::Base
   helper_method :logged_in?
 
   def require_user
-    unless logged_in?
-      flash[:alert] = "You must be logged in to access this page"
-      redirect_to rodauth.login_path
-    end
+    rodauth.require_account
   end
 end
