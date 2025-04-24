@@ -506,6 +506,6 @@ class ZammadApiClient
     return false unless responsible_subject
     return false unless article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
 
-    ticket.responsible_subject&.dig(:value) == responsible_subject.id
+    ticket.responsible_subject&.dig(:value)&.to_i == responsible_subject.id
   end
 end

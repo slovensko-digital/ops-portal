@@ -76,7 +76,7 @@ module Connector
       {
         ops_state: ticket.ops_state,
         responsible_subject: ticket.ops_responsible_subject,
-        investment: ticket.investment
+        investment: ticket.ops_investment
       }
     end
 

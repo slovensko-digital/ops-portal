@@ -16,7 +16,7 @@ module Connector
 
     def update_issue(issue_id, issue_data)
       response = @provider.put(URI.join(@url, "api/v1/issues/#{issue_id}"), { issue: issue_data, token: jwt_token })
-      raise unless response.status == 204
+      raise unless response.status == 200
     end
 
     def get_activity(issue_id, activity_id)
