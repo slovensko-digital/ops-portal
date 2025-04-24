@@ -4,7 +4,7 @@ one:
   title: MyString
   description: MyString
   author: one
-  reported_at: 2024-11-05 09:59:21
+  created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 1
   category: one
@@ -17,7 +17,7 @@ two:
   title: MyString
   description: MyString
   author: one
-  reported_at: 2024-11-05 09:59:21
+  created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 2
   category: one
@@ -28,7 +28,7 @@ without_triage_external_id:
   title: New issue
   description: New issue description
   author: one
-  reported_at: 2024-11-05 09:59:21
+  created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   category: one
   state: zero
