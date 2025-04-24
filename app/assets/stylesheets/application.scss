@@ -1959,15 +1959,18 @@ a.podnet-block:hover {
 }
 
 .podnet-block .photo .distance {
+  background: $yellow;
+  box-sizing: border-box;
+  color: $black;
+  font-size: em(12,16);
+  font-weight: $medium;
+  line-height: em(12,12);
+  padding: 10px;
   position: absolute;
-  border-top-left-radius: 16px;
-  padding: 0.5em 1em;
-  right: 0;
-  bottom: 0;
-  z-index: 100;
-  color: white;
-  font-weight: 600;
-  background-color: rgba(0, 0, 0, 0.6);
+  left: 14px;
+  top: 14px;
+  z-index: 2;
+  @include rounded(15px);
 }
 
 a.podnet-block .photo figure {
