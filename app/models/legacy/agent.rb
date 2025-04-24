@@ -11,6 +11,7 @@
 #  banned           :boolean          default(FALSE)
 #  birth            :date
 #  created_from_app :boolean          default(FALSE)
+#  display_name     :string
 #  email            :string
 #  email_notifiable :boolean          default(TRUE)
 #  exp              :integer
