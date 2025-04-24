@@ -3,9 +3,13 @@ class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
     ticket = triage_zammad_client.get_ticket(ticket_id)
     raise "Ticket not found" unless ticket
 
-    issue = Issue.find_by!(triage_external_id: ticket_id)
-
-    # TODO: update issue.description from custom TextArea field from Triage
+    issue = if ticket[:process_type] == "portal_issue_triage"
+      Issue.find_by!(triage_external_id: ticket_id)
+    elsif ticket[:process_type] == "portal_issue_resolution"
+      Issue.find_by!(resolution_external_id: ticket_id)
+    else
+      raise "Invalid process type"
+    end
 
     issue.update!(
       title: ticket[:title],
