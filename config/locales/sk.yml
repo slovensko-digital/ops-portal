@@ -47,6 +47,16 @@ sk:
     formats:
       default: "%e. %B %Y"
 
+  distance:
+    unit:
+      one: "m"
+      few: "m"
+      other: "m"
+    thousand:
+      one: "km"
+      few: "km"
+      other: "km"
+
   errors:
     messages:
       blank: "%{attribute} je povinná položka"

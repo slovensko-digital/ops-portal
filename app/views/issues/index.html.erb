@@ -65,13 +65,20 @@
             <path d="M18,2c-1.1,0-2,.9-2,2,0,.46.16.88.42,1.22l-3.37,5.8c-.09-.01-.18-.03-.28-.03-.31,0-.61.08-.87.21l-2.8-2.52c.08-.21.13-.44.13-.68,0-1.1-.9-2-2-2s-2,.9-2,2c0,.42.13.82.36,1.14l-3.2,4.89c-.12-.02-.25-.04-.39-.04-1.1,0-2,.9-2,2s.9,2,2,2,2-.9,2-2c0-.42-.13-.82-.36-1.14l3.2-4.89c.12.02.25.04.39.04.31,0,.61-.08.87-.21l2.8,2.52c-.08.21-.13.44-.13.68,0,1.1.9,2,2,2s2-.9,2-2c0-.46-.16-.88-.42-1.22l3.37-5.8c.09.01.18.03.28.03,1.1,0,2-.9,2-2s-.9-2-2-2Z"/>
           </svg>
         <% end %>
-        <button class="button button-transparent button-location not-implemented">
+        <%= button_to nil,
+                      class: class_names("button button-transparent button-location button-suggestion", "button-suggestion-active": params[:pin].present?),
+                      data: {
+                        controller: "geolocate",
+                        action: "geolocate#redirect:prevent",
+                        geolocate_supported_class: "geolocate-supported",
+                        geolocate_url_value: search_issues_path(pin: nil)
+                      } do %>
           <span>Moja poloha</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <circle cx="10" cy="10" r="1.5" />
+            <circle cx="10" cy="10" r="1.5"/>
             <path d="M19.75,9.25h-2.04c-.35-3.68-3.29-6.61-6.96-6.96V.25h-1.5v2.04c-3.68.35-6.61,3.29-6.96,6.96H.25v1.5h2.04c.35,3.68,3.29,6.61,6.96,6.96v2.04h1.5v-2.04c3.68-.35,6.61-3.29,6.96-6.96h2.04v-1.5ZM10.75,16.2v-1.95h-1.5v1.95c-2.85-.34-5.11-2.6-5.45-5.45h1.95v-1.5h-1.95c.34-2.85,2.6-5.11,5.45-5.45v1.95h1.5v-1.95c2.85.34,5.11,2.6,5.45,5.45h-1.95v1.5h1.95c-.34,2.85-2.6,5.11-5.45,5.45Z"/>
           </svg>
-        </button>
+        <% end %>
         <button class="button button-transparent not-implemented">
           <span>Zoradiť</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">

@@ -1,4 +1,7 @@
 <div class="photo">
+  <% if issue.respond_to?(:distance) %>
+    <div class="distance"><%= number_to_human issue.distance.to_i, units: :distance, precision: 2, significant: true, format: "%n%u" %></div>
+  <% end %>
   <figure>
     <div class="inside">
       <figure>

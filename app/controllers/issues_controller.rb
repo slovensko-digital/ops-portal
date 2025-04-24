@@ -9,7 +9,7 @@ class IssuesController < ApplicationController
     case @tab
     when "list"
         scope = scope.order(reported_at: :desc) # TODO
-        scope = scope.with_attached_photos.includes(:state)
+        scope = scope.with_attached_photos
 
         @search_results = search_engine.search(scope, params)
     when "map"
@@ -103,6 +103,24 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Hidden.new(
           param_name: :ulica,
           filter: ->(scope, params) { scope.where(address_street: params[:ulica]) }
+        ),
+
+        SearchEngine::Controls::Hidden.new(
+          param_name: :pin,
+          filter_label: "vzdialenosť do 500m",
+          filter: ->(scope, params) do
+            return scope unless params[:pin].present?
+
+            distance = 500
+
+            lat, lon = params[:pin].split(",", 2).map(&:to_f)
+
+            if params[:tab].blank? || params[:tab] == "list"
+              scope = scope.order_by_distance_from_point(lat, lon)
+            end
+
+            scope.within_distance_from_point(lat, lon, distance)
+          end
         ),
 
         SearchEngine::Controls::Dropdown.new(

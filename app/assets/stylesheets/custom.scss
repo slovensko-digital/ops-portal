@@ -100,3 +100,15 @@ form[aria-busy='true'] .button-add-picture {
 .form-item-wrapper input[type="search"]::-webkit-search-cancel-button {
     display: none;
 }
+
+.button.button-location {
+    display: none;
+}
+
+.button.button-location.geolocate-supported {
+    display: flex;
+}
+
+.button-location[aria-busy='true'] svg {
+    animation: rotate360 1500ms linear infinite;
+}
