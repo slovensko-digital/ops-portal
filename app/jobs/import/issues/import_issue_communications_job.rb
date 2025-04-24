@@ -13,7 +13,6 @@ module Import
               # author_email: legacy_record.email, # TODO skip emails for now
               author_name: legacy_record.signature,
               hidden: legacy_record.internal,
-              imported_at: Time.now,
               ip: legacy_record.ip,
               legacy_data: {
                 confirmation_needed: legacy_record.need_confirmation,
@@ -50,7 +49,6 @@ module Import
               email: Legacy::User.generate_dummy_email(legacy_record.user), # TODO skip emails for now
               # email: legacy_record.email, # TODO skip emails for now
               from_responsible_subject: legacy_record.direction,
-              imported_at: Time.now,
               internal: legacy_record.internal,
               ip: legacy_record.ip,
               message: legacy_record.message,
@@ -70,7 +68,7 @@ module Import
             )
             communication.activity ||= issue.legacy_communication_activities.create!
           end
-
+          communication.imported_at ||= Time.now
           communication.save!
 
           import_attachments_job.perform_later(communication: communication)

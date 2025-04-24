@@ -9,7 +9,6 @@ module Import
             legacy_id: legacy_record.id,
             email: Legacy::User.generate_dummy_email(legacy_record.updated_by), # TODO skip emails for now
             # email: legacy_record.email, # TODO skip emails for now
-            imported_at: Time.now,
             ip: legacy_record.ip,
             name: legacy_record.meno,
             published: legacy_record.status,
@@ -18,6 +17,7 @@ module Import
             author: Legacy::User.find_or_create_user(legacy_record.updated_by),
             confirmed_by: Legacy::User.find_or_create_user(legacy_record.confirmed_by)
           )
+          update.imported_at ||= Time.now
           update.activity ||= issue.update_activities.create!
           update.save!
 

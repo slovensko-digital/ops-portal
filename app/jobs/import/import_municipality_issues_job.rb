@@ -34,7 +34,6 @@ module Import
             address_municipality: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast)&.name,
             anonymous: legacy_record.anonymous,
             description: legacy_record.description,
-            imported_at: Time.now,
             latitude: legacy_record.map_x,
             legacy_data: {
               embed: legacy_record.embed,
@@ -87,7 +86,10 @@ module Import
             municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
             responsible_subject: Legacy::ResponsibleSubject.find_or_create_responsible_subject(legacy_record.zodpovednost),
             state: ::Issues::State.find_by(legacy_id: legacy_record.status)
-          )
+          ).tap do |issue|
+            issue.imported_at = Time.now
+            issue.save!
+          end
 
           import_photos_job.perform_later(issue: issue)
           import_updates_job.perform_later(issue: issue)

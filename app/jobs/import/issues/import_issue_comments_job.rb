@@ -17,7 +17,6 @@ module Import
             # author_email: legacy_record.email, # TODO skip emails for now
             author_name: legacy_record.meno,
             hidden: !legacy_record.is_published,
-            imported_at: Time.now,
             ip: legacy_record.ip,
             text: legacy_record.komentar,
             verification: legacy_record.verification,
@@ -26,6 +25,7 @@ module Import
             agent_author: Legacy::User.find_or_create_agent(legacy_record.user),
             type: comment_type
           )
+          comment.imported_at ||= Time.now
           comment.activity ||= issue.comment_activities.create!
           comment.save!
 
