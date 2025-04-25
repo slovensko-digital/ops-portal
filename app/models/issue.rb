@@ -14,12 +14,12 @@
 #  address_street           :string
 #  anonymous                :boolean
 #  description              :string           not null
+#  imported_at              :datetime
 #  issue_type               :integer          default("issue")
 #  last_synced_at           :datetime
 #  latitude                 :float
 #  legacy_data              :jsonb
 #  longitude                :float
-#  reported_at              :datetime         not null
 #  title                    :string           not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null

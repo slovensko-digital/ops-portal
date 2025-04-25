@@ -3,10 +3,10 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
-#  added_at                      :datetime
 #  author_email                  :string
 #  author_name                   :string
 #  hidden                        :boolean          default(FALSE)
+#  imported_at                   :datetime
 #  ip                            :inet
 #  legacy_data                   :jsonb
 #  text                          :string

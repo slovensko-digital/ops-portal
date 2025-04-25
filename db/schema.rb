@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_24_162554) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -226,7 +226,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
   create_table "issues", force: :cascade do |t|
     t.string "title", null: false
     t.string "description", null: false
-    t.datetime "reported_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "last_synced_at"
@@ -257,6 +256,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
     t.string "address_district"
     t.integer "resolution_external_id"
     t.index "((st_point(longitude, latitude, 4326))::geography)", name: "index_issues_on_location", using: :gist
+    t.datetime "imported_at"
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["legacy_id"], name: "index_issues_on_legacy_id", unique: true
@@ -296,7 +296,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
     t.bigint "activity_id", null: false
     t.string "author_name"
     t.string "author_email"
-    t.datetime "added_at"
     t.string "text"
     t.inet "ip"
     t.integer "verification"
@@ -310,6 +309,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
     t.boolean "hidden", default: false
     t.jsonb "legacy_data"
     t.string "type"
+    t.datetime "imported_at"
     t.index ["activity_id"], name: "index_issues_comments_on_activity_id"
     t.index ["agent_author_id"], name: "index_issues_comments_on_agent_author_id"
     t.index ["legacy_id"], name: "index_issues_comments_on_legacy_id", unique: true
@@ -399,13 +399,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
     t.string "email"
     t.string "text"
     t.bigint "confirmed_by_id"
-    t.datetime "added_at"
     t.boolean "published"
     t.inet "ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
     t.integer "triage_external_id"
+    t.datetime "imported_at"
     t.index ["activity_id"], name: "index_issues_updates_on_activity_id"
     t.index ["author_id"], name: "index_issues_updates_on_author_id"
     t.index ["confirmed_by_id"], name: "index_issues_updates_on_confirmed_by_id"
@@ -467,7 +467,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
     t.boolean "solved"
     t.boolean "solution_rejected"
     t.string "email"
-    t.datetime "added_at"
     t.inet "ip"
     t.boolean "internal"
     t.boolean "confirmation_needed"
@@ -480,6 +479,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_082339) do
     t.bigint "agent_author_id"
     t.bigint "responsible_subjects_user_author_id"
     t.string "type"
+    t.datetime "imported_at"
     t.index ["activity_id"], name: "index_legacy_issues_communications_on_activity_id"
     t.index ["agent_author_id"], name: "index_legacy_issues_communications_on_agent_author_id"
     t.index ["legacy_id"], name: "index_legacy_issues_communications_on_legacy_id", unique: true

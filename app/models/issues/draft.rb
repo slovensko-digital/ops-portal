@@ -78,7 +78,6 @@ class Issues::Draft < ApplicationRecord
       category: category,
       subcategory: subcategory,
       subtype: subtype,
-      reported_at: created_at,
       state: Issues::State.find_by(name: "Čakajúci"),
       municipality: municipality,
       municipality_district: municipality_district,

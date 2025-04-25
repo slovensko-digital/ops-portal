@@ -75,8 +75,8 @@ module Import
               legacy_responsible_subject_id: legacy_record.zodpovednost
             },
             longitude: legacy_record.map_y,
-            reported_at: convert_timestamp_value(legacy_record.posted_time), # TODO dolezity udaj pre triaz podnetu
             title: legacy_record.heading,
+            created_at: convert_timestamp_value(legacy_record.posted_time),
             author: Legacy::User.find_or_create_user(legacy_record.posted_by),
             owner: owner,
             category: category,
@@ -86,7 +86,10 @@ module Import
             municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
             responsible_subject: Legacy::ResponsibleSubject.find_or_create_responsible_subject(legacy_record.zodpovednost),
             state: ::Issues::State.find_by(legacy_id: legacy_record.status)
-          )
+          ).tap do |issue|
+            issue.imported_at = Time.now
+            issue.save!
+          end
 
           import_photos_job.perform_later(issue: issue)
           import_updates_job.perform_later(issue: issue)

@@ -77,7 +77,7 @@ class ZammadApiClient
         "value"=> issue.responsible_subject&.id
       },
       owner_id: owner_id,
-      created_at: issue.reported_at,
+      created_at: issue.created_at,
       likes_count: issue.votes.count,
       origin: DEFAULT_ORIGIN,
       article: {
@@ -92,7 +92,7 @@ class ZammadApiClient
           }
         end,
         sender: sender,
-        created_at: issue.reported_at
+        created_at: issue.created_at
       },
     )
 
@@ -185,7 +185,7 @@ class ZammadApiClient
           "data" => Base64.encode64(attachment.blob.download)
         }
       end,
-      created_at: activity_object.added_at,
+      created_at: activity_object.created_at,
       sender: sender
     )
 

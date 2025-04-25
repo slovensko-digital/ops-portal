@@ -3,8 +3,8 @@
 # Table name: issues_updates
 #
 #  id                 :bigint           not null, primary key
-#  added_at           :datetime
 #  email              :string
+#  imported_at        :datetime
 #  ip                 :inet
 #  name               :string
 #  published          :boolean

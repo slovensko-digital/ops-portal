@@ -3,10 +3,10 @@
 # Table name: legacy_issues_communications
 #
 #  id                                  :bigint           not null, primary key
-#  added_at                            :datetime
 #  confirmation_needed                 :boolean
 #  email                               :string
 #  from_responsible_subject            :boolean
+#  imported_at                         :datetime
 #  internal                            :boolean
 #  ip                                  :inet
 #  message                             :string

@@ -3,13 +3,13 @@
     {
       "warning_type": "Dynamic Render Path",
       "warning_code": 15,
-      "fingerprint": "35e32a0ae9c9b6ceb7f3b7bf8924fcdebc4fe2d71138ad7913ba2a4e1ed26733",
+      "fingerprint": "318b9a462d053ba64d19798a0f603d8924d8a628b4e51d13f1792cb7a585df96",
       "check_name": "Render",
       "message": "Render path contains parameter value",
       "file": "app/views/issues/index.html.erb",
-      "line": 21,
+      "line": 27,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => (search_engine.search(Issue.publicly_visible.order(:reported_at => :desc).with_attached_photos, params) or search_engine.stats(Issue.publicly_visible.order(:reported_at => :desc).with_attached_photos, params)).applied_filters, {})",
+      "code": "render(action => (search_engine.search(Issue.publicly_visible.order(:created_at => :desc).with_attached_photos, params) or search_engine.stats(Issue.publicly_visible.order(:created_at => :desc).with_attached_photos, params)).visible_filters, {})",
       "render_path": [
         {
           "type": "controller",
@@ -37,13 +37,13 @@
     {
       "warning_type": "Dynamic Render Path",
       "warning_code": 15,
-      "fingerprint": "5718d007cdf23a20cfc97a00b87fcd567a1a1190ba65c5b3d9ecd6844e7f7897",
+      "fingerprint": "82f7785a2fd4fb11cd14cee11db303a051392c10a5fd2674501a5cea843a3241",
       "check_name": "Render",
       "message": "Render path contains parameter value",
       "file": "app/views/issues/index.html.erb",
-      "line": 27,
+      "line": 21,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => (search_engine.search(Issue.publicly_visible.order(:reported_at => :desc).with_attached_photos, params) or search_engine.stats(Issue.publicly_visible.order(:reported_at => :desc).with_attached_photos, params)).visible_filters, {})",
+      "code": "render(action => (search_engine.search(Issue.publicly_visible.order(:created_at => :desc).with_attached_photos, params) or search_engine.stats(Issue.publicly_visible.order(:created_at => :desc).with_attached_photos, params)).applied_filters, {})",
       "render_path": [
         {
           "type": "controller",

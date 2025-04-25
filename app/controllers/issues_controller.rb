@@ -8,7 +8,7 @@ class IssuesController < ApplicationController
     scope = Issue.publicly_visible
     case @tab
     when "list"
-        scope = scope.order(reported_at: :desc) # TODO
+        scope = scope.order(created_at: :desc) # TODO
         scope = scope.with_attached_photos
 
         @search_results = search_engine.search(scope, params)
@@ -38,7 +38,7 @@ class IssuesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def issue_params
-    params.expect(issue: [ :title, :description, :author, :reported_at ])
+    params.expect(issue: [ :title, :description, :author, :created_at ])
   end
 
   private
