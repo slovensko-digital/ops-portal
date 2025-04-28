@@ -1,5 +1,5 @@
 class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
-  OPS_PORTAL_ARTICLE_TAG = ENV.fetch("OPS_PORTAL_ARTICLE_TAG", "[[ops portal]]")
+  OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
 
   def perform(ticket_id, article_id, triage_zammad_client: TriageZammadEnvironment.client)
     ticket = triage_zammad_client.get_ticket(ticket_id)

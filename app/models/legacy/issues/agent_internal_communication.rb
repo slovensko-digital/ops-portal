@@ -39,6 +39,6 @@ class Legacy::Issues::AgentInternalCommunication < Legacy::Issues::Communication
   end
 
   def triage_activity_body
-    [ ENV.fetch("RESPONSIBLE_SUBJECT_ARTICLE_TAG", "[[pre zodpovedny subjekt]]"), super ].join(" ")
+    [ TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG, super ].join(" ")
   end
 end

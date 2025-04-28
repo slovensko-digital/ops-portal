@@ -14,8 +14,8 @@ class ZammadApiClient
     lastname: "",
     uuid: "11111111-1111-1111-1111-111111111111"
   }
-  RESPONSIBLE_SUBJECT_ARTICLE_TAG = ENV.fetch("RESPONSIBLE_SUBJECT_ARTICLE_TAG", "[[pre zodpovedny subjekt]]")
-  OPS_PORTAL_ARTICLE_TAG = ENV.fetch("OPS_PORTAL_ARTICLE_TAG", "[[ops portal]]")
+  RESPONSIBLE_SUBJECT_ARTICLE_TAG = TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG
+  OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
 
   def initialize(url:, http_token:)
     @url = url
