@@ -12,9 +12,3 @@ amazon:
   secret_access_key: <%= ENV["AWS_S3_SECRET_ACCESS_KEY"] %>
   region: <%= ENV["AWS_S3_REGION"] %>
   bucket: <%= ENV["AWS_S3_BUCKET"] %>
-
-mirror:
-  service: Mirror
-  primary: local
-  mirrors:
-    - amazon
