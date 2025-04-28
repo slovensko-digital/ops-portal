@@ -59,5 +59,9 @@ jobs:
           DISCOURSE_URL: ${{ vars.DISCOURSE_URL }}
           DISCOURSE_API_USERNAME: ${{ vars.DISCOURSE_API_USERNAME }}
           DISCOURSE_IMPORT_CATEGORY_IDS: ${{ vars.DISCOURSE_IMPORT_CATEGORY_IDS }}
+          AWS_S3_REGION: ${{ vars.AWS_S3_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+          AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
 
         run: kamal deploy -d staging
