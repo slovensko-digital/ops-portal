@@ -437,7 +437,7 @@ class ZammadApiClient
     return if article.internal
 
     customer_article = article_from_customer?(article)
-    return unless customer_articles || customer_article
+    return if !customer_articles && customer_article
 
     portal_article = article_for_portal?(article, ticket, first_article: first_article)
     return unless portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
