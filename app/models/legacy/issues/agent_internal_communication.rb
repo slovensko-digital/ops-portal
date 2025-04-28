@@ -37,4 +37,8 @@ class Legacy::Issues::AgentInternalCommunication < Legacy::Issues::Communication
   def author
     agent_author
   end
+
+  def activity_body
+    [ENV.fetch("RESPONSIBLE_SUBJECT_ARTICLE_TAG", "[[pre zodpovedny subjekt]]"), super].join(' ')
+  end
 end

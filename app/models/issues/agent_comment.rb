@@ -28,4 +28,8 @@ class Issues::AgentComment < Issues::Comment
   def author
     agent_author
   end
+
+  def activity_body
+    [ENV.fetch("OPS_PORTAL_ARTICLE_TAG", "[[ops portal]]"), super].join(' ')
+  end
 end
