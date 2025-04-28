@@ -24,7 +24,7 @@ class Issues::Update < ApplicationRecord
 
   has_many_attached :attachments
 
-  def activity_body
+  def triage_activity_body
     text
   end
 end

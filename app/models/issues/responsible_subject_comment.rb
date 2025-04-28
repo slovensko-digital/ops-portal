@@ -29,7 +29,7 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
     responsible_subject_author
   end
 
-  def activity_body
+  def triage_activity_body
     [ENV.fetch("OPS_PORTAL_ARTICLE_TAG", "[[ops portal]]"), super].join(' ')
   end
 end

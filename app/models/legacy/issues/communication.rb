@@ -37,7 +37,7 @@ class Legacy::Issues::Communication < ApplicationRecord
 
   has_many_attached :attachments
 
-  def activity_body
+  def triage_activity_body
     message
   end
 
