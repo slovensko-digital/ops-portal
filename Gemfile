@@ -108,3 +108,5 @@ gem "kamal", "~> 2.5"
 gem "kaminari"
 
 gem "discourse_api"
+
+gem "aws-sdk-s3"
