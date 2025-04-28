@@ -38,6 +38,8 @@ class SyncIssueActivitiesToTriageJob < ApplicationJob
       "Customer"
     elsif user.is_a?(Legacy::Agent)
       "Agent"
+    elsif user.is_a?(NilClass)
+      "Customer"
     else
       raise "Unknown author type: #{user.class.name}"
     end

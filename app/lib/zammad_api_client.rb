@@ -132,18 +132,14 @@ class ZammadApiClient
 
     ticket.title = issue.title
     ticket.issue_type = issue.issue_type
-    ticket.municipality = build_ticket_municipality(issue)
-    ticket.address_lat = issue.latitude
-    ticket.address_lon = issue.longitude
-    ticket.address_county = issue.address_county
-    ticket.address_city = issue.address_city
-    ticket.address_city_district = issue.address_city_district
-    ticket.address_postcode = issue.address_postcode
-    ticket.address_suburb = issue.address_suburb
-    ticket.address_village = issue.address_village
-    ticket.address_town = issue.address_town
-    ticket.address_street =  issue.address_street
-    ticket.address_house_number = issue.address_house_number
+    ticket.address_state = issue.address_region, # TODO rename this?
+    ticket.address_county = issue.address_district, # TODO rename this?
+    ticket.address_municipality = build_ticket_municipality(issue),
+    ticket.address_postcode = issue.address_postcode,
+    ticket.address_street = issue.address_street,
+    ticket.address_house_number = issue.address_house_number,
+    ticket.address_lat = issue.latitude,
+    ticket.address_lon = issue.longitude,
     ticket.ops_state = issue.state.key
     ticket.likes_count = likes_count
 
