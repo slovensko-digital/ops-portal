@@ -30,6 +30,6 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   end
 
   def triage_activity_body
-    [ENV.fetch("OPS_PORTAL_ARTICLE_TAG", "[[ops portal]]"), super].join(' ')
+    [ ENV.fetch("OPS_PORTAL_ARTICLE_TAG", "[[ops portal]]"), super ].join(" ")
   end
 end
