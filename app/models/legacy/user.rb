@@ -3,6 +3,7 @@ module Legacy
     include ImportMethods
 
     def self.find_or_create_user(legacy_id)
+      return unless legacy_id
       return ::User.find_by(legacy_id: legacy_id) if ::User.find_by(legacy_id: legacy_id)
 
       legacy_record = Legacy::OldUser.where(rights: "U").find_by_id(legacy_id)
@@ -10,6 +11,7 @@ module Legacy
     end
 
     def self.find_or_create_agent(legacy_id)
+      return unless legacy_id
       return Legacy::Agent.find_by(legacy_id: legacy_id) if Legacy::Agent.find_by(legacy_id: legacy_id)
 
       legacy_record = Legacy::OldUser.where(rights: %w[A Ax]).find_by_id(legacy_id)
@@ -17,6 +19,7 @@ module Legacy
     end
 
     def self.find_or_create_responsible_subjects_user(legacy_id)
+      return unless legacy_id
       return ::ResponsibleSubjects::User.find_by(legacy_id: legacy_id) if ::ResponsibleSubjects::User.find_by(legacy_id: legacy_id)
 
       legacy_record = Legacy::MunicipalityUser.find_by_id(legacy_id)

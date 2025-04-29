@@ -13,6 +13,7 @@ env:
   # The dummy values are used to ensure that kamal can parse the config when calling exec commands from developer machines without the real values.
   clear:
     RAILS_ENV: production
+    ROLLBAR_ENV: dev
     RAILS_LOG_LEVEL: debug
     LEGACY_PORTAL_URL: <%= ENV.fetch("LEGACY_PORTAL_URL", "dummy") %>
     CONNECTOR__OPS_API_URL: <%= ENV.fetch("CONNECTOR__OPS_API_URL", "dummy") %>
