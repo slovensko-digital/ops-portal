@@ -396,7 +396,7 @@ class ZammadApiClient
 
     category = Issues::Category.find_by(name: ticket.category) || Issues::Category.find_by(triage_external_id: ticket.category)
     subcategory = category&.subcategories&.find_by!(name: ticket.subcategory)
-    subtype = subcategory&.subtypes&.find_by!(name: ticket.subtype)
+    subtype = subcategory&.subtypes&.find_by(name: ticket.subtype)
 
     ops_state = Issues::State.find_by!(key: ticket.ops_state)
 
@@ -440,7 +440,7 @@ class ZammadApiClient
     return if !customer_articles && customer_article
 
     portal_article = article_for_portal?(article, ticket, first_article: first_article)
-    return unless portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
+    return unless customer_article || portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
 
     return if article.sender != "Agent" && !customer_article && exclude_responsible_subject_articles
 
