@@ -10,7 +10,7 @@ class Connector::ImportResponsibleSubjectActivityToBackofficeJob < ApplicationJo
 
       raise "Activity not synced to triage! #{activity.id}" unless activity.activity_object.triage_external_id.present?
 
-      zammad_client.find_or_create_article_from_activity_object!(issue, activity.activity_object, sender: "Agent")
+      zammad_client.find_or_create_article_from_activity_object!(issue, activity.activity_object, internal: activity.activity_object.internal?, sender: "Agent")
     end
   end
 

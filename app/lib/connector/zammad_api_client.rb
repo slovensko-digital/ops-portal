@@ -107,7 +107,7 @@ module Connector
       end
     end
 
-    def find_or_create_article_from_activity_object!(issue, activity_object, sender:)
+    def find_or_create_article_from_activity_object!(issue, activity_object, internal:, sender:)
       ticket = find_ticket_for_issue!(issue)
 
       article = @tenant.activities.find_by(triage_external_id: activity_object.triage_external_id)
@@ -118,7 +118,7 @@ module Connector
         content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
         body: activity_object.backoffice_activity_body,
         type: DEFAULT_ARTICLE_TYPE,
-        internal: false, # TODO ?
+        internal: internal,
         triage_created_at: activity_object.created_at,
         attachments: activity_object.attachments.map do |attachment|
           {
