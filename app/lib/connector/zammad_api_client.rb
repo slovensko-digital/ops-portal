@@ -5,10 +5,12 @@ module Connector
     # TODO
     ANONYMOUS_USER_ID = 1
     DEFAULT_GROUP = "Incoming"
-    IMPORT_GROUP = "Import Odkaz pre starostu"
+    IMPORT_GROUP = "Stará verzia Odkaz pre starostu"
     DEFAULT_STATE = "new"
     DEFAULT_SENDER = "Customer"
     OPS_ORIGIN = "ops"
+    DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
+    DEFAULT_ARTICLE_TYPE = "web"
 
     def initialize(tenant)
       @token = tenant.backoffice_api_token
@@ -105,6 +107,47 @@ module Connector
       end
     end
 
+    def find_or_create_article_from_activity_object!(issue, activity_object, sender:)
+      ticket = find_ticket_for_issue!(issue)
+
+      article = @tenant.activities.find_by(triage_external_id: activity_object.triage_external_id)
+      return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
+
+      new_article = ticket.article(
+        origin_by_id: create_or_find_agent(activity_object.backoffice_author),
+        content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
+        body: activity_object.backoffice_activity_body,
+        type: DEFAULT_ARTICLE_TYPE,
+        internal: false, # TODO ?
+        triage_created_at: activity_object.created_at,
+        attachments: activity_object.attachments.map do |attachment|
+          {
+            "filename" => attachment.filename,
+            "mime-type" => attachment.content_type,
+            "data" => Base64.encode64(attachment.blob.download)
+          }
+        end,
+        sender: sender,
+        created_at: activity_object.created_at
+      )
+
+      # TODO custom error
+      raise unless new_article.id
+
+      @tenant.activities.create!(triage_external_id: activity_object.triage_external_id, backoffice_external_id: new_article.id)
+      new_article
+    end
+
+    def set_ticket_owner(issue)
+      ticket = find_ticket_for_issue!(issue)
+
+      user_id = create_or_find_agent(issue.backoffice_owner)
+      add_user_to_group(user_id, IMPORT_GROUP)
+
+      ticket.owner_id = user_id
+      ticket.save
+    end
+
     def check_import_mode!
       response_body = raw_api_request(:get, "settings")
       import_mode_on = response_body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
@@ -132,6 +175,26 @@ module Connector
       zammad_identifier
     end
 
+    def create_or_find_agent(author)
+      return ANONYMOUS_USER_ID unless author
+
+      # TODO fix
+      user = @tenant.users.find_or_initialize_by(firstname: author.name)
+      # user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
+      return user.external_id unless user.new_record?
+
+      zammad_identifier = find_or_create_user!(
+        firstname: author.name,
+        login: SecureRandom.uuid, # TODO change
+        # login: author.login,
+        roles: [ "Agent" ],
+      ).id
+
+      user.update(external_id: zammad_identifier)
+
+      zammad_identifier
+    end
+
     def find_zammad_user(query)
       # searches user by email, firstname, lastname and login
       @client.user.search(query: query).first
@@ -148,6 +211,20 @@ module Connector
         raise "Can't find nor create zammad user with email: #{user_params["email"]}" unless zammad_user
         zammad_user
       end
+    end
+
+    def add_user_to_group(user_identifier, group_name)
+      user = get_user(user_identifier)
+      user_groups = user.groups
+      user_groups[group_name] = "full"
+      user.groups = user_groups
+
+      user.save
+    end
+
+    def find_ticket_for_issue!(issue)
+      ticket = @tenant.issues.find_by(triage_external_id: issue.triage_external_id)
+      @client.ticket.find(ticket.backoffice_external_id)
     end
 
     def find_or_create_ticket!(issue, state:, group:)
@@ -233,6 +310,10 @@ module Connector
 
       @tenant.activities.create!(triage_external_id: activity["triage_identifier"], backoffice_external_id: new_article.id)
       new_article
+    end
+
+    def get_user(identifier)
+      @client.user.find identifier
     end
 
     def raw_api_request(method, endpoint, params = {})

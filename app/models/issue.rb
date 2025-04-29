@@ -71,6 +71,11 @@ class Issue < ApplicationRecord
     @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
   end
 
+  # TODO
+  def backoffice_owner
+    nil
+  end
+
   def should_create_resolution_process?
     return false if resolution_external_id.present?
 

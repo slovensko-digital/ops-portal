@@ -37,4 +37,12 @@ class Legacy::Issues::ResponsibleSubjectInternalCommunication < Legacy::Issues::
   def author
     responsible_subjects_user_author
   end
+
+  def backoffice_author
+    Legacy::User.find_or_create_responsible_subjects_user(user_id)
+  end
+
+  def backoffice_activity_body
+    message
+  end
 end
