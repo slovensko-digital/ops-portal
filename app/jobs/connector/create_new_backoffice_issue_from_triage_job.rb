@@ -5,8 +5,9 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     import: false,
     zammad_api_client: Connector::ZammadApiClient,
     ops_api_client: Connector::OpsApiClient,
-    import_responsible_subject_activity_job: ImportResponsibleSubjectActivityToBackofficeJob,
-    set_ticket_owner_job: SetBackofficeTicketOwnerJob
+    import_responsible_subject_activity_job: Connector::ImportResponsibleSubjectActivityToBackofficeJob,
+    import_private_backoffice_activity_job: Connector::ImportPrivateBackofficeActivityToBackofficeJob,
+    set_ticket_owner_job: Connector::SetBackofficeTicketOwnerJob
   )
     ops_client = ops_api_client.new(tenant)
     zammad_client = zammad_api_client.new(tenant)
@@ -26,7 +27,8 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
 
     if import
       import_responsible_subject_activity_job.perform_later(tenant, issue_id)
-      set_ticket_owner_job.perform_later(tenant. issue_id)
+      import_private_backoffice_activity_job.perform_later(tenant, issue_id)
+      set_ticket_owner_job.perform_later(tenant, issue_id)
     end
   end
 

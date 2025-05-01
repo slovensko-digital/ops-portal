@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_24_162554) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_30_053948) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -85,6 +85,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_162554) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "connector_tenant_id", null: false
+    t.integer "legacy_id"
     t.index ["backoffice_external_id"], name: "index_connector_activities_on_backoffice_external_id"
     t.index ["connector_tenant_id"], name: "index_connector_activities_on_connector_tenant_id"
     t.index ["triage_external_id"], name: "index_connector_activities_on_triage_external_id"
@@ -96,6 +97,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_162554) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "connector_tenant_id", null: false
+    t.integer "legacy_id"
     t.index ["backoffice_external_id"], name: "index_connector_issues_on_backoffice_external_id"
     t.index ["connector_tenant_id"], name: "index_connector_issues_on_connector_tenant_id"
     t.index ["triage_external_id"], name: "index_connector_issues_on_triage_external_id"

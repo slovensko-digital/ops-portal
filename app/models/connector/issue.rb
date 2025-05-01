@@ -7,6 +7,7 @@
 #  updated_at             :datetime         not null
 #  backoffice_external_id :integer
 #  connector_tenant_id    :bigint           not null
+#  legacy_id              :integer
 #  triage_external_id     :integer
 #
 class Connector::Issue < ApplicationRecord

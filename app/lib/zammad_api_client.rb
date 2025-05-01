@@ -358,6 +358,10 @@ class ZammadApiClient
     @client.user.search(query: query).first
   end
 
+  def find_zammad_user_by_id(id)
+    @client.user.find(id)
+  end
+
   def get_author(user_id, anonymous: false)
     return if anonymous
 
@@ -496,7 +500,7 @@ class ZammadApiClient
     return false if article.internal
     return false unless article.sender == "Customer"
 
-    find_zammad_user(article.origin_by)&.origin == "portal"
+    find_zammad_user_by_id(article.origin_by_id)&.origin == "portal" if article.origin_by_id
   end
 
   def article_from_responsible_subject?(article, responsible_subject)
