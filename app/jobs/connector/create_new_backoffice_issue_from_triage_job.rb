@@ -7,8 +7,8 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     import: false,
     zammad_api_client: Connector::ZammadApiClient,
     ops_api_client: Connector::OpsApiClient,
-    import_legacy_backoffice_activity_job: Connector::Legacy::ImportBackofficeActivityToBackofficeJob,
-    import_legacy_private_backoffice_activity_job: Connector::Legacy::ImportPrivateBackofficeActivityToBackofficeJob,
+    import_legacy_backoffice_activity_job: Connector::Legacy::ImportBackofficeActivityFromTriageToBackofficeJob,
+    import_legacy_private_backoffice_activity_job: Connector::Legacy::ImportInternalBackofficeActivityFromLegacyDbToBackofficeJob,
     set_ticket_owner_job: Connector::SetBackofficeTicketOwnerJob
   )
     ops_client = ops_api_client.new(tenant)

@@ -1,11 +1,11 @@
-class Connector::Legacy::ImportPrivateBackofficeIssuesToBackofficeJob < ApplicationJob
+class Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob < ApplicationJob
   include ImportMethods
 
   def perform(
     tenant,
     import_since: Date.parse("2020-01-01").beginning_of_day,
     zammad_api_client: Connector::ZammadApiClient,
-    import_activities_job: Connector::Legacy::ImportPrivateBackofficeIssueActivityToBackofficeJob
+    import_activities_job: Connector::Legacy::ImportManualBackofficeAlertsActivityFromLegacyDbToBackofficeJob
   )
     zammad_client = zammad_api_client.new(tenant)
     zammad_client.check_import_mode!

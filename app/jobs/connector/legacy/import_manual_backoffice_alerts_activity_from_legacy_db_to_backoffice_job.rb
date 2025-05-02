@@ -1,4 +1,4 @@
-class Connector::Legacy::ImportPrivateBackofficeIssueActivityToBackofficeJob < ApplicationJob
+class Connector::Legacy::ImportManualBackofficeAlertsActivityFromLegacyDbToBackofficeJob < ApplicationJob
   include ImportMethods
 
   def perform(tenant, legacy_issue_id, zammad_api_client: Connector::ZammadApiClient)
