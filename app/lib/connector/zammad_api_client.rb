@@ -167,6 +167,54 @@ module Connector
       new_article
     end
 
+    def find_or_create_ticket_from_legacy_record!(legacy_data, state:, group:)
+      tenant_issue = @tenant.issues.find_by(legacy_id: legacy_data.id)
+      return @client.ticket.find(tenant_issue.backoffice_external_id) if tenant_issue
+
+      tmp_body = {
+        state: state,
+        group: group,
+        origin: "internal", # TODO aky origin pre interne backoffice tickety?
+        title: legacy_data.title,
+        ops_issue_type: "internal_issue_resolution",  # TODO aky typ issue pre interne backoffice tickety?
+        ops_responsible_subject: {
+          "label"=> legacy_data.responsible_subject&.subject_name,
+          "value"=> legacy_data.responsible_subject&.id
+        },
+        ops_category: legacy_data.category&.name,
+        ops_subcategory: legacy_data.subcategory&.name,
+        ops_subtype: legacy_data.subtype&.name,
+        address_municipality: legacy_data.municipality&.name,
+        address_municipality_district: legacy_data.municipality_district.name,
+        address_street: legacy_data.address_street,
+        address_lat: legacy_data.latitude,
+        address_lon: legacy_data.longitude,
+        created_at: legacy_data.created_at,
+        customer_id: create_or_find_agent(legacy_data.author),
+        owner_id: create_or_find_agent(legacy_data.owner),
+        article: {
+          body: legacy_data.description.presence || "(bez popisu)",
+          type: DEFAULT_ARTICLE_TYPE,
+          internal: legacy_data.internal,
+          attachments: legacy_data.attachments.map do |attachment|
+            {
+              "filename" => attachment.filename,
+              "mime-type" => attachment.mimetype,
+              "data" => Base64.encode64(attachment.content.read)
+            }
+          end,
+          created_at: legacy_data.created_at
+        }
+      }
+
+      new_ticket = @client.ticket.create(tmp_body)
+      # TODO custom error
+      raise unless new_ticket.id
+
+      @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
+      new_ticket
+    end
+
     def set_ticket_owner(issue)
       ticket = find_ticket_for_issue!(issue)
 
