@@ -16,7 +16,8 @@
 #  updated_at                    :datetime         not null
 #  activity_id                   :bigint           not null
 #  agent_author_id               :bigint
-#  legacy_id                     :integer
+#  legacy_comment_id             :integer
+#  legacy_communication_id       :integer
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint

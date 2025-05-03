@@ -31,7 +31,7 @@
 #  subtype_id              :bigint
 #
 class Issues::Draft < ApplicationRecord
-  has_many_attached :photos do |photo|
+  has_many_attached :photos, service: :draft_attachments do |photo|
     photo.variant :llm, resize_to_limit: [ 800, 600 ], preprocessed: true
     photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
     photo.variant :square, resize_to_fill: [ 320, 320 ], preprocessed: true
@@ -86,8 +86,15 @@ class Issues::Draft < ApplicationRecord
     # TODO delete draft after success
     self.update_attribute(:submitted, true)
 
+    # TODO consider moving to background job
     photos.each do |photo|
-      issue.photos.append photo
+      # move attachments between different storage services
+      io = StringIO.new(photo.download)
+      issue.photos.attach(
+        io: io,
+        filename: photo.filename,
+        content_type: photo.content_type
+      )
     end
 
     SyncIssueToTriageJob.perform_later(issue)

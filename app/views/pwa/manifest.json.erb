@@ -1,22 +1,50 @@
 {
-  "name": "Ops",
+  "name": "Odkazprestarostu.sk",
+  "short_name": "OPS",
+  "description": "Je vo vašom okolí potrebné niečo vyriešiť? Odfoťte, odošlite a sledujte riešenie podnetu samosprávou.",
   "icons": [
     {
-      "src": "/icon.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "src": "<%= image_url("apple-touch-icons/apple-touch-icon-512.png") %>",
+      "sizes": "512x512",
+      "type": "image/png"
     },
     {
-      "src": "/icon.png",
-      "type": "image/png",
+      "src": "<%= image_url("apple-touch-icons/apple-touch-icon-512.png") %>",
       "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
   "start_url": "/",
   "display": "standalone",
   "scope": "/",
-  "description": "Ops.",
-  "theme_color": "red",
-  "background_color": "red"
+  "theme_color": "#fff",
+  "background_color": "#fff",
+  "shortcuts": [
+    {
+      "name": "Vytvoriť nový podnet",
+      "short_name": "Nový podnet",
+      "url": "<%= new_issues_draft_url %>"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "<%= image_url("pwa/screenshot-1.png") %>",
+      "type": "image/png",
+      "sizes": "720x1600",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "<%= image_url("pwa/screenshot-2.png") %>",
+      "type": "image/png",
+      "sizes": "720x1600",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "<%= image_url("pwa/screenshot-3.png") %>",
+      "type": "image/png",
+      "sizes": "720x1600",
+      "form_factor": "narrow"
+    }
+  ]
 }

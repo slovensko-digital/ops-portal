@@ -12,7 +12,7 @@ module Import
           end
 
           comment = ::Issues::Comment.find_or_initialize_by(
-            legacy_id: legacy_record.id,
+            legacy_comment_id: legacy_record.id,
             author_email: Legacy::User.generate_dummy_email(legacy_record.user.to_i), # TODO skip emails for now
             # author_email: legacy_record.email, # TODO skip emails for now
             author_name: legacy_record.meno,
