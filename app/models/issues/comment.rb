@@ -30,6 +30,10 @@ class Issues::Comment < ApplicationRecord
 
   has_many_attached :attachments
 
+  def legacy_id
+    legacy_comment_id || legacy_communication_id
+  end
+
   def triage_activity_body
     return "Zmazaný komentár: #{text}" if hidden
 
