@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_24_162554) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -301,7 +301,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_162554) do
     t.integer "verification"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "legacy_id"
     t.integer "triage_external_id"
     t.bigint "user_author_id"
     t.bigint "agent_author_id"
@@ -310,9 +309,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_162554) do
     t.jsonb "legacy_data"
     t.string "type"
     t.datetime "imported_at"
+    t.integer "legacy_comment_id"
+    t.integer "legacy_communication_id"
     t.index ["activity_id"], name: "index_issues_comments_on_activity_id"
     t.index ["agent_author_id"], name: "index_issues_comments_on_agent_author_id"
-    t.index ["legacy_id"], name: "index_issues_comments_on_legacy_id", unique: true
+    t.index ["legacy_comment_id"], name: "index_issues_comments_on_legacy_comment_id", unique: true
+    t.index ["legacy_communication_id"], name: "index_issues_comments_on_legacy_communication_id", unique: true
     t.index ["responsible_subject_author_id"], name: "index_issues_comments_on_responsible_subject_author_id"
     t.index ["user_author_id"], name: "index_issues_comments_on_user_author_id"
   end

@@ -16,7 +16,8 @@
 #  updated_at                    :datetime         not null
 #  activity_id                   :bigint           not null
 #  agent_author_id               :bigint
-#  legacy_id                     :integer
+#  legacy_comment_id             :integer
+#  legacy_communication_id       :integer
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
@@ -28,6 +29,10 @@ class Issues::Comment < ApplicationRecord
   belongs_to :responsible_subject_author, class_name: "ResponsibleSubject", optional: true
 
   has_many_attached :attachments
+
+  def legacy_id
+    legacy_comment_id || legacy_communication_id
+  end
 
   def triage_activity_body
     return "Zmazaný komentár: #{text}" if hidden
