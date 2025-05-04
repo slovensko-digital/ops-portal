@@ -1,5 +1,5 @@
 class IssuesController < ApplicationController
-  before_action :set_issue, only: %i[ show destroy ]
+  before_action :set_issue, only: %i[ show ]
 
   # GET /issues or /issues.json
   def index
@@ -21,12 +21,9 @@ class IssuesController < ApplicationController
 
   # GET /issues/1 or /issues/1.json
   def show
-  end
-
-  # DELETE /issues/1 or /issues/1.json
-  def destroy
-    @issue.destroy!
-    redirect_to issues_path, status: :see_other, notice: "Issue was successfully destroyed."
+    @activity_objects = @issue.activities
+      .includes(:activity_object)
+      .order(created_at: :asc).map(&:activity_object).select(&:visible?)
   end
 
   private

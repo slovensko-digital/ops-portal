@@ -30,7 +30,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :issues, path: "dopyty"
+  resources :issues, path: "dopyty" do
+    resource :issue_like, as: :like
+    resource :issue_subscription, as: :subscription
+    resources :issues_user_comments, path: "komentare", module: :issues
+  end
+
   namespace :issues, path: "dopyty" do
     resources :drafts, path: "novy-podnet" do
       post :confirm
@@ -51,12 +56,20 @@ Rails.application.routes.draw do
         resource :subtype
       end
     end
+
+    resources :activities do
+      resource :activity_vote, as: :vote
+    end
   end
+
+  resources :uploads
 
   resources :questions, path: "otazky", path_names: { new: "nova" }
   resources :praises, path: "pochvaly", path_names: { new: "nova" }
 
   resource :profile
+
+  resources :users, path: "pouzivatelia"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

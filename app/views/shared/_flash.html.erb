@@ -1,11 +1,13 @@
-<section class="section-flash">
-<% if notice %>
-  <div class="flash notice">
-    <%= flash[:notice] %>
-  </div>
-<% elsif alert %>
-  <div class="flash alert">
-    <%= flash[:alert] %>
-  </div>
+<% if flash.any? %>
+  <section class="section-flash">
+    <% if notice %>
+      <div class="flash notice">
+        <%= flash[:notice] %>
+      </div>
+    <% elsif alert %>
+      <div class="flash alert">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+  </section>
 <% end %>
-</section>

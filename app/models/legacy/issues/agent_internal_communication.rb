@@ -41,4 +41,8 @@ class Legacy::Issues::AgentInternalCommunication < Legacy::Issues::Communication
   def triage_activity_body
     [ TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG, super ].join(" ")
   end
+
+  def visible?
+    false
+  end
 end

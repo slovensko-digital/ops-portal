@@ -223,6 +223,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
     t.index ["scheduled_at"], name: "index_good_jobs_on_scheduled_at", where: "(finished_at IS NULL)"
   end
 
+  create_table "issue_likes", force: :cascade do |t|
+    t.bigint "issue_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_id", "user_id"], name: "index_issue_likes_on_issue_id_and_user_id", unique: true
+    t.index ["issue_id"], name: "index_issue_likes_on_issue_id"
+    t.index ["user_id"], name: "index_issue_likes_on_user_id"
+  end
+
+  create_table "issue_subscriptions", force: :cascade do |t|
+    t.bigint "issue_id", null: false
+    t.bigint "subscriber_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_id", "subscriber_id"], name: "index_issue_subscriptions_on_issue_id_and_subscriber_id", unique: true
+    t.index ["issue_id"], name: "index_issue_subscriptions_on_issue_id"
+    t.index ["subscriber_id"], name: "index_issue_subscriptions_on_subscriber_id"
+  end
+
   create_table "issues", force: :cascade do |t|
     t.string "title", null: false
     t.string "description", null: false
@@ -255,8 +275,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
     t.string "address_country_code"
     t.string "address_district"
     t.integer "resolution_external_id"
-    t.index "((st_point(longitude, latitude, 4326))::geography)", name: "index_issues_on_location", using: :gist
+    t.integer "likes_count", default: 0, null: false
     t.datetime "imported_at"
+    t.index "((st_point(longitude, latitude, 4326))::geography)", name: "index_issues_on_location", using: :gist
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
     t.index ["legacy_id"], name: "index_issues_on_legacy_id", unique: true
@@ -274,7 +295,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
     t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "likes_count", default: 0, null: false
+    t.integer "dislikes_count", default: 0, null: false
     t.index ["issue_id"], name: "index_issues_activities_on_issue_id"
+  end
+
+  create_table "issues_activity_votes", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.bigint "voter_id", null: false
+    t.integer "vote", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_id", "voter_id"], name: "index_issues_activity_votes_on_activity_id_and_voter_id", unique: true
+    t.index ["activity_id"], name: "index_issues_activity_votes_on_activity_id"
+    t.index ["voter_id"], name: "index_issues_activity_votes_on_voter_id"
   end
 
   create_table "issues_categories", force: :cascade do |t|
@@ -719,6 +753,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
   add_foreign_key "connector_activities", "connector_tenants"
   add_foreign_key "connector_issues", "connector_tenants"
   add_foreign_key "connector_users", "connector_tenants"
+  add_foreign_key "issue_likes", "issues"
+  add_foreign_key "issue_likes", "users"
+  add_foreign_key "issue_subscriptions", "issues", on_delete: :cascade
+  add_foreign_key "issue_subscriptions", "users", column: "subscriber_id", on_delete: :cascade
   add_foreign_key "issues", "issues_categories", column: "category_id"
   add_foreign_key "issues", "issues_states", column: "state_id"
   add_foreign_key "issues", "issues_subcategories", column: "subcategory_id"
@@ -728,6 +766,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
   add_foreign_key "issues", "responsible_subjects"
   add_foreign_key "issues", "users", column: "author_id"
   add_foreign_key "issues_activities", "issues"
+  add_foreign_key "issues_activity_votes", "issues_activities", column: "activity_id", on_delete: :cascade
+  add_foreign_key "issues_activity_votes", "users", column: "voter_id", on_delete: :cascade
   add_foreign_key "issues_comments", "issues_activities", column: "activity_id"
   add_foreign_key "issues_comments", "legacy_agents", column: "agent_author_id"
   add_foreign_key "issues_comments", "responsible_subjects", column: "responsible_subject_author_id"
