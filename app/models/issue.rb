@@ -42,7 +42,7 @@ class Issue < ApplicationRecord
   enum :issue_type, { issue: 1, question: 2, praise: 3 }, default: :issue
   # TODO add triage_draft_external_id - este premenovat
 
-  belongs_to :author, class_name: "User"
+  belongs_to :author, class_name: "User", optional: true
   belongs_to :owner, class_name: "Legacy::Agent", optional: true # TODO drop after legacy import
   belongs_to :category, class_name: "Issues::Category"
   belongs_to :subcategory, class_name: "Issues::Subcategory", optional: true
