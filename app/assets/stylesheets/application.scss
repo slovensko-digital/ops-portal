@@ -1165,7 +1165,8 @@ section.report .report-map-con .search-con form button:hover {
 }
 
 
-section.report .report-summary-block-con {
+section.report .report-summary-block-con,
+.podnet-edit {
   display: flex;
   flex-direction: column;
   gap: 20px;
