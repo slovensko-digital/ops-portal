@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_05_105243) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -489,16 +489,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_105243) do
     t.index ["street_id"], name: "index_legacy_agents_on_street_id"
   end
 
-  create_table "legacy_issue_subscriptions", force: :cascade do |t|
-    t.bigint "issue_id", null: false
-    t.bigint "subscriber_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["issue_id", "subscriber_id"], name: "index_legacy_issue_subscriptions_on_issue_id_and_subscriber_id", unique: true
-    t.index ["issue_id"], name: "index_legacy_issue_subscriptions_on_issue_id"
-    t.index ["subscriber_id"], name: "index_legacy_issue_subscriptions_on_subscriber_id"
-  end
-
   create_table "legacy_issues_communications", force: :cascade do |t|
     t.bigint "activity_id", null: false
     t.boolean "from_responsible_subject"
@@ -793,8 +783,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_105243) do
   add_foreign_key "issues_updates", "users", column: "confirmed_by_id"
   add_foreign_key "legacy_agents", "municipalities"
   add_foreign_key "legacy_agents", "streets"
-  add_foreign_key "legacy_issue_subscriptions", "issues", on_delete: :cascade
-  add_foreign_key "legacy_issue_subscriptions", "legacy_agents", column: "subscriber_id", on_delete: :cascade
   add_foreign_key "legacy_issues_communications", "issues_activities", column: "activity_id"
   add_foreign_key "legacy_issues_communications", "legacy_agents", column: "agent_author_id"
   add_foreign_key "legacy_issues_communications", "responsible_subjects_users", column: "responsible_subjects_user_author_id"

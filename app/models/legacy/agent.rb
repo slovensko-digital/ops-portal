@@ -42,7 +42,6 @@
 class Legacy::Agent < ApplicationRecord
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true
-  has_many :issue_subscriptions, foreign_key: :subscriber_id
 
   enum :rights, ops_admin: 1, municipality_admin: 2
   enum :sex, m: 1, f: 2
