@@ -8,7 +8,7 @@ module Import
       import_updates_job: Issues::ImportIssueUpdatesJob,
       import_comments_job: Issues::ImportIssueCommentsJob,
       import_communications_job: Issues::ImportIssueCommunicationsJob,
-      import_subscriptions_job: ImportIssueSubscriptionsJob
+      import_subscriptions_job: Issues::ImportIssueSubscriptionsJob
     )
       subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
       subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)

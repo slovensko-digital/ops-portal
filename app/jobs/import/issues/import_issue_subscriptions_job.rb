@@ -1,5 +1,5 @@
 module Import
-  class ImportIssueSubscriptionsJob < ApplicationJob
+  class Issues::ImportIssueSubscriptionsJob < ApplicationJob
     include ImportMethods
 
     def perform(issue:)
