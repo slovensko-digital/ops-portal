@@ -3,6 +3,7 @@
 # Table name: connector_users
 #
 #  id                  :bigint           not null, primary key
+#  email               :string
 #  firstname           :string
 #  lastname            :string
 #  uuid                :uuid

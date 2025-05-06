@@ -4,6 +4,7 @@ module Import
 
     def perform(
       legacy_record,
+      import_backoffice_owner_job: Issues::ImportIssueBackofficeOwnerJob,
       import_photos_job: Issues::ImportIssuePhotosJob,
       import_updates_job: Issues::ImportIssueUpdatesJob,
       import_comments_job: Issues::ImportIssueCommentsJob,
@@ -85,6 +86,7 @@ module Import
         issue.save!
       end
 
+      import_backoffice_owner_job.perform_later(issue: issue)
       import_photos_job.perform_later(issue: issue)
       import_updates_job.perform_later(issue: issue)
       import_comments_job.perform_later(issue: issue)

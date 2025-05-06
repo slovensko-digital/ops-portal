@@ -225,8 +225,32 @@ module Connector
       ticket.save
     end
 
+    def subscribe_ticket(agent, issue)
+      ticket = find_ticket_for_issue!(issue)
+
+      agent_id = create_or_find_agent(agent)
+
+      raise "Agent not found in backoffice!" unless agent_id
+
+      add_user_to_group(agent_id, IMPORT_GROUP)
+
+      _, response_status = raw_api_request(
+        :post,
+        "mentions",
+        params: {
+          mentionable_id: ticket.id,
+          mentionable_type: "Ticket"
+        },
+        headers: {
+          "From": agent_id.to_s
+        }
+      )
+
+      raise "Ticket subscription not successful!" unless response_status == 201
+    end
+
     def check_import_mode!
-      response_body = raw_api_request(:get, "settings")
+      response_body, _ = raw_api_request(:get, "settings")
       import_mode_on = response_body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
 
       raise "Import mode OFF" unless import_mode_on
@@ -255,19 +279,16 @@ module Connector
     def create_or_find_agent(author)
       return ANONYMOUS_USER_ID unless author
 
-      # TODO fix
-      user = @tenant.users.find_or_initialize_by(firstname: author.name)
-      # user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
+      user = @tenant.users.find_or_initialize_by(email: author.email)
       return user.external_id unless user.new_record?
 
       zammad_identifier = find_or_create_user!(
         firstname: author.name,
-        login: SecureRandom.uuid, # TODO change
-        # login: author.login,
+        email: author.email,
         roles: [ "Agent" ],
       ).id
 
-      user.update(external_id: zammad_identifier)
+      user.update(firstname: author.name, external_id: zammad_identifier)
 
       zammad_identifier
     end
@@ -393,7 +414,7 @@ module Connector
       @client.user.find identifier
     end
 
-    def raw_api_request(method, endpoint, params = {})
+    def raw_api_request(method, endpoint, params: {}, headers: {})
       url = File.join(@url, "api/v1/", endpoint)
       connection = Faraday.new(url: url) do |conn|
         conn.request :json
@@ -402,6 +423,7 @@ module Connector
       end
 
       response = connection.send(method) do |req|
+        req.headers.merge!(headers)
         req.headers["Authorization"] = "Token token=#{@token}"
         req.body = params.to_json unless params.empty?
       end
@@ -411,7 +433,7 @@ module Connector
     else
       raise "Request failed with status #{response.status}" unless response.status < 400
 
-      response.body
+      [ response.body, response.status ]
     end
   end
 end

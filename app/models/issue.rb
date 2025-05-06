@@ -19,6 +19,7 @@
 #  last_synced_at           :datetime
 #  latitude                 :float
 #  legacy_data              :jsonb
+#  likes_count              :integer          default(0), not null
 #  longitude                :float
 #  title                    :string           not null
 #  created_at               :datetime         not null
@@ -75,9 +76,8 @@ class Issue < ApplicationRecord
     @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
   end
 
-  # TODO
   def backoffice_owner
-    nil
+    ResponsibleSubjects::User.find_by(legacy_id: legacy_data["backoffice_owner_legacy_id"]) if legacy_data["backoffice_owner_legacy_id"]
   end
 
   def liked_by?(user)

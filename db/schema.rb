@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_06_143910) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -124,6 +124,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "connector_tenant_id", null: false
+    t.string "email"
     t.index ["connector_tenant_id"], name: "index_connector_users_on_connector_tenant_id"
     t.index ["external_id"], name: "index_connector_users_on_external_id"
   end
