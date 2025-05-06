@@ -26,7 +26,7 @@ class Issues::AgentPrivateComment < Issues::Comment
   validates :responsible_subject_author_id, absence: true
 
   def author_display_name
-    "Okdaz pre starostu"
+    "Odkaz pre starostu"
   end
 
   def visible?
