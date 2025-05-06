@@ -191,7 +191,7 @@ a.button-transparent:hover {
 }
 
 .total { background: $cakajuce; }
-.state-zaslane { background: $zaslane; }
+.state-zaslany-zodpovednemu { background: $zaslane; }
 .state-v-rieseni { background: $riesene; }
 .state-vyrieseny { background: $vyriesene; }
 .state-nerieseny { background: $neriesene; }
@@ -2063,6 +2063,10 @@ a.podnet-block .inside figure {
   width: 50px;
   @include rounded(50%);
   rotate: 10deg;
+}
+
+a.podnet-block .state-zaslany-zodpovednemu {
+  background: $zaslane;
 }
 
 a.podnet-block .state-vyrieseny {
