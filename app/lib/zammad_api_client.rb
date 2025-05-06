@@ -351,7 +351,7 @@ class ZammadApiClient
     @client.user.search(query: query).first
   end
 
-  def build_author_response(user_id, customer_article:, anonymous: false)
+  def build_author_response(user_id, customer_article:, sender: "Customer", anonymous: false)
     return if anonymous
     return if sender == "System"
     return DEFAULT_OPS_ADMIN_USER if sender == "Agent"
@@ -433,10 +433,10 @@ class ZammadApiClient
     return unless customer_articles || customer_article
 
     portal_article = article_for_portal?(article, ticket, first_article: first_article)
-    return unless portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
+    return unless customer_article || portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
 
     {
-      author: build_author_response(article.origin_by_id || article.created_by_id, customer_article: customer_article, anonymous: (ticket.anonymous && article.origin_by == ticket.customer)),
+      author: build_author_response(article.origin_by_id || article.created_by_id, customer_article: customer_article, sender: article.sender, anonymous: (ticket.anonymous && article.origin_by == ticket.customer)),
       triage_identifier: article.id,
       content_type: article.content_type,
       body: article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, ""),
