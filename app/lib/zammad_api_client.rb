@@ -131,6 +131,7 @@ class ZammadApiClient
     likes_count = issue.legacy_data ? issue.legacy_data["like_count"] : 999 # TODO use issue.likes_count
 
     ticket.title = issue.title
+    ticket.body = issue.description
     ticket.issue_type = issue.issue_type
     ticket.address_state = issue.address_region, # TODO rename this?
     ticket.address_county = issue.address_district, # TODO rename this?
@@ -144,11 +145,6 @@ class ZammadApiClient
     ticket.likes_count = likes_count
 
     ticket.save
-
-    # TODO check if it is always 1st article
-    article = ticket.articles.first
-    article.body = issue.description
-    article.save
   end
 
   def get_article(ticket_id, article_id, customer_articles: true, responsible_subject: nil)
