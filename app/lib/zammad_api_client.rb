@@ -128,8 +128,6 @@ class ZammadApiClient
   def update_ticket_from_issue!(ticket_id, issue)
     ticket = @client.ticket.find(ticket_id)
 
-    likes_count = issue.legacy_data ? issue.legacy_data["like_count"] : 999 # TODO use issue.likes_count
-
     ticket.title = issue.title
     ticket.body = issue.description
     ticket.issue_type = issue.issue_type
@@ -142,7 +140,7 @@ class ZammadApiClient
     ticket.address_lat = issue.latitude,
     ticket.address_lon = issue.longitude,
     ticket.ops_state = issue.state.key
-    ticket.likes_count = likes_count
+    ticket.likes_count = issue.likes_count
 
     ticket.save
   end
