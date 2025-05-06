@@ -15,7 +15,6 @@
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  activity_id                   :bigint           not null
-#  agent_author_id               :bigint
 #  legacy_comment_id             :integer
 #  legacy_communication_id       :integer
 #  responsible_subject_author_id :bigint
@@ -25,10 +24,6 @@
 class Issues::AgentPrivateComment < Issues::Comment
   validates :user_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
-
-  def author
-    agent_author
-  end
 
   def author_display_name
     "Okdaz pre starostu"

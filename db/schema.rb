@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_06_075307) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -337,7 +337,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
     t.datetime "updated_at", null: false
     t.integer "triage_external_id"
     t.bigint "user_author_id"
-    t.bigint "agent_author_id"
     t.bigint "responsible_subject_author_id"
     t.boolean "hidden", default: false
     t.jsonb "legacy_data"
@@ -346,7 +345,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
     t.integer "legacy_comment_id"
     t.integer "legacy_communication_id"
     t.index ["activity_id"], name: "index_issues_comments_on_activity_id"
-    t.index ["agent_author_id"], name: "index_issues_comments_on_agent_author_id"
     t.index ["legacy_comment_id"], name: "index_issues_comments_on_legacy_comment_id", unique: true
     t.index ["legacy_communication_id"], name: "index_issues_comments_on_legacy_communication_id", unique: true
     t.index ["responsible_subject_author_id"], name: "index_issues_comments_on_responsible_subject_author_id"
@@ -769,7 +767,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_192457) do
   add_foreign_key "issues_activity_votes", "issues_activities", column: "activity_id", on_delete: :cascade
   add_foreign_key "issues_activity_votes", "users", column: "voter_id", on_delete: :cascade
   add_foreign_key "issues_comments", "issues_activities", column: "activity_id"
-  add_foreign_key "issues_comments", "legacy_agents", column: "agent_author_id"
   add_foreign_key "issues_comments", "responsible_subjects", column: "responsible_subject_author_id"
   add_foreign_key "issues_comments", "users", column: "user_author_id"
   add_foreign_key "issues_drafts", "issues_categories", column: "category_id"

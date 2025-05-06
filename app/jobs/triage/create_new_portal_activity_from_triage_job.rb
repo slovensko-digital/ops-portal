@@ -26,13 +26,12 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
       issue = Issue.find_by!(resolution_external_id: ticket_id)
       return if issue.comments.find_by(triage_external_id: article_id)
 
-      unless article[:author][:responsible_subject_identifier].nil?
-        responsible_subject = ResponsibleSubject.find_by!(id: article[:author][:responsible_subject_identifier])
+      unless article[:author][:responsible_subject].nil?
         Issues::ResponsibleSubjectComment.create!(
           triage_external_id: article_id,
           text: article[:body],
           activity: issue.comment_activities.create!,
-          responsible_subject_author: responsible_subject
+          responsible_subject_author: article[:author][:responsible_subject]
         )
       else
         Issues::AgentComment.create!(

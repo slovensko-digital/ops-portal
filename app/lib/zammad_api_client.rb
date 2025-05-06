@@ -234,12 +234,8 @@ class ZammadApiClient
     @client.user.all
   end
 
-  def get_user(identifier)
-    @client.user.find identifier
-  end
-
   def add_user_to_group(user_identifier, group_name)
-    user = get_user(user_identifier)
+    user = @client.user.find(user_identifier)
     user_groups = user.groups
     user_groups[group_name] = "full"
     user.groups = user_groups
@@ -289,7 +285,7 @@ class ZammadApiClient
     begin
       zammad_user = @client.user.create(
         firstname: responsible_subject.subject_name,
-        roles: [ "Zodpovedný Subjekt" ]
+        roles: [ "Zodpovedný Subjekt" ],
       )
       zammad_user.id
     rescue RuntimeError => e
@@ -355,14 +351,26 @@ class ZammadApiClient
     @client.user.search(query: query).first
   end
 
-  def get_author(user_id, anonymous: false)
+  def build_author_response(user_id, customer_article:, anonymous: false)
     return if anonymous
+    return if sender == "System"
+    return DEFAULT_OPS_ADMIN_USER if sender == "Agent"
 
-    user = get_user(user_id)
-    {
+    user = @client.user.find(user_id)
+    return {
       firstname: user.firstname,
       lastname: user.lastname,
       uuid: user.uuid
+    } if customer_article
+
+    responsible_subject = ResponsibleSubject.find_by(external_id: user.id)
+    Rails.logger.warn("Responsible subject not found for user: #{user.inspect}") unless responsible_subject
+
+    {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      uuid: user.uuid,
+      responsible_subject: responsible_subject
     }
   end
 
@@ -396,7 +404,7 @@ class ZammadApiClient
       process_type: ticket.process_type,
       title: ticket.title,
       description: ticket.body,
-      author: get_author(ticket.customer_id, anonymous: ticket.anonymous),
+      author: build_author_response(ticket.customer_id, customer_article: true, anonymous: ticket.anonymous),
       responsible_subject: responsible_subject,
       issue_type: ticket.issue_type,
       category: category,
@@ -427,27 +435,8 @@ class ZammadApiClient
     portal_article = article_for_portal?(article, ticket, first_article: first_article)
     return unless portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
 
-    if article.sender == "Agent"
-      author = DEFAULT_OPS_ADMIN_USER
-    elsif article.sender == "Customer"
-      if customer_article
-        author = get_author(
-          article.origin_by_id || article.created_by_id,
-          anonymous: (ticket.anonymous && (article.created_by == ticket.customer || article.origin_by == ticket.customer))
-        )
-      else
-        user = get_user(article.origin_by_id || article.created_by_id)
-        author = {
-          firstname: user.firstname,
-          lastname: user.lastname,
-          uuid: user.uuid,
-          responsible_subject_identifier: user.responsible_subject_identifier
-        }
-      end
-    end
-
     {
-      author: author,
+      author: build_author_response(article.origin_by_id || article.created_by_id, customer_article: customer_article, anonymous: (ticket.anonymous && article.origin_by == ticket.customer)),
       triage_identifier: article.id,
       content_type: article.content_type,
       body: article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, ""),
