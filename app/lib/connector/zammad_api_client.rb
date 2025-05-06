@@ -168,7 +168,7 @@ module Connector
           "From": agent_id.to_s
         }
       )
-      
+
       raise "Ticket subscription not successful!" unless response_status == 201
     end
 
