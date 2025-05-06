@@ -189,7 +189,6 @@ module Connector
         address_lon: legacy_data.longitude,
         created_at: legacy_data.created_at,
         customer_id: create_or_find_agent(legacy_data.author),
-        owner_id: create_or_find_agent(legacy_data.owner),
         article: {
           body: legacy_data.description.presence || "(bez popisu)",
           type: DEFAULT_ARTICLE_TYPE,
@@ -210,7 +209,26 @@ module Connector
       raise unless new_ticket.id
 
       @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
+
+      set_ticket_owner_from_legacy_record(new_ticket, legacy_data)
+      set_ticket_subscribers_from_legacy_record(new_ticket, legacy_data)
+
       new_ticket
+    end
+
+    def set_ticket_owner_from_legacy_record(ticket, legacy_data)
+      user_id = create_or_find_agent(legacy_data.owner)
+      add_user_to_group(user_id, IMPORT_GROUP)
+
+      ticket.owner_id = user_id
+      ticket.save
+    end
+
+    def set_ticket_subscribers_from_legacy_record(ticket, legacy_data)
+      legacy_data.subscribers.each do |subscriber|
+        subscriber_id = create_or_find_agent(subscriber)
+        mention_agent_in_ticket(subscriber_id, ticket)
+      end
     end
 
     def set_ticket_owner(issue)
@@ -230,6 +248,10 @@ module Connector
 
       raise "Agent not found in backoffice!" unless agent_id
 
+      mention_agent_in_ticket(agent_id, ticket)
+    end
+
+    def mention_agent_in_ticket(agent_id, ticket)
       add_user_to_group(agent_id, IMPORT_GROUP)
 
       _, response_status = raw_api_request(

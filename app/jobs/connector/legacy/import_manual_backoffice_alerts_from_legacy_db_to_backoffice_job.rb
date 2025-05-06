@@ -20,6 +20,10 @@ class Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob
         subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
         subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
         category = subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
+        legacy_backoffice_owners = Legacy::Alerts::MunicipalityUser.where(alert_id: legacy_record.id).order(:id)
+        subscribers = legacy_backoffice_owners[0..-2]&.map do |subscriber|
+          Legacy::User.find_or_create_responsible_subjects_user(subscriber.municipality_user_id)
+        end&.compact
 
         legacy_data = OpenStruct.new(
           id: legacy_record.id,
@@ -32,7 +36,8 @@ class Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob
           category: category,
           subcategory: subcategory,
           subtype: subtype,
-          backoffice_owner: nil, # TODO set owner
+          owner: Legacy::User.find_or_create_responsible_subjects_user(legacy_backoffice_owners&.last&.municipality_user_id),
+          subscribers: subscribers,
           municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
           municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
           address_street: Street.find_by(legacy_id: legacy_record.ulica)&.name,
