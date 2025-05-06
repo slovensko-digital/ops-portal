@@ -75,9 +75,8 @@ class Issue < ApplicationRecord
     @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
   end
 
-  # TODO
   def backoffice_owner
-    nil
+    ResponsibleSubjects::User.find_by(legacy_id: legacy_data["backoffice_owner_legacy_id"]) if legacy_data["backoffice_owner_legacy_id"]
   end
 
   def liked_by?(user)
