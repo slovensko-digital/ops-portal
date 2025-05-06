@@ -12,7 +12,7 @@
 #
 class Issues::Activity < ApplicationRecord
   belongs_to :issue
-  has_many :votes, class_name: "Issues::ActivityVote"
+  has_many :votes, class_name: "Issues::ActivityVote", dependent: :destroy
 
   def content
     "dummy content"

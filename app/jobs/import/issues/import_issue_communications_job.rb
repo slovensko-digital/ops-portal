@@ -2,7 +2,11 @@ module Import
   class Issues::ImportIssueCommunicationsJob < ApplicationJob
     include ImportMethods
 
-    def perform(issue:, import_attachments_job: Issues::ImportIssueCommunicationAttachmentsJob)
+    def perform(
+      issue:,
+      import_attachments_job: Issues::ImportIssueCommunicationAttachmentsJob,
+      import_votes_job: Issues::ImportIssueCommunicationVotesJob
+    )
       # !! DO NOT ever delete the internal attribute condition !!
       Legacy::Alerts::Communication.where(alert: issue.legacy_id).where(internal: 0).find_in_batches do |group|
         group.each do |legacy_record|
@@ -72,6 +76,7 @@ module Import
           communication.save!
 
           import_attachments_job.perform_later(communication: communication)
+          import_votes_job.perform_later(communication: communication)
         end
       end
     end

@@ -57,7 +57,7 @@ class Issue < ApplicationRecord
   has_many :comment_activities, class_name: "Issues::CommentActivity", dependent: :destroy
   has_many :legacy_communication_activities, class_name: "Legacy::Issues::CommunicationActivity", dependent: :destroy
   has_many :update_activities, class_name: "Issues::UpdateActivity", dependent: :destroy
-  has_many :likes, class_name: "IssueLike"
+  has_many :likes, class_name: "IssueLike", dependent: :destroy
 
   has_many_attached :photos do |photo|
     photo.variant :normal, resize_to_fill: [ 680, 680 ], preprocessed: true
