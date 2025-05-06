@@ -59,7 +59,7 @@ sk:
 
   errors:
     messages:
-      blank: "%{attribute} je povinná položka"
+      blank: "je povinná položka"
 
   activerecord:
     attributes:

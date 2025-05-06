@@ -8,5 +8,7 @@ one:
   
 two:
   email: brian@queen.com
+  firstname: Brian
+  lastname: Queen
   password_hash: <%= RodauthApp.rodauth.allocate.password_hash("password") %>
   status: verified
