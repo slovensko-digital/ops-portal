@@ -14,8 +14,9 @@
       <picture>
         <%= image_tag blob.variant(resize_to_fill: [ 320, 320 ]) %>
         <%= hidden_field_tag "blobs[]", blob.signed_id %>
-        <% # TODO remove hardcoded value %>
+        <% # TODO remove hardcoded values %>
         <%= hidden_field_tag "issues_user_comment[attachments][]", blob.signed_id %>
+        <%= hidden_field_tag "issue[photos][]", blob.signed_id %>
       </picture>
     </figure>
   <% end %>

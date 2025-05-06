@@ -1,69 +1,78 @@
+<% content_for :title, @issue.title %>
+
 <section class="podnet">
   <div class="podnet-con">
     <!-- Podnet Description & Pictures -->
-    <div class="podnet-esential">
-      <h1><%= @issue.title %></h1>
-      <div class="podnet-description">
-        <%= @issue.description %>
-      </div>
-      <div class="podnet-pictures-con">
-        <figure class="big-picture">
-          <div class="lens-image">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-              <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
-              <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
-            </svg>
-          </div>
-          <picture>
-            <%= image_tag @issue.photos.first.variant(:normal) if @issue.photos.attached? %>
-          </picture>
-        </figure>
-        <% if @issue.photos.count > 1 %>
-          <% @issue.photos[1..].each do |photo| %>
-            <figure class="small-picture">
-              <div class="lens-image">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                  <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
-                  <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
-                </svg>
-              </div>
-              <picture>
-                <%= image_tag photo.variant(:thumb) %>
-              </picture>
-            </figure>
+    <%= turbo_frame_tag @issue, :edit do %>
+      <div class="podnet-esential">
+        <h1><%= @issue.title %></h1>
+        <div class="podnet-description prose">
+          <%= simple_format @issue.description %>
+        </div>
+        <div class="podnet-pictures-con">
+          <figure class="big-picture">
+            <div class="lens-image">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
+                <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
+              </svg>
+            </div>
+            <picture>
+              <%= image_tag @issue.photos.first.variant(:normal) if @issue.photos.attached? %>
+            </picture>
+          </figure>
+          <% if @issue.photos.count > 1 %>
+            <% @issue.photos[1..].each do |photo| %>
+              <figure class="small-picture">
+                <div class="lens-image">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                    <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
+                    <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
+                  </svg>
+                </div>
+                <picture>
+                  <%= image_tag photo.variant(:thumb) %>
+                </picture>
+              </figure>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
+
+        <div class="share-buttons">
+          <% if logged_in? && current_user.can_edit?(@issue) %>
+            <%= button_to "Upraviť", edit_issue_path(@issue), method: :get, class: "button button-transparent button-edit" %>
+          <% end %>
+          <%= render partial: "issue_subscriptions/button" %>
+          <%= render partial: "issue_likes/button" %>
+
+          <% unless @issue.editable? %>
+            <a class="button button-transparent button-share-mobile" data-action="webshare#share" data-controller="webshare" data-webshare-supported-class="button-share-supported" data-webshare-title-value="<%= @issue.title %>" data-webshare-text-value="Pozrite si tento podnet" data-webshare-url-value="<%= issue_url(@issue) %>">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+                <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+              </svg>
+              <span>Zdielať</span>
+            </a>
+
+            <%= link_to "https://www.facebook.com/sharer/sharer.php?u=#{issue_url(@issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+                <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+              </svg>
+              <span>Facebook</span>
+            <% end %>
+
+            <%= link_to "https://x.com/intent/tweet?url=#{issue_url(@issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+                <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+              </svg>
+              <span>Twitter/X</span>
+            <% end %>
+          <% end %>
+        </div>
       </div>
-
-      <div class="share-buttons">
-        <%= render partial: "issue_subscriptions/button" %>
-        <%= render partial: "issue_likes/button" %>
-
-        <a class="button button-transparent button-share-mobile" data-action="webshare#share" data-controller="webshare" data-webshare-supported-class="button-share-supported" data-webshare-title-value="<%= @issue.title %>" data-webshare-text-value="Pozrite si tento podnet" data-webshare-url-value="<%= issue_url(@issue) %>">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
-            <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
-          </svg>
-          <span>Zdielať</span>
-        </a>
-
-        <%= link_to "https://www.facebook.com/sharer/sharer.php?u=#{issue_url(@issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
-            <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
-          </svg>
-          <span>Facebook</span>
-        <% end %>
-
-        <%= link_to "https://x.com/intent/tweet?url=#{issue_url(@issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
-            <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
-          </svg>
-          <span>Twitter/X</span>
-        <% end %>
-      </div>
-    </div>
+    <% end %>
     <!-- Podnet Information -->
     <div class="podnet-information-con">
       <div class="podnet-information">

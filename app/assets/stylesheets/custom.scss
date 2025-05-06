@@ -141,3 +141,13 @@ form[aria-busy='true'] .button-add-picture {
     flex-wrap: wrap;
     gap: 10px;
 }
+
+.prose {
+    p {
+        margin-bottom: 1em;
+    }
+
+    :last-child {
+        margin-bottom: 0;
+    }
+}

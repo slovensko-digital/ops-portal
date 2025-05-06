@@ -69,4 +69,8 @@ class User < ApplicationRecord
   def subscribed_to?(issue)
     issue_subscriptions.where(issue: issue).exists?
   end
+
+  def can_edit?(thing)
+    thing.editable_by?(self)
+  end
 end

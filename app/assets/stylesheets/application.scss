@@ -1165,7 +1165,8 @@ section.report .report-map-con .search-con form button:hover {
 }
 
 
-section.report .report-summary-block-con {
+section.report .report-summary-block-con,
+.podnet-edit {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -2233,14 +2234,16 @@ section.podnet .podnet-pictures-con figure picture {
   right: 0;
   top: 0;
 }
-section.podnet .podnet-pictures-con figure.small-picture {
+section.podnet .podnet-pictures-con figure.small-picture,
+.uploads figure.small-picture {
   height: 80px;
   overflow: hidden;
   position: relative;
   width: 80px;
   @include rounded(10px);
 }
-section.podnet .podnet-pictures-con figure.small-picture .lens-image {
+section.podnet .podnet-pictures-con figure.small-picture .lens-image,
+.uploads figure.small-picture .lens-image {
   bottom: 50%;
   fill: $white;
   margin: 0 -19px -19px 0;
@@ -2547,7 +2550,8 @@ section.podnet .podnet-discussion .add-comment-form form textarea {
 section.podnet .podnet-discussion .add-comment-form form textarea::placeholder {
   color: $black-light;
 }
-section.podnet .podnet-discussion .add-comment-form .pictures-wrapper {
+section.podnet .podnet-discussion .add-comment-form .pictures-wrapper,
+.uploads.pictures-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -2556,7 +2560,7 @@ section.podnet .podnet-discussion .add-comment-form figure {
   height: 60px;
   width: 60px;
 }
-section.podnet .podnet-discussion .add-comment-form form .buttons-wrapper {
+.buttons-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
