@@ -799,7 +799,8 @@ article p {
 article strong {
   font-weight: $semibold;
 }
-article a {
+article a,
+.prose a {
   color: $black;
   text-decoration: underline;
   text-decoration-color: $blue;
@@ -807,7 +808,8 @@ article a {
   text-underline-offset: 0.1em;
   @include transition(all);
 }
-article a:hover {
+article a:hover,
+.prose a:hover {
   color: $red;
   text-decoration-color: $red;
 }

@@ -200,8 +200,11 @@ class RodauthMain < Rodauth::Rails::Auth
       def build_custom_params
         {
           firstname: param_or_nil("firstname"),
-          lastname: param_or_nil("lastname"),
-          municipality_id: param_or_nil("municipality_id")
+          public_profile: param_or_nil("public_profile"),
+          municipality_id: param_or_nil("municipality_id"),
+          email_notifications: param_or_nil("public_profile"),
+          birth_year: param_or_nil("birth_year"),
+          gdpr_stats_accepted: param_or_nil("gdpr_stats_accepted"),
         }
       end
 
@@ -225,6 +228,10 @@ class RodauthMain < Rodauth::Rails::Auth
         account[:firstname] = custom_params[:firstname]
         account[:lastname] = custom_params[:lastname]
         account[:municipality_id] = custom_params[:municipality_id] if custom_params[:municipality_id].present?
+        account[:anonymous] = custom_params[:public_profile] == "no"
+        account[:gdpr_stats_accepted] = custom_params[:gdpr] == "1"
+        account[:birth] = Date.new(custom_params[:birth_year].to_i, 1, 1) if custom_params[:birth_year].present?
+        account[:email_notifiable] = custom_params[:email_notifications] == "1"
       end
     end
   end

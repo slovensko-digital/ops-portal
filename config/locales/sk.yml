@@ -70,5 +70,6 @@ sk:
         title: Názov
         description: Popis
       user:
+        name: Meno
         firstname: Meno
         lastname: Priezvisko

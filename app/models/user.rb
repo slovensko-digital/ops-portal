@@ -54,9 +54,37 @@ class User < ApplicationRecord
   enum :sex, m: 1, f: 2
   enum :status, { unverified: 1, verified: 2, closed: 3 }
 
-  before_create { self.display_name ||= "Anonym #{self.id}" if self.anonymous? }
+  before_save do
+    self.display_name = self.anonymous? ? "Anonym ##{self.id}" : [ self.firstname, self.lastname ].compact.join(" ")
+  end
 
   validates :external_id, uniqueness: true, allow_nil: true
+  validates_presence_of :name
+
+  def name
+    [ firstname, lastname ].compact.join(" ")
+  end
+
+  def name=(value)
+    self.firstname = value
+    self.lastname = nil
+  end
+
+  def public_profile
+    !anonymous?
+  end
+
+  def birth_year
+    birth&.year
+  end
+
+  def birth_year=(value)
+    self.birth = value.present? ? Date.new(value.to_i, 1, 1) : nil
+  end
+
+  def public_profile=(value)
+    self.anonymous = !value
+  end
 
   def likes?(thing)
     thing.liked_by?(self)
