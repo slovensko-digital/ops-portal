@@ -4,7 +4,7 @@ module Import
 
     def perform(
       legacy_record,
-      import_backoffice_owner_job: Issues::ImportBackofficeOwnerJob,
+      import_backoffice_owner_job: Issues::ImportIssueBackofficeOwnerJob,
       import_photos_job: Issues::ImportIssuePhotosJob,
       import_updates_job: Issues::ImportIssueUpdatesJob,
       import_comments_job: Issues::ImportIssueCommentsJob,

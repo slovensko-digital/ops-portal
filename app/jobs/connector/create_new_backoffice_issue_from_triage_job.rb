@@ -31,7 +31,7 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
 
     if import
       import_legacy_backoffice_activity_job.perform_later(tenant, issue_id)
-      set_ticket_owner_job.perform_later(tenant. issue_id)
+      set_ticket_owner_job.perform_later(tenant, issue_id)
     end
   end
 
