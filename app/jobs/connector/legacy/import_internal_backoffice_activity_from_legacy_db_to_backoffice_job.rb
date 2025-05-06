@@ -27,7 +27,7 @@ class Connector::Legacy::ImportInternalBackofficeActivityFromLegacyDbToBackoffic
           end
         )
 
-        zammad_client.find_or_create_article_from_legacy_record!(legacy_data, tenant_issue, sender: "Agent")
+        zammad_client.find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, sender: "Agent")
       end
     end
   end

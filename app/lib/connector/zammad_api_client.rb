@@ -138,7 +138,7 @@ module Connector
       new_article
     end
 
-    def find_or_create_article_from_legacy_record!(legacy_data, tenant_issue, sender:)
+    def find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, sender:)
       ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
 
       article = @tenant.activities.find_by(legacy_id: legacy_data.id)
@@ -167,7 +167,7 @@ module Connector
       new_article
     end
 
-    def find_or_create_ticket_from_legacy_record!(legacy_data, state:, group:)
+    def find_or_create_ticket_from_legacy_data!(legacy_data, state:, group:)
       tenant_issue = @tenant.issues.find_by(legacy_id: legacy_data.id)
       return @client.ticket.find(tenant_issue.backoffice_external_id) if tenant_issue
 
@@ -210,13 +210,13 @@ module Connector
 
       @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
 
-      set_ticket_owner_from_legacy_record(new_ticket, legacy_data)
-      set_ticket_subscribers_from_legacy_record(new_ticket, legacy_data)
+      set_ticket_owner_from_legacy_data(new_ticket, legacy_data)
+      set_ticket_subscribers_from_legacy_data(new_ticket, legacy_data)
 
       new_ticket
     end
 
-    def set_ticket_owner_from_legacy_record(ticket, legacy_data)
+    def set_ticket_owner_from_legacy_data(ticket, legacy_data)
       user_id = create_or_find_agent(legacy_data.owner)
       add_user_to_group(user_id, IMPORT_GROUP)
 
@@ -224,7 +224,7 @@ module Connector
       ticket.save
     end
 
-    def set_ticket_subscribers_from_legacy_record(ticket, legacy_data)
+    def set_ticket_subscribers_from_legacy_data(ticket, legacy_data)
       legacy_data.subscribers.each do |subscriber|
         subscriber_id = create_or_find_agent(subscriber)
         mention_agent_in_ticket(subscriber_id, ticket)

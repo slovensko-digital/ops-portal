@@ -53,7 +53,7 @@ class Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob
           end
         )
 
-        zammad_client.find_or_create_ticket_from_legacy_record!(
+        zammad_client.find_or_create_ticket_from_legacy_data!(
           legacy_data,
           state: ISSUE_OPS_STATE_TO_BACKOFFICE_STATE.fetch(legacy_data.state.name),
           group: zammad_api_client::IMPORT_GROUP
