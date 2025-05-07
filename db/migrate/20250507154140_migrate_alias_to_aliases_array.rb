@@ -4,8 +4,10 @@ class MigrateAliasToAliasesArray < ActiveRecord::Migration[8.0]
     add_column :municipality_districts, :aliases, :string, array: true, default: [], null: false
 
     Municipality.reset_column_information
-    Municipality.where.not(alias: nil).update_all("aliases = ARRAY[alias]")
-    MunicipalityDistrict.where.not(alias: nil).update_all("aliases = ARRAY[alias]")
+    MunicipalityDistrict.reset_column_information
+
+    Municipality.find_each { |m|  m.update_columns(aliases: [ m.alias, m.name ].compact) }
+    MunicipalityDistrict.find_each { |md| md.update_columns(aliases: [ md.alias, md.name ].compact) }
 
     remove_column :municipalities, :alias
     remove_column :municipality_districts, :alias
@@ -16,13 +18,10 @@ class MigrateAliasToAliasesArray < ActiveRecord::Migration[8.0]
     add_column :municipality_districts, :alias, :string
 
     Municipality.reset_column_information
-    Municipality.find_each do |m|
-      m.update_columns(alias: m.aliases&.first)
-    end
+    MunicipalityDistrict.reset_column_information
 
-    MunicipalityDistrict.find_each do |md|
-      md.update_columns(alias: md.aliases&.first)
-    end
+    Municipality.find_each { |m| m.update_columns(alias: m.aliases&.first) }
+    MunicipalityDistrict.find_each { |md| md.update_columns(alias: md.aliases&.first) }
 
     remove_column :municipalities, :aliases
     remove_column :municipality_districts, :aliases
