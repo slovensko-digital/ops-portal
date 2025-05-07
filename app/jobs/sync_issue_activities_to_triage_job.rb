@@ -7,7 +7,6 @@ class SyncIssueActivitiesToTriageJob < ApplicationJob
 
       find_or_create_triage_portal_user!(activity.activity_object.author, client) if activity.activity_object.author && !activity.activity_object.author&.external_id
 
-      if issue.triage_process?
       external_id = issue.triage_process? ? issue.triage_external_id : issue.resolution_external_id
       article_id = client.create_article!(external_id, activity.activity_object, sender: sender_type(activity.activity_object.author))
 
