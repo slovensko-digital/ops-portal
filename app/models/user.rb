@@ -67,7 +67,7 @@ class User < ApplicationRecord
   end
 
   validates :external_id, uniqueness: true, allow_nil: true
-  validates_presence_of :name
+  validates_presence_of :name, unless: -> { legacy_id }
 
   def name
     [ firstname, lastname ].compact.join(" ")
