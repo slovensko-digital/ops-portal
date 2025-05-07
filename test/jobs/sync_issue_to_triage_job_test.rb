@@ -129,7 +129,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
       OpenStruct.new(name: "Dobrovoľníci::Trenčín"),
       OpenStruct.new(name: "Dobrovoľníci::Prešov")
     ]
-    triage_zammad_client_mock.expect :update_ticket_from_issue!, nil, [ issue.triage_external_id, issue ]
+    triage_zammad_client_mock.expect :update_ticket_from_issue!, nil, [ issue.triage_external_id, issue ], update_attachments: true
 
     ZammadApiClient.stub :new, triage_zammad_client_mock do
       SyncIssueToTriageJob.perform_now(issue, client: triage_zammad_client_mock)
