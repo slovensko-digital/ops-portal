@@ -3,7 +3,7 @@
 # Table name: municipality_districts
 #
 #  id              :bigint           not null, primary key
-#  alias           :string
+#  aliases         :string           default([]), not null, is an Array
 #  description     :string
 #  genitiv         :string
 #  logo            :string

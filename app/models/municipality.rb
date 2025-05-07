@@ -4,7 +4,7 @@
 #
 #  id                         :bigint           not null, primary key
 #  active                     :boolean
-#  alias                      :string
+#  aliases                    :string           default([]), not null, is an Array
 #  category                   :integer
 #  email                      :string
 #  handled_by                 :integer
