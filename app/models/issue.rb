@@ -68,7 +68,7 @@ class Issue < ApplicationRecord
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
   validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" }
-  validates_presence_of :title, :description
+  validates_presence_of :title, :description, unless: -> { imported_at }
 
   pg_search_scope :fulltext_search, against: [ :title, :description, :legacy_id ], ignoring: :accents
   scope :publicly_visible, -> { joins(:state).where.not(state: { key: %w[waiting rejected] }) }
@@ -111,12 +111,12 @@ class Issue < ApplicationRecord
   end
 
   def self.within_distance_from_point(lat, lon, distance)
-    where("ST_DWithin(ST_Point(longitude, latitude, 4326)::geography, ST_Point(?, ?, 4326)::geography, ?)", lon, lat, distance)
+    where("ST_DWithin(ST_Point(issues.longitude, issues.latitude, 4326)::geography, ST_Point(?, ?, 4326)::geography, ?)", lon, lat, distance)
   end
 
   def self.order_by_distance_from_point(lat, lon)
-    select_sql = sanitize_sql([ Arel.sql("issues.*, ST_Distance(ST_Point(longitude, latitude)::geography, ST_Point(:lon, :lat, 4326)::geography) as distance"), { lon: lon, lat: lat } ])
-    order_sql = sanitize_sql_for_order([ Arel.sql("ST_Point(longitude, latitude, 4326)::geography <-> ST_Point(?, ?, 4326)::geography"), lon, lat ])
+    select_sql = sanitize_sql([ Arel.sql("issues.*, ST_Distance(ST_Point(issues.longitude, issues.latitude)::geography, ST_Point(:lon, :lat, 4326)::geography) as distance"), { lon: lon, lat: lat } ])
+    order_sql = sanitize_sql_for_order([ Arel.sql("ST_Point(issues.longitude, issues.latitude, 4326)::geography <-> ST_Point(?, ?, 4326)::geography"), lon, lat ])
 
     select(select_sql).reorder(order_sql)
   end
