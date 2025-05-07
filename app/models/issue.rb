@@ -68,7 +68,7 @@ class Issue < ApplicationRecord
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
   validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" }
-  validates_presence_of :title, :description
+  validates_presence_of :title, :description, unless: -> { imported_at }
 
   pg_search_scope :fulltext_search, against: [ :title, :description, :legacy_id ], ignoring: :accents
   scope :publicly_visible, -> { joins(:state).where.not(state: { key: %w[waiting rejected] }) }

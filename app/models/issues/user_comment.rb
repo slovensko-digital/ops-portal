@@ -25,7 +25,7 @@
 class Issues::UserComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
-  validates :text, presence: true
+  validates :text, presence: true, unless: -> { attachments.empty? }
   validate :edited_within_editing_window, on: :edit
 
   def author
