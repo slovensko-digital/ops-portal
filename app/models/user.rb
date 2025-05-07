@@ -47,7 +47,7 @@ class User < ApplicationRecord
 
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true
-  has_many :issues
+  has_many :issues, foreign_key: :author_id
   has_many :issues_drafts, class_name: "Issues::Draft", foreign_key: :author_id
   has_many :issue_likes, foreign_key: :user_id
   has_many :issue_subscriptions, foreign_key: :subscriber_id
