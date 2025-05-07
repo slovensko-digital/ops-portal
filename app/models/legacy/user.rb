@@ -69,7 +69,7 @@ module Legacy
         city_id: legacy_record.cityid,
         municipality: ::Municipality.find_by(legacy_id: legacy_record.mesto),
         street: ::Street.find_by(legacy_id: legacy_record.streetid),
-        onboarded: true,
+        onboarded: true
       }
     end
 
