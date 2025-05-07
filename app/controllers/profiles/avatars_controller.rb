@@ -9,6 +9,7 @@ class Profiles::AvatarsController < ApplicationController
   end
 
   private
+
   def avatar_params
     params.require(:user).permit(:avatar)
   end
