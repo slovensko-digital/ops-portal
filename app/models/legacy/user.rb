@@ -68,7 +68,8 @@ module Legacy
         verified: legacy_record.verified,
         city_id: legacy_record.cityid,
         municipality: ::Municipality.find_by(legacy_id: legacy_record.mesto),
-        street: ::Street.find_by(legacy_id: legacy_record.streetid)
+        street: ::Street.find_by(legacy_id: legacy_record.streetid),
+        onboarded: true
       }
     end
 

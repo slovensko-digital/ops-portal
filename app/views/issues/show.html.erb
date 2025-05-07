@@ -87,7 +87,7 @@
             <div class="subject-con">
               <figure>
                 <picture>
-                  <%= image_tag "ops-avatar-blue.png", alt: "" %>
+                  <%= user_avatar(@issue.author, variant: :medium) %>
                 </picture>
               </figure>
               <div class="name"><%= @issue.author.display_name %></div>

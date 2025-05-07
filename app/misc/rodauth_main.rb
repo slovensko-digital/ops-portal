@@ -199,32 +199,23 @@ class RodauthMain < Rodauth::Rails::Auth
     auth_class_eval do
       def build_custom_params
         {
-          firstname: param_or_nil("firstname"),
-          lastname: param_or_nil("lastname"),
-          municipality_id: param_or_nil("municipality_id")
+          name: param_or_nil("name")
         }
       end
 
       def validate_custom_params(custom_params)
-        is_valid = true
+        if custom_params[:name].blank?
+          full_message = I18n.t("errors.format", attribute: I18n.t("activerecord.attributes.user.name"), message: I18n.t("errors.messages.blank"))
+          set_field_error("name", full_message)
 
-        if custom_params[:firstname].blank?
-          is_valid = false
-          set_field_error("firstname", I18n.t("errors.messages.blank", attribute: I18n.t("activerecord.attributes.user.firstname")))
+          return false
         end
 
-        if custom_params[:municipality_id].present? && !Municipality.exists?(custom_params[:municipality_id])
-          is_valid = false
-          set_field_error("municipality_id", I18n.t("errors.messages.invalid"))
-        end
-
-        is_valid
+        true
       end
 
       def populate_account(custom_params)
-        account[:firstname] = custom_params[:firstname]
-        account[:lastname] = custom_params[:lastname]
-        account[:municipality_id] = custom_params[:municipality_id] if custom_params[:municipality_id].present?
+        account[:firstname] = custom_params[:name]
       end
     end
   end

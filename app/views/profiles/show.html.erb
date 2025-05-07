@@ -9,7 +9,7 @@
 
       <div class="account-item-con">
         <div class="description">Email</div>
-        <div class="item-title"><%= current_user.email %></div>
+        <div class="item-title"><%= @user.email %></div>
       </div>
 
       <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
@@ -18,48 +18,43 @@
     </div>
 
     <div class="account-info-con">
-      <div class="title">Osobné údaje</div>
+      <div class="title">Osobné údaje a nastavenia</div>
 
       <div class="account-item-subject">
         <figure>
           <picture>
-            <%= image_tag "ops-avatar-blue.png", alt: "" %>
+            <%= user_avatar(@user, variant: :medium) %>
           </picture>
         </figure>
-        <div class="item-title"><%= current_user.firstname %> <%= current_user.lastname %></div>
+        <div class="item-title"><%= @user.display_name %></div>
       </div>
 
       <div class="account-item-con">
-        <div class="description">Mesto</div>
-        <div class="item-title">Bratislava</div>
+        <div class="description">Meno</div>
+        <div class="item-title"><%= @user.name %></div>
       </div>
 
       <div class="account-item-con">
-        <div class="description">Ulica</div>
-        <div class="item-title">Sasinkova</div>
+        <div class="description">Verejný profil</div>
+        <div class="item-title"><%= !@user.anonymous? ? 'Áno' : 'Nie' %></div>
       </div>
 
       <div class="account-item-con">
-        <div class="description">Vek</div>
-        <div class="item-title">68</div>
+        <div class="description">Preferované mesto alebo obec</div>
+        <div class="item-title"><%= @user.municipality&.name || '&mdash;'.html_safe %></div>
       </div>
 
       <div class="account-item-con">
-        <div class="description">Pohlavie</div>
-        <div class="item-title">Muž</div>
+        <div class="description">Emailové notifikácie k&nbsp;podnetom?</div>
+        <div class="item-title"><%= @user.email_notifiable? ? 'Zapnuté' : 'Vypnuté' %></div>
       </div>
 
       <div class="account-item-con">
-        <div class="description">Ide o miesto vášho trvalého bydliska?</div>
-        <div class="item-title">Áno</div>
+        <div class="description">Rok narodenia</div>
+        <div class="item-title"><%= @user.birth&.year || '&mdash;'.html_safe %></div>
       </div>
 
-      <div class="account-item-con">
-        <div class="description">Chcete dostávať emailové notifikácie k podnetom?</div>
-        <div class="item-title">Áno</div>
-      </div>
-
-      <a href="./osobne-udaje.html" class="button button-transparent not-implemented">Zmeniť</a>
+      <%= link_to "Zmeniť", edit_profile_path, class: "button button-transparent" %>
     </div>
 
     <div class="account-info-con account-delete">

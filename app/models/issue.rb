@@ -21,11 +21,12 @@
 #  legacy_data              :jsonb
 #  likes_count              :integer          default(0), not null
 #  longitude                :float
+#  praise_public            :boolean          default(FALSE), not null
 #  title                    :string           not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  author_id                :bigint
-#  category_id              :bigint           not null
+#  category_id              :bigint
 #  legacy_id                :integer
 #  municipality_district_id :bigint
 #  municipality_id          :bigint
@@ -45,7 +46,7 @@ class Issue < ApplicationRecord
 
   belongs_to :author, class_name: "User", optional: true
   belongs_to :owner, class_name: "Legacy::Agent", optional: true # TODO drop after legacy import
-  belongs_to :category, class_name: "Issues::Category"
+  belongs_to :category, class_name: "Issues::Category", optional: true
   belongs_to :subcategory, class_name: "Issues::Subcategory", optional: true
   belongs_to :subtype, class_name: "Issues::Subtype", optional: true
   belongs_to :municipality, optional: true
@@ -66,6 +67,7 @@ class Issue < ApplicationRecord
   end
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
+  validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" }
   validates_presence_of :title, :description
 
   pg_search_scope :fulltext_search, against: [ :title, :description, :legacy_id ], ignoring: :accents

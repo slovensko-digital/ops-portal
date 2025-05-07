@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="uploads"
 export default class extends Controller {
-  static targets = ["upload"]
+  static targets = ["removable"]
   connect() {
   }
 
@@ -14,6 +14,6 @@ export default class extends Controller {
     }
     if(!confirmed) return false;
 
-    this.uploadTarget.remove();
+    this.removableTarget.remove();
   }
 }

@@ -1,52 +1,43 @@
-<!-- TODO -->
 <section class="forms-container report">
   <h1>Nová pochvala</h1>
 
-  <form action="">
+  <%= form_with model: @praise, url: praises_path, method: :post do |form| %>
     <div class="form-other-con">
       <div class="form-description">Polia označené * sú povinné.</div>
 
       <div class="form-items-con">
         <div class="form-item-wrapper">
-          <label for="title">Text pochvaly*</label>
-          <textarea placeholder="Sem napíš svoju pochvalu"></textarea>
-        </div>
-        <div class="form-item-wrapper">
-          <label for="title">Obec*</label>
-          <div class="dropdown-button">
-            <span class="gray-text">Vybrať</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
-              <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
-            </svg>
-          </div>
-        </div>
-        <div class="form-item-wrapper">
-          <label for="title">Zodpovedný subjekt*</label>
-          <div class="dropdown-button">
-            <span class="gray-text">Vybrať</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
-              <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
-            </svg>
-          </div>
-        </div>
-        <div class="form-item-wrapper">
-          <label for="title">Typ pochvaly*</label>
-          <div class="dropdown-button">
-            <span class="gray-text">Vybrať</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
-              <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
-            </svg>
-          </div>
-        </div>
-        <div class="form-item-wrapper">
-          <label for="title">Viac info o adresátovi</label>
-          <textarea placeholder="Sed et tempus metus. Quisque placerat auctor mattis. Quisque efficitur est nec enim laoreet, quis lobortis diam vestibulum."></textarea>
+          <%= form.label :title, "Názov*" %>
+          <%= form.text_field :title %>
+          <% @praise.errors.full_messages_for(:title).each do |message| %>
+            <span class="error-message"><%= message %></span>
+          <% end %>
         </div>
 
+        <div class="form-item-wrapper">
+          <%= form.label :description, "Text pochvaly*" %>
+          <%= form.text_area :description, placeholder: "Sem napíšte pochvalu" %>
+          <% @praise.errors.full_messages_for(:description).each do |message| %>
+            <span class="error-message"><%= message %></span>
+          <% end %>
+        </div>
 
+        <div class="form-item-wrapper">
+          <%= form.label :municipality_id, "Mesto alebo obec*" %>
+          <%= form.collection_select :municipality_id, @municipalities, :id, :name, { prompt: "Vyberte" }, class: "dropdown-button" %>
+          <% @praise.errors.full_messages_for(:municipality_id).each do |message| %>
+            <span class="error-message"><%= message %></span>
+          <% end %>
+        </div>
+
+        <div class="form-check-box-con form-check-box-con-start">
+          <%= form.checkbox :praise_public, class: "form-check-box" %>
+          <%= form.label :praise_public, "Chcem pochvalu zverejniť na portáli." %>
+        </div>
       </div>
 
-      <input class="button" type="submit" value="Odoslať">
+      <%= form.submit "Odoslať pochvalu", class: "button", data: { "turbo_submits_with": "Odosieľam..." } %>
     </div>
-  </form>
+  <% end %>
+
 </section>

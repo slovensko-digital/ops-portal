@@ -59,7 +59,7 @@ sk:
 
   errors:
     messages:
-      blank: "%{attribute} je povinná položka"
+      blank: "je povinná položka"
 
   activerecord:
     attributes:
@@ -70,5 +70,10 @@ sk:
         title: Názov
         description: Popis
       user:
+        name: Meno
         firstname: Meno
         lastname: Priezvisko
+      praise:
+        title: Názov
+        description: "Text pochvaly"
+        municipality_id: "Mesto alebo obec"

@@ -799,7 +799,8 @@ article p {
 article strong {
   font-weight: $semibold;
 }
-article a {
+article a,
+.prose a {
   color: $black;
   text-decoration: underline;
   text-decoration-color: $blue;
@@ -807,7 +808,8 @@ article a {
   text-underline-offset: 0.1em;
   @include transition(all);
 }
-article a:hover {
+article a:hover,
+.prose a:hover {
   color: $red;
   text-decoration-color: $red;
 }
@@ -1438,7 +1440,7 @@ input.button {
 }
 section.forms-container .button {
   //border: none !important;
-  width: 100% !important;
+  //width: 100% !important;
 }
 .form-other-con {
   display: flex;
@@ -1656,7 +1658,7 @@ ul.dropdown-list li.active svg {
   height: 100%;
   object-fit: cover;
 }
-.form-picture-con a.button {
+.form-picture-con .button {
   margin-top: 0 !important;
   width: fit-content !important;
 }

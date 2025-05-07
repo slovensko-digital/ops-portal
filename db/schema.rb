@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_06_143910) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_07_082225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -258,7 +258,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_143910) do
     t.float "latitude"
     t.float "longitude"
     t.bigint "author_id"
-    t.bigint "category_id", null: false
+    t.bigint "category_id"
     t.bigint "state_id"
     t.bigint "municipality_id"
     t.integer "legacy_id"
@@ -280,6 +280,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_143910) do
     t.integer "resolution_external_id"
     t.integer "likes_count", default: 0, null: false
     t.datetime "imported_at"
+    t.boolean "praise_public", default: false, null: false
     t.index "((st_point(longitude, latitude, 4326))::geography)", name: "index_issues_on_location", using: :gist
     t.index ["author_id"], name: "index_issues_on_author_id"
     t.index ["category_id"], name: "index_issues_on_category_id"
@@ -740,6 +741,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_143910) do
     t.integer "legacy_id"
     t.integer "status", default: 1, null: false
     t.string "display_name"
+    t.boolean "gdpr_stats_accepted", default: false
+    t.boolean "onboarded", default: false
     t.index ["email"], name: "index_users_on_email", unique: true, where: "(status = ANY (ARRAY[1, 2]))"
     t.index ["external_id"], name: "index_users_on_external_id", unique: true
     t.index ["legacy_id"], name: "index_users_on_legacy_id", unique: true

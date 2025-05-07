@@ -7,6 +7,7 @@ one:
   email: bratislava
   municipality_type: 2
   has_municipality_districts: 1
+  active: true
 
 tn:
   sub: tn
@@ -14,3 +15,4 @@ tn:
   alias: trencin
   email: trencin
   municipality_type: 1
+  active: true

@@ -2,11 +2,10 @@
 
 <section class="forms-container report">
   <h1>Vytvoriť účet</h1>
+  <%= form_with url: rodauth.create_account_path, method: :post, data: { turbo: false }, html: { novalidate: true } do |form| %>
+    <div class="form-other-con">
+      <div class="form-description">Polia označené * sú povinné.</div>
 
-  <div class="form-other-con">
-    <div class="form-description">Polia označené * sú povinné.</div>
-
-    <%= form_with url: rodauth.create_account_path, method: :post, data: { turbo: false }, html: { novalidate: true } do |form| %>
       <div class="form-items-con">
         <div class="form-item-wrapper">
           <%= form.label "login", "#{rodauth.login_label}*" %>
@@ -31,33 +30,23 @@
         <% end %>
 
         <div class="form-item-wrapper">
-          <%= form.label :firstname, "Meno*" %>
-          <%= form.text_field :firstname, value: params["firstname"], id: "firstname", aria: ({ invalid: true, describedby: "firstname_error_message" } if rodauth.field_error("firstname")) %>
-          <%= content_tag(:span, rodauth.field_error("firstname"), class: "error-message", id: "firstname_error_message") if rodauth.field_error("firstname") %>
+          <%= form.label :name, "Meno*" %>
+          <%= form.text_field :name, value: params["name"], id: "name", aria: ({ invalid: true, describedby: "name_error_message" } if rodauth.field_error("name")) %>
+          <%= content_tag(:span, rodauth.field_error("name"), class: "error-message", id: "name_error_message") if rodauth.field_error("name") %>
         </div>
-
-        <div class="form-item-wrapper">
-          <%= form.label :lastname, "Priezvisko" %>
-          <%= form.text_field :lastname, value: params["lastname"], id: "lastname", aria: ({ invalid: true, describedby: "lastname_error_message" } if rodauth.field_error("lastname")) %>
-          <%= content_tag(:span, rodauth.field_error("lastname"), id: "lastname_error_message") if rodauth.field_error("lastname") %>
-        </div>
-
-        <div class="form-item-wrapper">
-          <%= form.label :municipality_id, "Mesto alebo obec" %>
-
-          <%= form.select :municipality_id,
-                          options_for_select(
-                            Municipality.where(active: true).order(:name).map { |m| [ "#{m.name} (#{m.category&.titleize})", m.id ] },
-                            params["municipality_id"]
-                          ),
-                          { include_blank: "Select Municipality" },
-                          { id: "municipality_id", aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
-          <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
-
-        </div>
-
-        <%= form.submit rodauth.create_account_button, class: "button" %>
       </div>
-    <% end %>
-  </div>
+
+      <%= form.submit rodauth.create_account_button, class: "button" %>
+
+      <div class="form-notice prose">Pri registrácii spracúvame vaše osobné údaje v&nbsp;rozsahu nevyhnutnom na splnenie úlohy
+        realizovanej vo verejnom záujme na základe GDPR čl. 6, odsek 1 písm. e). Podmienkou pre vytvorenie (registráciu)
+        používateľského
+        účtu pre osoby mladšie ako 16 rokov je súhlas ich rodičov alebo zákonných zástupcov. Viac informácií o
+        spracúvaní
+        osobných údajoch a vašich právach nájdete v
+        časti  <%= link_to 'Zásady ochrany osobných údajov', '/zasady-ochrany-osobnych-udajov', target: :_blank %>.
+      </div>
+    </div>
+    </div>
+  <% end %>
 </section>

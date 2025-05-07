@@ -1,0 +1,124 @@
+<% content_for :title, "Zmena osobných údajov" %>
+
+<section class="forms-container report">
+  <% if @user.onboarded? %>
+    <%= link_to profile_path, class: "button-back" do %>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
+        <path d="M1,19l9-9L1,1" fill="none" stroke-width="2"/>
+      </svg>
+    </span>
+      <span>Späť</span>
+    <% end %>
+    <h1>Osobné údaje</h1>
+  <% else %>
+    <h1>Vitajte na portáli Odkaz&nbsp;pre&nbsp;starostu!</h1>
+    <div class="form-other-con">
+      <div class="form-description">Predtým ako začnete portál používať je dobré si upraviť osobný profil a nastaviť pár
+        vecí. <strong>Nezaberie vám to viac ako minútu.</strong>
+      </div>
+      <h1>Osobné údaje</h1>
+    </div>
+  <% end %>
+
+  <%= form_with model: @user, url: profile_avatar_path, method: :patch, data: { controller: 'auto-submit' } do |f| %>
+    <div class="form-other-con">
+      <div class="form-picture-con">
+        <figure>
+          <picture>
+            <%= user_avatar @user, variant: :big %>
+          </picture>
+        </figure>
+        <%= f.label :avatar, 'Zmeniť fotku', class: 'button button-transparent' %>
+        <%= f.file_field :avatar, accept: "capture=camera;image/*", data: { action: 'auto-submit#submit' }, class: "sr-only" %>
+        <%= f.submit "Zmeniť fotku", class: 'sr-only' %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form_with model: @user, url: profile_path, method: :patch do |f| %>
+    <%= f.hidden_field :onboarded, value: true %>
+    <div class="form-other-con">
+      <div class="form-items-con">
+        <div class="form-item-wrapper">
+          <%= f.label :name, "Meno*" %>
+          <%= f.text_field :name %>
+          <% @user.errors.full_messages_for(:name).each do |message| %>
+            <span class="error-message"><%= message %></span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-items-con">
+        <div class="form-description">Chcete mať na portáli Odkaz pre starostu verejný profil?</div>
+
+        <div class="form-radio-button-wrapper">
+          <div class="form-radio-button-con">
+            <%= f.radio_button :anonymous, false, checked: !@user.anonymous? %>
+            <%= f.label :anonymous, "Áno", value: false %>
+          </div>
+          <div class="form-radio-button-con">
+            <%= f.radio_button :anonymous, true, checked: @user.anonymous? %>
+            <%= f.label :anonymous, "Nie", value: true %>
+          </div>
+        </div>
+
+        <div class="form-notice">Verejný profil znamená, že na portáli Odkaz pre starostu bude verejne viditeľné vaše
+          meno.
+        </div>
+      </div>
+
+      <div class="form-items-con">
+        <div class="form-item-wrapper">
+          <%= f.label :municipality_id, "Preferované mesto alebo obec" %>
+
+          <%= f.select :municipality_id,
+                       options_for_select(
+                         Municipality.where(active: true).order(:name).pluck(:name, :id),
+                         @user.municipality_id
+                       ),
+                       { include_blank: "" },
+                       { id: "municipality_id", class: 'dropdown-button', aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
+          <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
+        </div>
+        <div class="form-notice">Budete vidieť najmä podnety a oznamy z&nbsp;preferovaného mesta alebo obce.</div>
+      </div>
+
+      <div class="form-items-con">
+        <div class="form-description">Chcete dostávať emailové notifikácie k&nbsp;podnetom?</div>
+
+        <div class="form-radio-button-wrapper">
+          <div class="form-radio-button-con">
+            <%= f.radio_button :email_notifiable, true, checked: @user.email_notifiable? %>
+            <%= f.label :email_notifiable, "Áno", value: true %>
+          </div>
+          <div class="form-radio-button-con">
+            <%= f.radio_button :email_notifiable, false, checked: !@user.email_notifiable? %>
+            <%= f.label :email_notifiable, "Nie", value: false %>
+          </div>
+        </div>
+
+        <div class="form-notice">Emailové upozomenie k sledovanému podnetu dostávate v pripade aktualizácie alebo
+          nového komentára.
+        </div>
+      </div>
+
+      <div class="form-items-con">
+        <div class="form-item-wrapper">
+          <%= f.label "birth_year", "Rok narodenia" %>
+          <%= f.number_field :birth_year %>
+        </div>
+      </div>
+
+      <div class="form-check-box-con form-check-box-con-start">
+        <%= f.checkbox :gdpr_stats_accepted, class: "form-check-box" %>
+        <%= f.label :gdpr_stats_accepted, class: "prose" do %>
+          Súhlasím so spracovaním osobných údajov aj na štatistické účely. Vaše osobné údaje anonymizujeme. Viac
+          nájdete
+          v časti <%= link_to 'Zásady ochrany osobných údajov', '/zasady-ochrany-osobnych-udajov', target: :_blank %>.
+        <% end %>
+      </div>
+    </div>
+    <%= f.submit "Uložiť", class: "button" %>
+  <% end %>
+</section>

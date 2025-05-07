@@ -2,42 +2,44 @@
 #
 # Table name: users
 #
-#  id               :bigint           not null, primary key
-#  about            :string
-#  access_token     :string
-#  active           :boolean
-#  admin_name       :string
-#  anonymous        :boolean          default(FALSE)
-#  banned           :boolean          default(FALSE)
-#  birth            :date
-#  created_from_app :boolean          default(FALSE)
-#  display_name     :string
-#  email            :citext           not null
-#  email_notifiable :boolean          default(TRUE)
-#  exp              :integer
-#  fcm_token        :string
-#  firstname        :string
-#  gdpr_accepted    :boolean
-#  lastname         :string
-#  login            :string
-#  organization     :boolean
-#  password_hash    :string
-#  phone            :string
-#  resident         :boolean
-#  sex              :integer
-#  signature        :string
-#  status           :integer          default("unverified"), not null
-#  timestamp        :datetime
-#  uuid             :uuid             not null
-#  verification     :string
-#  verified         :boolean          default(FALSE)
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  city_id          :integer
-#  external_id      :integer
-#  legacy_id        :integer
-#  municipality_id  :bigint
-#  street_id        :bigint
+#  id                  :bigint           not null, primary key
+#  about               :string
+#  access_token        :string
+#  active              :boolean
+#  admin_name          :string
+#  anonymous           :boolean          default(FALSE)
+#  banned              :boolean          default(FALSE)
+#  birth               :date
+#  created_from_app    :boolean          default(FALSE)
+#  display_name        :string
+#  email               :citext           not null
+#  email_notifiable    :boolean          default(TRUE)
+#  exp                 :integer
+#  fcm_token           :string
+#  firstname           :string
+#  gdpr_accepted       :boolean
+#  gdpr_stats_accepted :boolean          default(FALSE)
+#  lastname            :string
+#  login               :string
+#  onboarded           :boolean          default(FALSE)
+#  organization        :boolean
+#  password_hash       :string
+#  phone               :string
+#  resident            :boolean
+#  sex                 :integer
+#  signature           :string
+#  status              :integer          default("unverified"), not null
+#  timestamp           :datetime
+#  uuid                :uuid             not null
+#  verification        :string
+#  verified            :boolean          default(FALSE)
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  city_id             :integer
+#  external_id         :integer
+#  legacy_id           :integer
+#  municipality_id     :bigint
+#  street_id           :bigint
 #
 class User < ApplicationRecord
   include Rodauth::Rails.model
@@ -50,13 +52,39 @@ class User < ApplicationRecord
   has_many :issue_likes, foreign_key: :user_id
   has_many :issue_subscriptions, foreign_key: :subscriber_id
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
+  has_one_attached :avatar do |avatar|
+    avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
+    avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
+    avatar.variant :medium, resize_to_fill: [ 80, 80 ], preprocessed: true
+    avatar.variant :big, resize_to_fill: [ 100, 100 ], preprocessed: true
+  end
 
   enum :sex, m: 1, f: 2
   enum :status, { unverified: 1, verified: 2, closed: 3 }
 
-  before_create { self.display_name ||= "Anonym #{self.id}" if self.anonymous? }
+  before_save do
+    self.display_name = self.anonymous? ? "Anonym ##{self.id}" : [ self.firstname, self.lastname ].compact.join(" ")
+  end
 
   validates :external_id, uniqueness: true, allow_nil: true
+  validates_presence_of :name
+
+  def name
+    [ firstname, lastname ].compact.join(" ")
+  end
+
+  def name=(value)
+    self.firstname = value
+    self.lastname = nil
+  end
+
+  def birth_year
+    birth&.year
+  end
+
+  def birth_year=(value)
+    self.birth = value.present? ? Date.new(value.to_i, 1, 1) : nil
+  end
 
   def likes?(thing)
     thing.liked_by?(self)

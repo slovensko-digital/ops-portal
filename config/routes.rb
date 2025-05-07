@@ -65,9 +65,16 @@ Rails.application.routes.draw do
   resources :uploads
 
   resources :questions, path: "otazky", path_names: { new: "nova" }
-  resources :praises, path: "pochvaly", path_names: { new: "nova" }
 
-  resource :profile
+  resources :praises, path: "pochvaly", path_names: { new: "nova" } do
+    collection do
+      get "podakovanie", action: :thanks, as: "thanks"
+    end
+  end
+
+  resource :profile do
+    resource :avatar, module: :profiles
+  end
 
   resources :users, path: "pouzivatelia"
 
