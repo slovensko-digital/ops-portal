@@ -9,13 +9,13 @@ class IssuesController < ApplicationController
 
     scope = Issue.publicly_visible
     case @tab
-      when "list"
+    when "list"
         scope = scope.with_attached_photos
 
         @search_results = search_engine.search(scope, params)
-      when "map"
+    when "map"
         @search_results = search_engine.search(scope, params) # TODO
-      when "stats"
+    when "stats"
         @search_results = search_engine.stats(scope, params)
     end
   end
@@ -163,17 +163,17 @@ class IssuesController < ApplicationController
           items: [
             "Posledných 30 dní",
             "Tento rok",
-            "Minulý rok",
+            "Minulý rok"
           ],
           multiple: false,
           sort: false,
           filter: ->(scope, params) do
             case params[:obdobie]
-              when "Posledných 30 dní"
+            when "Posledných 30 dní"
                 scope = scope.where(created_at: 30.days.ago..)
-              when "Tento rok"
+            when "Tento rok"
                 scope = scope.where(created_at: Date.current.beginning_of_year..)
-              when "Minulý rok"
+            when "Minulý rok"
                 scope = scope.where(created_at: 1.year.ago.beginning_of_year..1.year.ago.end_of_year)
             end
 
@@ -192,6 +192,12 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Sort.new(
           name: :nove,
           label: "Najnovšie",
+          apply_if: ->(params) do
+            return false unless params[:sort].nil? || params[:sort] == "nove"
+            return false if params[:pin].present? && (params[:sort].nil? || params[:sort] == "vzd")
+
+            true
+          end,
           order: ->(scope, _) { scope.order(created_at: :desc) }
         ),
 
@@ -225,11 +231,10 @@ class IssuesController < ApplicationController
 
             scope.order_by_distance_from_point(lat, lon)
           end
-        ),
+        )
       ],
 
       per_page: 12,
-      default_sort: :nove,
       default_permitted_params: [ "tab" ]
     )
   end

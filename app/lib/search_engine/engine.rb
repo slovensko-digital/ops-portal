@@ -1,11 +1,10 @@
 module SearchEngine
   class Engine
-    def initialize(filters:, sorts: [], default_sort: nil, per_page: nil, default_permitted_params: [])
+    def initialize(filters:, sorts: [], per_page: nil, default_permitted_params: [])
       @filters = filters
       @sorts = sorts
       @per_page = per_page
       @default_permitted_params = default_permitted_params
-      @default_sort = default_sort
     end
 
     def search(scope, params)
@@ -61,7 +60,6 @@ module SearchEngine
         filter.add_permitted_params(p)
       end
 
-      results.default_sort = @default_sort
       permitted_params << :sort
 
       results.search_params = params.permit(*permitted_params)
