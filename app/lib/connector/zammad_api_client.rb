@@ -138,6 +138,99 @@ module Connector
       new_article
     end
 
+    def find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, sender:)
+      ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
+
+      article = @tenant.activities.find_by(legacy_id: legacy_data.id)
+      return ticket.articles.find { |a| article.backoffice_external_id == a.id } if article
+
+      new_article = ticket.article(
+        origin_by_id: create_or_find_agent(legacy_data.author),
+        content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
+        body: legacy_data.body,
+        type: DEFAULT_ARTICLE_TYPE,
+        internal: legacy_data.internal,
+        attachments: legacy_data.attachments.map do |attachment|
+          {
+            "filename" => attachment.filename,
+            "mime-type" => attachment.mimetype,
+            "data" => Base64.encode64(attachment.content)
+          }
+        end,
+        sender: sender,
+        created_at: legacy_data.created_at
+      )
+
+      raise unless new_article.id
+
+      @tenant.activities.create!(legacy_id: legacy_data.id, backoffice_external_id: new_article.id)
+      new_article
+    end
+
+    def find_or_create_ticket_from_legacy_data!(legacy_data, state:, group:)
+      tenant_issue = @tenant.issues.find_by(legacy_id: legacy_data.id)
+      return @client.ticket.find(tenant_issue.backoffice_external_id) if tenant_issue
+
+      tmp_body = {
+        state: state,
+        group: group,
+        title: legacy_data.title,
+        ops_responsible_subject: {
+          "label"=> legacy_data.responsible_subject&.subject_name,
+          "value"=> legacy_data.responsible_subject&.id
+        },
+        ops_category: legacy_data.category&.name,
+        ops_subcategory: legacy_data.subcategory&.name,
+        ops_subtype: legacy_data.subtype&.name,
+        address_municipality: legacy_data.municipality&.name,
+        address_municipality_district: legacy_data.municipality_district.name,
+        address_street: legacy_data.address_street,
+        address_lat: legacy_data.latitude,
+        address_lon: legacy_data.longitude,
+        created_at: legacy_data.created_at,
+        customer_id: create_or_find_agent(legacy_data.author),
+        article: {
+          body: legacy_data.description.presence || "(bez popisu)",
+          type: DEFAULT_ARTICLE_TYPE,
+          internal: legacy_data.internal,
+          attachments: legacy_data.attachments.map do |attachment|
+            {
+              "filename" => attachment.filename,
+              "mime-type" => attachment.mimetype,
+              "data" => Base64.encode64(attachment.content.read)
+            }
+          end,
+          created_at: legacy_data.created_at
+        }
+      }
+
+      new_ticket = @client.ticket.create(tmp_body)
+      # TODO custom error
+      raise unless new_ticket.id
+
+      @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
+
+      set_ticket_owner_from_legacy_data(new_ticket, legacy_data)
+      set_ticket_subscribers_from_legacy_data(new_ticket, legacy_data)
+
+      new_ticket
+    end
+
+    def set_ticket_owner_from_legacy_data(ticket, legacy_data)
+      user_id = create_or_find_agent(legacy_data.owner)
+      add_user_to_group(user_id, IMPORT_GROUP)
+
+      ticket.owner_id = user_id
+      ticket.save
+    end
+
+    def set_ticket_subscribers_from_legacy_data(ticket, legacy_data)
+      legacy_data.subscribers.each do |subscriber|
+        subscriber_id = create_or_find_agent(subscriber)
+        mention_agent_in_ticket(subscriber_id, ticket)
+      end
+    end
+
     def set_ticket_owner(issue)
       ticket = find_ticket_for_issue!(issue)
 
@@ -155,6 +248,10 @@ module Connector
 
       raise "Agent not found in backoffice!" unless agent_id
 
+      mention_agent_in_ticket(agent_id, ticket)
+    end
+
+    def mention_agent_in_ticket(agent_id, ticket)
       add_user_to_group(agent_id, IMPORT_GROUP)
 
       _, response_status = raw_api_request(
