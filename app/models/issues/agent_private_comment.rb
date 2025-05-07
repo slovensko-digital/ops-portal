@@ -30,6 +30,10 @@ class Issues::AgentPrivateComment < Issues::Comment
     "Odkaz pre starostu"
   end
 
+  def author
+    agent_author
+  end
+
   def visible?
     false
   end

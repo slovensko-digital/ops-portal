@@ -30,6 +30,10 @@ class Issues::AgentComment < Issues::Comment
     "Odkaz pre starostu"
   end
 
+  def author
+    agent_author
+  end
+
   def triage_activity_body
     [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, super ].join(" ")
   end

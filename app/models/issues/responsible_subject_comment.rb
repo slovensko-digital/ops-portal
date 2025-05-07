@@ -23,6 +23,7 @@
 #  user_author_id                :bigint
 #
 class Issues::ResponsibleSubjectComment < Issues::Comment
+  validates :agent_author_id, absence: true
   validates :user_author_id, absence: true
 
   def author

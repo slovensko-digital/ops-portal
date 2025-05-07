@@ -23,6 +23,7 @@
 #  user_author_id                :bigint
 #
 class Issues::UserComment < Issues::Comment
+  validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
   validates :text, presence: true
   validate :edited_within_editing_window, on: :edit

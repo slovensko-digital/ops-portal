@@ -25,6 +25,7 @@
 class Issues::Comment < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
   belongs_to :user_author, class_name: "User", optional: true
+  belongs_to :agent_author, class_name: "Legacy::Agent", foreign_key: "agent_author_id", optional: true
   belongs_to :responsible_subject_author, class_name: "ResponsibleSubject", optional: true
   delegate :issue, to: :activity
 
