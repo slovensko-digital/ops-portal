@@ -78,20 +78,12 @@ class User < ApplicationRecord
     self.lastname = nil
   end
 
-  def public_profile
-    !anonymous?
-  end
-
   def birth_year
     birth&.year
   end
 
   def birth_year=(value)
     self.birth = value.present? ? Date.new(value.to_i, 1, 1) : nil
-  end
-
-  def public_profile=(value)
-    self.anonymous = !value
   end
 
   def likes?(thing)
