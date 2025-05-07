@@ -37,9 +37,8 @@ module Import
           front_page: legacy_record.titulka,
           mms: legacy_record.mms,
           soft_reject: legacy_record.soft_reject,
-          owner_id: legacy_record.riesitel, # TODO nevieme referencia na ktory model by toto mala byt
-          new_owner_id: legacy_record.riesitel_new, # TODO nevieme referencia na ktory model by toto mala byt
-          modified_at: legacy_record.modified_time, # TODO nestaci updated_at?
+          owner_id: legacy_record.riesitel,
+          new_owner_id: legacy_record.riesitel_new,
           updated_by_id: legacy_record.modified_by, # TODO overit na ktory model je toto referencia
           state_changed_at: legacy_record.last_status_change_time,
           street_legacy_id: legacy_record.ulica,
@@ -82,6 +81,7 @@ module Import
         state: ::Issues::State.find_by(legacy_id: legacy_record.status)
       ).tap do |issue|
         issue.imported_at = Time.now
+        issue.updated_at = legacy_record.modified_time
         issue.save!
       end
 
