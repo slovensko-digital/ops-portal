@@ -1,7 +1,6 @@
 one:
-  id: 1
   name: Staré Mesto
-  municipality_id: 1
+  municipality: one
   genitiv: Starého Mesta
   lokal: Starom Meste
   description:
@@ -12,9 +11,8 @@ one:
   aliases: [stare-mesto, "Staré Mesto", "Bratislava - mestská časť Staré Mesto"]
 
 two:
-  id: 2
   name: Ružinov
-  municipality_id: 1
+  municipality: one
   genitiv: Ružinova
   lokal: Ružinove
   description:
@@ -25,9 +23,8 @@ two:
   aliases: [ruzinov, Ružinov]
 
 three:
-  id: 3
   name: Vrakuňa
-  municipality_id: 1
+  municipality: one
   genitiv: Vrakune
   lokal: Vrakuni
   description:
