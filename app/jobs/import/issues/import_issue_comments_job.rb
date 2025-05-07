@@ -2,7 +2,11 @@ module Import
   class Issues::ImportIssueCommentsJob < ApplicationJob
     include ImportMethods
 
-    def perform(issue:, import_photos_job: Issues::ImportIssueCommentAttachmentsJob)
+    def perform(
+      issue:,
+      import_photos_job: Issues::ImportIssueCommentAttachmentsJob,
+      import_votes_job: Issues::ImportIssueCommentVotesJob
+    )
       Legacy::Alerts::Comment.where(remoteid: issue.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
           comment_type = if Legacy::User.find_or_create_agent(legacy_record.user).present?
@@ -30,6 +34,7 @@ module Import
           comment.save!
 
           import_photos_job.perform_later(comment: comment)
+          import_votes_job.perform_later(comment: comment)
         end
       end
     end

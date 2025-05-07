@@ -22,7 +22,7 @@ class Connector::Legacy::ImportInternalBackofficeActivityFromLegacyDbToBackoffic
             OpenStruct.new(
               filename: legacy_attachment_record.name,
               mimetype: attachment_mimetype_by_name(legacy_attachment_record.name),
-              content: download_from_ops_portal(legacy_attachment_record.path)
+              content: download_from_ops_portal(legacy_attachment_record.path).read
             )
           end
         )
