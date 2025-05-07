@@ -4,7 +4,6 @@ module Import
 
     def perform(
       legacy_record,
-      import_backoffice_owner_job: Issues::ImportIssueBackofficeOwnerJob,
       import_photos_job: Issues::ImportIssuePhotosJob,
       import_updates_job: Issues::ImportIssueUpdatesJob,
       import_comments_job: Issues::ImportIssueCommentsJob,
@@ -20,6 +19,7 @@ module Import
       else
         Legacy::User.find_or_create_agent(legacy_record.riesitel_new)
       end
+      backoffice_owners = Legacy::Alerts::MunicipalityUser.where(alert_id: legacy_record.id).order(:id)
 
       issue = Issue.find_or_create_by!(
         legacy_id: legacy_record.id,
@@ -40,7 +40,6 @@ module Import
           soft_reject: legacy_record.soft_reject,
           owner_id: legacy_record.riesitel, # TODO nevieme referencia na ktory model by toto mala byt
           new_owner_id: legacy_record.riesitel_new, # TODO nevieme referencia na ktory model by toto mala byt
-          modified_at: legacy_record.modified_time, # TODO nestaci updated_at?
           updated_by_id: legacy_record.modified_by, # TODO overit na ktory model je toto referencia
           state_changed_at: legacy_record.last_status_change_time,
           street_legacy_id: legacy_record.ulica,
@@ -67,7 +66,9 @@ module Import
           ended_at: legacy_record.end_date,
           parent_id: legacy_record.parent_id,
           organization_unit_id2: legacy_record.organizational_unit_id2,
-          legacy_responsible_subject_id: legacy_record.zodpovednost
+          legacy_responsible_subject_id: legacy_record.zodpovednost,
+          backoffice_owner_legacy_id: backoffice_owners&.last&.municipality_user_id,
+          other_backoffice_owners_legacy_ids: backoffice_owners[0..-2]&.map(&:municipality_user_id)
         },
         longitude: legacy_record.map_y,
         title: legacy_record.heading,
@@ -83,10 +84,10 @@ module Import
         state: ::Issues::State.find_by(legacy_id: legacy_record.status)
       ).tap do |issue|
         issue.imported_at = Time.now
+        issue.updated_at = convert_timestamp_value(legacy_record.modified_time)
         issue.save!
       end
 
-      import_backoffice_owner_job.perform_later(issue: issue)
       import_photos_job.perform_later(issue: issue)
       import_updates_job.perform_later(issue: issue)
       import_comments_job.perform_later(issue: issue)
