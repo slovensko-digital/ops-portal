@@ -73,6 +73,8 @@ class Issue < ApplicationRecord
   pg_search_scope :fulltext_search, against: [ :title, :description, :legacy_id ], ignoring: :accents
   scope :publicly_visible, -> { joins(:state).where.not(state: { key: %w[waiting rejected] }) }
 
+  before_save :recalculate_computed_fields
+
   def votes
     # fake it
     @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
@@ -115,5 +117,12 @@ class Issue < ApplicationRecord
     order_sql = sanitize_sql_for_order([ Arel.sql("ST_Point(issues.longitude, issues.latitude, 4326)::geography <-> ST_Point(?, ?, 4326)::geography"), lon, lat ])
 
     select(select_sql).reorder(order_sql)
+  end
+
+  def recalculate_computed_fields
+    self.responsible_subject_last_contact_at = Issues::ResponsibleSubjectComment
+      .joins(activity: :issue)
+      .where(issues: { id: id })
+      .maximum(:created_at)
   end
 end

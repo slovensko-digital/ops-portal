@@ -239,3 +239,22 @@ select.dropdown-button:open {
 .forms-container form {
     margin-bottom: 40px;
 }
+
+
+// faux tailwind
+
+.hidden {
+    visibility: hidden;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.relative {
+    position: relative;
+}
+
+.right-0 {
+    right: 0;
+}

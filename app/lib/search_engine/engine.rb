@@ -1,13 +1,16 @@
 module SearchEngine
   class Engine
-    def initialize(filters:, per_page: nil, default_permitted_params: [])
+    def initialize(filters:, sorts: [], default_sort: nil, per_page: nil, default_permitted_params: [])
       @filters = filters
+      @sorts = sorts
       @per_page = per_page
       @default_permitted_params = default_permitted_params
+      @default_sort = default_sort
     end
 
     def search(scope, params)
       scope = apply_filters(scope, params)
+      scope = apply_sort(scope, params)
 
       scope = scope.page(params[:page])
       scope = scope.per(@per_page) if @per_page
@@ -44,11 +47,22 @@ module SearchEngine
       scope
     end
 
+    def apply_sort(scope, params)
+      @sorts.each do |sort|
+        scope = sort.apply(scope, params)
+      end
+
+      scope
+    end
+
     def build_results_with_filters(params)
       results = Results.new
       permitted_params = @filters.each_with_object(@default_permitted_params) do |filter, p|
         filter.add_permitted_params(p)
       end
+
+      results.default_sort = @default_sort
+      permitted_params << :sort
 
       results.search_params = params.permit(*permitted_params)
 
@@ -58,6 +72,10 @@ module SearchEngine
 
       @filters.each do |filter|
         filter.add_visible_filter(results)
+      end
+
+      @sorts.each do |sort|
+        sort.add_sort(results)
       end
 
       results

@@ -1594,11 +1594,22 @@ ul.dropdown-list li {
   font-size: em(18,16);
   font-weight: $medium;
   line-height: em(18,18);
-  padding: 12px 14px;
+  //padding: 12px 14px;
 }
 ul.dropdown-list li:hover {
   background: $line;
 }
+
+ul.dropdown-list li a {
+  color: $black;
+  display: block;
+  padding: 12px 14px;
+}
+
+ul.dropdown-list li.active {
+  background: $line;
+}
+
 ul.dropdown-list li.check-box a {
   align-items: center;
   display: grid;

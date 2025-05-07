@@ -1,5 +1,5 @@
 <!-- Zoznam podnetov -->
-<% if @search_results.hits.any? %>
+<% if @search_results.hits.length > 0 %>
   <div class="wrapper-list">
     <div class="podnet-block-con">
       <%= render @search_results.hits %>

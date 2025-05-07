@@ -9,3 +9,5 @@ pin "leaflet" # @1.9.4
 pin "leaflet.locatecontrol" # @0.84.1
 pin "tailwindcss-stimulus-components" # @6.1.3
 pin "@stimulus-components/auto-submit", to: "@stimulus-components--auto-submit.js" # @6.0.0
+pin "@stimulus-components/dropdown", to: "@stimulus-components--dropdown.js" # @3.0.0
+pin "stimulus-use" # @0.52.3

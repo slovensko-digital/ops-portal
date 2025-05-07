@@ -11,16 +11,19 @@ module SearchEngine
         end
       end
 
-      Filled = Struct.new(:control, :value, :items, keyword_init: true) do
+      Filled = Struct.new(:control, :value, :items, :default_label, :multiple, keyword_init: true) do
         delegate :to_partial_path, to: :control
       end
 
-      def initialize(param_name:, label:, items:, filter:, filter_label: -> { _1 })
+      def initialize(param_name:, label:, items:, filter:, filter_label: -> { _1 }, multiple: true, default_label: "Všetko", sort: true)
         @param_name = param_name
         @label = label
         @items = items
         @filter = filter
         @filter_label = filter_label
+        @multiple = multiple
+        @default_label = default_label
+        @sort = sort
       end
 
       def apply(scope, params)
@@ -53,15 +56,21 @@ module SearchEngine
 
         values = Array(results.search_params[@param_name])
 
-        items.map do |value|
+        out = items.map do |value|
           Item.new(
             label: value,
             value: value,
             selected: values.include?(value),
-            add_params: results.search_params.merge(@param_name => (values + [ value ]).uniq),
-            remove_params: results.search_params.merge(@param_name => (values - [ value ]).uniq),
+            add_params: results.search_params.merge(@param_name => @multiple ? (values + [ value ]).uniq : value),
+            remove_params: results.search_params.merge(@param_name => @multiple ? (values - [ value ]).uniq : nil),
           )
-        end.sort_by { |i| i.selected? ? [ -1, i.label ] : [ 1, i.label ] }
+        end
+
+        out.sort_by! do |i|
+          i.selected? ? [ -1, i.label ] : [ 1, i.label ]
+        end if @sort
+
+        out
       end
 
       def add_visible_filter(results)
@@ -71,7 +80,9 @@ module SearchEngine
         results.visible_filters << Filled.new(
           control: self,
           value: results.search_params[@param_name],
-          items: items_data
+          items: items_data,
+          default_label: @default_label,
+          multiple: @multiple,
         )
       end
     end

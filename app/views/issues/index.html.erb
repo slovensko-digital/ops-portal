@@ -79,12 +79,24 @@
             <path d="M19.75,9.25h-2.04c-.35-3.68-3.29-6.61-6.96-6.96V.25h-1.5v2.04c-3.68.35-6.61,3.29-6.96,6.96H.25v1.5h2.04c.35,3.68,3.29,6.61,6.96,6.96v2.04h1.5v-2.04c3.68-.35,6.61-3.29,6.96-6.96h2.04v-1.5ZM10.75,16.2v-1.95h-1.5v1.95c-2.85-.34-5.11-2.6-5.45-5.45h1.95v-1.5h-1.95c.34-2.85,2.6-5.11,5.45-5.45v1.95h1.5v-1.95c2.85.34,5.11,2.6,5.45,5.45h-1.95v1.5h1.95c-.34,2.85-2.6,5.11-5.45,5.45Z"/>
           </svg>
         <% end %>
-        <button class="button button-transparent not-implemented">
-          <span>Zoradiť</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
-            <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
-          </svg>
-        </button>
+        <div data-controller="dropdown" class="relative">
+          <button class="button button-transparent" data-action="dropdown#toggle click@window->dropdown#hide">
+            <span>Zoradiť</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
+              <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
+            </svg>
+          </button>
+          <ul
+            data-dropdown-target="menu" style="z-index: 100; margin-top: 10px; width: 27ch; height: auto; overflow: hidden;"
+            class="dropdown-list hidden absolute right-0"
+          >
+            <% @search_results.sorts.each do |sort| %>
+              <%= tag.li(class: class_names('active': sort.selected)) do %>
+                <%= link_to sort.control.label, search_issues_path(sort.params) %>
+              <% end %>
+            <% end %>
+          </ul>
+        </div>
       </nav>
 
       <%= render partial: @tab %>
