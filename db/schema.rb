@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_06_192830) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_07_082225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -738,6 +738,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_192830) do
     t.integer "status", default: 1, null: false
     t.string "display_name"
     t.boolean "gdpr_stats_accepted", default: false
+    t.boolean "onboarded", default: false
     t.index ["email"], name: "index_users_on_email", unique: true, where: "(status = ANY (ARRAY[1, 2]))"
     t.index ["external_id"], name: "index_users_on_external_id", unique: true
     t.index ["legacy_id"], name: "index_users_on_legacy_id", unique: true

@@ -30,80 +30,10 @@
         <% end %>
 
         <div class="form-item-wrapper">
-          <%= form.label :firstname, "Meno*" %>
-          <%= form.text_field :firstname, value: params["firstname"], id: "firstname", aria: ({ invalid: true, describedby: "firstname_error_message" } if rodauth.field_error("firstname")) %>
-          <%= content_tag(:span, rodauth.field_error("firstname"), class: "error-message", id: "firstname_error_message") if rodauth.field_error("firstname") %>
+          <%= form.label :name, "Meno*" %>
+          <%= form.text_field :name, value: params["name"], id: "name", aria: ({ invalid: true, describedby: "name_error_message" } if rodauth.field_error("name")) %>
+          <%= content_tag(:span, rodauth.field_error("name"), class: "error-message", id: "name_error_message") if rodauth.field_error("name") %>
         </div>
-      </div>
-
-      <div class="form-items-con">
-        <div class="form-description">Chcete mať na portáli Odkaz pre starostu verejný profil?</div>
-
-        <div class="form-radio-button-wrapper">
-          <div class="form-radio-button-con">
-            <%= form.radio_button :public_profile, "yes", checked: params[:public_profile].presence == "yes" || true %>
-            <%= form.label :public_profile, "Áno", value: "yes" %>
-          </div>
-          <div class="form-radio-button-con">
-            <%= form.radio_button :public_profile, "no", checked: params[:public_profile].presence == "no" %>
-            <%= form.label :public_profile, "Nie", value: "no" %>
-          </div>
-        </div>
-
-        <div class="form-notice">Verejný profil znamená, že na portáli Odkaz pre starostu bude verejne viditeľné vaše
-          meno.
-        </div>
-      </div>
-
-      <div class="form-items-con">
-        <div class="form-item-wrapper">
-          <%= form.label :municipality_id, "Preferované mesto alebo obec" %>
-
-          <%= form.select :municipality_id,
-                          options_for_select(
-                            Municipality.where(active: true).order(:name).pluck(:name, :id),
-                            params["municipality_id"]
-                          ),
-                          { include_blank: "" },
-                          { id: "municipality_id", class: 'dropdown-button', aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
-          <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
-        </div>
-        <div class="form-notice">Budete vidieť najmä podnety a oznamy z&nbsp;preferovaného mesta alebo obce.</div>
-      </div>
-
-      <div class="form-items-con">
-        <div class="form-description">Chcete dostávať emailové notifikácie k&nbsp;podnetom?</div>
-
-        <div class="form-radio-button-wrapper">
-          <div class="form-radio-button-con">
-            <%= form.radio_button :email_notifications, "yes", checked: params[:email_notifications].presence == "yes" || true %>
-            <%= form.label :email_notifications, "Áno", value: "yes" %>
-          </div>
-          <div class="form-radio-button-con">
-            <%= form.radio_button :email_notifications, "no", checked: params[:email_notifications].presence == "no" %>
-            <%= form.label :email_notifications, "Nie", value: "no" %>
-          </div>
-        </div>
-
-        <div class="form-notice">Emailové upozomenie k sledovanému podnetu dostávate v pripade aktualizácie alebo
-          nového komentára.
-        </div>
-      </div>
-
-      <div class="form-items-con">
-        <div class="form-item-wrapper">
-          <%= form.label "birth_year", "Rok narodenia" %>
-          <%= form.number_field :birth_year, value: params[:birth_year], id: "birth_year", aria: ({ invalid: true, describedby: "birth_year_error_message" } if rodauth.field_error(:birth_year)), min: 1900, max: Date.today.year %>
-          <%= content_tag(:span, rodauth.field_error(:birth_year), class: "error-message", id: "birth_year_error_message") if rodauth.field_error(:birth_year) %>
-        </div>
-      </div>
-
-      <div class="form-check-box-con form-check-box-con-start">
-        <%= form.checkbox :gdpr_stats_accepted, checked: params[:gdpr_stats_accepted] == "1", class: "form-check-box" %>
-        <%= form.label :gdpr_stats_accepted, class: "prose" do %>
-          Súhlasím so spracovaním osobných údajov aj na štatistické účely. Vaše osobné údaje anonymizujeme. Viac nájdete
-          v časti <%= link_to 'Zásady ochrany osobných údajov', '/zasady-ochrany-osobnych-udajov', target: :_blank %>.
-        <% end %>
       </div>
 
       <%= form.submit rodauth.create_account_button, class: "button" %>

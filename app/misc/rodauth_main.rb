@@ -199,39 +199,23 @@ class RodauthMain < Rodauth::Rails::Auth
     auth_class_eval do
       def build_custom_params
         {
-          firstname: param_or_nil("firstname"),
-          public_profile: param_or_nil("public_profile"),
-          municipality_id: param_or_nil("municipality_id"),
-          email_notifications: param_or_nil("public_profile"),
-          birth_year: param_or_nil("birth_year"),
-          gdpr_stats_accepted: param_or_nil("gdpr_stats_accepted")
+          name: param_or_nil("name")
         }
       end
 
       def validate_custom_params(custom_params)
-        is_valid = true
+        if custom_params[:name].blank?
+          full_message = I18n.t("errors.format", attribute: I18n.t("activerecord.attributes.user.name"), message: I18n.t("errors.messages.blank"))
+          set_field_error("name", full_message)
 
-        if custom_params[:firstname].blank?
-          is_valid = false
-          set_field_error("firstname", I18n.t("errors.messages.blank", attribute: I18n.t("activerecord.attributes.user.firstname")))
+          return false
         end
 
-        if custom_params[:municipality_id].present? && !Municipality.exists?(custom_params[:municipality_id])
-          is_valid = false
-          set_field_error("municipality_id", I18n.t("errors.messages.invalid"))
-        end
-
-        is_valid
+        true
       end
 
       def populate_account(custom_params)
-        account[:firstname] = custom_params[:firstname]
-        account[:lastname] = custom_params[:lastname]
-        account[:municipality_id] = custom_params[:municipality_id] if custom_params[:municipality_id].present?
-        account[:anonymous] = custom_params[:public_profile] == "no"
-        account[:gdpr_stats_accepted] = custom_params[:gdpr] == "1"
-        account[:birth] = Date.new(custom_params[:birth_year].to_i, 1, 1) if custom_params[:birth_year].present?
-        account[:email_notifiable] = custom_params[:email_notifications] == "1"
+        account[:firstname] = custom_params[:name]
       end
     end
   end

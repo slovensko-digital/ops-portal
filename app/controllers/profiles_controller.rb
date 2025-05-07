@@ -11,7 +11,8 @@ class ProfilesController < ApplicationController
     @user = current_user
     @user.assign_attributes(user_attributes)
     if @user.save
-      redirect_to profile_path, notice: "Zmeny boli uložené."
+      path = @user.onboarded_previously_changed? ? root_path : profile_path
+      redirect_to path, notice: "Zmeny profilu boli uložené."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -20,6 +21,6 @@ class ProfilesController < ApplicationController
   private
 
   def user_attributes
-    params.require(:user).permit(:name, :anonymous, :municipality_id, :email_notifiable, :birth_year, :gdpr_stats_accepted)
+    params.require(:user).permit(:name, :anonymous, :municipality_id, :email_notifiable, :birth_year, :gdpr_stats_accepted, :onboarded)
   end
 end
