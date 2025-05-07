@@ -21,11 +21,12 @@
 #  legacy_data              :jsonb
 #  likes_count              :integer          default(0), not null
 #  longitude                :float
+#  praise_public            :boolean          default(FALSE), not null
 #  title                    :string           not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  author_id                :bigint
-#  category_id              :bigint           not null
+#  category_id              :bigint
 #  legacy_id                :integer
 #  municipality_district_id :bigint
 #  municipality_id          :bigint
