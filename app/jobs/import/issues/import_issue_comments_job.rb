@@ -26,6 +26,7 @@ module Import
             verification: legacy_record.verification,
             created_at: convert_timestamp_value(legacy_record.time),
             user_author: Legacy::User.find_or_create_user(legacy_record.user),
+            agent_author: Legacy::User.find_or_create_agent(legacy_record.user),
             type: comment_type
           )
           comment.imported_at ||= Time.now
