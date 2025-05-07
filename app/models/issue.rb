@@ -19,6 +19,7 @@
 #  last_synced_at           :datetime
 #  latitude                 :float
 #  legacy_data              :jsonb
+#  likes_count              :integer          default(0), not null
 #  longitude                :float
 #  title                    :string           not null
 #  created_at               :datetime         not null
@@ -42,7 +43,7 @@ class Issue < ApplicationRecord
   enum :issue_type, { issue: 1, question: 2, praise: 3 }, default: :issue
   # TODO add triage_draft_external_id - este premenovat
 
-  belongs_to :author, class_name: "User"
+  belongs_to :author, class_name: "User", optional: true
   belongs_to :owner, class_name: "Legacy::Agent", optional: true # TODO drop after legacy import
   belongs_to :category, class_name: "Issues::Category"
   belongs_to :subcategory, class_name: "Issues::Subcategory", optional: true
@@ -56,24 +57,46 @@ class Issue < ApplicationRecord
   has_many :comment_activities, class_name: "Issues::CommentActivity", dependent: :destroy
   has_many :legacy_communication_activities, class_name: "Legacy::Issues::CommunicationActivity", dependent: :destroy
   has_many :update_activities, class_name: "Issues::UpdateActivity", dependent: :destroy
+  has_many :likes, class_name: "IssueLike"
 
   has_many_attached :photos do |photo|
-    photo.variant :small, resize_to_limit: [ 800, 600 ], preprocessed: true
+    photo.variant :normal, resize_to_fill: [ 680, 680 ], preprocessed: true
+    photo.variant :small, resize_to_fill: [ 320, 320 ], preprocessed: true
+    photo.variant :thumb, resize_to_fill: [ 160, 160 ], preprocessed: true
   end
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
+  validates_presence_of :title, :description
 
   pg_search_scope :fulltext_search, against: [ :title, :description, :legacy_id ], ignoring: :accents
-  scope :publicly_visible, -> { joins(:state).where.not(state: { name: [ "Čakajúci", "Neprijatý" ] }) }
+  scope :publicly_visible, -> { joins(:state).where.not(state: { key: %w[waiting rejected] }) }
 
   def votes
     # fake it
     @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
   end
 
-  # TODO
   def backoffice_owner
-    nil
+    ResponsibleSubjects::User.find_by(legacy_id: legacy_data["backoffice_owner_legacy_id"]) if legacy_data["backoffice_owner_legacy_id"]
+  end
+
+  def liked_by?(user)
+    user.issue_likes.where(issue: self).exists?
+  end
+
+  def editable_by?(user)
+    return false unless user == author
+    return false unless editable?
+
+    true
+  end
+
+  def public?
+    !state.key.in? %w[waiting rejected]
+  end
+
+  def editable?
+    state.key == "waiting"
   end
 
   def should_create_resolution_process?

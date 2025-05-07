@@ -1,100 +1,98 @@
+<% content_for :title, @issue.title %>
+
 <section class="podnet">
   <div class="podnet-con">
     <!-- Podnet Description & Pictures -->
-    <div class="podnet-esential">
-      <h1><%= @issue.title %></h1>
-      <div class="podnet-description">
-        <%= @issue.description %>
-      </div>
-      <div class="podnet-pictures-con">
-        <figure class="big-picture">
-          <div class="lens-image">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-              <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
-              <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
-            </svg>
-          </div>
-          <picture>
-            <%= image_tag @issue.photos.first.variant(:small) if @issue.photos.attached? %>
-          </picture>
-        </figure>
-        <% if @issue.photos.count > 1 %>
-          <% @issue.photos[1..].each do |photo| %>
-            <figure class="small-picture">
-              <div class="lens-image">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                  <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
-                  <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
-                </svg>
-              </div>
-              <picture>
-                <%= image_tag photo.variant(:small) %>
-              </picture>
-            </figure>
+    <%= turbo_frame_tag @issue, :edit do %>
+      <div class="podnet-esential">
+        <h1><%= @issue.title %></h1>
+        <div class="podnet-description prose">
+          <%= simple_format @issue.description %>
+        </div>
+        <div class="podnet-pictures-con">
+          <figure class="big-picture">
+            <div class="lens-image">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
+                <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
+              </svg>
+            </div>
+            <picture>
+              <%= image_tag @issue.photos.first.variant(:normal) if @issue.photos.attached? %>
+            </picture>
+          </figure>
+          <% if @issue.photos.count > 1 %>
+            <% @issue.photos[1..].each do |photo| %>
+              <figure class="small-picture">
+                <div class="lens-image">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                    <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
+                    <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
+                  </svg>
+                </div>
+                <picture>
+                  <%= image_tag photo.variant(:thumb) %>
+                </picture>
+              </figure>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
+
+        <div class="share-buttons">
+          <% if logged_in? && current_user.can_edit?(@issue) %>
+            <%= button_to "Upraviť", edit_issue_path(@issue), method: :get, class: "button button-transparent button-edit" %>
+          <% end %>
+          <%= render partial: "issue_subscriptions/button" %>
+          <%= render partial: "issue_likes/button" %>
+
+          <% unless @issue.editable? %>
+            <a class="button button-transparent button-share-mobile" data-action="webshare#share" data-controller="webshare" data-webshare-supported-class="button-share-supported" data-webshare-title-value="<%= @issue.title %>" data-webshare-text-value="Pozrite si tento podnet" data-webshare-url-value="<%= issue_url(@issue) %>">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+                <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+              </svg>
+              <span>Zdielať</span>
+            </a>
+
+            <%= link_to "https://www.facebook.com/sharer/sharer.php?u=#{issue_url(@issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+                <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+              </svg>
+              <span>Facebook</span>
+            <% end %>
+
+            <%= link_to "https://x.com/intent/tweet?url=#{issue_url(@issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+                <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+              </svg>
+              <span>Twitter/X</span>
+            <% end %>
+          <% end %>
+        </div>
       </div>
-
-      <div class="share-buttons">
-        <a class="button button-transparent button-share">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
-            <polygon points="1 .78 1 5.7 1 12.59 1 18.59 7 14.99 13 18.59 13 12.59 13 5.7 13 .78 1 .78" stroke="#1c3054" stroke-miterlimit="10" stroke-width="1.5"/>
-          </svg>
-          <span>Sledovať podnet</span>
-        </a>
-
-        <a class="button button-transparent button-like button-active">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <path d="M17.46,3.35c-2.06-2.05-5.4-2.05-7.46,0-2.06-2.05-5.4-2.05-7.46,0C.49,5.4.49,8.72,2.54,10.77l7.46,7.41,7.46-7.41c2.06-2.05,2.06-5.37,0-7.41Z" stroke="#1c3054" stroke-miterlimit="10" stroke-width="1.5"/>
-          </svg>
-          <span>35</span>
-        </a>
-
-        <a class="button button-transparent button-share-mobile">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
-            <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
-          </svg>
-          <span>Zdielať</span>
-        </a>
-
-        <a class="button button-transparent button-share-desktop">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
-            <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
-          </svg>
-          <span>Facebook</span>
-        </a>
-
-        <a class="button button-transparent button-share-desktop">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
-            <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
-          </svg>
-          <span>Instagram</span>
-        </a>
-      </div>
-    </div>
+    <% end %>
     <!-- Podnet Information -->
     <div class="podnet-information-con">
       <div class="podnet-information">
         <div class="information-wrapper">
           <div class="label">Stav riešenia podnetu:</div>
-          <a class="button button-status"><%= @issue.state.name %></a>
+          <div class="button button-status state-<%= @issue.state.name.parameterize %>"><%= @issue.state.name %></div>
         </div>
 
         <div class="information-wrapper">
           <div class="label">Podnet podal:</div>
-          <a href="./profil.html">
+          <%= link_to @issue.author do %>
             <div class="subject-con">
               <figure>
                 <picture>
                   <%= image_tag "ops-avatar-blue.png", alt: "" %>
                 </picture>
               </figure>
-              <div class="name"><%= @issue.author.firstname %> <%= @issue.author.lastname %></div>
+              <div class="name"><%= @issue.author.display_name %></div>
             </div>
-          </a>
+          <% end %>
         </div>
 
         <div class="information-wrapper">
@@ -104,7 +102,9 @@
 
         <div class="information-wrapper">
           <div class="label">ID:</div>
-          <div class="value"><%= @issue.id %></div>
+          <div class="value">#<%= @issue.id %>
+            <% if @issue.legacy_id %> <span class="value-old" title="Staré ID">(#<%= @issue.legacy_id %>)
+            <% end %></span></div>
         </div>
 
         <div class="information-wrapper">
@@ -112,12 +112,13 @@
           <div class="value-con">
             <%= link_to @issue.category.name, issues_path(kategoria: @issue.category.name), class: "value" %>
             <%= link_to @issue.subcategory.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name), class: "value" %>
-            <% if @issue.subtype.name.present? %><%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %><% end %>
+            <% if @issue.subtype.present? %><%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %>
+            <% end %>
           </div>
         </div>
 
         <div class="information-wrapper">
-          <div class="label">Vybavuje:</div>
+          <div class="label">Zodpovedný:</div>
           <div class="value-con">
             <% if @issue.responsible_subject.present? %>
               <%= link_to @issue.responsible_subject.subject_name, issues_path(zodpovedny: @issue.responsible_subject.subject_name), class: "value" %>
@@ -131,7 +132,8 @@
           <div class="label">Poloha:</div>
           <div class="value-con">
             <%= link_to @issue.address_street, issues_path(ulica: @issue.address_street, cast: @issue.municipality_district&.name, obec: @issue.municipality&.name), class: "value" %>
-            <% if @issue.municipality_district %><%= link_to @issue.municipality_district.name, issues_path(cast: @issue.municipality_district.name, obec: @issue.municipality.name), class: "value" %><% end %>
+            <% if @issue.municipality_district %><%= link_to @issue.municipality_district.name, issues_path(cast: @issue.municipality_district.name, obec: @issue.municipality.name), class: "value" %>
+            <% end %>
             <%= link_to @issue.municipality.name, issues_path(obec: @issue.municipality.name), class: "value" %>
           </div>
           <div class="map" data-controller="map" data-map-latitude-value="<%= @issue.latitude %>" data-map-longitude-value="<%= @issue.longitude %>">
@@ -145,379 +147,40 @@
     <div class="podnet-discussion">
       <div class="podnet-discussion-con">
         <div class="podnet-discussion-wrapper">
-          <h1>Komentáre</h1>
-          <button class="button button-transparent">
+          <h1>Diskusia</h1>
+          <!--<button class="button button-transparent">
             <span>Zoradiť</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
               <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
             </svg>
-          </button>
+          </button>-->
         </div>
-        <div class="comment-con">
-          <div class="comment">
-            <div class="subject">
-              <figure>
-                <picture>
-                  <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                </picture>
-              </figure>
-              <div class="name">František Mrkvička</div>
-            </div>
-            <div class="date">24. november 2024</div>
-            <div class="comment-content">Pellentesque semper risus dui. Integer suscipit ultrices erat sit amet  aliquam. Maecenas feugiat lobortis nisl, nec scelerisque elit pulvinar  quis. In commodo, tortor ut ultrices mattis, massa diam lobortis justo,  id porttitor massa risus at metus.</div>
-            <figure class="small-picture">
-              <div class="lens-image">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                  <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
-                  <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
-                </svg>
+        <%= turbo_frame_tag "activities", class: 'comment-con' do %>
+          <%= render @activity_objects %>
+          <% if @activity_objects.empty? %>
+            <div class="be-first-comment-notice">Buďte prvý kto overí podnet alebo napíše komentár!</div>
+          <% end %>
+        <% end %>
+
+        <% if logged_in? %>
+          <%= render partial: "issues/new_issue_activity_buttons" %>
+        <% else %>
+          <div class="no-login-notice-con">
+            <div class="no-login-notice">Chcete pridať komentár alebo overiť podnet? Prihláste sa!</div>
+            <div class="no-login-notice-buttons-con">
+              <div class="login-con">
+                <%= link_to "Prihlásiť", rodauth.login_path, class: "button", data: { turbo_frame: "_top" } %>
               </div>
-              <picture>
-                <%= image_tag "cyklostojan.jpg", alt: "Cyklostojan" %>
-              </picture>
-            </figure>
-            <div class="like-dislike-confirm-con">
-              <div class="like-dislike-con">
-                <div class="like-con">
-                  <div class="like">
-                    <a class="button-share button-like">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                        <path d="M14.69,10.67c.07-.36.18-.46.27-1.04.19-1.16-.54-2.17-1.71-2.17-7.46,0-5.73.94-4.96-4.71.22-1.62-1.85-2.58-3.07-.76-12.62,18.83,7.06,19.16,7.82,14.54.14-.28,1.68-.95,1.15-2.92.2-.36,1.37-1.23.51-2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                      </svg>
-                      <span>35</span>
-                    </a>
-                  </div>
-                  <div class="users-con">
-                    <figure style="z-index: 3;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 2;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 1;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                  </div>
-                </div>
-                <div class="like-con">
-                  <div class="like">
-                    <a class="button-share button-dislike">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                        <path d="M1.31,9.33c-.07.36-.18.46-.27,1.04-.19,1.16.54,2.17,1.71,2.17,7.46,0,5.73-.94,4.96,4.71-.22,1.62,1.85,2.58,3.07.76C23.41-.82,3.73-1.15,2.97,3.47c-.14.28-1.68.95-1.15,2.92-.2.36-1.37,1.23-.51,2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                      </svg>
-                      <span>8</span>
-                    </a>
-                  </div>
-                  <div class="users-con">
-                    <figure style="z-index: 3;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 2;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 1;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                  </div>
-                </div>
+              <div class="registration-con">
+                <div class="registration-notice">Ešte nemáte účet?</div>
+                <%= link_to "Vytvoriť účet", rodauth.create_account_path, class: "button button-transparent", data: { turbo_frame: "_top" } %>
               </div>
-              <a class="button-confirm">
-                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 20 20">
-                  <path d="M10,20C4.49,20,0,15.51,0,10S4.49,0,10,0s10,4.49,10,10-4.49,10-10,10ZM10,1.46C5.29,1.46,1.46,5.29,1.46,10s3.83,8.54,8.54,8.54,8.54-3.83,8.54-8.54S14.71,1.46,10,1.46Z"/>
-                  <path d="M10,11.59c-.4,0-.73-.33-.73-.73v-5.85c0-.4.33-.73.73-.73s.73.33.73.73v5.85c0,.4-.33.73-.73.73Z"/>
-                  <circle cx="10" cy="14.02" r=".98"/>
-                </svg>
-                <span>Nahlásiť komentár</span>
-              </a>
             </div>
           </div>
-          <div class="comment government">
-            <div class="subject">
-              <figure>
-                <picture>
-                  <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                </picture>
-              </figure>
-              <div class="name">MČ Staré mesto</div>
-            </div>
-            <div class="date">2. december 2024</div>
-            <div class="comment-content">Mauris nec imperdiet ligula, ac varius metus. Quisque eget pellentesque  ipsum, ac consectetur elit. In posuere eget eros in lobortis. Nullam  elementum, sem a dignissim congue, turpis ipsum blandit nisi, et  porttitor mauris nisi vel augue.</div>
-            <div class="like-dislike-confirm-con">
-              <div class="like-dislike-con">
-                <div class="like-con">
-                  <div class="like">
-                    <a class="button-share button-like">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                        <path d="M14.69,10.67c.07-.36.18-.46.27-1.04.19-1.16-.54-2.17-1.71-2.17-7.46,0-5.73.94-4.96-4.71.22-1.62-1.85-2.58-3.07-.76-12.62,18.83,7.06,19.16,7.82,14.54.14-.28,1.68-.95,1.15-2.92.2-.36,1.37-1.23.51-2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                      </svg>
-                      <span>35</span>
-                    </a>
-                  </div>
-                  <div class="users-con">
-                    <figure style="z-index: 3;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 2;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 1;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                  </div>
-                </div>
-                <div class="like-con">
-                  <div class="like">
-                    <a class="button-share button-dislike">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                        <path d="M1.31,9.33c-.07.36-.18.46-.27,1.04-.19,1.16.54,2.17,1.71,2.17,7.46,0,5.73-.94,4.96,4.71-.22,1.62,1.85,2.58,3.07.76C23.41-.82,3.73-1.15,2.97,3.47c-.14.28-1.68.95-1.15,2.92-.2.36-1.37,1.23-.51,2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                      </svg>
-                      <span>8</span>
-                    </a>
-                  </div>
-                  <div class="users-con">
-                    <figure style="z-index: 3;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 2;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 1;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                  </div>
-                </div>
-              </div>
-              <a class="button-confirm">
-                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 20 20">
-                  <path d="M10,20C4.49,20,0,15.51,0,10S4.49,0,10,0s10,4.49,10,10-4.49,10-10,10ZM10,1.46C5.29,1.46,1.46,5.29,1.46,10s3.83,8.54,8.54,8.54,8.54-3.83,8.54-8.54S14.71,1.46,10,1.46Z"/>
-                  <path d="M10,11.59c-.4,0-.73-.33-.73-.73v-5.85c0-.4.33-.73.73-.73s.73.33.73.73v5.85c0,.4-.33.73-.73.73Z"/>
-                  <circle cx="10" cy="14.02" r=".98"/>
-                </svg>
-                <span>Nahlásiť komentár</span>
-              </a>
-            </div>
-          </div>
-          <div class="comment confirm-commnet">
-            <div class="confirm-status-con">
-              <div class="confirm-status">
-                <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 17 12">
-                  <polygon points="7 11.2 .47 4.67 1.53 3.61 7 9.08 15.75 .33 16.81 1.39 7 11.2"/>
-                </svg>
-                <span>Overené</span>
-              </div>
-            </div>
-            <div class="subject">
-              <figure>
-                <picture>
-                  <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                </picture>
-              </figure>
-              <div class="name">František Mrkvička</div>
-            </div>
-            <div class="date">28. december 2024</div>
-            <div class="comment-content">Mauris nec imperdiet ligula, ac varius metus. Quisque eget pellentesque  ipsum, ac consectetur elit. In posuere eget eros in lobortis. Nullam  elementum, sem a dignissim congue, turpis ipsum blandit nisi, et  porttitor mauris nisi vel augue.</div>
-
-            <figure class="small-picture">
-              <div class="lens-image">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                  <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
-                  <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
-                </svg>
-              </div>
-              <picture>
-                <%= image_tag "cyklostojan.jpg", alt: "Cyklostojan" %>
-              </picture>
-            </figure>
-
-            <div class="like-dislike-confirm-con">
-              <div class="like-dislike-con">
-                <div class="like-con">
-                  <div class="like">
-                    <a class="button-share button-like">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                        <path d="M14.69,10.67c.07-.36.18-.46.27-1.04.19-1.16-.54-2.17-1.71-2.17-7.46,0-5.73.94-4.96-4.71.22-1.62-1.85-2.58-3.07-.76-12.62,18.83,7.06,19.16,7.82,14.54.14-.28,1.68-.95,1.15-2.92.2-.36,1.37-1.23.51-2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                      </svg>
-                      <span>35</span>
-                    </a>
-                  </div>
-                  <div class="users-con">
-                    <figure style="z-index: 3;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 2;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 1;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                  </div>
-                </div>
-                <div class="like-con">
-                  <div class="like">
-                    <a class="button-share button-dislike">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                        <path d="M1.31,9.33c-.07.36-.18.46-.27,1.04-.19,1.16.54,2.17,1.71,2.17,7.46,0,5.73-.94,4.96,4.71-.22,1.62,1.85,2.58,3.07.76C23.41-.82,3.73-1.15,2.97,3.47c-.14.28-1.68.95-1.15,2.92-.2.36-1.37,1.23-.51,2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                      </svg>
-                      <span>8</span>
-                    </a>
-                  </div>
-                  <div class="users-con">
-                    <figure style="z-index: 3;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 2;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                    <figure style="z-index: 1;">
-                      <picture>
-                        <%= image_tag "ops-avatar-blue.png", alt: "" %>
-                      </picture>
-                    </figure>
-                  </div>
-                </div>
-              </div>
-              <a class="button-confirm">
-                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 20 20">
-                  <path d="M10,20C4.49,20,0,15.51,0,10S4.49,0,10,0s10,4.49,10,10-4.49,10-10,10ZM10,1.46C5.29,1.46,1.46,5.29,1.46,10s3.83,8.54,8.54,8.54,8.54-3.83,8.54-8.54S14.71,1.46,10,1.46Z"/>
-                  <path d="M10,11.59c-.4,0-.73-.33-.73-.73v-5.85c0-.4.33-.73.73-.73s.73.33.73.73v5.85c0,.4-.33.73-.73.73Z"/>
-                  <circle cx="10" cy="14.02" r=".98"/>
-                </svg>
-                <span>Nahlásiť komentár</span>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="add-buttons">
-          <a class="button add-comment-button">Pridať komentár</a>
-          <a href="" class="button button-transparent">Overiť podnet</a>
-        </div>
-
-
-        <!-- Pridaj komentár -->
-        <div class="add-comment-form-con">
-          <div class="add-comment-form">
-            <div class="title">Pridať komentár</div>
-            <div class="description">Duis interdum sodales felis vel placerat. Aenean facilisis viverra placerat. Donec sed pellentesque nisl, id molestie est. Quisque iaculis nibh eget tristique pellentesque.</div>
-            <form action="">
-              <textarea placeholder="Sem napíš svoj komentár"></textarea>
-              <div class="pictures-wrapper">
-                <figure class="small-picture">
-                  <div class="lens-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                      <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
-                      <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
-                    </svg>
-                  </div>
-                  <picture>
-                    <%= image_tag "cyklostojan.jpg", alt: "Cyklostojan" %>
-                  </picture>
-                </figure>
-                <figure class="small-picture">
-                  <div class="lens-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                      <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
-                      <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
-                    </svg>
-                  </div>
-                  <picture>
-                    <%= image_tag "cyklostojan.jpg", alt: "Cyklostojan" %>
-                  </picture>
-                </figure>
-              </div>
-              <div class="buttons-wrapper">
-                <a class="button button-transparent">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                    <polygon points="16 9.25 8.75 9.25 8.75 2 7.25 2 7.25 9.25 0 9.25 0 10.75 7.25 10.75 7.25 18 8.75 18 8.75 10.75 16 10.75 16 9.25" fill="#1c3054"/>
-                  </svg>
-                  <span>Pridať obrázok</span>
-                </a>
-                <input class="button submit" type="submit" value="Odoslať"/>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- Pridaj komentár -->
-        <div class="add-comment-form-con">
-          <div class="add-comment-form">
-            <div class="title">Overiť podnet</div>
-            <div class="description">Aenean commodo sapien vitae metus hendrerit, id condimentum dui suscipit. Vivamus vitae nisi et tellus eleifend viverra sed ut mauris.</div>
-            <form action="">
-              <textarea placeholder="Sem napíš svoj komentár"></textarea>
-              <div class="pictures-wrapper">
-                <figure class="small-picture">
-                  <div class="lens-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                      <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
-                      <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
-                    </svg>
-                  </div>
-                  <picture>
-                    <%= image_tag "cyklostojan.jpg", alt: "Cyklostojan" %>
-                  </picture>
-                </figure>
-                <figure class="small-picture">
-                  <div class="lens-image">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                      <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
-                      <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
-                    </svg>
-                  </div>
-                  <picture>
-                    <%= image_tag "cyklostojan.jpg", alt: "Cyklostojan" %>
-                  </picture>
-                </figure>
-              </div>
-              <div class="buttons-wrapper">
-                <a class="button button-transparent">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
-                    <polygon points="16 9.25 8.75 9.25 8.75 2 7.25 2 7.25 9.25 0 9.25 0 10.75 7.25 10.75 7.25 18 8.75 18 8.75 10.75 16 10.75 16 9.25" fill="#1c3054"/>
-                  </svg>
-                  <span>Pridať obrázok</span>
-                </a>
-                <input class="button submit" type="submit" value="Overiť"/>
-              </div>
-            </form>
-          </div>
-        </div>
-
-
+        <% end %>
 
       </div>
     </div>
+
   </div>
 </section>

@@ -1,0 +1,23 @@
+<%= turbo_frame_tag [ prefix, :uploads ], class: wrapper_class, data: { controller: :uploads } do %>
+  <%= hidden_field_tag "uploads_prefix", prefix %>
+  <%= file_field_tag "new_files[]", multiple: true, accept: "capture=camera;image/*", class: "sr-only new-files", id: nil,
+                     data: { action: "delegate#click", delegate_selector_param: ".uploads-submit" } %>
+  <%= button_tag "Upload", formaction: uploads_path, formmethod: :post, data: { turbo_frame: [ prefix, :uploads ].join('_') }, class: "uploads-submit sr-only" %>
+  <% blobs.each do |blob| %>
+    <figure class="small-picture" data-uploads-target="upload">
+      <%= button_tag class: "lens-image", data: { action: "click->uploads#remove", 'uploads-confirm-param': "Naozaj chcete odstrániť túto fotografiu?" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+          <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
+          <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
+        </svg>
+      <% end %>
+      <picture>
+        <%= image_tag blob.variant(resize_to_fill: [ 320, 320 ]) %>
+        <%= hidden_field_tag "blobs[]", blob.signed_id %>
+        <% # TODO remove hardcoded values %>
+        <%= hidden_field_tag "issues_user_comment[attachments][]", blob.signed_id %>
+        <%= hidden_field_tag "issue[photos][]", blob.signed_id %>
+      </picture>
+    </figure>
+  <% end %>
+<% end %>

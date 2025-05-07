@@ -1,0 +1,68 @@
+<%= turbo_frame_tag comment do %>
+  <div class="<%= class_names("comment", government: responsible_subject) %>">
+    <div class="subject">
+      <figure>
+        <picture>
+          <%= image_tag "ops-avatar-blue.png", alt: "" %>
+        </picture>
+      </figure>
+      <div class="name"><%= author_name %></div>
+    </div>
+    <div class="date"><%= l comment.created_at.to_date %></div>
+    <div class="comment-content">
+      <% if comment.legacy_data.blank? %>
+        <%= simple_format(comment.text) %>
+      <% else %>
+        <div class="comment-legacy">
+          <div class="comment-legacy-text">
+            <%= simple_format(comment.legacy_data["plain_message"]) %>
+          </div>
+
+          <% if comment.legacy_data["solved_by"].present? %>
+            <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
+          <% end %>
+          <% if comment.legacy_data["solved_in"].present? %>
+            <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
+          <% end %>
+          <% if comment.legacy_data["signature"].present? %>
+            <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <% if comment.attachments.any? %>
+      <div class="comment-attachments">
+        <% comment.attachments.each do |photo| %>
+          <figure class="small-picture">
+            <div class="lens-image">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
+                <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
+              </svg>
+            </div>
+            <picture>
+              <%= image_tag photo.variant(:thumb), alt: "Fotka podnetu" %>
+            </picture>
+          </figure>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="like-dislike-confirm-con">
+      <%= render partial: "issues/activity_votes/buttons", locals: { activity: comment.activity } %>
+      <!--    <a class="button-confirm">-->
+      <!--      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 20 20">-->
+      <!--        <path d="M10,20C4.49,20,0,15.51,0,10S4.49,0,10,0s10,4.49,10,10-4.49,10-10,10ZM10,1.46C5.29,1.46,1.46,5.29,1.46,10s3.83,8.54,8.54,8.54,8.54-3.83,8.54-8.54S14.71,1.46,10,1.46Z"/>-->
+      <!--        <path d="M10,11.59c-.4,0-.73-.33-.73-.73v-5.85c0-.4.33-.73.73-.73s.73.33.73.73v5.85c0,.4-.33.73-.73.73Z"/>-->
+      <!--        <circle cx="10" cy="14.02" r=".98"/>-->
+      <!--      </svg>-->
+      <!--      <span>Nahlásiť komentár</span>-->
+      <!--    </a>-->
+      <% if comment.editable_by?(current_user) %>
+        <div class="like-dislike-con">
+          <%= link_to "Upraviť", edit_issue_issues_user_comment_path(comment.activity.issue, comment), class: "button button-md button-edit" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

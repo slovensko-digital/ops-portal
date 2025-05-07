@@ -1,0 +1,6 @@
+<%=
+  render "issues/shared/comment",
+         comment: responsible_subject_comment,
+         author_name: responsible_subject_comment.author.subject_name,
+         responsible_subject: true
+%>

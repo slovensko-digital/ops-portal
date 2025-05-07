@@ -112,3 +112,42 @@ form[aria-busy='true'] .button-add-picture {
 .button-location[aria-busy='true'] svg {
     animation: rotate360 1500ms linear infinite;
 }
+
+.comment-legacy-text p {
+    padding-bottom: 1em;
+}
+.comment-legacy-text p:last-child {
+    padding-bottom: 0;
+}
+
+.comment-legacy-signature {
+    padding-top: 1em;
+}
+
+.button.button-share-mobile {
+    display: none;
+}
+
+.button.button-share-mobile.button-share-supported {
+    display: flex;
+}
+
+#new_issue_activity {
+    scroll-margin-top: 70px;
+}
+
+.comment-attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.prose {
+    p {
+        margin-bottom: 1em;
+    }
+
+    :last-child {
+        margin-bottom: 0;
+    }
+}

@@ -1,5 +1,5 @@
 class SyncIssueToTriageJob < ApplicationJob
-  def perform(issue, client: TriageZammadEnvironment.client, import: false, sync_activities_to_triage_job: SyncIssueActivitiesToTriageJob)
+  def perform(issue, client: TriageZammadEnvironment.client, import: false, sync_activities_to_triage_job: SyncIssueActivitiesToTriageJob, sync_activities: true)
     client.check_import_mode! if import
 
     if issue.resolution_external_id.present?
@@ -20,7 +20,7 @@ class SyncIssueToTriageJob < ApplicationJob
       )
     end
 
-    sync_activities_to_triage_job.perform_later(issue, import: import)
+    sync_activities_to_triage_job.perform_later(issue, import: import) if sync_activities
   end
 
   private

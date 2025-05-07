@@ -103,6 +103,12 @@
 	section.podnet .podnet-con {
 		grid-template-columns: auto per(420,1160);
 	}
+
+	// Flash messages
+	.flash-message-container {
+		right: per(60,1280);
+		top: 186px;
+	}
 	
 	// Footer
 	footer {

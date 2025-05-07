@@ -26,7 +26,7 @@ class Connector::Legacy::ImportManualBackofficeAlertsActivityFromLegacyDbToBacko
 
         raise unless backoffice_issue
 
-        zammad_client.find_or_create_article_from_legacy_record!(legacy_data, backoffice_issue, sender: "Agent")
+        zammad_client.find_or_create_article_from_legacy_data!(legacy_data, backoffice_issue, sender: "Agent")
       end
     end
   end

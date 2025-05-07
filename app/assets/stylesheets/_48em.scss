@@ -127,7 +127,26 @@
 	.statistics-con {
 		grid-template-columns: 1fr 1fr;
 	}
-	
+
+	// Oznam ak nie je užívateľ prihlásený
+	.no-login-notice-con {
+		padding: 30px;
+	}
+	.no-login-notice-con .no-login-notice-buttons-con {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	// Oznam ak nie je užívateľ overený
+	.unverified-notice-con {
+		padding: 30px;
+	}
+
+	// Flash messages
+	.flash-message-container {
+		right: per(40,768);
+		top: 130px;
+	}
+
 	// Footer
 	footer {
 		padding: em(60,16) per(40,768);

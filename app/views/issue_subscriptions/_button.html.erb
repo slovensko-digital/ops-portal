@@ -1,0 +1,17 @@
+<%= turbo_frame_tag :subscribe_button do %>
+  <% if logged_in? %>
+    <%= button_to issue_subscription_path(@issue), method: current_user.subscribed_to?(@issue) ? :delete : :post, class: class_names("button button-transparent button-share", "button-active": current_user.subscribed_to?(@issue)) do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
+        <polygon points="1 .78 1 5.7 1 12.59 1 18.59 7 14.99 13 18.59 13 12.59 13 5.7 13 .78 1 .78" stroke="#1c3054" stroke-miterlimit="10" stroke-width="1.5"/>
+      </svg>
+      <span><%= current_user.subscribed_to?(@issue) ? "Zrušiť sledovanie" : "Sledovať podnet" %></span>
+    <% end %>
+  <% else %>
+    <div class="button button-transparent button-share" title="Aby ste mohli sledovať podnet sa musíte prihlásiť.">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">
+        <polygon points="1 .78 1 5.7 1 12.59 1 18.59 7 14.99 13 18.59 13 12.59 13 5.7 13 .78 1 .78" stroke="#1c3054" stroke-miterlimit="10" stroke-width="1.5"/>
+      </svg>
+      <span>Sledovať podnet</span>
+    </div>
+  <% end %>
+<% end %>

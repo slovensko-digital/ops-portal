@@ -1,8 +1,30 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing issue</h1>
-
-  <%= render "form", issue: @issue %>
-
-  <%= link_to "Show this issue", @issue, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-  <%= link_to "Back to issues", issues_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-</div>
+<%= turbo_frame_tag @issue, :edit do %>
+  <div class="podnet-esential">
+    <%= form_with model: @issue, multipart: true, class: "podnet-edit", data: { controller: "autofocus delegate", autofocus_target: "scrollAnchor", delegate_target: "selectorRoot" } do |f| %>
+      <div class="form-item-wrapper">
+        <%= f.label :title %>
+        <%= f.text_field :title, data: { autofocus_target: "input" } %>
+        <% @issue.errors[:title].each do |error| %>
+          <div class="error-message"><%= error %></div>
+        <% end %>
+      </div>
+      <div class="form-item-wrapper">
+        <%= f.label :description %>
+        <%= f.textarea :description %>
+        <% @issue.errors[:description].each do |error| %>
+          <div class="error-message"><%= error %></div>
+        <% end %>
+      </div>
+      <%= render partial: "uploads/form", locals: { prefix: dom_id(@issue), blobs: @issue.photos.blobs, wrapper_class: "pictures-wrapper uploads" } %>
+      <div class="buttons-wrapper">
+        <%= f.button class: "button button-transparent", data: { action: 'delegate#click', delegate_selector_param: ".new-files" } do %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
+            <polygon points="16 9.25 8.75 9.25 8.75 2 7.25 2 7.25 9.25 0 9.25 0 10.75 7.25 10.75 7.25 18 8.75 18 8.75 10.75 16 10.75 16 9.25" fill="#1c3054"/>
+          </svg>
+          <span>Pridať obrázok</span>
+        <% end %>
+        <%= f.submit "Uložiť zmeny", class: "button" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -45,4 +45,8 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   def internal?
     false
   end
+
+  def visible?
+    !hidden
+  end
 end

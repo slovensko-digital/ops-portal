@@ -16,7 +16,6 @@ class ZammadApiClient
   }
   RESPONSIBLE_SUBJECT_ARTICLE_TAG = TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
-  OPS_APP_USER_NAME = "Aplikácia Odkaz pre starostu"
   def initialize(url:, http_token:)
     @url = url
     @http_token = http_token
@@ -72,7 +71,6 @@ class ZammadApiClient
       subtype: issue.subtype&.name,
       ops_state: issue.state.key,
       state: state,
-      # TODO set state for imported tickets?
       portal_url: Rails.application.routes.url_helpers.issue_url(issue),
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: {
@@ -375,7 +373,7 @@ class ZammadApiClient
     # TODO why are we creating a user from zammad in portal? this should never happen
     # TODO handle responsible subject users for portal
 
-    return if [ u.firstname, u.lastname ].join(" ") == OPS_APP_USER_NAME
+    return if u.id == ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID").to_i
 
     User.create!(external_id: u.id, email: u.email, firstname: u.firstname, lastname: u.lastname)
   end
@@ -441,7 +439,7 @@ class ZammadApiClient
     portal_article = article_for_portal?(article, ticket, first_article: first_article)
     return unless customer_article || portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
 
-    return if article.sender != "Agent" && !customer_article && exclude_responsible_subject_articles
+    return if article.sender != "Agent" && customer_article == false && exclude_responsible_subject_articles
 
     if article.sender == "Agent"
       author = DEFAULT_OPS_ADMIN_USER

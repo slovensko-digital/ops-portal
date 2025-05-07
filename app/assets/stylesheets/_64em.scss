@@ -16,6 +16,9 @@
 		line-height: em(16,16);
 		height: 44px;
 	}
+	.button-md {
+		height: 36px;
+	}
 	
 	// Pagination
 	nav.pagination a.button-pagination {
@@ -367,6 +370,12 @@
 	section.podnet .share-buttons a.button-share-desktop {
 		display: flex;
 	}
+
+	// Flash messages
+	.flash-message-container {
+		right: per(40,1024);
+		top: 176px;
+	}
 	
 	// Footer
 	footer {
@@ -378,6 +387,23 @@
 		font-size: em(20,16);
 		line-height: em(30,20);
 	}
+
+	// Oznam ak nie je užívateľ prihlásený
+	.no-login-notice-con .no-login-notice {
+		font-size: em(24,16);
+		line-height: em(34,24);
+	}
+
+	// Oznam ak nie je užívateľ overený
+	.unverified-notice-con .unverified-notice-title {
+		font-size: em(24,16);
+		line-height: em(34,24);
+	}
+	.unverified-notice-con .unverified-notice-description {
+		font-size: em(18,16);
+		line-height: em(28,18);
+	}
+
 }
 
 

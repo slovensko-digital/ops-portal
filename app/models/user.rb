@@ -47,6 +47,9 @@ class User < ApplicationRecord
   belongs_to :street, optional: true
   has_many :issues
   has_many :issues_drafts, class_name: "Issues::Draft", foreign_key: :author_id
+  has_many :issue_likes, foreign_key: :user_id
+  has_many :issue_subscriptions, foreign_key: :subscriber_id
+  has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
 
   enum :sex, m: 1, f: 2
   enum :status, { unverified: 1, verified: 2, closed: 3 }
@@ -54,4 +57,20 @@ class User < ApplicationRecord
   before_create { self.display_name ||= "Anonym #{self.id}" if self.anonymous? }
 
   validates :external_id, uniqueness: true, allow_nil: true
+
+  def likes?(thing)
+    thing.liked_by?(self)
+  end
+
+  def dislikes?(thing)
+    thing.disliked_by?(self)
+  end
+
+  def subscribed_to?(issue)
+    issue_subscriptions.where(issue: issue).exists?
+  end
+
+  def can_edit?(thing)
+    thing.editable_by?(self)
+  end
 end

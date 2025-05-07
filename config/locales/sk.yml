@@ -63,6 +63,9 @@ sk:
 
   activerecord:
     attributes:
+      issue:
+        title: Názov
+        description: Popis
       issues/draft:
         title: Názov
         description: Popis

@@ -1,11 +1,19 @@
-<section class="section-flash">
-<% if notice %>
-  <div class="flash notice">
-    <%= flash[:notice] %>
-  </div>
-<% elsif alert %>
-  <div class="flash alert">
-    <%= flash[:alert] %>
+<% if flash.any? %>
+  <div class="flash-message-container" data-controller="dismiss">
+    <% if notice %>
+      <div class="flash-messages green">
+        <figure>
+        </figure>
+        <div><%= flash[:notice] %></div>
+      </div>
+    <% end %>
+
+    <% if alert %>
+      <div class="flash-messages red">
+        <figure>
+        </figure>
+        <div><%= flash[:alert] %></div>
+      </div>
+    <% end %>
   </div>
 <% end %>
-</section>

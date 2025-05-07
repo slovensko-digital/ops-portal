@@ -102,7 +102,7 @@
         <div class="statistics-block statistics-block-undefined">
           <div class="general-value-con">
             <div class="general-title-con">
-              <div class="general-title"><%= link_to responsible_subject.subject_name, search_issues_path(zodpovedny: responsible_subject.subject_name, tab: :list) %></div>
+              <div class="general-title"><% if responsible_subject %><%= link_to responsible_subject.subject_name, search_issues_path(zodpovedny: responsible_subject.subject_name, tab: :list) %><% else %>Neznámy<% end %></div>
               <div class="statistics-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                   <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>

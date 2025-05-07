@@ -26,9 +26,12 @@ $blue-light: rgba(57, 232, 255, 0.3); // #39E8FF
 $blue-dark: rgba(10, 9, 73, 1); // #0A0949
 $green: rgba(0, 229, 158, 1); // #00E59E
 $green-light: rgba(0, 229, 158, 0.2); // #00E59E
+$green-middle: rgba(102, 239, 197, 1); // #00E59E
 $pink: rgba(255, 210, 230, 1); // #ffd2e6
+$pink-fifty: rgba(255, 210, 230, 0.5); // #ffd2e6
 $red: rgba(255, 71, 97, 1); // #ff4761
 $yellow: rgba(255, 212, 0, 1); // #ffd400
+$yellow-middle: rgba(255, 224, 124, 1); // #ffd400
 $white: rgba(255, 255, 255, 1); // #FFFFFF
 
 $line: rgba(28, 48, 84, 0.1); // #1C3054
@@ -97,7 +100,6 @@ h1 {
   background: $black;
   box-sizing: border-box;
   color: $white;
-  cursor: pointer;
   display: flex;
   gap: 0 10px;
   fill: $white;
@@ -114,11 +116,15 @@ h1 {
   @include rounded(25px);
   @include transition(all);
 }
-.button:hover {
+a.button:hover, button.button:hover {
   background: $blue;
   color: $black;
   fill: $black;
 }
+a.button, button.button, input.button {
+  cursor: pointer;
+}
+
 .button svg {
   height: 20px;
   //stroke-width: 2;
@@ -131,10 +137,32 @@ h1 {
   fill: $black;
   //stroke: $black;
 }
-.button-transparent:hover {
+button.button-transparent:hover,
+a.button-transparent:hover {
   background: $blue;
   color: $black;
 }
+.button-md {
+  height: 36px;
+}
+.button-edit {
+  background: $yellow;
+  color: $black;
+}
+
+.button-edit:hover {
+  background: $blue;
+}
+
+.button-delete {
+  background: $red;
+}
+
+.button-delete:hover {
+  background: $blue;
+}
+
+
 
 // Close Button
 .button-close-gen {
@@ -163,7 +191,7 @@ h1 {
 }
 
 .total { background: $cakajuce; }
-.state-zaslane { background: $zaslane; }
+.state-zaslany-zodpovednemu { background: $zaslane; }
 .state-v-rieseni { background: $riesene; }
 .state-vyrieseny { background: $vyriesene; }
 .state-nerieseny { background: $neriesene; }
@@ -1137,7 +1165,8 @@ section.report .report-map-con .search-con form button:hover {
 }
 
 
-section.report .report-summary-block-con {
+section.report .report-summary-block-con,
+.podnet-edit {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -2036,6 +2065,10 @@ a.podnet-block .inside figure {
   rotate: 10deg;
 }
 
+a.podnet-block .state-zaslany-zodpovednemu {
+  background: $zaslane;
+}
+
 a.podnet-block .state-vyrieseny {
   background: $green;
 }
@@ -2148,7 +2181,10 @@ a.podnet-block .description-con .description .date {
 }
 
 // Podnet
-section.podnet {}
+section.podnet {
+  margin: 0 auto;
+  max-width: 1160px;
+}
 section.podnet .podnet-con {
   display: grid;
   //grid-template-columns: 1fr;
@@ -2202,14 +2238,16 @@ section.podnet .podnet-pictures-con figure picture {
   right: 0;
   top: 0;
 }
-section.podnet .podnet-pictures-con figure.small-picture {
+section.podnet .podnet-pictures-con figure.small-picture,
+.uploads figure.small-picture {
   height: 80px;
   overflow: hidden;
   position: relative;
   width: 80px;
   @include rounded(10px);
 }
-section.podnet .podnet-pictures-con figure.small-picture .lens-image {
+section.podnet .podnet-pictures-con figure.small-picture .lens-image,
+.uploads figure.small-picture .lens-image {
   bottom: 50%;
   fill: $white;
   margin: 0 -19px -19px 0;
@@ -2224,19 +2262,24 @@ section.podnet .share-buttons {
   flex-wrap: wrap;
   gap: 20px;
 }
-section.podnet .share-buttons a.button-share, a.button-like {
+section.podnet .share-buttons .button-share, .button-like {
   fill: transparent;
 }
-section.podnet .share-buttons a.button-share:hover, a.button-like:hover {
+section.podnet .share-buttons button.button-share:hover,
+  button.button-like:hover {
   fill: $black;
 }
-section.podnet .share-buttons a.button-active {
+
+section.podnet .share-buttons .button-active,
+section.podnet .like-dislike-con .button-share.button-active
+{
   fill: $black;
 }
-section.podnet .share-buttons a.button-share-desktop {
+
+section.podnet .share-buttons .button-share-desktop {
   display: none;
 }
-section.podnet .share-buttons a.button-share-active {
+section.podnet .share-buttons .button-share-active {
   fill: $black;
 }
 
@@ -2259,6 +2302,7 @@ section.podnet .podnet-information .subject-con .name {
   font-size: em(18,16);
   font-weight: $semibold;
   line-height: em(26,18);
+  color: $black;
 }
 section.podnet .podnet-information .subject-con {
   align-items: center;
@@ -2308,9 +2352,16 @@ section.podnet .podnet-information .value {
   font-weight: $medium;
   line-height: em(18,18);
 }
-section.podnet .podnet-information a.button-status {
-  background: $green;
+section.podnet .podnet-information .value-old {
+  color: $black-light;
+}
+section.podnet .podnet-information .value-old[title] {
+  cursor: help;
+}
+
+section.podnet .podnet-information .button-status {
   width: 100%;
+  color: $black;
 }
 section.podnet .podnet-information a {
   color: $black;
@@ -2338,7 +2389,6 @@ section.podnet .podnet-discussion .podnet-discussion-con {
   gap: 40px 0;
 }
 section.podnet .podnet-discussion .comment {
-  border-top: 1px solid $black;
   display: grid;
   gap: 30px 0;
   padding: 30px 20px;
@@ -2371,8 +2421,12 @@ section.podnet .podnet-discussion .confirm-commnet .confirm-status {
 section.podnet .podnet-discussion .confirm-commnet .confirm-status svg {
   width: 18px;
 }
-section.podnet .podnet-discussion .comment:last-child {
+section.podnet .podnet-discussion .comment,
+section.podnet .podnet-discussion .edit-comment-form {
   border-bottom: 1px solid $black;
+}
+section.podnet .podnet-discussion .comment-con > *:first-child .comment {
+  border-top: 1px solid $black;
 }
 section.podnet .podnet-discussion .subject .name {
   font-family: $general;
@@ -2500,7 +2554,8 @@ section.podnet .podnet-discussion .add-comment-form form textarea {
 section.podnet .podnet-discussion .add-comment-form form textarea::placeholder {
   color: $black-light;
 }
-section.podnet .podnet-discussion .add-comment-form .pictures-wrapper {
+section.podnet .podnet-discussion .add-comment-form .pictures-wrapper,
+.uploads.pictures-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -2509,7 +2564,7 @@ section.podnet .podnet-discussion .add-comment-form figure {
   height: 60px;
   width: 60px;
 }
-section.podnet .podnet-discussion .add-comment-form form .buttons-wrapper {
+.buttons-wrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
@@ -2518,10 +2573,15 @@ section.podnet .podnet-discussion .add-comment-form form .buttons-wrapper {
 section.podnet .podnet-discussion .add-comment-form form .button {
   width: 100%;
 }
-section.podnet .podnet-discussion .add-comment-form form a.button-add-image svg {
+section.podnet .podnet-discussion .add-comment-form form .button-add-image svg {
   width: 20px;
 }
 
+section.podnet .podnet-discussion .edit-comment-form {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+}
 
 
 
@@ -2550,11 +2610,10 @@ section.podnet .like-dislike-con .like-con {
 section.podnet .like-dislike-con .like {
   display: inline-block;
 }
-section.podnet .like-dislike-con a.button-share {
+section.podnet .like-dislike-con .button-share {
   align-items: center;
   border: 1px solid $blue-dark;
   box-sizing: border-box;
-  cursor: pointer;
   display: flex;
   fill: transparent;
   font-family: $general;
@@ -2569,24 +2628,23 @@ section.podnet .like-dislike-con a.button-share {
   @include rounded(25px);
   @include transition(all);
 }
-section.podnet .like-dislike-con a.button-share:hover {
+section.podnet .like-dislike-con button.button-share:hover {
   fill: $black;
 }
-section.podnet .like-dislike-con a.button-like svg {
-  width: 14px;
-}
-section.podnet .like-dislike-con a.button-share-active {
-  fill: $black;
-  //stroke: $red;
-}
-section.podnet .like-dislike-con a.button-dislike svg {
-  width: 14px;
-}
-section.podnet .like-dislike-con a.button-share-active {
-  fill: $black;
-  //stroke: $red;
+section.podnet .like-dislike-con button.button-share.button-active:hover {
+  fill: transparent;
 }
 
+section.podnet .like-dislike-con .button-like svg {
+  width: 14px;
+}
+section.podnet .like-dislike-con .button-share-active {
+  fill: $black;
+}
+
+section.podnet .like-dislike-con .button-dislike svg {
+  width: 14px;
+}
 
 
 
@@ -2751,6 +2809,159 @@ section.search-result-blank .notice {
 }
 section.search-result-blank .search-term {
   font-weight: $semibold;
+}
+
+
+// Oznam ak nie je užívateľ prihlásený
+.no-login-notice-con {
+  background: $pink-fifty;
+  display: flex;
+  flex-direction: column;
+  gap: 30px 0;
+  padding: per(20,280);
+  @include rounded(15px);
+  text-wrap: pretty;
+}
+.no-login-notice-con .no-login-notice {
+  color: $black;
+  font-family: $general;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(30,20);
+}
+.no-login-notice-con .no-login-notice-buttons-con {
+  align-items: end;
+  display: grid;
+  gap: 20px 30px;
+  grid-template-columns: 1fr;
+}
+.no-login-notice-con .registration-notice {
+  color: $black-light;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(16,16);
+  margin-bottom: 20px;
+  text-align: center;
+}
+.no-login-notice-con a.button {
+  background: $yellow;
+  color: $black;
+  width: 100%;
+}
+.no-login-notice-con a.button:hover {
+  background: $blue;
+  color: $black;
+}
+.no-login-notice-con a.button-transparent {
+  background: transparent;
+}
+
+
+
+
+// Oznam ak nie je užívateľ overený
+.unverified-notice-con {
+  background: $pink-fifty;
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+  padding: per(20,280);
+  @include rounded(15px);
+}
+.unverified-notice-con .unverified-notice-title {
+  color: $black;
+  font-family: $general;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(30,20);
+}
+.unverified-notice-con .unverified-notice-description {
+  color: $black;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(26,16);
+}
+.unverified-notice-con a.button {
+  background: $yellow;
+  color: $black;
+}
+.unverified-notice-con a.button:hover {
+  background: $blue;
+  color: $black;
+}
+
+
+// Flash messages
+.flash-message-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin-left: per(20,320);
+  position: fixed;
+  gap: 10px 0;
+  right: per(20,320);
+  top: 100px;
+  z-index: 10002;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+.flash-messages {
+  box-shadow: 0px 0px 5px 1px rgba(28, 48, 84, 0.3);
+  display: flex;
+  color: $black;
+  font-family: $general;
+  font-size: em(16,16);
+  font-weight: $medium;
+  line-height: em(24,18);
+  gap: 0 20px;
+  max-width: 360px;
+  padding: 20px;
+  @include rounded(15px);
+}
+.flash-messages figure {
+  margin-top: 2px;
+}
+.flash-messages figure::before {
+  display: block;
+  width: 50px;
+  height: 60px;
+}
+// Green
+.flash-messages.green {
+  background: $green-middle;
+}
+.flash-messages.green figure::before {
+  content: url("fm-smile.svg");
+}
+// Red
+.flash-messages.red {
+  background: $pink;
+}
+.flash-messages.red figure::before {
+  content: url("fm-frow.svg");
+}
+// Red
+.flash-messages.yellow {
+  background: $yellow-middle;
+}
+.flash-messages.yellow figure::before {
+  content: url("fm-smile.svg");
+}
+
+
+
+
+// Be First Notice
+.be-first-comment-notice {
+  border-top: 1px solid $black;
+  color: $black;
+  font-family: $general;
+  font-size: em(20,16);
+  font-weight: $semibold;
+  line-height: em(30,20);
+  padding-top: 30px;
 }
 
 // Kontakt

@@ -138,7 +138,7 @@ module Connector
       new_article
     end
 
-    def find_or_create_article_from_legacy_record!(legacy_data, tenant_issue, sender:)
+    def find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, sender:)
       ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
 
       article = @tenant.activities.find_by(legacy_id: legacy_data.id)
@@ -167,16 +167,14 @@ module Connector
       new_article
     end
 
-    def find_or_create_ticket_from_legacy_record!(legacy_data, state:, group:)
+    def find_or_create_ticket_from_legacy_data!(legacy_data, state:, group:)
       tenant_issue = @tenant.issues.find_by(legacy_id: legacy_data.id)
       return @client.ticket.find(tenant_issue.backoffice_external_id) if tenant_issue
 
       tmp_body = {
         state: state,
         group: group,
-        origin: "internal", # TODO aky origin pre interne backoffice tickety?
         title: legacy_data.title,
-        ops_issue_type: "internal_issue_resolution",  # TODO aky typ issue pre interne backoffice tickety?
         ops_responsible_subject: {
           "label"=> legacy_data.responsible_subject&.subject_name,
           "value"=> legacy_data.responsible_subject&.id
@@ -191,7 +189,6 @@ module Connector
         address_lon: legacy_data.longitude,
         created_at: legacy_data.created_at,
         customer_id: create_or_find_agent(legacy_data.author),
-        owner_id: create_or_find_agent(legacy_data.owner),
         article: {
           body: legacy_data.description.presence || "(bez popisu)",
           type: DEFAULT_ARTICLE_TYPE,
@@ -212,7 +209,26 @@ module Connector
       raise unless new_ticket.id
 
       @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
+
+      set_ticket_owner_from_legacy_data(new_ticket, legacy_data)
+      set_ticket_subscribers_from_legacy_data(new_ticket, legacy_data)
+
       new_ticket
+    end
+
+    def set_ticket_owner_from_legacy_data(ticket, legacy_data)
+      user_id = create_or_find_agent(legacy_data.owner)
+      add_user_to_group(user_id, IMPORT_GROUP)
+
+      ticket.owner_id = user_id
+      ticket.save
+    end
+
+    def set_ticket_subscribers_from_legacy_data(ticket, legacy_data)
+      legacy_data.subscribers.each do |subscriber|
+        subscriber_id = create_or_find_agent(subscriber)
+        mention_agent_in_ticket(subscriber_id, ticket)
+      end
     end
 
     def set_ticket_owner(issue)
@@ -225,8 +241,36 @@ module Connector
       ticket.save
     end
 
+    def subscribe_ticket(agent, issue)
+      ticket = find_ticket_for_issue!(issue)
+
+      agent_id = create_or_find_agent(agent)
+
+      raise "Agent not found in backoffice!" unless agent_id
+
+      mention_agent_in_ticket(agent_id, ticket)
+    end
+
+    def mention_agent_in_ticket(agent_id, ticket)
+      add_user_to_group(agent_id, IMPORT_GROUP)
+
+      _, response_status = raw_api_request(
+        :post,
+        "mentions",
+        params: {
+          mentionable_id: ticket.id,
+          mentionable_type: "Ticket"
+        },
+        headers: {
+          "From": agent_id.to_s
+        }
+      )
+
+      raise "Ticket subscription not successful!" unless response_status == 201
+    end
+
     def check_import_mode!
-      response_body = raw_api_request(:get, "settings")
+      response_body, _ = raw_api_request(:get, "settings")
       import_mode_on = response_body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
 
       raise "Import mode OFF" unless import_mode_on
@@ -255,19 +299,16 @@ module Connector
     def create_or_find_agent(author)
       return ANONYMOUS_USER_ID unless author
 
-      # TODO fix
-      user = @tenant.users.find_or_initialize_by(firstname: author.name)
-      # user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
+      user = @tenant.users.find_or_initialize_by(email: author.email)
       return user.external_id unless user.new_record?
 
       zammad_identifier = find_or_create_user!(
         firstname: author.name,
-        login: SecureRandom.uuid, # TODO change
-        # login: author.login,
+        email: author.email,
         roles: [ "Agent" ],
       ).id
 
-      user.update(external_id: zammad_identifier)
+      user.update(firstname: author.name, external_id: zammad_identifier)
 
       zammad_identifier
     end
@@ -393,7 +434,7 @@ module Connector
       @client.user.find identifier
     end
 
-    def raw_api_request(method, endpoint, params = {})
+    def raw_api_request(method, endpoint, params: {}, headers: {})
       url = File.join(@url, "api/v1/", endpoint)
       connection = Faraday.new(url: url) do |conn|
         conn.request :json
@@ -402,6 +443,7 @@ module Connector
       end
 
       response = connection.send(method) do |req|
+        req.headers.merge!(headers)
         req.headers["Authorization"] = "Token token=#{@token}"
         req.body = params.to_json unless params.empty?
       end
@@ -411,7 +453,7 @@ module Connector
     else
       raise "Request failed with status #{response.status}" unless response.status < 400
 
-      response.body
+      [ response.body, response.status ]
     end
   end
 end
