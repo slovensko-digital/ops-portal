@@ -3,7 +3,7 @@ class Issues::IssuesUserCommentsController < ApplicationController
   before_action :require_user, only: [ :create, :edit, :update ]
 
   def new
-    @comment = Issues::UserComment.new
+    @comment = @issue.triage_process? ? Issues::UserPrivateComment.new : Issues::UserComment.new
   end
 
   def edit
@@ -22,7 +22,7 @@ class Issues::IssuesUserCommentsController < ApplicationController
   end
 
   def create
-    @comment = @issue.triage_process? ? Issues::UserPrivateComment.new(comment_params) : Issues::UserComment.new(comment_params)
+    @comment = @issue.triage_process? ? Issues::UserPrivateComment.new(private_comment_params) : Issues::UserComment.new(comment_params)
     @comment.build_activity(issue: @issue, type: Issues::CommentActivity)
     @comment.user_author = current_user
 
@@ -40,6 +40,10 @@ class Issues::IssuesUserCommentsController < ApplicationController
   private
 
   def comment_params
+    params.require(:issues_user_comment).permit(:text, attachments: [])
+  end
+
+  def private_comment_params
     params.require(:issues_user_comment).permit(:text, attachments: [])
   end
 end
