@@ -81,7 +81,7 @@ module Import
         state: ::Issues::State.find_by(legacy_id: legacy_record.status)
       ).tap do |issue|
         issue.imported_at = Time.now
-        issue.updated_at = legacy_record.modified_time
+        issue.updated_at = convert_timestamp_value(legacy_record.modified_time)
         issue.save!
       end
 
