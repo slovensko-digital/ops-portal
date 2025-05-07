@@ -26,12 +26,12 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :user_author_id, absence: true
 
-  def author_display_name
-    responsible_subject_author.name
-  end
-
   def author
     responsible_subject_author
+  end
+
+  def author_display_name
+    responsible_subject_author.name
   end
 
   def visible?

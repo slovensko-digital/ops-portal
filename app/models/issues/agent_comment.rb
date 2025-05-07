@@ -34,15 +34,15 @@ class Issues::AgentComment < Issues::Comment
     agent_author
   end
 
+  def triage_activity_body
+    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, super ].join(" ")
+  end
+
   def visible?
     !hidden
   end
 
   def triage_visible?
     visible?
-  end
-
-  def triage_activity_body
-    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, super ].join(" ")
   end
 end
