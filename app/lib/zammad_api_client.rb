@@ -442,10 +442,13 @@ class ZammadApiClient
     customer_article = article_from_customer?(article)
     return if !customer_articles && customer_article
 
-    portal_article = article_for_portal?(article, ticket, first_article: first_article)
-    return unless customer_article || portal_article || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
+    article_without_author = article.origin_by_id == nil
 
-    return if article.sender != "Agent" && customer_article == false && exclude_responsible_subject_articles
+    portal_article = article_for_portal?(article, ticket, first_article: first_article)
+    return unless customer_article || portal_article || article_without_author || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
+
+    responsible_subject_article = article.sender != "Agent" && customer_article == false
+    return if exclude_responsible_subject_articles && responsible_subject_article
 
     if article.sender == "Agent"
       author = DEFAULT_OPS_ADMIN_USER
