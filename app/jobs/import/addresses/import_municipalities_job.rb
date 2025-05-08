@@ -6,7 +6,7 @@ module Import
           Municipality.find_or_create_by!(
             legacy_id: legacy_record.id,
             active: legacy_record.status,
-            alias: legacy_record.alias,
+            aliases: [ legacy_record.alias ].compact,
             category: legacy_record.city_type,
             email: legacy_record.email,
             handled_by: legacy_record.spravuje,
@@ -16,7 +16,7 @@ module Import
             logo: legacy_record.logo,
             longitude: legacy_record.map_x.presence,
             municipality_type: legacy_record.typ,
-            name: legacy_record.nazov,
+            name: legacy_record.nazov.strip,
             population: legacy_record.pocet_obyvatelov,
             sub: legacy_record.sub.presence,
             district: District.find_by(legacy_id: legacy_record.kraj)

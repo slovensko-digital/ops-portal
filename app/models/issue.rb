@@ -12,6 +12,7 @@
 #  address_postcode         :string
 #  address_region           :string
 #  address_street           :string
+#  address_suburb           :string
 #  anonymous                :boolean
 #  description              :string           not null
 #  imported_at              :datetime

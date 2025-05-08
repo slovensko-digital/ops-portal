@@ -1,0 +1,11 @@
+bb_kraj:
+  name: Banskobystrický kraj
+  created_at: "2025-03-07 10:07:41.639076000 +0100"
+  updated_at: "2025-03-07 10:07:41.639076000 +0100"
+  legacy_id: 1
+
+ba_kraj:
+  name: Bratislavský kraj
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
+  legacy_id: 2

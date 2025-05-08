@@ -4,7 +4,7 @@
 #
 #  id                         :bigint           not null, primary key
 #  active                     :boolean
-#  alias                      :string
+#  aliases                    :string           default([]), not null, is an Array
 #  category                   :integer
 #  email                      :string
 #  handled_by                 :integer
@@ -31,4 +31,11 @@ class Municipality < ApplicationRecord
 
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # TODO Pomenovanie ciselnych hodnot iba podla nasho usudku
+
+  def self.find_by_address(city:, municipality:, suburb:)
+    municipality_district = MunicipalityDistrict.find_by_address(city: city, municipality: municipality, suburb: suburb)
+    return [ municipality_district.municipality, municipality_district ] if municipality_district
+
+    [ active.where("? = ANY(aliases)", municipality).first, nil ]
+  end
 end

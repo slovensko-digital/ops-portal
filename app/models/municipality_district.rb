@@ -3,7 +3,7 @@
 # Table name: municipality_districts
 #
 #  id              :bigint           not null, primary key
-#  alias           :string
+#  aliases         :string           default([]), not null, is an Array
 #  description     :string
 #  genitiv         :string
 #  logo            :string
@@ -16,4 +16,20 @@
 #
 class MunicipalityDistrict < ApplicationRecord
   belongs_to :municipality
+
+  def self.find_by_address(city:, municipality:, suburb:)
+    result = MunicipalityDistrict.joins(:municipality)
+      .where("municipalities.active = true")
+      .where("? = ANY(municipalities.aliases)", city)
+      .where("? = ANY(municipality_districts.aliases)", municipality)
+      .first
+
+    return result if result
+
+    MunicipalityDistrict.joins(:municipality)
+      .where("municipalities.active = true")
+      .where("? = ANY(municipalities.aliases)", municipality)
+      .where("? = ANY(municipality_districts.aliases)", suburb)
+      .first
+  end
 end
