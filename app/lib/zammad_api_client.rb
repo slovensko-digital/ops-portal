@@ -415,8 +415,11 @@ class ZammadApiClient
   end
 
   def build_author_response(article_type, author, zammad_api_client: TriageZammadEnvironment.client.client)
+    return unless author
+
     if [ :user_portal_comment ].include?(article_type)
-      user = zammad_api_client.user.find(author.external_id)
+      user_id = author.is_a?(User) ? author.external_id : author
+      user = zammad_api_client.user.find(user_id)
       unless user.nil?
         {
           firstname: user.firstname,
@@ -431,7 +434,7 @@ class ZammadApiClient
       DEFAULT_OPS_ADMIN_USER
 
     elsif [ :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment ].include?(article_type)
-      responsible_subject = zammad_api_client.responsible_subject.find(author.external_id)
+      responsible_subject = zammad_api_client.user.find(author.external_id)
       unless responsible_subject.nil?
         {
           firstname: responsible_subject.firstname,
@@ -476,8 +479,8 @@ class ZammadApiClient
       process_type: ticket.process_type,
       title: ticket.title,
       description: ticket.body,
-      author: ticket.anonymous ? nil : User.find_by(external_id: article.origin_by_id || article.created_by_id),
-      author_response: build_author_response(:user_portal_comment, ticket.author),
+      author: ticket.anonymous ? nil : User.find_by(external_id: ticket.origin_by_id || ticket.created_by_id),
+      author_response: build_author_response(:user_portal_comment, ticket.origin_by_id || ticket.created_by_id),
       responsible_subject: responsible_subject,
       issue_type: ticket.issue_type,
       category: category,
@@ -508,7 +511,7 @@ class ZammadApiClient
       return unless ticket.responsible_subject&.dig(:value)&.to_i == responsible_subject.id
 
       responsible_subject_changed_at = ticket.responsible_subject_changed_at
-      return unless responsible_subject_changed_at.present? && article.created_at > responsible_subject_changed_at
+      return if responsible_subject_changed_at.present? && article.created_at < responsible_subject_changed_at
     end
 
     author = case article_type
@@ -555,7 +558,7 @@ class ZammadApiClient
       return :user_portal_comment if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id || article.created_by_id)&.origin == "portal"
 
       if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
-        return :responsible_subject_portal_and_backoffice_comment if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by)&.roles&.include?("Zodpovedný Subjekt")
+        return :responsible_subject_portal_and_backoffice_comment if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id)&.roles&.include?("Zodpovedný Subjekt")
 
         if article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
           :agent_portal_and_backoffice_comment if article.sender == "Agent"
