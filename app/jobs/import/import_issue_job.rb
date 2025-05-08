@@ -13,6 +13,7 @@ module Import
       import_subscriptions_job: Issues::ImportIssueSubscriptionsJob,
       import_likes_job: Issues::ImportIssueLikesJob
     )
+      municipality = Municipality.find_by(legacy_id: legacy_record.mesto)
       subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
       subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
       category = subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
@@ -80,8 +81,8 @@ module Import
         category: category,
         subcategory: subcategory,
         subtype: subtype,
-        municipality: Municipality.find_by(legacy_id: legacy_record.mesto),
-        municipality_district: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast),
+        municipality: municipality,
+        municipality_district: municipality&.municipality_districts.find_by(legacy_id: legacy_record.mestska_cast),
         responsible_subject: Legacy::ResponsibleSubject.find_or_create_responsible_subject(legacy_record.zodpovednost),
         state: ::Issues::State.find_by(legacy_id: legacy_record.status)
       ).tap do |issue|
