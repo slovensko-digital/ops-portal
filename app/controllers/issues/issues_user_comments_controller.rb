@@ -11,17 +11,16 @@ class Issues::IssuesUserCommentsController < ApplicationController
   end
 
   def new
-    @comment = Issues::UserComment.new
+    @comment = @issue.triage_process? ? Issues::UserPrivateComment.new : Issues::UserComment.new
   end
 
   def edit
     @comment = current_user.issues_comments.find(params[:id])
-    @comment.valid?(:edit)
   end
 
   def update
     @comment = current_user.issues_comments.find(params[:id])
-    @comment.assign_attributes(@comment.type == "Issues::UserPrivateComment" ? private_comment_params : comment_params)
+    @comment.assign_attributes(comment_params)
     if @comment.save(context: :edit)
       render @comment
     else
@@ -48,10 +47,10 @@ class Issues::IssuesUserCommentsController < ApplicationController
   private
 
   def comment_params
-    params.require(:issues_user_comment).permit(:text, attachments: [])
-  end
-
-  def private_comment_params
-    params.require(:issues_user_private_comment).permit(:text, attachments: [])
+    if @issue.triage_process?
+      params.require(:issues_user_private_comment).permit(:text, attachments: [])
+    else
+      params.require(:issues_user_comment).permit(:text, attachments: [])
+    end
   end
 end
