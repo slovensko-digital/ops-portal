@@ -94,7 +94,7 @@ class ZammadApiClient
       },
       owner_id: owner_id,
       created_at: issue.created_at,
-      likes_count: issue.votes.count,
+      likes_count: issue.likes.count,
       origin: DEFAULT_ORIGIN,
       article: {
         origin_by_id: issue.author.external_id,

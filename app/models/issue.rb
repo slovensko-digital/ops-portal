@@ -78,7 +78,7 @@ class Issue < ApplicationRecord
   before_save :recalculate_computed_fields
 
   def visible_activity_objects
-    activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object)
+    activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
 
     if triage_process?
       activity_objects.select(&:triage_visible?)
@@ -89,11 +89,6 @@ class Issue < ApplicationRecord
 
   def triage_process?
     resolution_external_id.nil?
-  end
-
-  def votes
-    # fake it
-    @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
   end
 
   def backoffice_owner
@@ -144,5 +139,12 @@ class Issue < ApplicationRecord
       .joins(activity: :issue)
       .where(issues: { id: id })
       .maximum(:created_at)
+
+    self.comments_count = visible_activity_objects.count
+  end
+
+  def reset_counters
+    recalculate_computed_fields
+    save
   end
 end
