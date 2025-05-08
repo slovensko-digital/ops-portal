@@ -68,7 +68,7 @@ class ZammadApiClient
     ticket = @client.ticket.create(
       process_type: process_type,
       issue_type: issue.issue_type,
-      title: issue.title,
+      title: issue.title.presence || "Bez názvu",
       body: issue.description,
       group: group,
       customer_id: issue.author.external_id,
