@@ -29,9 +29,7 @@ class Issues::Comment < ApplicationRecord
   belongs_to :responsible_subject_author, class_name: "ResponsibleSubject", optional: true
   delegate :issue, to: :activity
 
-  has_many_attached :attachments do |photo|
-    photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
-  end
+  include Issues::ActivityObjectAttachments
 
   def legacy_id
     legacy_comment_id || legacy_communication_id

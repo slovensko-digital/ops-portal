@@ -28,9 +28,9 @@ module SearchEngine
 
       scope = scope.reorder("") # reset order due to optional fulltext search
       results.stats = {
-        by_state: scope.group("state").order("count_all DESC").async_count,
-        by_category: scope.group("category").order("count_all DESC").async_count,
-        by_responsible_subject: scope.group("responsible_subject").order("count_all DESC").async_count
+        by_state: scope.group("state").order("count_issues_id DESC").async_count,
+        by_category: scope.group("category").order("count_issues_id DESC").async_count,
+        by_responsible_subject: scope.group("responsible_subject").order("count_issues_id DESC").async_count
       }
 
       results

@@ -22,10 +22,22 @@ class Issues::Update < ApplicationRecord
   belongs_to :author, optional: true, class_name: "User"
   belongs_to :confirmed_by, optional: true, class_name: "User"
 
-  has_many_attached :attachments
+  include Issues::ActivityObjectAttachments
+
+  def author_display_name
+    author.display_name
+  end
 
   def triage_activity_body
     text
+  end
+
+  def triage_visible?
+    true
+  end
+
+  def visible?
+    true
   end
 
   def visible?

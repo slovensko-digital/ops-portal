@@ -49,4 +49,12 @@ class Legacy::Issues::ResponsibleSubjectInternalCommunication < Legacy::Issues::
   def internal?
     true
   end
+
+  def visible?
+    false
+  end
+
+  def triage_visible?
+    false
+  end
 end

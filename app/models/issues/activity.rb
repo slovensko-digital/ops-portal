@@ -14,6 +14,8 @@ class Issues::Activity < ApplicationRecord
   belongs_to :issue
   has_many :votes, class_name: "Issues::ActivityVote", dependent: :destroy
 
+  after_commit { issue.reset_counters }
+
   def content
     "dummy content"
   end

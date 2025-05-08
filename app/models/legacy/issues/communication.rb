@@ -35,7 +35,7 @@ class Legacy::Issues::Communication < ApplicationRecord
   belongs_to :agent_author, optional: true, class_name: "Legacy::Agent"
   belongs_to :responsible_subjects_user_author, optional: true, class_name: "ResponsibleSubjects::User"
 
-  has_many_attached :attachments
+  include ::Issues::ActivityObjectAttachments
 
   def triage_activity_body
     message
