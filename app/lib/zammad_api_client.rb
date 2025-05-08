@@ -568,7 +568,7 @@ class ZammadApiClient
       elsif article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
         :agent_backoffice_comment if article.sender == "Agent"
       else
-        return nil unless article.sender == "Customer" && zammad_api_client.user.find(article.origin_by)&.roles&.include?("Zodpovedný Subjekt")
+        return nil unless article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id || article.created_by_id)&.roles&.include?("Zodpovedný Subjekt")
         :responsible_subject_backoffice_comment
       end
     else
