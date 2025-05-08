@@ -12,6 +12,7 @@ x-load-env:
 env:
   # The dummy values are used to ensure that kamal can parse the config when calling exec commands from developer machines without the real values.
   clear:
+    GOOD_JOB_MAX_THREADS: 10
     RAILS_ENV: production
     ROLLBAR_ENV: dev
     RAILS_LOG_LEVEL: debug
