@@ -89,6 +89,14 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "homepage#show"
 
+  # legacy urls redirects
+
+  get "r/:municipality_slug" => "legacy/redirects#index"
+  get "r/:municipality_slug/vsetky-podnety" => "legacy/redirects#search_list"
+  get "r/:municipality_slug/statistiky" => "legacy/redirects#search_stats"
+  get "r/:municipality_slug/podnety/:legacy_id/:slug" => "legacy/redirects#show_issue"
+  get "r/:municipality_slug/pridat-podnet" => "legacy/redirects#create_issue"
+
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   mount GoodJob::Engine => "admin/good_job" # TODO authenticate!
 

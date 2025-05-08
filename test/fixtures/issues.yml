@@ -34,3 +34,15 @@ without_triage_external_id:
   state: zero
   municipality: trencin
   responsible_subject: one
+
+legacy1:
+  title: New issue
+  description: New issue description
+  author: one
+  created_at: 2024-11-05 09:59:21
+  last_synced_at: 2024-11-05 09:59:23
+  category: one
+  state: zero
+  municipality: bratislava
+  responsible_subject: one
+  legacy_id: 12345

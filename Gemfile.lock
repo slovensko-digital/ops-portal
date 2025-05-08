@@ -134,6 +134,7 @@ GEM
       faraday-follow_redirects
       faraday-multipart
       rack (>= 1.6)
+    docile (1.4.0)
     dotenv (3.1.8)
     drb (2.2.1)
     ed25519 (1.4.0)
@@ -490,6 +491,12 @@ GEM
     sequel-activerecord_connection (2.0.0)
       activerecord (>= 5.0, < 8.1)
       sequel (~> 5.38)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.12.3)
+    simplecov_json_formatter (0.1.4)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -599,6 +606,7 @@ DEPENDENCIES
   rubocop-rails-omakase
   selenium-webdriver
   sequel-activerecord_connection (~> 2.0)
+  simplecov
   solid_cable
   solid_cache
   stimulus-rails

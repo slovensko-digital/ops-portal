@@ -111,7 +111,7 @@
           <div class="label">Kategórie:</div>
           <div class="value-con">
             <%= link_to @issue.category.name, issues_path(kategoria: @issue.category.name), class: "value" %>
-            <%= link_to @issue.subcategory.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name), class: "value" %>
+            <% if @issue.subcategory %><%= link_to @issue.subcategory.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name), class: "value" %><% end %>
             <% if @issue.subtype.present? %><%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %>
             <% end %>
           </div>
