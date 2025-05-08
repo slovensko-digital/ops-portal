@@ -27,6 +27,7 @@ class Issues::Comment < ApplicationRecord
   belongs_to :user_author, class_name: "User", optional: true
   belongs_to :agent_author, class_name: "Legacy::Agent", foreign_key: "agent_author_id", optional: true
   belongs_to :responsible_subject_author, class_name: "ResponsibleSubject", optional: true
+  delegate :issue, to: :activity
 
   has_many_attached :attachments do |photo|
     photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
@@ -48,5 +49,10 @@ class Issues::Comment < ApplicationRecord
 
   def editable_by?(user)
     false
+  end
+
+  def author_display_name
+    return author.display_name if author
+    author_name
   end
 end

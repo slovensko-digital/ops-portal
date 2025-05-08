@@ -22,9 +22,7 @@ class IssuesController < ApplicationController
 
   # GET /issues/1 or /issues/1.json
   def show
-    @activity_objects = @issue.activities
-      .includes(:activity_object)
-      .order(created_at: :asc).map(&:activity_object).select(&:visible?)
+    @activity_objects = @issue.visible_activity_objects
   end
 
   def edit

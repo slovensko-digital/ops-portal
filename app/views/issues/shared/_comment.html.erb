@@ -6,30 +6,32 @@
           <%= user_avatar(comment.author) %>
         </picture>
       </figure>
-      <div class="name"><%= author_name %></div>
+      <div class="name"><%= comment.author_display_name %></div>
     </div>
     <div class="date"><%= l comment.created_at.to_date %></div>
-    <div class="comment-content">
-      <% if comment.legacy_data.blank? %>
-        <%= simple_format(comment.text) %>
-      <% else %>
-        <div class="comment-legacy">
-          <div class="comment-legacy-text">
-            <%= simple_format(comment.legacy_data["plain_message"]) %>
-          </div>
+    <% if comment.text.present? %>
+      <div class="comment-content">
+        <% if comment.legacy_data.blank? %>
+          <%= simple_format(comment.text) %>
+        <% else %>
+          <div class="comment-legacy">
+            <div class="comment-legacy-text">
+              <%= simple_format(comment.legacy_data["plain_message"]) %>
+            </div>
 
-          <% if comment.legacy_data["solved_by"].present? %>
-            <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
-          <% end %>
-          <% if comment.legacy_data["solved_in"].present? %>
-            <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
-          <% end %>
-          <% if comment.legacy_data["signature"].present? %>
-            <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
+            <% if comment.legacy_data["solved_by"].present? %>
+              <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
+            <% end %>
+            <% if comment.legacy_data["solved_in"].present? %>
+              <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
+            <% end %>
+            <% if comment.legacy_data["signature"].present? %>
+              <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
     <% if comment.attachments.any? %>
       <div class="comment-attachments">
         <% comment.attachments.each do |photo| %>

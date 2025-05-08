@@ -22,11 +22,19 @@
 #  triage_external_id            :integer
 #  user_author_id                :bigint
 #
-class Issues::UserPrivateComment < Issues::Comment
+class Issues::UserPrivateComment < Issues::UserComment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
 
   def author
     user_author
+  end
+
+  def visible?
+    false
+  end
+
+  def triage_visible?
+    !hidden
   end
 end

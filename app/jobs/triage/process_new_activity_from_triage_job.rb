@@ -5,10 +5,26 @@ class Triage::ProcessNewActivityFromTriageJob < ApplicationJob
 
     return unless responsible_subject.pro?
 
-    article = triage_zammad_client.get_article(ticket_id, article_id, responsible_subject: responsible_subject)
+    allowed_article_types = [
+      :unknown_user_portal_comment,
+      :user_portal_comment,
+      :agent_portal_and_backoffice_comment,
+      :agent_backoffice_comment
+    ]
+
+    article = triage_zammad_client.get_article(
+      ticket_id,
+      article_id,
+      allowed_article_types: allowed_article_types,
+      responsible_subject: responsible_subject
+    )
     return unless article
 
     client = Client.find_by!(responsible_subject: responsible_subject)
-    webhook_client.new(client).activity_created(ticket_id, article_id, customer_activity: article[:customer_activity])
+    webhook_client.new(client).activity_created(
+      ticket_id,
+      article_id,
+      customer_activity: [ :unknown_user_portal_comment, :user_portal_comment ].include?(article[:article_type]),
+    )
   end
 end

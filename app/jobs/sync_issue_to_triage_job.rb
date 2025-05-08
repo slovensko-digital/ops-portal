@@ -7,7 +7,7 @@ class SyncIssueToTriageJob < ApplicationJob
       issue.touch(:last_synced_at)
 
     elsif issue.triage_external_id.present?
-      client.update_ticket_from_issue!(issue.triage_external_id, issue)
+      client.update_ticket_from_issue!(issue.triage_external_id, issue, update_attachments: true)
       issue.touch(:last_synced_at)
 
     else

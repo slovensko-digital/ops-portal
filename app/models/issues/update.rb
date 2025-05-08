@@ -27,4 +27,8 @@ class Issues::Update < ApplicationRecord
   def triage_activity_body
     text
   end
+
+  def visible?
+    published
+  end
 end
