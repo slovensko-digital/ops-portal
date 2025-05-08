@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     resource :issue_like, as: :like
     resource :issue_subscription, as: :subscription
     resources :issues_user_comments, path: "komentare", module: :issues
+    resources :issues_user_private_comments, path: "komentare", module: :issues, controller: "issues_user_comments"
   end
 
   namespace :issues, path: "dopyty" do
