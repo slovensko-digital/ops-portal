@@ -1,5 +1,7 @@
 module Import
   class ImportLegacyIssuesToTriageJob < ApplicationJob
+    queue_with_priority 100
+
     def perform(municipality:, municipality_district: nil, import_issue_job: ::SyncIssueToTriageJob)
       Issue
         .where.not(legacy_id: nil)

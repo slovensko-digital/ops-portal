@@ -1,5 +1,7 @@
 module Import
   class ImportLegacyIssuesFromTriageToBackofficeJob < ApplicationJob
+    queue_with_priority 100
+
     def perform(responsible_subject, import_issue_from_triage_job: ::Connector::CreateNewBackofficeIssueFromTriageJob, import_manual_issues_job: ::Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob)
       client = ::Client.find_by(responsible_subject: responsible_subject)
       tenant = ::Connector::Tenant.find_by(ops_api_subject_identifier: client.id)
