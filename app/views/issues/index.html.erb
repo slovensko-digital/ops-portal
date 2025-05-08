@@ -89,8 +89,8 @@
             </svg>
           </button>
           <ul
-            data-dropdown-target="menu" style="z-index: 100; margin-top: 10px; width: 27ch; height: auto; overflow: hidden;"
-            class="dropdown-list hidden absolute right-0"
+            data-dropdown-target="menu"
+            class="dropdown-list hidden"
           >
             <% @search_results.sorts.each do |sort| %>
               <%= tag.li(class: class_names('active': sort.selected)) do %>
