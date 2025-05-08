@@ -151,7 +151,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def municipality_supported
-    errors.add(:base, :municipality_unsupported) unless Municipality.find_by_address.first
+    errors.add(:base, :municipality_unsupported) unless Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb).first
   end
 
   def gps_to_float(gps)
