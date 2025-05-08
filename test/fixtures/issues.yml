@@ -11,7 +11,7 @@ one:
   subcategory: one
   subtype: one
   state: zero
-  municipality: one
+  municipality: bratislava
 
 two:
   title: MyString
@@ -22,7 +22,7 @@ two:
   triage_external_id: 2
   category: one
   state: three
-  municipality: one
+  municipality: bratislava
 
 without_triage_external_id:
   title: New issue
@@ -32,5 +32,5 @@ without_triage_external_id:
   last_synced_at: 2024-11-05 09:59:23
   category: one
   state: zero
-  municipality: tn
+  municipality: trencin
   responsible_subject: one

@@ -1,6 +1,6 @@
-one:
+bratislava:
   name: "Bratislava"
-  district: two
+  district: ba_kraj
   sub: "ba"
   email: "example-ba@example.org"
   municipality_type: "huge"
@@ -18,9 +18,9 @@ one:
   legacy_id: 1
   aliases: ["bratislava", "Bratislava"]
 
-two:
+banska_bystrica:
   name: "Banská Bystrica"
-  district: one
+  district: bb_kraj
   sub: "bb"
   email: "example-bb@example.org"
   municipality_type: "other"
@@ -38,7 +38,7 @@ two:
   legacy_id: 2
   aliases: ["banska-bystrica", "Banská Bystrica"]
 
-tn:
+trencin:
   name: Trenčín
   sub: "tn"
   email: "trencin"
