@@ -19,7 +19,7 @@ module Connector
       @client = ZammadAPI::Client.new(url: @url, http_token: @token)
     end
 
-    def create_issue!(issue, state:, group:)
+    def create_issue!(issue, state: DEFAULT_STATE, group: DEFAULT_STATE)
       ticket = find_or_create_ticket!(issue, state: state, group: group)
 
       issue["activities"][1..-1].each do |activity|
