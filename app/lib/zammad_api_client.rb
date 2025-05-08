@@ -9,6 +9,11 @@ class ZammadApiClient
   DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
   USERS_PER_PAGE = 1000
   # TODO: consider seeding this value
+  DEFAULT_OPS_ADMIN_USER = {
+    firstname: "Dobrovoľník Odkazu pre starostu",
+    lastname: "",
+    uuid: "11111111-1111-1111-1111-111111111111"
+  }
   RESPONSIBLE_SUBJECT_ARTICLE_TAG = TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
   ATTACHMENTS_UPDATE_ARTICLE_BODY = "Aktualizované prílohy"
@@ -423,11 +428,7 @@ class ZammadApiClient
         nil
       end
     elsif [ :agent_portal_comment, :agent_portal_and_backoffice_comment, :agent_backoffice_comment ].include?(article_type)
-      {
-        firstname: "Dobrovoľník Odkazu pre starostu",
-        lastname: "",
-        uuid: "11111111-1111-1111-1111-111111111111"
-      }
+      DEFAULT_OPS_ADMIN_USER
 
     elsif [ :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment ].include?(article_type)
       responsible_subject = zammad_api_client.responsible_subject.find(author.external_id)
@@ -570,12 +571,5 @@ class ZammadApiClient
     end
 
     # TODO add more process_types
-  end
-
-  def article_for_this_responsible_subject?(article, ticket, responsible_subject)
-    return false unless responsible_subject
-    return false unless article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
-
-    ticket.responsible_subject&.dig(:value)&.to_i == responsible_subject.id
   end
 end

@@ -5,7 +5,6 @@ class Triage::ProcessNewActivityFromTriageJob < ApplicationJob
 
     return unless responsible_subject.pro?
 
-
     allowed_article_types = [
       :unknown_user_portal_comment,
       :user_portal_comment,
