@@ -532,7 +532,7 @@ class ZammadApiClient
     return false if article.internal
     return false unless article.sender == "Customer"
 
-    find_zammad_user_by_id(article.origin_by_id)&.origin == "portal" if article.origin_by_id
+    @client.user.find(article.origin_by_id || article.created_by_id)&.origin == "portal"
   end
 
   def article_from_responsible_subject?(article, responsible_subject)
