@@ -4,14 +4,14 @@
       <div class="form-item-wrapper">
         <%= f.label :title %>
         <%= f.text_field :title, data: { autofocus_target: "input" } %>
-        <% @issue.errors[:title].each do |error| %>
+        <% @issue.errors.full_messages_for(:title).each do |error| %>
           <div class="error-message"><%= error %></div>
         <% end %>
       </div>
       <div class="form-item-wrapper">
         <%= f.label :description %>
         <%= f.textarea :description %>
-        <% @issue.errors[:description].each do |error| %>
+        <% @issue.errors.full_messages_for(:description).each do |error| %>
           <div class="error-message"><%= error %></div>
         <% end %>
       </div>

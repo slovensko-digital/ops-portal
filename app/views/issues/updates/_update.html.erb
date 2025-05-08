@@ -1,5 +1,14 @@
+<% comment = update %>
 <%= turbo_frame_tag comment do %>
-  <div class="<%= class_names("comment", government: responsible_subject) %>">
+  <div class="<%= class_names("comment confirm-commnet") %>">
+    <div class="confirm-status-con">
+      <div class="confirm-status">
+        <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 17 12">
+          <polygon points="7 11.2 .47 4.67 1.53 3.61 7 9.08 15.75 .33 16.81 1.39 7 11.2"></polygon>
+        </svg>
+        <span>Overené</span>
+      </div>
+    </div>
     <div class="subject">
       <figure>
         <picture>
@@ -11,25 +20,7 @@
     <div class="date"><%= l comment.created_at.to_date %></div>
     <% if comment.text.present? %>
       <div class="comment-content">
-        <% if comment.legacy_data.blank? %>
-          <%= simple_format(comment.text) %>
-        <% else %>
-          <div class="comment-legacy">
-            <div class="comment-legacy-text">
-              <%= simple_format(comment.legacy_data["plain_message"]) %>
-            </div>
-
-            <% if comment.legacy_data["solved_by"].present? %>
-              <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
-            <% end %>
-            <% if comment.legacy_data["solved_in"].present? %>
-              <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
-            <% end %>
-            <% if comment.legacy_data["signature"].present? %>
-              <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
-            <% end %>
-          </div>
-        <% end %>
+        <%= simple_format(comment.text) %>
       </div>
     <% end %>
     <% if comment.attachments.any? %>
@@ -60,11 +51,6 @@
       <!--      </svg>-->
       <!--      <span>Nahlásiť komentár</span>-->
       <!--    </a>-->
-      <% if comment.editable_by?(current_user) %>
-        <div class="like-dislike-con">
-          <%= link_to "Upraviť", edit_issue_issues_user_comment_path(comment.activity.issue, comment), class: "button button-md button-edit" %>
-        </div>
-      <% end %>
     </div>
   </div>
 <% end %>

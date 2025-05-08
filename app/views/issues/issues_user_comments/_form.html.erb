@@ -5,8 +5,8 @@
     <% end %>
   <% else %>
     <%= f.text_area :text, placeholder: "Sem napíšte váš komentár", data: { autofocus_target: "input" }, class: "#{comment.errors[:text].any? ? 'error' : ''}" %>
-    <% if comment.errors[:text].any? %>
-      <div class="error-message"><%= comment.errors[:text].first %></div>
+    <% comment.errors.full_messages_for(:text).each do |error| %>
+      <div class="error-message"><%= error %></div>
     <% end %>
 
     <%= render partial: "uploads/form", locals: { prefix: dom_id(comment), blobs: comment.attachments.blobs, wrapper_class: "pictures-wrapper" } %>

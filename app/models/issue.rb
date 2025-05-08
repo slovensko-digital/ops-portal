@@ -2,42 +2,43 @@
 #
 # Table name: issues
 #
-#  id                       :bigint           not null, primary key
-#  address_city             :string
-#  address_country          :string
-#  address_country_code     :string
-#  address_district         :string
-#  address_house_number     :string
-#  address_municipality     :string
-#  address_postcode         :string
-#  address_region           :string
-#  address_street           :string
-#  address_suburb           :string
-#  anonymous                :boolean
-#  description              :string           not null
-#  imported_at              :datetime
-#  issue_type               :integer          default("issue")
-#  last_synced_at           :datetime
-#  latitude                 :float
-#  legacy_data              :jsonb
-#  likes_count              :integer          default(0), not null
-#  longitude                :float
-#  praise_public            :boolean          default(FALSE), not null
-#  title                    :string           not null
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  author_id                :bigint
-#  category_id              :bigint
-#  legacy_id                :integer
-#  municipality_district_id :bigint
-#  municipality_id          :bigint
-#  owner_id                 :bigint
-#  resolution_external_id   :integer
-#  responsible_subject_id   :bigint
-#  state_id                 :bigint
-#  subcategory_id           :bigint
-#  subtype_id               :bigint
-#  triage_external_id       :integer
+#  id                                  :bigint           not null, primary key
+#  address_city                        :string
+#  address_country                     :string
+#  address_country_code                :string
+#  address_district                    :string
+#  address_house_number                :string
+#  address_municipality                :string
+#  address_postcode                    :string
+#  address_region                      :string
+#  address_street                      :string
+#  address_suburb                      :string
+#  anonymous                           :boolean
+#  description                         :string           not null
+#  imported_at                         :datetime
+#  issue_type                          :integer          default("issue")
+#  last_synced_at                      :datetime
+#  latitude                            :float
+#  legacy_data                         :jsonb
+#  likes_count                         :integer          default(0), not null
+#  longitude                           :float
+#  praise_public                       :boolean          default(FALSE), not null
+#  responsible_subject_last_contact_at :datetime
+#  title                               :string           not null
+#  created_at                          :datetime         not null
+#  updated_at                          :datetime         not null
+#  author_id                           :bigint
+#  category_id                         :bigint
+#  legacy_id                           :integer
+#  municipality_district_id            :bigint
+#  municipality_id                     :bigint
+#  owner_id                            :bigint
+#  resolution_external_id              :integer
+#  responsible_subject_id              :bigint
+#  state_id                            :bigint
+#  subcategory_id                      :bigint
+#  subtype_id                          :bigint
+#  triage_external_id                  :integer
 #
 class Issue < ApplicationRecord
   include PgSearch::Model
@@ -58,6 +59,7 @@ class Issue < ApplicationRecord
   has_many :comment_activities, class_name: "Issues::CommentActivity", dependent: :destroy
   has_many :legacy_communication_activities, class_name: "Legacy::Issues::CommunicationActivity", dependent: :destroy
   has_many :update_activities, class_name: "Issues::UpdateActivity", dependent: :destroy
+  has_many :comments, class_name: "Issues::Comment", through: :comment_activities, source: :activity_object, dependent: :destroy
   has_many :likes, class_name: "IssueLike", dependent: :destroy
 
   has_many_attached :photos do |photo|
@@ -75,9 +77,18 @@ class Issue < ApplicationRecord
 
   before_save :recalculate_computed_fields
 
-  def votes
-    # fake it
-    @_votes ||= OpenStruct.new(count: legacy_data ? legacy_data["like_count"] : Random.rand(10))
+  def visible_activity_objects
+    activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
+
+    if triage_process?
+      activity_objects.select(&:triage_visible?)
+    else
+      activity_objects.select(&:visible?)
+    end
+  end
+
+  def triage_process?
+    resolution_external_id.nil?
   end
 
   def backoffice_owner
@@ -128,5 +139,12 @@ class Issue < ApplicationRecord
       .joins(activity: :issue)
       .where(issues: { id: id })
       .maximum(:created_at)
+
+    self.comments_count = visible_activity_objects.count
+  end
+
+  def reset_counters
+    recalculate_computed_fields
+    save
   end
 end

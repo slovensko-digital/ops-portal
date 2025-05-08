@@ -25,7 +25,7 @@
 class Issues::UserComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
-  validates :text, presence: true, unless: -> { attachments.empty? }
+  validates :text, presence: true, if: -> { attachments.empty? }
   validate :edited_within_editing_window, on: :edit
 
   def author
@@ -33,7 +33,11 @@ class Issues::UserComment < Issues::Comment
   end
 
   def visible?
-    true
+    !hidden
+  end
+
+  def triage_visible?
+    visible?
   end
 
   def editable_by?(user)

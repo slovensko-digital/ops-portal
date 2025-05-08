@@ -7,7 +7,7 @@ class IssuesController < ApplicationController
   def index
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
-    scope = Issue.publicly_visible
+    scope = Issue.publicly_visible.includes(:state)
     case @tab
     when "list"
         scope = scope.with_attached_photos
@@ -22,9 +22,7 @@ class IssuesController < ApplicationController
 
   # GET /issues/1 or /issues/1.json
   def show
-    @activity_objects = @issue.activities
-      .includes(:activity_object)
-      .order(created_at: :asc).map(&:activity_object).select(&:visible?)
+    @activity_objects = @issue.visible_activity_objects
   end
 
   def edit
@@ -205,6 +203,12 @@ class IssuesController < ApplicationController
           name: :oblubene,
           label: "Najobľúbenejšie",
           order: ->(scope, _) { scope.order(likes_count: :desc, created_at: :desc) }
+        ),
+
+        SearchEngine::Controls::Sort.new(
+          name: :komentare,
+          label: "Najkomentovanejšie",
+          order: ->(scope, _) { scope.order(comments_count: :desc, created_at: :desc) }
         ),
 
         SearchEngine::Controls::Sort.new(

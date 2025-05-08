@@ -678,7 +678,8 @@ CREATE TABLE public.issues (
     imported_at timestamp(6) without time zone,
     praise_public boolean DEFAULT false NOT NULL,
     responsible_subject_last_contact_at timestamp(6) without time zone,
-    address_suburb character varying
+    address_suburb character varying,
+    comments_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -3758,6 +3759,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250508151724'),
 ('20250508082624'),
 ('20250507214604'),
 ('20250507173456'),

@@ -26,7 +26,19 @@ class Issues::AgentPrivateComment < Issues::Comment
   validates :user_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
 
+  def author_display_name
+    "Odkaz pre starostu"
+  end
+
   def author
     agent_author
+  end
+
+  def visible?
+    false
+  end
+
+  def triage_visible?
+    !hidden
   end
 end

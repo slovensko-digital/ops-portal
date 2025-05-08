@@ -16,13 +16,29 @@ class ZammadApiClient
   }
   RESPONSIBLE_SUBJECT_ARTICLE_TAG = TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
+  ATTACHMENTS_UPDATE_ARTICLE_BODY = "Aktualizované prílohy"
+  ATTACHMENTS_UPDATE_ARTICLE_TYPE = "note"
+
+  DEFAULT_ALLOWED_ARTICLE_TYPES = [
+    :unknown_user_portal_comment,             # unknown user comment visible on portal
+    :user_portal_comment,                     # user comment visible on portal
+    :agent_portal_comment,                    # agent comment visible on portal
+    :agent_portal_and_backoffice_comment,     # agent comment visible on portal, triage and backoffice
+    :responsible_subject_portal_and_backoffice_comment,      # responsible subject comment visible on portal, triage and backoffice
+    :agent_backoffice_comment                 # agent comment visible in triage and backoffice
+    # :responsible_subject_backoffice_comment,# responsible subject comment visible in triage and backoffice
+    # :user_private_comment,                  # user comment visible on portal in triage_process
+    # :agent_private_comment,                 # agent comment visible on portal in triage_process
+    # :system_note,                           # system note
+  ]
+
   def initialize(url:, http_token:)
     @url = url
     @http_token = http_token
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
   end
 
-  def get_ticket(ticket_id, expand: false, customer_articles: false, exclude_responsible_subject_articles: false, responsible_subject: nil)
+  def get_ticket(ticket_id, expand: false, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, responsible_subject: nil)
     begin
       ticket = @client.ticket.find(ticket_id)
     rescue => e
@@ -36,13 +52,12 @@ class ZammadApiClient
     return result unless expand
 
     result.merge({
-      activities: [ build_article_response(ticket, ticket.articles.first, first_article: true) ] +
+      activities: [ build_article_response(ticket, ticket.articles.first, allowed_article_types: allowed_article_types, first_article: true) ] +
         ticket.articles[1..].map { |article|
           build_article_response(
             ticket,
             article,
-            customer_articles: customer_articles,
-            exclude_responsible_subject_articles: exclude_responsible_subject_articles,
+            allowed_article_types: allowed_article_types,
             responsible_subject: responsible_subject
           )
         }.compact
@@ -79,7 +94,7 @@ class ZammadApiClient
       },
       owner_id: owner_id,
       created_at: issue.created_at,
-      likes_count: issue.votes.count,
+      likes_count: issue.likes.count,
       origin: DEFAULT_ORIGIN,
       article: {
         origin_by_id: issue.author.external_id,
@@ -126,33 +141,86 @@ class ZammadApiClient
     ticket.save
   end
 
-  def update_ticket_from_issue!(ticket_id, issue)
+  def update_ticket_from_issue!(ticket_id, issue, update_attachments: false)
     ticket = @client.ticket.find(ticket_id)
 
-    likes_count = issue.legacy_data ? issue.legacy_data["like_count"] : 999 # TODO use issue.likes_count
-
     ticket.title = issue.title
+    ticket.body = issue.description
     ticket.issue_type = issue.issue_type
-    ticket.address_state = issue.address_region, # TODO rename this?
-    ticket.address_county = issue.address_district, # TODO rename this?
-    ticket.address_municipality = build_ticket_municipality(issue),
-    ticket.address_postcode = issue.address_postcode,
-    ticket.address_street = issue.address_street,
-    ticket.address_house_number = issue.address_house_number,
-    ticket.address_lat = issue.latitude,
-    ticket.address_lon = issue.longitude,
+    ticket.address_state = issue.address_region # TODO rename this?
+    ticket.address_county = issue.address_district # TODO rename this?
+    ticket.address_municipality = build_ticket_municipality(issue)
+    ticket.address_postcode = issue.address_postcode
+    ticket.address_street = issue.address_street
+    ticket.address_house_number = issue.address_house_number
+    ticket.address_lat = issue.latitude
+    ticket.address_lon = issue.longitude
     ticket.ops_state = issue.state.key
-    ticket.likes_count = likes_count
+    ticket.likes_count = issue.likes_count
 
     ticket.save
 
-    # TODO check if it is always 1st article
-    article = ticket.articles.first
-    article.body = issue.description
-    article.save
+    update_ticket_attachments!(ticket_id, issue) if update_attachments
   end
 
-  def get_article(ticket_id, article_id, customer_articles: true, responsible_subject: nil)
+  def update_ticket_attachments!(ticket_id, issue)
+    ticket = @client.ticket.find(ticket_id)
+
+    attachment_update_articles = ticket.articles.select { | article| article.type == ATTACHMENTS_UPDATE_ARTICLE_TYPE && article.body == ATTACHMENTS_UPDATE_ARTICLE_BODY }
+    first_article = ticket.articles.first
+    triage_attachments = [ first_article, attachment_update_articles ].flatten.map do |article|
+      article.attachments.map do |attachment|
+      {
+        article_id: article.id,
+        id: attachment.id,
+        filename: attachment.filename,
+        content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
+        size: attachment.size
+      }
+      end
+    end.flatten
+
+    local_attachments = issue.photos.map do |photo|
+      {
+        filename: photo.filename,
+        content_type: photo.content_type,
+        size: photo.blob.byte_size
+      }
+    end
+
+    new_attachments = local_attachments.reject do |photo|
+      triage_attachments.any? { |attachment| attachment.values_at(:filename, :size, :content_type).map(&:to_s) == photo.values_at(:filename, :size, :content_type).map(&:to_s) }
+    end
+
+    attachments_to_delete = triage_attachments.reject do |attachment|
+      local_attachments.any? { |photo| attachment.values_at(:filename, :size, :content_type).map(&:to_s) == photo.values_at(:filename, :size, :content_type).map(&:to_s) }
+    end
+
+    attachments_to_delete.each do |attachment|
+      raw_api_request(:delete, "attachments/#{attachment[:id]}")
+    end
+
+    return if new_attachments.empty?
+
+    article = ticket.article(
+      origin_by_id: issue.author.external_id,
+      content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
+      body: ATTACHMENTS_UPDATE_ARTICLE_BODY,
+      type: ATTACHMENTS_UPDATE_ARTICLE_TYPE,
+      internal: false,
+      attachments: new_attachments.map do |attachment|
+        {
+          "filename" => attachment[:filename],
+          "mime-type" => attachment[:content_type],
+          "data" => Base64.encode64(issue.photos.find { |photo| photo.filename == attachment[:filename] }.blob.download)
+        }
+      end
+    )
+
+    raise unless article.id
+  end
+
+  def get_article(ticket_id, article_id, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, customer_articles: true, responsible_subject: nil)
     begin
       ticket = @client.ticket.find(ticket_id)
       article = ticket.articles.find { |a| a.id == article_id.to_i }
@@ -162,7 +230,7 @@ class ZammadApiClient
       return
     end
 
-    result = build_article_response(ticket, article, customer_articles: customer_articles, responsible_subject: responsible_subject)
+    result = build_article_response(ticket, article, allowed_article_types: allowed_article_types, responsible_subject: responsible_subject)
     return unless result.present?
     result
   end
@@ -235,12 +303,8 @@ class ZammadApiClient
     @client.user.all
   end
 
-  def get_user(identifier)
-    @client.user.find identifier
-  end
-
   def add_user_to_group(user_identifier, group_name)
-    user = get_user(user_identifier)
+    user = @client.user.find(user_identifier)
     user_groups = user.groups
     user_groups[group_name] = "full"
     user.groups = user_groups
@@ -284,7 +348,7 @@ class ZammadApiClient
     begin
       zammad_user = @client.user.create(
         firstname: responsible_subject.subject_name,
-        roles: [ "Zodpovedný Subjekt" ]
+        roles: [ "Zodpovedný Subjekt" ],
       )
       zammad_user.id
     rescue RuntimeError => e
@@ -350,32 +414,39 @@ class ZammadApiClient
     @client.user.search(query: query).first
   end
 
-  def find_zammad_user_by_id(id)
-    @client.user.find(id)
-  end
+  def build_author_response(article_type, author, zammad_api_client: TriageZammadEnvironment.client.client)
+    return unless author
 
-  def get_author(user_id, anonymous: false)
-    return if anonymous
+    if [ :user_portal_comment ].include?(article_type)
+      user_id = author.is_a?(User) ? author.external_id : author
+      user = zammad_api_client.user.find(user_id)
+      unless user.nil?
+        {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          uuid: user.uuid
+        }
+      else
+        Rails.logger.warn("User with id: #{user_id} not found in Triage Zammad")
+        nil
+      end
+    elsif [ :agent_portal_comment, :agent_portal_and_backoffice_comment, :agent_backoffice_comment ].include?(article_type)
+      DEFAULT_OPS_ADMIN_USER
 
-    user = find_or_create_user(user_id)
-    {
-      firstname: user.firstname,
-      lastname: user.lastname,
-      uuid: user.uuid
-    } if user
-  end
-
-  def find_or_create_user(user_id)
-    user = User.find_by(external_id: user_id)
-    return user if user
-
-    u = get_user(user_id)
-    # TODO why are we creating a user from zammad in portal? this should never happen
-    # TODO handle responsible subject users for portal
-
-    return if u.id == ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID").to_i
-
-    User.create!(external_id: u.id, email: u.email, firstname: u.firstname, lastname: u.lastname)
+    elsif [ :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment ].include?(article_type)
+      responsible_subject = zammad_api_client.user.find(author.external_id)
+      unless responsible_subject.nil?
+        {
+          firstname: responsible_subject.firstname,
+          lastname: responsible_subject.lastname,
+          uuid: responsible_subject.uuid,
+          responsible_subject_identifier: responsible_subject.id
+        }
+      else
+        Rails.logger.warn("Responsible subject with id: #{author.external_id} not found in Triage Zammad")
+        nil
+      end
+    end
   end
 
   def build_ticket_municipality(issue)
@@ -408,7 +479,8 @@ class ZammadApiClient
       process_type: ticket.process_type,
       title: ticket.title,
       description: ticket.body,
-      author: get_author(ticket.customer_id, anonymous: ticket.anonymous),
+      author: ticket.anonymous ? nil : User.find_by(external_id: ticket.origin_by_id || ticket.created_by_id),
+      author_response: build_author_response(:user_portal_comment, ticket.origin_by_id || ticket.created_by_id),
       responsible_subject: responsible_subject,
       issue_type: ticket.issue_type,
       category: category,
@@ -430,37 +502,34 @@ class ZammadApiClient
     }
   end
 
-  def build_article_response(ticket, article, customer_articles: true, exclude_responsible_subject_articles: false, responsible_subject: nil, first_article: false)
-    return if article.internal
+  def build_article_response(ticket, article, allowed_article_types:, responsible_subject: nil, first_article: false)
+    article_type = get_article_type(article, ticket.process_type)
+    return unless first_article || allowed_article_types.include?(article_type)
 
-    customer_article = article_from_customer?(article)
-    return if !customer_articles && customer_article
+    if article_type == :agent_backoffice_comment
+      return unless responsible_subject
+      return unless ticket.responsible_subject&.dig(:value)&.to_i == responsible_subject.id
 
-    article_without_author = article.origin_by_id == nil
+      responsible_subject_changed_at = ticket.responsible_subject_changed_at
+      return if responsible_subject_changed_at.present? && article.created_at < responsible_subject_changed_at
+    end
 
-    portal_article = article_for_portal?(article, ticket, first_article: first_article)
-    return unless customer_article || portal_article || article_without_author || article_for_this_responsible_subject?(article, ticket, responsible_subject) || article_from_responsible_subject?(article, responsible_subject)
-
-    responsible_subject_article = article.sender != "Agent" && customer_article == false
-    return if exclude_responsible_subject_articles && responsible_subject_article
-
-    if article.sender == "Agent"
-      author = DEFAULT_OPS_ADMIN_USER
-    else
-      # TODO this anonymous logic is not correct as article.created_by is not always the same as article.origin_by
-      author = get_author(
-        article.origin_by_id || article.created_by_id,
-        anonymous: (ticket.anonymous && article.created_by == ticket.customer)
-      )
+    author = case article_type
+    when :user_portal_comment, :user_private_comment
+      unless ticket.anonymous? && article.origin_by_id == ticket.customer_id
+        User.find_by(external_id: article.origin_by_id || article.created_by_id)
+      end
+    when :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment
+      ResponsibleSubject.find_by(external_id: article.origin_by_id)
     end
 
     {
+      article_type: article_type,
       author: author,
+      author_response: build_author_response(article_type, author),
       triage_identifier: article.id,
       content_type: article.content_type,
       body: article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, ""),
-      portal_activity: portal_article,
-      customer_activity: customer_article,
       created_at: article.created_at,
       updated_at: article.updated_at,
       attachments: article.attachments.map do |attachment|
@@ -474,41 +543,37 @@ class ZammadApiClient
     }
   end
 
-  def article_for_portal?(article, ticket, first_article: false)
-    return false if article.internal
-    return true if first_article
+  def get_article_type(article, process_type, zammad_api_client: @client)
+    return if article.internal
+    return :system_note if article.sender == "System"
 
-    process_type = ticket.process_type
     case process_type
     when "portal_issue_triage"
-      return true
+      return :user_private_comment if article.sender == "Customer" && article.type == "web"
+
+      :agent_private_comment if article.sender == "Agent"
+
     when "portal_issue_resolution"
-      return true if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
+      return :unknown_user_portal_comment if article.sender == "Customer" && article.origin_by_id == ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID")
+      return :user_portal_comment if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id || article.created_by_id)&.origin == "portal"
+
+      if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
+        return :responsible_subject_portal_and_backoffice_comment if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id)&.roles&.include?("Zodpovedný Subjekt")
+
+        if article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
+          :agent_portal_and_backoffice_comment if article.sender == "Agent"
+        else
+          :agent_portal_comment if article.sender == "Agent"
+        end
+      elsif article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
+        :agent_backoffice_comment if article.sender == "Agent"
+      else
+        return nil unless article.sender == "Customer" && zammad_api_client.user.find(article.origin_by)&.roles&.include?("Zodpovedný Subjekt")
+        :responsible_subject_backoffice_comment
+      end
+    else
+      # TODO add more process_types
+      raise "Unknown process type: #{process_type}"
     end
-
-    # TODO add support for other process types
-
-    false
-  end
-
-  def article_from_customer?(article)
-    return false if article.internal
-    return false unless article.sender == "Customer"
-
-    find_zammad_user_by_id(article.origin_by_id)&.origin == "portal" if article.origin_by_id
-  end
-
-  def article_from_responsible_subject?(article, responsible_subject)
-    return false if article.internal
-    return false unless article.sender == "Customer"
-
-    find_zammad_user(article.origin_by)&.roles&.include?("Zodpovedný Subjekt")
-  end
-
-  def article_for_this_responsible_subject?(article, ticket, responsible_subject)
-    return false unless responsible_subject
-    return false unless article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
-
-    ticket.responsible_subject&.dig(:value)&.to_i == responsible_subject.id
   end
 end

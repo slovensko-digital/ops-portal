@@ -26,6 +26,10 @@ class Issues::AgentComment < Issues::Comment
   validates :user_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
 
+  def author_display_name
+    "Odkaz pre starostu"
+  end
+
   def author
     agent_author
   end
@@ -36,5 +40,9 @@ class Issues::AgentComment < Issues::Comment
 
   def visible?
     !hidden
+  end
+
+  def triage_visible?
+    visible?
   end
 end
