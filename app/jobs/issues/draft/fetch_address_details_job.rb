@@ -8,6 +8,7 @@ class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
 
     draft.address_house_number = address.find { _1["type"] == "house_number" }&.dig("localname")
     draft.address_street = address.find { _1["class"] == "highway" }&.dig("localname")
+    draft.address_suburb = address.find { _1["type"] == "administrative" && _1["admin_level"] == 10 }&.dig("localname")
     draft.address_municipality = address.find { _1["type"] == "administrative" && _1["admin_level"] == 9 }&.dig("localname")
     draft.address_district = address.find { _1["type"] == "administrative" && _1["admin_level"] == 8 }&.dig("localname")
     draft.address_city = address.find { _1["type"] == "administrative" && _1["admin_level"] == 6 }&.dig("localname")

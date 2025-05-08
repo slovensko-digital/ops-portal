@@ -1,18 +1,58 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  sub: ba
-  name: Bratislava
-  alias: bratislava
-  email: bratislava
-  municipality_type: 2
-  has_municipality_districts: 1
+bratislava:
+  name: "Bratislava"
+  district: ba_kraj
+  sub: "ba"
+  email: "example-ba@example.org"
+  municipality_type: "huge"
+  has_municipality_districts: true
+  handled_by: 1
+  latitude: 17.109832763671875
+  longitude: 48.13470457551313
+  population: 428672
   active: true
+  category: "regional_capital"
+  languages:
+  logo: "public/signs/cities/ba.gif"
+  created_at: "2025-03-07 10:07:42.055392000 +0100"
+  updated_at: "2025-03-07 10:07:42.055392000 +0100"
+  legacy_id: 1
+  aliases: ["bratislava", "Bratislava"]
 
-tn:
-  sub: tn
+banska_bystrica:
+  name: "Banská Bystrica"
+  district: bb_kraj
+  sub: "bb"
+  email: "example-bb@example.org"
+  municipality_type: "other"
+  has_municipality_districts: true
+  handled_by: 1
+  latitude: 19.1461917
+  longitude: 48.736277
+  population: 78068
+  active: true
+  category: "regional_capital"
+  languages:
+  logo:
+  created_at: "2025-03-07 10:07:42.078049000 +0100"
+  updated_at: "2025-03-07 10:07:42.078049000 +0100"
+  legacy_id: 2
+  aliases: ["banska-bystrica", "Banská Bystrica"]
+
+trencin:
   name: Trenčín
-  alias: trencin
-  email: trencin
-  municipality_type: 1
+  sub: "tn"
+  email: "trencin"
+  municipality_type: "1"
+  has_municipality_districts: false
+  handled_by: 1
+  latitude: 18.0425
+  longitude: 48.895
+  population: 55000
   active: true
+  category: "regional_capital"
+  languages:
+  logo:
+  created_at: "2025-03-07 10:07:42.078049000 +0100"
+  updated_at: "2025-03-07 10:07:42.078049000 +0100"
+  legacy_id: 3
+  aliases: ["trencin", "Trenčín"]

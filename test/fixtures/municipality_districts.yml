@@ -1,0 +1,35 @@
+stare_mesto_ba:
+  name: Staré Mesto
+  municipality: bratislava
+  genitiv: Starého Mesta
+  lokal: Starom Meste
+  description:
+  logo: public/signs/districts/ba-stare-mesto.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  legacy_id: 1
+  aliases: [stare-mesto, "Staré Mesto", "Bratislava - mestská časť Staré Mesto"]
+
+ruzinov_ba:
+  name: Ružinov
+  municipality: bratislava
+  genitiv: Ružinova
+  lokal: Ružinove
+  description:
+  logo: public/signs/districts/ba-ruzinov.gif
+  created_at: 2025-03-07 10:07:42.965615000 +0100
+  updated_at: 2025-03-07 10:07:42.965615000 +0100
+  legacy_id: 2
+  aliases: [ruzinov, Ružinov]
+
+vrakuna_ba:
+  name: Vrakuňa
+  municipality: bratislava
+  genitiv: Vrakune
+  lokal: Vrakuni
+  description:
+  logo: public/signs/districts/ba-vrakuna.gif
+  created_at: 2025-03-07 10:07:42.970865000 +0100
+  updated_at: 2025-03-07 10:07:42.970865000 +0100
+  legacy_id: 3
+  aliases: [vrakuna, Vrakuňa]

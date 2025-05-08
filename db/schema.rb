@@ -282,6 +282,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_214604) do
     t.integer "likes_count", default: 0, null: false
     t.datetime "imported_at"
     t.boolean "praise_public", default: false, null: false
+    t.string "address_suburb"
     t.datetime "responsible_subject_last_contact_at"
     t.index "((st_point(longitude, latitude, 4326))::geography)", name: "index_issues_on_location", using: :gist
     t.index ["author_id"], name: "index_issues_on_author_id"
@@ -387,6 +388,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_214604) do
     t.jsonb "address_data"
     t.string "address_district"
     t.boolean "submitted", default: false, null: false
+    t.string "address_suburb"
     t.index ["author_id"], name: "index_issues_drafts_on_author_id"
     t.index ["category_id"], name: "index_issues_drafts_on_category_id"
     t.index ["subcategory_id"], name: "index_issues_drafts_on_subcategory_id"
@@ -533,7 +535,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_214604) do
     t.string "name"
     t.bigint "district_id"
     t.string "sub"
-    t.string "alias"
     t.string "email"
     t.integer "municipality_type"
     t.boolean "has_municipality_districts"
@@ -548,8 +549,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_214604) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
+    t.string "aliases", default: [], null: false, array: true
     t.index ["active"], name: "index_municipalities_on_active"
-    t.index ["alias"], name: "index_municipalities_on_alias"
     t.index ["district_id"], name: "index_municipalities_on_district_id"
     t.index ["latitude"], name: "index_municipalities_on_latitude"
     t.index ["legacy_id"], name: "index_municipalities_on_legacy_id", unique: true
@@ -559,7 +560,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_214604) do
   create_table "municipality_districts", force: :cascade do |t|
     t.string "name"
     t.bigint "municipality_id", null: false
-    t.string "alias"
     t.string "genitiv"
     t.string "lokal"
     t.string "description"
@@ -567,6 +567,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_214604) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "legacy_id"
+    t.string "aliases", default: [], null: false, array: true
     t.index ["legacy_id"], name: "index_municipality_districts_on_legacy_id", unique: true
     t.index ["municipality_id"], name: "index_municipality_districts_on_municipality_id"
   end
