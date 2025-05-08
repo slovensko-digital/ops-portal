@@ -19,22 +19,17 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
 
     return if SKIPPED_TICKETS_OPS_STATES.include?(issue_data["ops_state"])
 
-    if import
-      zammad_client.check_import_mode! if import
-      zammad_group = zammad_api_client::IMPORT_GROUP
-      backoffice_state = ISSUE_OPS_STATE_TO_BACKOFFICE_STATE.fetch(issue_data["ops_state"])
-    else
-      backoffice_state = zammad_api_client::DEFAULT_STATE
-      zammad_group = zammad_api_client::DEFAULT_GROUP
-    end
+    return zammad_client.create_issue!(issue_data) unless import
+
+    zammad_client.check_import_mode!
+    zammad_group = zammad_api_client::IMPORT_GROUP
+    backoffice_state = ISSUE_OPS_STATE_TO_BACKOFFICE_STATE.fetch(issue_data["ops_state"])
 
     zammad_client.create_issue!(issue_data, state: backoffice_state, group: zammad_group)
 
-    if import
-      import_legacy_backoffice_activity_job.perform_later(tenant, issue_id)
-      import_legacy_internal_backoffice_activity_job.perform_later(tenant, issue_id)
-      set_ticket_owner_job.perform_later(tenant, issue_id)
-    end
+    import_legacy_backoffice_activity_job.perform_later(tenant, issue_id)
+    import_legacy_internal_backoffice_activity_job.perform_later(tenant, issue_id)
+    set_ticket_owner_job.perform_later(tenant, issue_id)
   end
 
   ISSUE_OPS_STATE_TO_BACKOFFICE_STATE = {
