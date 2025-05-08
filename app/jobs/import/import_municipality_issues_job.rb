@@ -8,7 +8,7 @@ module Import
     )
       conditions = {
         mesto: municipality.legacy_id,
-        is_manual: 0, # !! DO NOT ever delete this condition !!
+        is_manual: 0 # !! DO NOT ever delete this condition !!
       }
       conditions.merge!(mestska_cast: municipality_district.legacy_id) if municipality_district
 
