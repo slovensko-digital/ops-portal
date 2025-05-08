@@ -2,15 +2,10 @@ module Import
   class Issues::ImportIssueUpdateAttachmentsJob < ApplicationJob
     include ImportMethods
 
-    def perform(update:)
+    def perform(update:, import_attachment_job: Issues::ImportIssueUpdateAttachmentJob)
       Legacy::Alerts::UpdateImage.where(update_id: update.legacy_id).find_in_batches do |group|
         group.each do |legacy_record|
-          attachment_content = download_from_ops_portal(legacy_record.href)
-          attachment_name = File.basename(legacy_record.href)
-
-          persisted = attachment_persisted?(name: attachment_name, content: attachment_content, persisted_records: update.attachments)
-
-          update.attachments.attach(io: attachment_content, filename: attachment_name) unless persisted
+          import_attachment_job.perform_later(legacy_record, update: update)
         end
       end
     end
