@@ -34,9 +34,9 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
             "info": { "type": "STRING" },
             "more_info": { "type": "STRING" },
             "action": { "type": "STRING" },
-            "explanation": { "type": "STRING" },
+            "explanation": { "type": "STRING" }
           },
-          required: ["title", "info", "action"],
+          required: [ "title", "info", "action" ]
         }
       }
     )
