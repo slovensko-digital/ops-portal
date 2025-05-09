@@ -472,6 +472,9 @@ header nav .buttons-con {
   flex-wrap: nowrap;
   width: 100%;
 }
+header nav .buttons-con svg {
+  display: block;
+}
 header nav a.search {
   stroke: $black;
   @include transition(all);
