@@ -21,6 +21,7 @@
 #  gdpr_stats_accepted :boolean          default(FALSE)
 #  lastname            :string
 #  login               :string
+#  newsletter_accepted :boolean          default(FALSE), not null
 #  onboarded           :boolean          default(FALSE)
 #  organization        :boolean
 #  password_hash       :string
