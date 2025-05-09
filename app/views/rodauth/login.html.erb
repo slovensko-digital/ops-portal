@@ -35,7 +35,7 @@
       <div class="form-or-notice">alebo</div>
 
       <div class="form-items-con">
-        <% if ENV['FACEBOOK_APP_ID'].present? %>
+        <% if ENV['GOOGLE_CLIENT_ID'].present? %>
           <%= button_to rodauth.omniauth_request_path(:google), method: :post, data: { turbo: false }, class: "button" do %>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="w-5 h-5">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
@@ -47,7 +47,7 @@
           <% end %>
         <% end %>
 
-        <% if ENV['GOOGLE_CLIENT_ID'].present? %>
+        <% if ENV['FACEBOOK_APP_ID'].present? %>
           <%= button_to rodauth.omniauth_request_path(:facebook), method: :post, data: { turbo: false }, class: "button" do %>
             <svg viewBox="0 0 213 213" preserveAspectRatio="xMinYMin" class="w-5 h-5">
               <path d="M90,212v-75h-27v-31h27v-25q0,-40 40,-40q15,0 24,2v26h-14q-16,0 -16,16v21h30l-5,31h-27v75a106 106,0,1,0,-32 0" fill="#1877f2"></path>
