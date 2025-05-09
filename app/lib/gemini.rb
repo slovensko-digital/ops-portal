@@ -1,7 +1,7 @@
 class Gemini
-  def self.generate(messages:, system_prompt:)
+  def self.generate(messages:, system_prompt:, response_schema: nil)
     conn = Faraday.new(
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
       params: { key: ENV["GEMINI_API_KEY"] },
       headers: {
         "content-type": "application/json"
@@ -13,15 +13,19 @@ class Gemini
     end
 
     res = conn.post do |req|
-      req.body = {
+      body = {
         contents: [
           {
             parts: messages.map { build_message(_1) }
           }
         ],
         system_instruction: { parts: [ { text: system_prompt } ] },
-        generationConfig: { response_mime_type: "application/json" }
-      }.to_json
+        generationConfig: { responseMimeType: "application/json" }
+      }
+
+      body[:generationConfig].merge!(responseSchema: response_schema) if response_schema
+
+      req.body = body.to_json
     end
 
     return [] unless res.body["candidates"]

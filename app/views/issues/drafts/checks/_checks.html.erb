@@ -6,7 +6,8 @@
   <% @draft.checks.each do |check| %>
     <div class="report-warning">
       <div class="title"><%= check['title'] %></div>
-      <div class="description"><%= check['description'] %></div>
+      <div class="description"><%= simple_format check['info'] %></div>
+      <% if check['more_info'].present? %><%= link_to "Viac info", check['more_info'], class: "button button-transparent" %><% end %>
     </div>
   <% end %>
 </div>
