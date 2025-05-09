@@ -1,4 +1,5 @@
 class IssuesController < ApplicationController
+  before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
   before_action :check_show_permissions, only: :show
   before_action :check_edit_permissions, only: %i[ edit update ]

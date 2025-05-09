@@ -60,6 +60,7 @@ sk:
   errors:
     messages:
       blank: "je povinná položka"
+      accepted: "musíte súhlasiť"
 
   activerecord:
     attributes:
@@ -73,6 +74,7 @@ sk:
         name: Meno
         firstname: Meno
         lastname: Priezvisko
+        terms_of_service: S pravidlami používania
       praise:
         title: Názov
         description: "Text pochvaly"

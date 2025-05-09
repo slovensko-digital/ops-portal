@@ -23,7 +23,11 @@ strong, b {
     font-weight: bold;
 }
 
-form .error-message {
+.error-summary {
+    margin-bottom: 40px;
+}
+
+.error-message {
     background-color: #FFD2E6;
     padding: 10px;
     border-radius: 6px;

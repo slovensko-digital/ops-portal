@@ -1728,6 +1728,7 @@ CREATE TABLE public.users (
     display_name character varying,
     gdpr_stats_accepted boolean DEFAULT false,
     onboarded boolean DEFAULT false,
+    newsletter_accepted boolean DEFAULT false NOT NULL,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -3760,6 +3761,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250509084443'),
 ('20250508170305'),
 ('20250508151724'),
 ('20250508082624'),

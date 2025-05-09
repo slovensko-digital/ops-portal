@@ -23,4 +23,10 @@ class ApplicationController < ActionController::Base
   def require_user
     rodauth.require_account
   end
+
+  def ensure_user_onboarded
+    if current_user
+      redirect_to edit_profile_path unless current_user.onboarded?
+    end
+  end
 end

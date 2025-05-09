@@ -11,11 +11,16 @@
       <span>Späť</span>
     <% end %>
     <h1>Osobné údaje</h1>
+    <% if @user.errors.any? %>
+      <div class="error-message error-summary">Zadané údaje obsahujú chyby. Skontrolujte ich a&nbsp;skúste odoslať znova.</div>
+    <% end %>
   <% else %>
     <h1>Vitajte na portáli Odkaz&nbsp;pre&nbsp;starostu!</h1>
     <div class="form-other-con">
-      <div class="form-description">Predtým ako začnete portál používať je dobré si upraviť osobný profil a nastaviť pár
-        vecí. <strong>Nezaberie vám to viac ako minútu.</strong>
+      <div class="form-description prose">
+        <p>Predtým ako začnete portál používať musíte súhlasiť s podmienkami používania.</p>
+        <p>Popri tom je vhodné si upraviť osobný profil a&nbsp;nastaviť pár vecí.
+          <strong>Nezaberie vám to viac ako minútu.</strong></p>
       </div>
       <h1>Osobné údaje</h1>
     </div>
@@ -108,6 +113,26 @@
           <%= f.label "birth_year", "Rok narodenia" %>
           <%= f.number_field :birth_year %>
         </div>
+      </div>
+
+      <% if @onboarding || !@user.onboarded? %>
+        <% @user.errors.full_messages_for(:terms_of_service).each do |error| %>
+          <div class="error-message"><%= error %></div>
+        <% end %>
+
+        <div class="form-check-box-con form-check-box-con-start">
+          <%= f.checkbox :terms_of_service, class: "form-check-box" %>
+          <%= f.label :terms_of_service, class: "prose" do %>
+            Zaväzujem sa dodržiavať <%= link_to "pravidlá používania", cms_page_path("pravidla"), target: :_blank %>.*
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="form-check-box-con form-check-box-con-start">
+        <%= f.checkbox :newsletter_accepted, class: "form-check-box" %>
+        <%= f.label :newsletter_accepted, class: "prose" do %>
+          Súhlasím zo zasielaním občasných emailových noviniek z&nbsp;portálu Odkaz pre starostu.
+        <% end %>
       </div>
 
       <div class="form-check-box-con form-check-box-con-start">

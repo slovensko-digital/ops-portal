@@ -68,6 +68,7 @@ class User < ApplicationRecord
 
   validates :external_id, uniqueness: true, allow_nil: true
   validates_presence_of :name, unless: -> { legacy_id }
+  validates_acceptance_of :terms_of_service, on: :onboarding
 
   def name
     [ firstname, lastname ].compact.join(" ")
