@@ -36,7 +36,7 @@
               <%= link_to profile_path, class: "account" do %>
                 <figure>
                   <picture>
-                    <%= image_tag "muz.jpg" %>
+                    <%= user_avatar(current_user, variant: :medium) %>
                   </picture>
                 </figure>
                 <div class="name"><%= current_user.firstname %></div>

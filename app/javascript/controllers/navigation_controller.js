@@ -11,4 +11,8 @@ export default class extends Controller {
   close(event) {
     this.togglerTarget.classList.remove("open-nav-body");
   }
+
+  disconnect() {
+    this.togglerTarget.classList.remove("open-nav-body");
+  }
 }
