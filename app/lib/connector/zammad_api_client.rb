@@ -10,7 +10,8 @@ module Connector
     DEFAULT_SENDER = "Customer"
     OPS_ORIGIN = "ops"
     DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
-    DEFAULT_ARTICLE_TYPE = "web"
+    DEFAULT_ARTICLE_TYPE = "note"
+    DEFAULT_FIRST_ARTICLE_TYPE = "web"
 
     def initialize(tenant)
       @token = tenant.backoffice_api_token
@@ -188,10 +189,11 @@ module Connector
         address_lat: legacy_data.latitude,
         address_lon: legacy_data.longitude,
         created_at: legacy_data.created_at,
+        origin_by_id: create_or_find_agent(legacy_data.author),
         customer_id: create_or_find_agent(legacy_data.author),
         article: {
           body: legacy_data.description.presence || "(bez popisu)",
-          type: DEFAULT_ARTICLE_TYPE,
+          type: DEFAULT_FIRST_ARTICLE_TYPE,
           internal: legacy_data.internal,
           attachments: legacy_data.attachments.map do |attachment|
             {
@@ -379,7 +381,7 @@ module Connector
           origin_by_id: create_or_find_customer(article["author"]),
           content_type: article["content_type"],
           body: article["body"],
-          type: article["type"],
+          type: DEFAULT_FIRST_ARTICLE_TYPE,
           triage_created_at: article["created_at"],
           attachments: article["attachments"].map do |attachment|
             {
@@ -409,7 +411,7 @@ module Connector
         origin_by_id: create_or_find_customer(activity["author"]),
         content_type: activity["content_type"],
         body: activity["body"],
-        type: activity["type"],
+        type: DEFAULT_ARTICLE_TYPE,
         internal: false,
         triage_created_at: activity["created_at"],
         attachments: activity["attachments"].map do |attachment|

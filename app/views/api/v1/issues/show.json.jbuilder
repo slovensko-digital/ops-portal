@@ -6,7 +6,7 @@ json.responsible_subject {
   json.value @issue[:responsible_subject]&.id
 }
 json.responsible_subject_changed_at @issue[:responsible_subject_changed_at]
-json.author @issue[:author]
+json.author @issue[:author_response]
 json.issue_type @issue[:issue_type]
 json.category @issue[:category].name
 json.subcategory @issue[:subcategory]&.name
