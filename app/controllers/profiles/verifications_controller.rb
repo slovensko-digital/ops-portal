@@ -33,7 +33,6 @@ class Profiles::VerificationsController < ApplicationController
 
       render :code, status: :unprocessable_entity
     end
-
   end
 
   private
