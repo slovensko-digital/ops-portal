@@ -31,3 +31,19 @@ older_post:
   text: "<p>This is obsolete and should not be displayed</p>"
   raw: ""
   tags: []
+
+ai_generate_suggestions:
+  title: "AI Prompt: Generate Suggestions"
+  slug: generatesuggestions
+  category_id: <%= ENV["CMS_AI_CATEGORY_ID"] %>
+  text: ""
+  raw: "suggestions prompt"
+  tags: ["prompt:generatesuggestions"]
+
+ai_generate_checks:
+  title: "AI Prompt: Generate Checks"
+  slug: generatechecks
+  category_id: <%= ENV["CMS_AI_CATEGORY_ID"] %>
+  text: ""
+  raw: "checks prompt"
+  tags: ["prompt:generatechecks"]

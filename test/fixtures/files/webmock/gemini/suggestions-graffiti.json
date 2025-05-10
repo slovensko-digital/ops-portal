@@ -1,0 +1,38 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "[\n  {\n    \"title\": \"Poškodená rozvodná skriňa\",\n    \"description\": \"Rozvodná skriňa je pomaľovaná grafitmi.\",\n    \"category\": \"Mobiliár\",\n    \"subcategory\": \"rozvodná skriňa\",\n    \"subtype\": \"poškodená rozvodná skriňa\"\n  },\n  {\n    \"title\": \"Zanedbaná zeleň\",\n    \"description\": \"Burina prerastá cez rozvodnú skriňu, je potrebné ju odstrániť.\",\n    \"category\": \"Zeleň a znečisťovanie\",\n    \"subcategory\": \"ostatná starostlivosť\",\n    \"subtype\": \"iné\"\n  }\n]"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "avgLogprobs": -0.07242728414989653
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 5294,
+    "candidatesTokenCount": 168,
+    "totalTokenCount": 5462,
+    "promptTokensDetails": [
+      {
+        "modality": "IMAGE",
+        "tokenCount": 1806
+      },
+      {
+        "modality": "TEXT",
+        "tokenCount": 3488
+      }
+    ],
+    "candidatesTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 168
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.0-flash"
+}

@@ -67,6 +67,12 @@ sk:
       models:
         issues/draft:
           latlon_missing: "Nastavte čo najpresnejšiu polohu podnetu na mape."
+          invalid_content: "sú v nepodporovanom formáte. Odstráňte ich."
+          attributes:
+            photos:
+              blank: sú povinné. Nahrajte aspoň jednu.
+            zoom:
+              greater_than: musí byť určená presnejšie. Skúste mapu viac priblížiť.
         user:
           confirmation: "je nesprávny"
           attributes:
@@ -83,6 +89,8 @@ sk:
       issues/draft:
         title: Názov
         description: Popis
+        photos: Fotky
+        zoom: Poloha
       user:
         name: Meno
         firstname: Meno

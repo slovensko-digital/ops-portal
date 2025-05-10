@@ -1,0 +1,32 @@
+{
+  "place_id": 174739609,
+  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 25298061,
+  "lat": "48.1629767",
+  "lon": "17.0490936",
+  "class": "amenity",
+  "type": "parking",
+  "place_rank": 30,
+  "importance": 7.727397573810967e-5,
+  "addresstype": "amenity",
+  "name": "",
+  "display_name": "Pustá, Kútiky, Bratislava, okres Bratislava IV, Bratislava, Bratislavský kraj, 841 04, Slovensko",
+  "address": {
+    "road": "Pustá",
+    "suburb": "Kútiky",
+    "city_district": "okres Bratislava IV",
+    "city": "Bratislava",
+    "state": "Bratislavský kraj",
+    "ISO3166-2-lvl4": "SK-BL",
+    "postcode": "841 04",
+    "country": "Slovensko",
+    "country_code": "sk"
+  },
+  "boundingbox": [
+    "48.1627493",
+    "48.1632083",
+    "17.0486913",
+    "17.0494942"
+  ]
+}

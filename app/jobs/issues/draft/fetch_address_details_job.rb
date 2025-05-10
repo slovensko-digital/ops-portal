@@ -1,5 +1,6 @@
 class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
   queue_as :default
+  queue_with_priority ASAP
 
   def perform(draft)
     details = fetch_osm_details(draft)
@@ -43,6 +44,8 @@ class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
         "W"
     when "node"
         "N"
+    when "relation"
+        "R"
     else
         raise NotImplementedError, "Unknown osm_type: #{json["osm_type"]}"
     end

@@ -3,14 +3,26 @@
 <section class="report">
   <h1>Podnet má problém</h1>
 
-  <% if @draft.errors[:base].any? %>
+  <% if @draft.errors.added?(:base, :municipality_unsupported) %>
     <div class="report-summary-block-con">
       <div class="report-warning">
         <div class="title">Samospráva nie je zapojená do projektu Odkaz pre starostu</div>
         <div class="description">
-          <p>Tento podnet nemôžeme zverejniť, nakoľko samospráva nie je zapojená do projektu Odkaz pre starostu. </p>
+          <p>Tento podnet nemôžeme spracovať, nakoľko samospráva nie je zatiaľ zapojená do projektu Odkaz pre starostu. </p>
         </div>
         <%= link_to "Viac info", "/pridajte-sa", class: "button button-transparent" %>
+      </div>
+    </div>
+
+    <%= link_to "Upraviť podnet", issues_draft_summary_path(@draft), class: "button button-transparent" %>
+  <% elsif @draft.errors.added?(:base, :municipality_supported_on_old_portal) %>
+    <div class="report-summary-block-con">
+      <div class="report-warning">
+        <div class="title">Samospráva ešte nebola premigrovaná na nový portál Odkazu&nbsp;pre&nbsp;starostu</div>
+        <div class="description">
+          <p>Tento podnet môžete zatiaľ zverejniť na pôvodnom portáli Odkazu pre starostu. </p>
+        </div>
+        <%= link_to "www.odkazprestarostu.sk", "https://www.odkazprestarostu.sk", class: "button button-transparent", target: :_blank %>
       </div>
     </div>
 

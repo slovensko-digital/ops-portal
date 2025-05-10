@@ -8,6 +8,7 @@ module Import
           Municipality.find_or_create_by!(
             legacy_id: legacy_record.id,
             active: legacy_record.status,
+            active_on_old_portal: true,
             aliases: [ legacy_record.alias ].compact,
             category: legacy_record.city_type,
             email: legacy_record.email,

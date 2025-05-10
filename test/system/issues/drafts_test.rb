@@ -3,9 +3,36 @@ require "test_helpers/issues/drafts_helper"
 
 class Issues::DraftsTest < ApplicationSystemTestCase
   include Issues::DraftsHelper
+  include ActiveJob::TestHelper
 
   setup do
     @user = users(:one)
+
+    stub_json_request(
+      :post,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=",
+      body: /checks prompt/,
+      response: "webmock/gemini/checks-confirmable.json"
+    )
+
+    stub_json_request(
+      :post,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=",
+      body: /suggestions prompt/,
+      response: "webmock/gemini/suggestions-graffiti.json"
+    )
+
+    stub_json_request(
+      :get,
+      "https://nominatim.openstreetmap.org/reverse?format=json&lat=48.16311388888889&lon=17.049330555555557",
+      response: "webmock/nominatim/pusta-reverse.json"
+    )
+
+    stub_json_request(
+      :get,
+      "https://nominatim.openstreetmap.org/details?addressdetails=1&format=json&osmid=25298061&osmtype=W",
+      response: "webmock/nominatim/pusta-details.json"
+    )
   end
 
   test "full issue creation with checks" do
@@ -18,6 +45,7 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     assert_text "Lokalita"
     click_on "Pokračovať"
 
+    assert_text "Poškodená rozvodná skriňa"
     assert_text "Popis podnetu"
 
     click_on "Vlastný nadpis podnetu"
@@ -31,14 +59,10 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     assert_text "Výber typu problému"
     click_on "vyvaleny"
 
-    geolocate_latest_draft
-
     assert_text "Popis podnetu"
     fill_in "Názov", with: "Graffiti"
     fill_in "Popis", with: "Je tu graffiti, treba vycistit"
     click_on "Pokračovať"
-
-    generate_checks_for_latest_draft
 
     assert_text "Zhrnutie podnetu"
     click_on "Odoslať podnet"

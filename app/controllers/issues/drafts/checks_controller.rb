@@ -15,6 +15,7 @@ class Issues::Drafts::ChecksController < ApplicationController
 
   def create
     Issues::Draft::GenerateChecksJob.perform_now(@draft) if @draft.checks.nil?
+    Issues::Draft::FetchAddressDetailsJob.perform_now(@draft) if @draft.address_data.nil?
     if @draft.valid?(:checks_step)
       @draft.confirm
       redirect_to thanks_issues_drafts_path

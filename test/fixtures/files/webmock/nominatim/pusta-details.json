@@ -1,0 +1,224 @@
+{
+  "place_id": 174739609,
+  "parent_place_id": 173837741,
+  "osm_type": "W",
+  "osm_id": 25298061,
+  "category": "amenity",
+  "type": "parking",
+  "admin_level": 15,
+  "localname": "",
+  "names": {},
+  "addresstags": {},
+  "country_code": "sk",
+  "indexed_date": "2024-11-09T08:16:45.542253+00:00",
+  "importance": 7.727397573810967e-5,
+  "calculated_importance": 7.727397573810967e-5,
+  "extratags": {
+    "fee": "no",
+    "access": "yes",
+    "parking": "surface"
+  },
+  "rank_address": 30,
+  "rank_search": 30,
+  "isarea": true,
+  "centroid": {
+    "type": "Point",
+    "coordinates": [
+      17.04909360424812,
+      48.1629767
+    ]
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      17.04909360424812,
+      48.1629767
+    ]
+  },
+  "address": [
+    {
+      "localname": "Pustá",
+      "place_id": 173837741,
+      "osm_id": 25298010,
+      "osm_type": "W",
+      "class": "highway",
+      "type": "residential",
+      "admin_level": 15,
+      "rank_address": 26,
+      "distance": 0.0,
+      "isaddress": true
+    },
+    {
+      "localname": "Staré Grunty",
+      "place_id": 174399948,
+      "osm_id": 11445334224,
+      "osm_type": "N",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 0.01886865632153201,
+      "isaddress": false
+    },
+    {
+      "localname": "Rovnice",
+      "place_id": 174769743,
+      "osm_id": 4430152911,
+      "osm_type": "N",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 0.01324500927935118,
+      "isaddress": false
+    },
+    {
+      "localname": "Doktorov jarok",
+      "place_id": 174956473,
+      "osm_id": 4430152905,
+      "osm_type": "N",
+      "class": "place",
+      "type": "neighbourhood",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 0.0067859326330288,
+      "isaddress": false
+    },
+    {
+      "localname": "Lackova dráha",
+      "place_id": 174736020,
+      "osm_id": 4430152906,
+      "osm_type": "N",
+      "class": "place",
+      "type": "neighbourhood",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 0.004350650181295763,
+      "isaddress": false
+    },
+    {
+      "localname": "Kútiky",
+      "place_id": 174706288,
+      "osm_id": 4430152910,
+      "osm_type": "N",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 9.732638748045151e-4,
+      "isaddress": true
+    },
+    {
+      "localname": "Karlova Ves",
+      "place_id": 174800571,
+      "osm_id": 2208777,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 9,
+      "rank_address": 20,
+      "distance": 5.1065005258022805e-8,
+      "isaddress": false
+    },
+    {
+      "localname": "Bratislava",
+      "place_id": 173727134,
+      "osm_id": 293814124,
+      "osm_type": "W",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 20,
+      "distance": 8.999069273357289e-7,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Bratislava IV",
+      "place_id": 390021659,
+      "osm_id": 388245,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 8,
+      "rank_address": 18,
+      "distance": 4.984436142959761e-7,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislava",
+      "place_id": 390018651,
+      "osm_id": 1702499,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 16,
+      "distance": 6.068709703231963e-7,
+      "isaddress": false
+    },
+    {
+      "localname": "Karlova Ves",
+      "place_id": 174632224,
+      "osm_id": 2208760,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
+      "rank_address": 16,
+      "distance": 5.1065005258022805e-8,
+      "isaddress": false
+    },
+    {
+      "localname": "Bratislava",
+      "place_id": 174793718,
+      "osm_id": 3992676,
+      "osm_type": "R",
+      "class": "place",
+      "type": "city",
+      "admin_level": 15,
+      "rank_address": 16,
+      "distance": 8.999069273357289e-7,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 174856904,
+      "osm_id": 388265,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 4,
+      "rank_address": 8,
+      "distance": 2.1141125855931323e-6,
+      "isaddress": true
+    },
+    {
+      "localname": "841 04",
+      "place_id": 174790877,
+      "osm_id": 6129676,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "postal_code",
+      "admin_level": 15,
+      "rank_address": 5,
+      "distance": 1.1169057605554875e-7,
+      "isaddress": true
+    },
+    {
+      "localname": "sk",
+      "class": "place",
+      "type": "country_code",
+      "rank_address": 4,
+      "distance": 0.0,
+      "isaddress": false
+    },
+    {
+      "localname": "Slovensko",
+      "class": "place",
+      "type": "country",
+      "rank_address": 4,
+      "distance": 0.0,
+      "isaddress": true
+    }
+  ]
+}
