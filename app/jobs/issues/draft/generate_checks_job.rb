@@ -1,5 +1,6 @@
 class Issues::Draft::GenerateChecksJob < ApplicationJob
   queue_as :default
+  queue_with_priority ASAP
 
   def perform(draft)
     draft.checks = llm_generate_checks(draft)

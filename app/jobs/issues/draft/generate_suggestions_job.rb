@@ -1,5 +1,6 @@
 class Issues::Draft::GenerateSuggestionsJob < ApplicationJob
   queue_as :default
+  queue_with_priority ASAP
 
   def perform(draft)
     draft.suggestions = generate_suggestions(draft)

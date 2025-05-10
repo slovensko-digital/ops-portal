@@ -48,6 +48,7 @@
   <%= form_with(model: @draft, url: issues_draft_geo_path(@draft, next: params[:next])) do |form| %>
     <%= form.hidden_field :latitude, data: { "geo-target": :latitude } %>
     <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
+    <%= form.hidden_field :zoom, data: { "geo-target": :zoom } %>
     <% if params[:next] == 'summary' %>
       <%= form.submit "Uložiť", class: "button" %>
     <% else %>

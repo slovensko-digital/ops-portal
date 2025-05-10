@@ -5,6 +5,7 @@ class Issues::Drafts::DetailsController < ApplicationController
   end
 
   def update
+    @draft.checks = nil
     if @draft.update_with_context(details_params, :details_step)
       Issues::Draft::GenerateChecksJob.perform_later(@draft)
       redirect_to issues_draft_summary_path(@draft)

@@ -14,7 +14,9 @@
 #  address_street                      :string
 #  address_suburb                      :string
 #  anonymous                           :boolean
+#  comments_count                      :integer          default(0), not null
 #  description                         :string           not null
+#  fulltext_extra                      :string
 #  imported_at                         :datetime
 #  issue_type                          :integer          default("issue")
 #  last_synced_at                      :datetime

@@ -4,7 +4,7 @@ import {LocateControl} from "leaflet.locatecontrol";
 
 // Connects to data-controller="geo"
 export default class extends Controller {
-    static targets = ["latitude", "longitude", "map", "search", "localize", "support"]
+    static targets = ["latitude", "longitude", "zoom", "map", "search", "localize", "support"]
     static classes = ["supported"]
 
     connect() {
@@ -21,7 +21,7 @@ export default class extends Controller {
         new LocateControl({strings: {title: 'Aktuálna poloha'}}).addTo(this.map);
 
         let place = [this.latitudeTarget.value, this.longitudeTarget.value];
-        let zoom = 17;
+        let zoom = this.zoomTarget.value || 17;
         if (place[0] === '' || place[1] === '') {
             place = [48.148598, 17.107748]
             zoom = 12;
@@ -35,6 +35,7 @@ export default class extends Controller {
         const pos = this.map.getCenter();
         this.latitudeTarget.value = pos.lat;
         this.longitudeTarget.value = pos.lng;
+        this.zoomTarget.value = this.map.getZoom();
     }
 
     search(event) {

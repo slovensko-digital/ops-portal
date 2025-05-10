@@ -8,6 +8,7 @@ class Issues::DraftsController < ApplicationController
   end
 
   def edit
+    @draft.valid?(:photos_step)
     render :new
   end
 
@@ -15,7 +16,7 @@ class Issues::DraftsController < ApplicationController
     @draft = Issues::Draft.new(draft_params)
     @draft.author = current_user
     if @draft.save(context: :photos_step)
-      @draft.schedule_calculate_suggestions # TODO move somehow to after_save
+      ::Issues::Draft::GenerateSuggestionsJob.perform_later(@draft)
       redirect_to issues_draft_geo_path(@draft)
     else
       render :new, status: :unprocessable_entity
@@ -32,7 +33,7 @@ class Issues::DraftsController < ApplicationController
   end
 
   def destroy_photo
-    @draft.photos.find(params[:photo_id]).purge
+    @draft.photos.find(params[:photo_id]).purge_later
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
   end
 

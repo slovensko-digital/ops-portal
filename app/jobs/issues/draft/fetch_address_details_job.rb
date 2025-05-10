@@ -1,5 +1,6 @@
 class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
   queue_as :default
+  queue_with_priority ASAP
 
   def perform(draft)
     details = fetch_osm_details(draft)

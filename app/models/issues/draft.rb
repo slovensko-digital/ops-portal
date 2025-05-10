@@ -24,6 +24,7 @@
 #  submitted               :boolean          default(FALSE), not null
 #  suggestions             :jsonb
 #  title                   :string
+#  zoom                    :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  author_id               :bigint           not null
@@ -46,6 +47,8 @@ class Issues::Draft < ApplicationRecord
   validates_presence_of :photos, on: :photos_step
   validates_presence_of :title, :description, on: :details_step
   validate :latlon_present, on: :geo_step
+  validates_numericality_of :zoom, greater_than: 14, allow_nil: true, on: :geo_step
+  validate :photos_allowed_content_type, on: :photos_step
 
   validate :municipality_supported, on: :checks_step
   validate :checks_passed, on: :checks_step
@@ -94,10 +97,6 @@ class Issues::Draft < ApplicationRecord
     end
 
     SyncIssueToTriageJob.perform_later(issue)
-  end
-
-  def schedule_calculate_suggestions
-    ::Issues::Draft::GenerateSuggestionsJob.perform_later(self)
   end
 
   def needs_editing?
@@ -150,6 +149,10 @@ class Issues::Draft < ApplicationRecord
   end
 
   private
+
+  def photos_allowed_content_type
+    errors.add(:photos, :invalid_content) if photos.any? { |file| !file.content_type.in?(UploadsController::ALLOWED_CONTENT_TYPES) }
+  end
 
   def latlon_present
     errors.add(:base, :latlon_missing) if latitude.blank? || longitude.blank?
