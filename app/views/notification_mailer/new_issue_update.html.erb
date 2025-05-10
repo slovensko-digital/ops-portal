@@ -1,2 +1,14 @@
-<p class="ops-email-title">Nová aktualizácia</p>
+<%= render "title", title: "Nová aktualizácia" %>
+<p class="ops-email-paragraph">
+  K podnetu <b><%= @issue.title %></b> pribudla nová aktualizácia.
+</p>
+<p class="ops-email-paragraph">
+  Pre detail aktualizácie, prosím, kliknite nižšie.
+</p>
+<p class="ops-email-paragraph">
+  <%= render "button", url: issue_url(@issue), label: "Detail aktualizácie" %>
+</p>
+<p class="ops-email-paragraph">
+  <%= render "button", url: issue_url(@issue), label: "Reagovať na aktualizáciu" %>
+</p>
 <%= render "unsubscribe" %>

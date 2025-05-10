@@ -1,5 +1,14 @@
 <%= render "title", title: "Nový komentár" %>
 <p class="ops-email-paragraph">
-  <%= render "button", url: "", label: "Reagovať na komentár" %>
+  K podnetu <b><%= @issue.title %></b> pribudol nový komentár.
+</p>
+<p class="ops-email-paragraph">
+  <b><%= @comment.author_display_name %></b> napísal/a:
+</p>
+<p class="ops-email-paragraph">
+  <%= simple_format(@comment.text) %>
+</p>
+<p class="ops-email-paragraph">
+  <%= render "button", url: issue_url(@issue), label: "Reagovať na komentár" %>
 </p>
 <%= render "unsubscribe" %>

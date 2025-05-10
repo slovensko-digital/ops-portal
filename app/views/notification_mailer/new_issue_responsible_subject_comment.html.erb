@@ -1,2 +1,14 @@
-<p class="ops-email-title">Nová odpoveď</p>
+<%= render "title", title: "Nová odpoveď" %>
+<p class="ops-email-paragraph">
+  K podnetu <b><%= @issue.title %></b> pribudla nová odpoveď od samosprávy.
+</p>
+<p class="ops-email-paragraph">
+  Pre detail novej odpovede, prosím, kliknite nižšie.
+</p>
+<p class="ops-email-paragraph">
+  <%= render "button", url: issue_url(@issue), label: "Detail odpovede" %>
+</p>
+<p class="ops-email-paragraph">
+  <%= render "button", url: issue_url(@issue), label: "Reagovať na odpoveď" %>
+</p>
 <%= render "unsubscribe" %>

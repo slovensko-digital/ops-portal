@@ -1,19 +1,19 @@
-<p class="ops-email-paragraph">
-  <b>Dajte o Vašom podnete vedieť aj prostredníctvom sociálnych sietí.</b>
-</p>
-<p class="ops-email-paragraph">
-  <%= render "button", url: "", label: "Facebook" %>
-  <%= render "button", url: "", label: "Instagram" %>
-</p>
+<%# <p class="ops-email-paragraph"> %>
+<%#   <b>Dajte o Vašom podnete vedieť aj prostredníctvom sociálnych sietí.</b> %>
+<%# </p> %>
+<%# <p class="ops-email-paragraph"> %>
+<%#   <%= render "button", url: "", label: "Facebook" %> %>
+<%#   <%= render "button", url: "", label: "Instagram" %> %>
+<%# </p> %>
 <p class="ops-email-paragraph">
   <b>Páči sa Vám, čo robíme? Staňte sa našimi podporovateľmi a pomôžte nám zlepšovať naše samosprávy.</b>
 </p>
 <p class="ops-email-paragraph">
-  <%= render "button", url: "", label: "Podporte nás" %>
+  <%= render "button", url: url_for('/podporte-nas'), label: "Podporte nás" %>
 </p>
 <p class="ops-email-paragraph">
   <b>Ak chcete o nás počuť viac a pravidelnejšie, prihláste sa na odber newsletteru.</b>
 </p>
 <p class="ops-email-paragraph">
-  <%= render "button", url: "", label: "Odoberať newsletter" %>
+  <%= render "button", url: edit_profile_url, label: "Odoberať newsletter" %>
 </p>

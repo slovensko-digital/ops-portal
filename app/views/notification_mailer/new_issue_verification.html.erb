@@ -1,2 +1,12 @@
-<p class="ops-email-title">Overenie podnetu</p>
+<%= render "title", title: "Overenie podnetu" %>
+<p class="ops-email-paragraph">
+  K podnetu <b><%= @issue.title %></b> pribudlo nové overenie podnetu.
+</p>
+<p class="ops-email-paragraph">
+    <%# TODO: Add author display name or relevant information here  %>
+  <b><%= "Niekto" %></b> overil riešenie tohto podnetu.
+</p>
+<p class="ops-email-paragraph">
+  <%= render "button", url: issue_url(@issue), label: "Reagovať na overenie podnetu" %>
+</p>
 <%= render "unsubscribe" %>

@@ -1,6 +1,6 @@
 <%= render "title", title: "Váš podnet bol zverejnený" %>
-<p class="ops-email-paragraph">Dobrý deň, Váš podnet <b>Poškodený cyklostojan</b>, ktorý ste pridali
-  <b>12.5.2024</b> na portál Odkaz pre starostu bol zverejnený a odoslaný zodpovedným pracovníkom a pracovníčkam samosprávy.
+<p class="ops-email-paragraph">Dobrý deň, Váš podnet <b><%= @issue.title %></b>, ktorý ste pridali
+  <b><%= @issue.created_at.strftime("%d.%m.%Y") %></b> na portál Odkaz pre starostu, bol zverejnený a odoslaný zodpovedným pracovníkom a pracovníčkam samosprávy.
 </p>
 <p class="ops-email-paragraph">Ak v súčasnosti, alebo v budúcnosti budete mať doplňujúcu informáciu o aktuálnom stave alebo o riešení Vášho podnetu, môžete nám ju poskytnúť pridaním komentára k podnetu, ideálne aj s priložením fotografie aktuálneho stavu.</p>
 <p class="ops-email-paragraph">O reakcii samosprávy, ako aj prípadnej reakcií ostatných návštevníkov portálu Vás zakaždým upozorníme e-mailom.</p>
