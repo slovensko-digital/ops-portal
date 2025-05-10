@@ -18,7 +18,7 @@
               </svg>
             </div>
             <picture>
-              <%= image_tag @issue.photos.first.variant(:normal) if @issue.photos.attached? %>
+              <%= image_tag @issue.photos[0].variant(:normal) if @issue.photos.attached? %>
             </picture>
           </figure>
           <% if @issue.photos.count > 1 %>
