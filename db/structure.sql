@@ -849,7 +849,7 @@ CREATE TABLE public.issues_drafts (
     updated_at timestamp(6) without time zone NOT NULL,
     latitude double precision,
     longitude double precision,
-    suggestions jsonb,
+    suggestions jsonb DEFAULT '[]'::jsonb,
     picked_suggestion_index integer,
     checks jsonb,
     address_house_number character varying,
@@ -868,8 +868,7 @@ CREATE TABLE public.issues_drafts (
     address_data jsonb,
     address_district character varying,
     submitted boolean DEFAULT false NOT NULL,
-    address_suburb character varying,
-    zoom integer
+    address_suburb character varying
 );
 
 
@@ -3767,8 +3766,6 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20250510002751'),
-('20250509230101'),
 ('20250509170228'),
 ('20250509084443'),
 ('20250508170305'),

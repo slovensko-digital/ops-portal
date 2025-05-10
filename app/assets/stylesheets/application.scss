@@ -1737,6 +1737,9 @@ section.account .button {
 section.account .account-delete {
   background: $pink !important;
 }
+section.account .account-delete .description {
+  color: $black;
+}
 section.account .account-item-subject {
   align-items: center;
   display: grid;
@@ -2806,6 +2809,51 @@ section.compliment .info-block .info-block-value {
   font-weight: $medium;
   line-height: em(28,18);
 }
+
+// SMS overenie
+section.verification {
+  padding-bottom: per(80,280);
+  padding-top: 40px;
+  max-width: 400px;
+}
+section.verification h1 {
+  margin-bottom: 30px;
+  text-align: center;
+}
+section.verfication .form-description {
+  text-align: center;
+}
+section.verification .button {
+  width: 100%;
+}
+section.verification .form-other-con {
+  gap: 30px 0;
+}
+section.verification {
+  input[autocomplete="one-time-code"] {
+    text-align: center;
+  }
+}
+
+
+
+
+// Overenie totožnosti
+section.identity {
+  padding-bottom: per(80,280);
+  padding-top: 40px;
+  max-width: 400px;
+}
+section.identity h1 {
+  margin-bottom: 30px;
+}
+section.identity .button {
+  width: 100%;
+}
+section.identity .form-other-con {
+  gap: 30px 0;
+}
+
 
 // Vyhľadávanie
 section.search-result-blank {

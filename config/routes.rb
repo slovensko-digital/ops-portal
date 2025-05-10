@@ -75,6 +75,10 @@ Rails.application.routes.draw do
 
   resource :profile do
     resource :avatar, module: :profiles
+    resource :verification, module: :profiles do
+      get :code
+      post :check_code
+    end
   end
 
   resources :users, path: "pouzivatelia"

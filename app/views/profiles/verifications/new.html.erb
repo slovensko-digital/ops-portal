@@ -1,0 +1,26 @@
+<% content_for :title, "Overenie účtu" %>
+
+<section class="identity">
+  <h1>Overenie totožnosti</h1>
+
+  <%= form_with model: @user, url: profile_verification_path, class: "form-other-con" do |f| %>
+    <div class="form-description prose">
+      <p>Aby ste mohli využívať všetky funkcie portálu Odkaz pre starostu, je potrebné overiť váš účet pomocou
+      bezpečnostného kódu, ktorý bude zaslaný na váš telefón.</p>
+      <p><strong>Telefónne číslo sa použije len na toto overenie.</strong></p>
+    </div>
+
+    <div class="form-items-con">
+      <div class="form-item-wrapper">
+        <%= f.label :phone_verification_number, "Telefónne číslo*" %>
+        <%= f.telephone_field :phone_verification_number, placeholder: "+421xxxxxxxxx" %>
+        <% if @user.errors.any? %>
+          <%# show only first error to not leak information %>
+          <div class="error-message"><%= @user.errors.full_messages.first %></div>
+        <% end %>
+      </div>
+    </div>
+
+    <%= f.submit "Vyžiadať bezpečnostný kód", class: "button" %>
+  <% end %>
+</section>

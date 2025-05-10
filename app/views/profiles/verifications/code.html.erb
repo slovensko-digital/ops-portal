@@ -1,0 +1,23 @@
+<% content_for :title, "Overenie účtu" %>
+
+<section class="verification">
+
+  <h1>Zadajte kód</h1>
+  <%= form_with url: check_code_profile_verification_path, data: { controller: :otp }, scope: :user do |f| %>
+    <%= f.hidden_field :phone_verified, value: true %>
+    <div class="form-other-con">
+      <div class="form-description">Zadajte bezpečnostný kód z SMS správy, ktorý vám bol doručený na váš telefón.</div>
+      <div class="form-items-con">
+        <div class="form-item-wrapper">
+          <%= f.text_field :phone_verification_code_confirmation, inputmode: :numeric, maxlength: 5, autocomplete: "one-time-code", data: { otp_target: "input", controller: :autofocus, autofocus_target: "input" }, class: "form-input" %>
+          <% if @user.errors.any? %>
+            <%# show only first error to not leak information %>
+            <div class="error-message"><%= @user.errors.full_messages.first %></div>
+          <% end %>
+        </div>
+      </div>
+      <%= f.submit "Overiť kód", class: "button" %>
+    </div>
+  <% end %>
+
+</section>

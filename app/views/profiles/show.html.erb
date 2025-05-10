@@ -4,6 +4,16 @@
   <h1>Váš účet</h1>
 
   <div class="account-wrapper">
+    <% unless @user.phone_verified? %>
+      <div class="account-info-con account-delete">
+        <div class="title">Overiť totožnosť</div>
+        <div class="description">Aby ste mohli využívať všetky funkcie portálu Odkaz pre starostu, je potrebné overiť váš účet pomocou
+          bezpečnostného kódu, ktorý bude zaslaný na váš telefón.
+        </div>
+        <%= link_to "Overiť", new_profile_verification_path, class: "button button-transparent" %>
+      </div>
+    <% end %>
+
     <div class="account-info-con">
       <div class="title">Prihlasovacie údaje</div>
 
