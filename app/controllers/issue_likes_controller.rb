@@ -1,5 +1,6 @@
 class IssueLikesController < ApplicationController
   include IssueScoped
+  before_action :require_full_access_user
 
   def create
     @issue.likes.find_or_initialize_by(user: current_user).save

@@ -83,7 +83,7 @@
 
         <div class="information-wrapper">
           <div class="label">Podnet podal:</div>
-          <%= link_to @issue.author do %>
+          <%= tag.div do %>
             <div class="subject-con">
               <figure>
                 <picture>
@@ -111,7 +111,8 @@
           <div class="label">Kategórie:</div>
           <div class="value-con">
             <%= link_to @issue.category.name, issues_path(kategoria: @issue.category.name), class: "value" %>
-            <% if @issue.subcategory %><%= link_to @issue.subcategory.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name), class: "value" %><% end %>
+            <% if @issue.subcategory %><%= link_to @issue.subcategory.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name), class: "value" %>
+            <% end %>
             <% if @issue.subtype.present? %><%= link_to @issue.subtype.name, issues_path(kategoria: @issue.category.name, podkategoria: @issue.subcategory.name, typ: @issue.subtype.name), class: "value" %>
             <% end %>
           </div>
@@ -163,7 +164,11 @@
         <% end %>
 
         <% if logged_in? %>
-          <%= render partial: "issues/new_issue_activity_buttons" %>
+          <% if current_user.full_access? %>
+            <%= render partial: "issues/new_issue_activity_buttons" %>
+          <% else %>
+            <%= render partial: "issues/comments_verified_profile_required" %>
+          <% end %>
         <% else %>
           <div class="no-login-notice-con">
             <div class="no-login-notice">Chcete pridať komentár alebo overiť podnet? Prihláste sa!</div>

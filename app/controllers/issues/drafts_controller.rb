@@ -1,5 +1,5 @@
 class Issues::DraftsController < ApplicationController
-  before_action :require_user
+  before_action :require_full_access_user
   before_action :ensure_user_onboarded
   before_action :load_draft, except: [ :new, :new_question, :create, :thanks ]
 

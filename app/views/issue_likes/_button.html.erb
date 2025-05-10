@@ -1,17 +1,8 @@
 <%= turbo_frame_tag :like_button do %>
-  <% if logged_in? %>
-    <%= button_to issue_like_path(@issue), method: current_user.likes?(@issue) ? :delete : :post, class: class_names("button button-transparent button-like", "button-active": current_user.likes?(@issue)) do %>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-        <path d="M17.46,3.35c-2.06-2.05-5.4-2.05-7.46,0-2.06-2.05-5.4-2.05-7.46,0C.49,5.4.49,8.72,2.54,10.77l7.46,7.41,7.46-7.41c2.06-2.05,2.06-5.37,0-7.41Z" stroke="#1c3054" stroke-miterlimit="10" stroke-width="1.5"/>
-      </svg>
-      <span><%= @issue.likes_count %></span>
-    <% end %>
-  <% else %>
-    <div class="button button-transparent button-like" title="Aby ste mohli hlasovať sa musíte prihlásiť.">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-        <path d="M17.46,3.35c-2.06-2.05-5.4-2.05-7.46,0-2.06-2.05-5.4-2.05-7.46,0C.49,5.4.49,8.72,2.54,10.77l7.46,7.41,7.46-7.41c2.06-2.05,2.06-5.37,0-7.41Z" stroke="#1c3054" stroke-miterlimit="10" stroke-width="1.5"/>
-      </svg>
-      <span><%= @issue.likes_count %></span>
-    </div>
+  <%= button_to issue_like_path(@issue), method: current_user.likes?(@issue) ? :delete : :post, class: class_names("button button-transparent button-like", "button-active": current_user.likes?(@issue)) do %>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+      <path d="M17.46,3.35c-2.06-2.05-5.4-2.05-7.46,0-2.06-2.05-5.4-2.05-7.46,0C.49,5.4.49,8.72,2.54,10.77l7.46,7.41,7.46-7.41c2.06-2.05,2.06-5.37,0-7.41Z" stroke="#1c3054" stroke-miterlimit="10" stroke-width="1.5"/>
+    </svg>
+    <span><%= @issue.likes_count %></span>
   <% end %>
 <% end %>

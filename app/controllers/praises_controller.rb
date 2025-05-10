@@ -1,7 +1,8 @@
 class PraisesController < ApplicationController
-  before_action :require_user
+  before_action :require_full_access_user
   before_action :ensure_user_onboarded
   before_action :set_form_dependencies
+
   def new
     @praise = Praise.new
   end

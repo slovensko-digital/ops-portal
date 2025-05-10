@@ -75,6 +75,8 @@ Rails.application.routes.draw do
 
   resource :profile, path: "profil" do
     collection do
+      get :please_create, path: "potrebne-zalozit"
+      get :please_verify, path: "potrebne-overit"
       get :watched_issues, path: "sledovane"
       get :verified_issues, path: "overene"
       get :settings, path: "nastavenia"
@@ -100,7 +102,6 @@ Rails.application.routes.draw do
   root "homepage#show"
 
   # legacy urls redirects
-
   get "r/:municipality_slug" => "legacy/redirects#index"
   get "r/:municipality_slug/vsetky-podnety" => "legacy/redirects#search_list"
   get "r/:municipality_slug/statistiky" => "legacy/redirects#search_stats"

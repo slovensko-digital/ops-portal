@@ -22,7 +22,6 @@ class PraisesTest < ApplicationSystemTestCase
   test "login requirement" do
     visit new_praise_path
 
-    assert_current_path "/login"
-    assert_text "musíte sa prihlásiť"
+    assert_text "a byť prihlásený"
   end
 end

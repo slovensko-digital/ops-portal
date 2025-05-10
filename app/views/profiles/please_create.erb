@@ -1,0 +1,13 @@
+<section class="identity">
+  <h1>Odomknite všetky funkcie!</h1>
+
+  <div class="form-other-con">
+    <%= image_tag "locked.png", alt: "" %>
+    <div class="form-description prose">
+      <p class="title">Ak chcete využívať niektoré funkcie portálu Odkaz pre starostu, musíte mať vytvorený účet a byť prihlásený.</p>
+    </div>
+
+    <%= link_to "Prihlásiť", rodauth.login_path, class: "button" %>
+    <%= link_to "Vytvoriť účet", rodauth.create_account_path, class: "button button-transparent" %>
+  </div>
+</section>
