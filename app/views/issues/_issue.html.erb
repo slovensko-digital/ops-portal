@@ -3,7 +3,7 @@
 
   <div class="info-con">
     <div class="state-con">
-      <% if issue.issue_type == 'issue' %>
+      <% if issue.issue_type.in? ['issue', 'question'] %>
         <div class="state state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
       <% end %>
       <div class="icon-con">
