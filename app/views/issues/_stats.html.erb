@@ -73,10 +73,10 @@
   <div class="wrapper-statistics">
     <div class="statistics-con">
       <% @search_results.stats[:by_category].value.each do |category, count| %>
-        <div class="statistics-block statistics-block-category-<%= category.name.parameterize %>">
+        <div class="statistics-block statistics-block-<%= category ? "category-#{category.name.parameterize}" : 'undefined' %>">
           <div class="general-value-con">
             <div class="general-title-con">
-              <div class="general-title"><%= link_to category.name, search_issues_path(kategoria: category.name, tab: :list) %></div>
+              <div class="general-title"><% if category %><%= link_to category.name, search_issues_path(kategoria: category.name, tab: :list) %><% else %>Bez kategórie<% end %></div>
               <div class="statistics-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                   <polyline points="2 18 8.67 8.9 15.33 14.62 22 6" fill="none" stroke-miterlimit="10" stroke-width="1.5"/>
