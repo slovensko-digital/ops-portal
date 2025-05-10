@@ -63,6 +63,10 @@ Rails.application.routes.draw do
     end
   end
 
+  get "unsubscribe/global/:token", to: "unsubscribes#global", as: :unsubscribe_global
+  post "unsubscribe/global/:token", to: "unsubscribes#global_post"
+  get "unsubscribe/subscription/:token", to: "unsubscribes#subscription", as: :unsubscribe_subscription
+
   resources :uploads
 
   resources :questions, path: "otazky", path_names: { new: "nova" }
