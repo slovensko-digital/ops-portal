@@ -1,5 +1,6 @@
 class IssueSubscriptionsController < ApplicationController
   include IssueScoped
+  before_action :require_user
 
   def create
     current_user.subscribe_to(@issue)

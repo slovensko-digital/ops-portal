@@ -9,24 +9,40 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    rodauth.rails_account # `rodauth.rails_account` surprisingly sets value for registration and password reset
+    # `rodauth.rails_account` surprisingly sets value for registration and password reset
+    rodauth.rails_account || AnonymousUser.new
   end
+
   helper_method :current_user
 
   def logged_in?
     # `rodauth.logged_in?` checks only session entry
     # `rodauth.rails_account` surprisingly sets value for registration and password reset
-    rodauth.logged_in? && current_user.present?
+    rodauth.logged_in? && rodauth.rails_account
   end
+
   helper_method :logged_in?
 
   def require_user
-    rodauth.require_account
+    redirect_to_with_turbo please_create_profile_path unless logged_in?
+  end
+
+  def require_full_access_user
+    require_user
+
+    redirect_to_with_turbo please_verify_profile_path if logged_in? && !current_user.full_access?
   end
 
   def ensure_user_onboarded
-    if current_user
+    if logged_in?
       redirect_to edit_profile_path unless current_user.onboarded?
+    end
+  end
+
+  def redirect_to_with_turbo(path)
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.redirect(path) }
+      format.html { redirect_to path }
     end
   end
 end

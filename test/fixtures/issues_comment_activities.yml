@@ -1,0 +1,7 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+_fixture:
+  model_class: Issues::CommentActivity
+
+issue_two_activity_comment1:
+  type: Issues::CommentActivity
+  issue: two

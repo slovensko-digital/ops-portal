@@ -1,6 +1,8 @@
 class Issues::ActivityVotesController < ApplicationController
   include Issues::ActivityScoped
 
+  before_action :require_full_access_user
+
   def create
     @activity.votes.find_or_initialize_by(voter: current_user).tap do |vote|
       vote.vote = params[:vote]

@@ -120,6 +120,10 @@ class User < ApplicationRecord
     thing.editable_by?(self)
   end
 
+  def full_access?
+    phone_verified?
+  end
+
   def recent_phone_verification?
     return true if phone_verification_attempted_at.nil?
 

@@ -1,6 +1,12 @@
 class ProfilesController < ApplicationController
-  before_action :require_user
-  before_action :set_user
+  before_action :require_user, except: [ :please_create ]
+  before_action :set_user, except: [ :please_create, :please_verify ]
+
+  def please_create
+  end
+
+  def please_verify
+  end
 
   def show
     @tab = :my
