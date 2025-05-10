@@ -4,6 +4,7 @@
 #
 #  id                         :bigint           not null, primary key
 #  active                     :boolean
+#  active_on_old_portal       :boolean          default(FALSE), not null
 #  aliases                    :string           default([]), not null, is an Array
 #  category                   :integer
 #  email                      :string
