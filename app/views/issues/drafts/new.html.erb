@@ -1,10 +1,11 @@
 <section class="report">
-  <h1>Nový podnet</h1>
+  <h1><%= t "issues/drafts.new_#{@draft.issue_type}" %></h1>
 
   <div class="report-suggestion-description">Nahrajte fotografiu k podnetu. Ak používate mobil, odporúčame zapnúť lokalizáciu GPS.</div>
 
   <div class="report-suggestion-add-pictures-con">
     <%= form_with(model: @draft, data: { controller: 'auto-submit' }) do |form| %>
+      <%= form.hidden_field :issue_type %>
       <div class="report-suggestion-add-pictures-wrapper">
         <%= form.label :photos, class: "button-add-picture" do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">

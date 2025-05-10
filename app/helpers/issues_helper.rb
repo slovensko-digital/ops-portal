@@ -6,8 +6,11 @@ module IssuesHelper
   end
 
   def format_issue_address(draft)
-    return "Nezistené" unless draft.address_municipality
-    [ draft.address_street, draft.address_municipality, draft.address_city ].map(&:presence).compact.join(", ")
+    parts = [ draft.address_street, draft.address_municipality, draft.address_city ].map(&:presence).compact
+    return parts.join(", ") if parts.any?
+
+    # fallback for praises and legacy tickets
+    [draft.municipality_district&.name, draft.municipality.name].compact.join(", ")
   end
 
   def search_issues_path(params = {})
@@ -16,5 +19,9 @@ module IssuesHelper
     else
       issues_path(params)
     end
+  end
+
+  def praise_image_tag(issue)
+    image_tag "pochvala-#{(issue.id % 6) + 1}.png", alt: "Pochvala"
   end
 end

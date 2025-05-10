@@ -46,7 +46,7 @@
 
             <div class="mobile-buttons-nav">
               <%= link_to "Nahlásiť podnet", new_issues_draft_path %>
-              <%= link_to "Položiť otázku", new_question_path %>
+              <%= link_to "Položiť otázku", new_question_issues_drafts_path %>
               <%= link_to "Dať pochvalu", new_praise_path %>
             </div>
 
@@ -112,7 +112,7 @@
     <div class="nav-wrap-main">
       <div class="nav-con-main">
         <%= link_to "Nahlásiť&nbsp;podnet".html_safe, new_issues_draft_path, class: "button-main" %>
-        <%= link_to "Položit&nbsp;otázku".html_safe, new_question_path %>
+        <%= link_to "Položit&nbsp;otázku".html_safe, new_question_issues_drafts_path %>
         <%= link_to "Dať&nbsp;pochvalu".html_safe, new_praise_path %>
         <div class="search-con">
           <%= form_tag issues_path, method: :get do %>

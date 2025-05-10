@@ -17,6 +17,7 @@
 #  anonymous               :boolean
 #  checks                  :jsonb
 #  description             :string
+#  issue_type              :string           default("issue"), not null
 #  latitude                :float
 #  latlon_from_exif        :boolean          default(FALSE)
 #  longitude               :float
@@ -24,6 +25,7 @@
 #  submitted               :boolean          default(FALSE), not null
 #  suggestions             :jsonb
 #  title                   :string
+#  zoom                    :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  author_id               :bigint           not null
@@ -55,6 +57,7 @@ class Issues::Draft < ApplicationRecord
     municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb)
 
     issue = Issue.create!(
+      issue_type: issue_type,
       title: title,
       description: description,
       author: author,

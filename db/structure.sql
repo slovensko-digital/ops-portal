@@ -849,7 +849,7 @@ CREATE TABLE public.issues_drafts (
     updated_at timestamp(6) without time zone NOT NULL,
     latitude double precision,
     longitude double precision,
-    suggestions jsonb DEFAULT '[]'::jsonb,
+    suggestions jsonb,
     picked_suggestion_index integer,
     checks jsonb,
     address_house_number character varying,
@@ -868,7 +868,9 @@ CREATE TABLE public.issues_drafts (
     address_data jsonb,
     address_district character varying,
     submitted boolean DEFAULT false NOT NULL,
-    address_suburb character varying
+    address_suburb character varying,
+    zoom integer,
+    issue_type character varying DEFAULT 'issue'::character varying NOT NULL
 );
 
 
@@ -1203,7 +1205,8 @@ CREATE TABLE public.municipalities (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
-    aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL
+    aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
+    active_on_old_portal boolean DEFAULT false NOT NULL
 );
 
 
@@ -3766,6 +3769,10 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250510115550'),
+('20250510095126'),
+('20250510002751'),
+('20250509230101'),
 ('20250509170228'),
 ('20250509084443'),
 ('20250508170305'),

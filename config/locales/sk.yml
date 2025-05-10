@@ -98,3 +98,7 @@ sk:
         municipality_id: "Mesto alebo obec"
       issues/user_comment:
         text: "Text komentára"
+
+  issues/drafts:
+    new_issue: "Nový podnet"
+    new_question: "Nová otázka"

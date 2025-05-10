@@ -38,7 +38,8 @@ Rails.application.routes.draw do
   end
 
   namespace :issues, path: "dopyty" do
-    resources :drafts, path: "novy-podnet" do
+    resources :drafts, path: "novy-dopyt", path_names: { new: "podnet" } do
+      get :new_question, on: :collection, path: "otazka"
       delete :destroy_photo
       get :thanks, on: :collection, path: "dakujeme"
       scope module: :drafts do
@@ -64,8 +65,6 @@ Rails.application.routes.draw do
   end
 
   resources :uploads
-
-  resources :questions, path: "otazky", path_names: { new: "nova" }
 
   resources :praises, path: "pochvaly", path_names: { new: "nova" } do
     collection do
