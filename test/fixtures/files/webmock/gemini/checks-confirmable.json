@@ -1,0 +1,26 @@
+{
+  "candidates" : [ {
+    "content" : {
+      "parts" : [ {
+        "text" : "[\n  {\n    \"action\": \"confirm\",\n    \"info\": \"Obec môže konať iba v prípade, ak je budova v jej vlastníctve alebo vo vlastníctve jej organizácie.\\n\\nČo môže urobiť samospráva?\\nAk ide o súkromný majetok, môže upozorniť majiteľa či zvýšiť daň z nehnuteľností pre neudržiavanú stavbu.\\n\\nČo môže urobiť občan?\\nObčan si môže vyhľadať majiteľa v katastri nehnuteľností. Ak ide o pamiatkovo chránenú budovu, môže kontaktovať Pamiatkový úrad.\",\n    \"title\": \"Schátraná budova a grafity na budove\",\n    \"more_info\": \"/podnet-tykajuci-sa-schratranej-budovy\"\n  }\n]"
+      } ],
+      "role" : "model"
+    },
+    "finishReason" : "STOP",
+    "avgLogprobs" : -1.3921140276606958E-4
+  } ],
+  "usageMetadata" : {
+    "promptTokenCount" : 2585,
+    "candidatesTokenCount" : 199,
+    "totalTokenCount" : 2784,
+    "promptTokensDetails" : [ {
+      "modality" : "TEXT",
+      "tokenCount" : 2585
+    } ],
+    "candidatesTokensDetails" : [ {
+      "modality" : "TEXT",
+      "tokenCount" : 199
+    } ]
+  },
+  "modelVersion" : "gemini-2.0-flash"
+}

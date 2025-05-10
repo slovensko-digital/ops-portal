@@ -9,3 +9,8 @@ aktuality:
   name: Aktuality
   slug: aktuality
   parent_category_id: <%= ENV["CMS_ROOT_CATEGORY_ID"] %>
+
+aiprompts:
+  id: <%= ENV["CMS_AI_CATEGORY_ID"] %>
+  name: AI Prompts
+  slug: ai-prompts

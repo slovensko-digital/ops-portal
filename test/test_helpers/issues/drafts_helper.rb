@@ -1,5 +1,14 @@
 module Issues
   module DraftsHelper
+    def stub_json_request(method, uri, body: nil, response:)
+      stub = stub_request(method, uri)
+      stub = stub.with(body: body) if body
+      stub.to_return(
+        body: file_fixture(response).read,
+        headers: { "Content-Type" => "application/json" }
+      )
+    end
+
     def geolocate_latest_draft
       draft = Issues::Draft.last
       draft.address_data = {}
@@ -8,19 +17,6 @@ module Issues
       draft.address_street = "Zohorská"
       draft.address_house_number = "3"
       draft.save!
-    end
-
-    def generate_checks_for_latest_draft
-      d = Issues::Draft.last
-      d.checks = [
-        {
-          title: "Graffity",
-          info: "Toto moze chvilu trvat",
-          more_info: "/more-info",
-          action: "confirm"
-        }
-      ]
-      d.save!
     end
   end
 end

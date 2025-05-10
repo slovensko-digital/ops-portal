@@ -14,11 +14,18 @@
 #
 module Ai
   class Prompt < Cms::Page
+    class PromptNotFoundException < StandardError
+    end
+
     def self.get(prompt_name)
-      joins(:category)
+      prompt = joins(:category)
         .where(cms_categories: { id: ENV.fetch("CMS_AI_CATEGORY_ID") })
         .with_tags("prompt:#{prompt_name}")
-        .first&.raw
+        .first
+
+      raise PromptNotFoundException, prompt_name unless prompt
+
+      prompt.raw
     end
   end
 end
