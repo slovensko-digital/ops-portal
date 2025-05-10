@@ -5,7 +5,7 @@ class HomepageController < ApplicationController
     @issues = Issue
       .relevant_for(current_user)
       .where(state: { key: "resolved" })
-      .order(created_at: :desc)
+      .newest
       .joins(:state)
       .limit(4)
     @news = Cms::Page.joins(:category).where(category: { name: "Aktuality" }).published.order(created_at: :desc).limit(4)

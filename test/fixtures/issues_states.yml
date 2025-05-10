@@ -2,11 +2,13 @@
 _fixture:
   model_class: Issues::State
 
-zero:
+waiting:
   name: Čakajúci
+  key: waiting
   color: "#999999"
 
-three:
+in_progress:
   name: V riešení
+  key: in_progress
   color: "#5598C4"
 

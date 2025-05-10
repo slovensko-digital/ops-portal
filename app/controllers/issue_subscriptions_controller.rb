@@ -2,7 +2,7 @@ class IssueSubscriptionsController < ApplicationController
   include IssueScoped
 
   def create
-    current_user.issue_subscriptions.create(issue: @issue)
+    current_user.subscribe_to(@issue)
 
     render partial: "button"
   end

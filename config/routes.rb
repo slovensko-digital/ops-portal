@@ -73,7 +73,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :profile do
+  resource :profile, path: "profil" do
+    collection do
+      get :watched_issues, path: "sledovane"
+      get :verified_issues, path: "overene"
+      get :settings, path: "nastavenia"
+    end
     resource :avatar, module: :profiles
     resource :verification, module: :profiles do
       get :code

@@ -8,15 +8,5 @@ module Issues
         headers: { "Content-Type" => "application/json" }
       )
     end
-
-    def geolocate_latest_draft
-      draft = Issues::Draft.last
-      draft.address_data = {}
-      draft.address_city = "Bratislava"
-      draft.address_municipality = "Karlova Ves"
-      draft.address_street = "Zohorská"
-      draft.address_house_number = "3"
-      draft.save!
-    end
   end
 end

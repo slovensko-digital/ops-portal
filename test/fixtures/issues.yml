@@ -10,7 +10,7 @@ one:
   category: one
   subcategory: one
   subtype: one
-  state: zero
+  state: waiting
   municipality: bratislava
 
 two:
@@ -21,7 +21,7 @@ two:
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 2
   category: one
-  state: three
+  state: in_progress
   municipality: bratislava
 
 without_triage_external_id:
@@ -31,18 +31,18 @@ without_triage_external_id:
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   category: one
-  state: zero
+  state: waiting
   municipality: trencin
   responsible_subject: one
 
 legacy1:
-  title: New issue
+  title: Legacy issue
   description: New issue description
-  author: one
+  author: two
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   category: one
-  state: zero
+  state: in_progress
   municipality: bratislava
   responsible_subject: one
   legacy_id: 12345

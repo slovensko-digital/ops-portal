@@ -7,3 +7,7 @@ one:
 two:
   issue: two
   subscriber: two
+
+one_legacy1:
+  issue: legacy1
+  subscriber: one

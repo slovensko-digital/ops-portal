@@ -11,4 +11,5 @@
 #  legacy_id  :integer
 #
 class Issues::State < ApplicationRecord
+  PRIVATE_KEYS = %w[waiting rejected]
 end

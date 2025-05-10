@@ -58,12 +58,13 @@ class User < ApplicationRecord
   has_many :issues_drafts, class_name: "Issues::Draft", foreign_key: :author_id
   has_many :issue_likes, foreign_key: :user_id
   has_many :issue_subscriptions, foreign_key: :subscriber_id
+  has_many :watched_issues, through: :issue_subscriptions, source: :issue
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
   has_one_attached :avatar do |avatar|
     avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
     avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
     avatar.variant :medium, resize_to_fill: [ 80, 80 ], preprocessed: true
-    avatar.variant :big, resize_to_fill: [ 100, 100 ], preprocessed: true
+    avatar.variant :big, resize_to_fill: [ 160, 160 ], preprocessed: true
   end
 
   enum :sex, m: 1, f: 2
@@ -109,6 +110,10 @@ class User < ApplicationRecord
 
   def subscribed_to?(issue)
     issue_subscriptions.where(issue: issue).exists?
+  end
+
+  def subscribe_to(issue)
+    issue_subscriptions.create(issue: issue)
   end
 
   def can_edit?(thing)

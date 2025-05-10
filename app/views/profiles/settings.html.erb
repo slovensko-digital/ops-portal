@@ -1,0 +1,75 @@
+<% content_for(:title, 'Mô účet') %>
+
+<section class="account">
+  <h1>Môj účet</h1>
+
+  <div class="account-wrapper">
+    <% unless @user.phone_verified? %>
+      <div class="account-info-con account-delete">
+        <div class="title">Overiť totožnosť</div>
+        <div class="description">Aby ste mohli využívať všetky funkcie portálu Odkaz pre starostu, je potrebné overiť váš účet pomocou
+          bezpečnostného kódu, ktorý bude zaslaný na váš telefón.
+        </div>
+        <%= link_to "Overiť", new_profile_verification_path, class: "button button-transparent" %>
+      </div>
+    <% end %>
+
+    <div class="account-info-con">
+      <div class="title">Prihlasovacie údaje</div>
+
+      <div class="account-item-con">
+        <div class="description">Email</div>
+        <div class="item-title"><%= @user.email %></div>
+      </div>
+
+      <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
+      <%= link_to "Zmeniť heslo", rodauth.change_password_path, class: "button button-transparent" %>
+      <%= link_to "Zmeniť email", rodauth.change_login_path, class: "button button-transparent" %>
+    </div>
+
+    <div class="account-info-con">
+      <div class="title">Osobné údaje a nastavenia</div>
+
+      <div class="account-item-subject">
+        <figure>
+          <picture>
+            <%= user_avatar(@user, variant: :medium) %>
+          </picture>
+        </figure>
+        <div class="item-title"><%= @user.display_name %></div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Meno</div>
+        <div class="item-title"><%= @user.name %></div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Verejný profil</div>
+        <div class="item-title"><%= !@user.anonymous? ? 'Áno' : 'Nie' %></div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Preferované mesto alebo obec</div>
+        <div class="item-title"><%= @user.municipality&.name || '&mdash;'.html_safe %></div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Emailové notifikácie k&nbsp;podnetom?</div>
+        <div class="item-title"><%= @user.email_notifiable? ? 'Zapnuté' : 'Vypnuté' %></div>
+      </div>
+
+      <div class="account-item-con">
+        <div class="description">Rok narodenia</div>
+        <div class="item-title"><%= @user.birth&.year || '&mdash;'.html_safe %></div>
+      </div>
+
+      <%= link_to "Zmeniť", edit_profile_path, class: "button button-transparent" %>
+    </div>
+
+    <div class="account-info-con account-delete">
+      <div class="title">Vymazať účet</div>
+      <%= link_to "Vymazať", rodauth.close_account_path, class: "button button-transparent" %>
+    </div>
+  </div>
+</section>

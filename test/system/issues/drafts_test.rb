@@ -3,7 +3,6 @@ require "test_helpers/issues/drafts_helper"
 
 class Issues::DraftsTest < ApplicationSystemTestCase
   include Issues::DraftsHelper
-  include ActiveJob::TestHelper
 
   setup do
     @user = users(:one)
@@ -36,7 +35,7 @@ class Issues::DraftsTest < ApplicationSystemTestCase
   end
 
   test "full issue creation with checks" do
-    login(@user.email, "password")
+    login_as(@user)
 
     click_on "Nahlásiť podnet"
 
@@ -71,5 +70,12 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     click_on "Odoslať podnet aj tak"
 
     assert_text "Podnet bol odoslaný!"
+
+    click_on "Zobraziť všetky moje podnety"
+    assert_text "Graffiti"
+
+    click_on "Sledované podnety"
+    assert_text "Legacy issue"
+    assert_text "Graffiti"
   end
 end

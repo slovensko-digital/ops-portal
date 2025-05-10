@@ -84,6 +84,8 @@ class Issues::Draft < ApplicationRecord
       municipality_district: municipality_district,
     )
 
+    issue.author.subscribe_to(issue)
+
     # TODO delete draft after success
     self.update_attribute(:submitted, true)
 

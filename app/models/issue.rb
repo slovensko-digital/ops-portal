@@ -74,7 +74,11 @@ class Issue < ApplicationRecord
   validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" }
   validates_presence_of :title, :description, unless: -> { imported_at }
 
+  scope :newest, -> { order(created_at: :desc) }
   scope :publicly_visible, -> { joins(:state).where.not(state: { key: %w[waiting rejected] }) }
+  scope :currently_viewable_by, ->(user) do
+    joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
+  end
 
   before_save :recalculate_computed_fields
 

@@ -1,4 +1,8 @@
 module AuthHelper
+  def login_as(user)
+    login(user.email, "password")
+  end
+
   def login(email, password)
     visit "/login"
 
@@ -13,7 +17,7 @@ module AuthHelper
   end
 
   def logout
-    visit "/profile"
+    visit profile_path
 
     click_button "Odhlásiť sa"
 

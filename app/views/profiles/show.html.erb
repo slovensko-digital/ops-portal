@@ -1,75 +1,88 @@
-<% content_for(:title, 'Váš účet') %>
+<% content_for(:title, "Môj profil") %>
 
-<section class="account">
-  <h1>Váš účet</h1>
+<section class="profile">
+  <h1>Môj profil</h1>
+  <div class="profile-con">
 
-  <div class="account-wrapper">
-    <% unless @user.phone_verified? %>
-      <div class="account-info-con account-delete">
-        <div class="title">Overiť totožnosť</div>
-        <div class="description">Aby ste mohli využívať všetky funkcie portálu Odkaz pre starostu, je potrebné overiť váš účet pomocou
-          bezpečnostného kódu, ktorý bude zaslaný na váš telefón.
+    <!-- Profil -->
+    <div>
+      <div class="profile-wrapper">
+        <!-- Picture and Name -->
+        <div class="profile-info-panel">
+          <figure>
+            <picture>
+              <%= user_avatar(@user, variant: :big) %>
+            </picture>
+          </figure>
+          <div class="profile-name"><%= @user.display_name %></div>
+          <div class="profile-since">Pomáha zlepšiť naše mestá a obce od roku <%= @user.created_at.year %></div>
+
+          <!-- Button -->
+          <%= link_to "Upraviť profil", settings_profile_path, class: "button button-transparent" %>
+          <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
         </div>
-        <%= link_to "Overiť", new_profile_verification_path, class: "button button-transparent" %>
+
+        <!--
+        <div class="profile-results-con">
+          <div class="profile-results-panel">
+            <div class="title-results">4 pridaných podnetov</div>
+            <div class="results-line-info">Viac ako 83 % používateľov</div>
+            <div class="results-line-wrap">
+              <div class="results-line-back">
+                <div class="results-line"></div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-results-panel">
+            <div class="title-results">1 pridaných komnetárov</div>
+            <div class="results-line-info">Viac ako 5 % používateľov</div>
+            <div class="results-line-wrap">
+              <div class="results-line-back">
+                <div class="results-line" style="width: 5%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-results-panel">
+            <div class="title-results">0 overených podnetov</div>
+            <div class="results-line-info">Viac ako 18 % používateľov</div>
+            <div class="results-line-wrap">
+              <div class="results-line-back">
+                <div class="results-line" style="width: 18%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+-->
       </div>
-    <% end %>
-
-    <div class="account-info-con">
-      <div class="title">Prihlasovacie údaje</div>
-
-      <div class="account-item-con">
-        <div class="description">Email</div>
-        <div class="item-title"><%= @user.email %></div>
-      </div>
-
-      <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
-      <%= link_to "Zmeniť heslo", rodauth.change_password_path, class: "button button-transparent" %>
-      <%= link_to "Zmeniť email", rodauth.change_login_path, class: "button button-transparent" %>
     </div>
 
-    <div class="account-info-con">
-      <div class="title">Osobné údaje a nastavenia</div>
 
-      <div class="account-item-subject">
-        <figure>
-          <picture>
-            <%= user_avatar(@user, variant: :medium) %>
-          </picture>
-        </figure>
-        <div class="item-title"><%= @user.display_name %></div>
+    <div class="profile-suggestion-con">
+      <div class="profil-nav-con">
+        <ul>
+          <li><%= link_to "Moje podnety", profile_path, class: class_names("button button-transparent", active: @tab == :my), data: { turbo_action: :advance } %></li>
+          <li><%= link_to "Sledované podnety", watched_issues_profile_path, class: class_names("button button-transparent", active: @tab == :watched), data: { turbo_action: :advance } %></li>
+        </ul>
       </div>
 
-      <div class="account-item-con">
-        <div class="description">Meno</div>
-        <div class="item-title"><%= @user.name %></div>
-      </div>
+      <% if @issues.length > 0 %>
+        <div class="podnet-block-con">
+          <%= render @issues %>
+        </div>
+        <%= ops_paginate(@issues) %>
+      <% else %>
+        <section class="search-result-blank">
+          <h1>Zatiaľ tu nič nie je.</h1>
 
-      <div class="account-item-con">
-        <div class="description">Verejný profil</div>
-        <div class="item-title"><%= !@user.anonymous? ? 'Áno' : 'Nie' %></div>
-      </div>
+          <figure class="empty-box">
+            <%= image_tag "krabica.png", alt: "" %>
+          </figure>
 
-      <div class="account-item-con">
-        <div class="description">Preferované mesto alebo obec</div>
-        <div class="item-title"><%= @user.municipality&.name || '&mdash;'.html_safe %></div>
-      </div>
+          <div class="notice">Skúste nejaký podnet vytvoriť alebo začat sledovať.</div>
+        </section>
+      <% end %>
 
-      <div class="account-item-con">
-        <div class="description">Emailové notifikácie k&nbsp;podnetom?</div>
-        <div class="item-title"><%= @user.email_notifiable? ? 'Zapnuté' : 'Vypnuté' %></div>
-      </div>
-
-      <div class="account-item-con">
-        <div class="description">Rok narodenia</div>
-        <div class="item-title"><%= @user.birth&.year || '&mdash;'.html_safe %></div>
-      </div>
-
-      <%= link_to "Zmeniť", edit_profile_path, class: "button button-transparent" %>
-    </div>
-
-    <div class="account-info-con account-delete">
-      <div class="title">Vymazať účet</div>
-      <%= link_to "Vymazať", rodauth.close_account_path, class: "button button-transparent" %>
     </div>
   </div>
+
 </section>

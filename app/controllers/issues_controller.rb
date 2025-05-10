@@ -208,7 +208,7 @@ class IssuesController < ApplicationController
 
             true
           end,
-          order: ->(scope, _) { scope.order(created_at: :desc) }
+          order: ->(scope, _) { scope.newest }
         ),
 
         SearchEngine::Controls::Sort.new(
