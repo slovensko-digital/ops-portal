@@ -13,7 +13,6 @@
 class Issues::Activity < ApplicationRecord
   belongs_to :issue
   has_many :votes, class_name: "Issues::ActivityVote", dependent: :destroy
-  has_one :activity_object, class_name: "Issues::ActivityObject", foreign_key: :activity_id, dependent: :destroy
 
   after_commit { issue.reset_counters }
 
