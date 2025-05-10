@@ -75,8 +75,8 @@ Rails.application.routes.draw do
 
   resource :profile, path: "profil" do
     collection do
-      get :please_create, path: "nonono"
-      get :please_verify, path: "ninini"
+      get :please_create, path: "potrebne-zalozit"
+      get :please_verify, path: "potrebne-overit"
       get :watched_issues, path: "sledovane"
       get :verified_issues, path: "overene"
       get :settings, path: "nastavenia"
