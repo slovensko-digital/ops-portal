@@ -11,7 +11,7 @@ class Profiles::VerificationsController < ApplicationController
     if @user.valid?(:phone_verification)
       record_phone_verification_attempt(@user)
 
-      ::Profiles::SendVerificationCodeJob.perform_later(@user, @user.phone)
+      ::Profiles::SendVerificationCodeJob.perform_later(@user, @user.phone_verification_number)
 
       redirect_to action: :code
     else
