@@ -124,6 +124,12 @@ class Issue < ApplicationRecord
     false
   end
 
+  def self.relevant_for(user)
+    return where(municipality: user.municipality) if user&.municipality
+
+    self
+  end
+
   def self.within_distance_from_point(lat, lon, distance)
     where("ST_DWithin(ST_Point(issues.longitude, issues.latitude, 4326)::geography, ST_Point(?, ?, 4326)::geography, ?)", lon, lat, distance)
   end

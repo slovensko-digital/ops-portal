@@ -50,7 +50,7 @@
               <%= link_to "Dať pochvalu", new_praise_path %>
             </div>
 
-            <%= link_to "Nahlásené dopyty", issues_path %>
+            <%= link_to "Nahlásené dopyty", relevant_issues_path %>
             <%= link_to 'Aktuality', '/aktuality' %>
             <%= link_to "Pravidlá", "/pravidla" %>
             <%= link_to "Pridajte sa", "/pridajte-sa" %>
@@ -60,7 +60,7 @@
         </div>
         <div class="buttons-con">
           <%= link_to "Nahlásiť podnet", new_issues_draft_path, class: "add-button" %>
-          <%= link_to issues_path, class: "icon search" do %>
+          <%= link_to relevant_issues_path, class: "icon search" do %>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
               <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke-miterlimit="10"/>
               <path d="M15,15l5,5" fill="none" stroke-miterlimit="10"/>

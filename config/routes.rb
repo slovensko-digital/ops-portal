@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   end
 
   resources :issues, path: "dopyty" do
+    get :relevant, on: :collection, path: :r
     resource :issue_like, as: :like
     resource :issue_subscription, as: :subscription
     resources :issues_user_comments, path: "komentare", module: :issues

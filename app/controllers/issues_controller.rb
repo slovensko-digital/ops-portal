@@ -4,7 +4,12 @@ class IssuesController < ApplicationController
   before_action :check_show_permissions, only: :show
   before_action :check_edit_permissions, only: %i[ edit update ]
 
-  # GET /issues or /issues.json
+  def relevant
+    path = current_user&.municipality ? issues_path(obec: current_user&.municipality&.name) : issues_path
+
+    redirect_to path
+  end
+
   def index
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
