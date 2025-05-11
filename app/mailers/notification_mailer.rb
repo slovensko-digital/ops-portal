@@ -74,7 +74,7 @@ class NotificationMailer < ApplicationMailer
 
   def list_unsubscribe_header
     {
-      "List-Unsubscribe" => "<#{unsubscribe_global_url(token: @user.email_global_unsubscribe_token)}>",
+      "List-Unsubscribe" => "<#{unsubscribe_global_subscriptions_url(token: @user.email_global_unsubscribe_token)}>",
       "List-Unsubscribe-Post" => "<List-Unsubscribe=One-Click>"
     }
   end

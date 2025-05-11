@@ -65,9 +65,18 @@ Rails.application.routes.draw do
     end
   end
 
-  get "unsubscribe/global/:token", to: "unsubscribes#global", as: :unsubscribe_global
-  post "unsubscribe/global/:token", to: "unsubscribes#global_post"
-  get "unsubscribe/subscription/:token", to: "unsubscribes#subscription", as: :unsubscribe_subscription
+  resources :global_subscriptions, only: [] do
+    collection do
+      get "unsubscribe/:token", action: :unsubscribe, as: :unsubscribe
+      post "unsubscribe/:token", action: :unsubscribe_post
+    end
+  end
+
+  resources :subscriptions, only: [] do
+    collection do
+      get "unsubscribe/:token", action: :unsubscribe, as: :unsubscribe
+    end
+  end
 
   resources :uploads
 

@@ -1,7 +1,7 @@
 <p class="ops-email-notice">
   Toto upozornenie ste dostali na základe Vášho prihlásenia k odberu nových informácií o riešení podnetu. Pokiaľ o ďalšom riešení podnetu nechcete byť informovaný, kliknite na
   <a
-    href="<%= unsubscribe_subscription_url(token: @subscription.email_unsubscribe_token) %>"
+    href="<%= unsubscribe_subscriptions_url(token: @subscription.email_unsubscribe_token) %>"
     target="_blank"
     class="ops-email-notice-link"
   >
@@ -9,7 +9,7 @@
   </a>.
   Pokiaľ o ďalšom riešení sledovaných podnetov nechcete byť informovaný e-mailom, kliknite na
   <a
-    href="<%= unsubscribe_global_url(token: @user.email_global_unsubscribe_token) %>"
+    href="<%= unsubscribe_global_subscriptions_url(token: @user.email_global_unsubscribe_token) %>"
     target="_blank"
     class="ops-email-notice-link"
   >

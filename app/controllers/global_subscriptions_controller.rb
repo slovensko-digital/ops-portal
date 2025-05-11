@@ -1,7 +1,7 @@
-class UnsubscribesController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [ :global_post ]
+class GlobalSubscriptionsController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [ :unsubscribe_post ]
 
-  def global
+  def unsubscribe
     # TODO: add custom views for global unsubscribes
     user = User.find_by(email_global_unsubscribe_token: params[:token])
     if user
@@ -12,7 +12,7 @@ class UnsubscribesController < ApplicationController
     end
   end
 
-  def global_post
+  def unsubscribe_post
     user = User.find_by(email_global_unsubscribe_token: params[:token])
     if user
       user.update(email_notifiable: false)
