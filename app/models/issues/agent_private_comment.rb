@@ -26,6 +26,8 @@ class Issues::AgentPrivateComment < Issues::Comment
   validates :user_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
 
+  after_create_commit :notify_subscribers, unless: -> { legacy_id }
+
   def author_display_name
     "Odkaz pre starostu"
   end

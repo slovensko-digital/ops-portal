@@ -26,6 +26,8 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :user_author_id, absence: true
 
+  after_create_commit :notify_subscribers, unless: -> { legacy_id }
+
   def author
     responsible_subject_author
   end

@@ -49,13 +49,14 @@ class Issues::Comment < ApplicationRecord
     false
   end
 
-  def author?(user)
-    return false unless user_author
-    user_author == user
-  end
-
   def author_display_name
     return author.display_name if author
     author_name
+  end
+
+  private
+
+  def notify_subscribers
+    Notifications::PublishNewIssueCommentJob.perform_later(self)
   end
 end

@@ -6,7 +6,7 @@ module Notifications
       issue.subscriptions.each do |subscription|
         user = subscription.subscriber
         next unless user.email_notifiable?
-        next if comment.author?(user)
+        next if comment.user_author == user
 
         case comment
         when Issues::UserComment, Issues::AgentComment, Issues::AgentPrivateComment
