@@ -5,10 +5,7 @@
 <p class="ops-email-paragraph">
   <b><%= @comment.author_display_name %></b> napísal/a:
 </p>
-<p class="ops-email-paragraph">
-  <%# TODO: comment text is somehow rendered outside this paragraf %>
-  <%= simple_format(@comment.text) %>
-</p>
+<%= simple_format(@comment.text, { class: "ops-email-paragraph" }) %>
 <p class="ops-email-paragraph">
   <%= ops_button "Reagovať na komentár", "#{issue_url(@issue)}#new_issue_activity" %>
 </p>
