@@ -82,7 +82,7 @@ class Issue < ApplicationRecord
   end
 
   before_save :recalculate_computed_fields
-  after_update :notify_subscribers, if: :saved_change_to_state_id?
+  after_update :notify_subscribers, if: -> { issue_type == "issue" }
 
   def visible_activity_objects
     activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
@@ -168,6 +168,10 @@ class Issue < ApplicationRecord
   end
 
   def notify_subscribers
-    Notifications::PublishIssueStateChangedJob.perform_later(self, state_id_change: saved_change_to_state_id)
+    if saved_change_to_resolution_external_id?
+      Notifications::PublishIssueAcceptedJob.perform_later(self)
+    elsif saved_change_to_state_id?
+      Notifications::PublishIssueStateChangedJob.perform_later(self, state_id_change: saved_change_to_state_id)
+    end
   end
 end

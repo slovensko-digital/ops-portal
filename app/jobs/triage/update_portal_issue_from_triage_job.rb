@@ -1,10 +1,5 @@
 class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
-  def perform(
-      ticket_id,
-      triage_zammad_client: TriageZammadEnvironment.client,
-      create_issue_resolution_process_ticket_job: Triage::CreateIssueResolutionProcessTicketJob,
-      issue_accepted_notification_job: ::Notifications::PublishIssueAcceptedJob
-  )
+  def perform(ticket_id, triage_zammad_client: TriageZammadEnvironment.client, create_issue_resolution_process_ticket_job: Triage::CreateIssueResolutionProcessTicketJob)
     ticket = triage_zammad_client.get_ticket(ticket_id)
     raise "Ticket not found" unless ticket
 
@@ -38,6 +33,5 @@ class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
     return unless issue.should_create_resolution_process?
 
     create_issue_resolution_process_ticket_job.perform_later(issue, triage_group: ticket[:group], triage_owner_id: ticket[:owner_id])
-    issue_accepted_notification_job.perform_later(issue)
   end
 end
