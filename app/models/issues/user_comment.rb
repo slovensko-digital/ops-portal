@@ -48,7 +48,7 @@ class Issues::UserComment < Issues::Comment
   end
 
   def editing_window_end
-    created_at + 5.seconds # TODO
+    created_at + ENV.fetch("COMMENT_EDITING_WINDOW_SECONDS", 300).to_i # TODO
   end
 
   def within_editing_window?
