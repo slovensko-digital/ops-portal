@@ -103,6 +103,11 @@ class Issues::Draft < ApplicationRecord
       )
     end
 
+    # preserve rotations
+    issue.photos.blobs.each_with_index do |blob, index|
+      blob.update(rotation: photos[index].blob.rotation)
+    end
+
     SyncIssueToTriageJob.perform_later(issue)
   end
 

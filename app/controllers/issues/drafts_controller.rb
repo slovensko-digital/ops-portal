@@ -42,6 +42,12 @@ class Issues::DraftsController < ApplicationController
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
   end
 
+  def rotate_photo
+    blob = @draft.photos.find(params[:photo_id]).blob
+    blob.update!(rotation: (blob.rotation - 90) % 360)
+    redirect_to edit_issues_draft_path(@draft, next: params[:next])
+  end
+
   def thanks
   end
 
