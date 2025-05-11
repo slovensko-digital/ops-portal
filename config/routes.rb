@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     resources :drafts, path: "novy-dopyt", path_names: { new: "podnet" } do
       get :new_question, on: :collection, path: "otazka"
       delete :destroy_photo
+      patch :rotate_photo
       get :thanks, on: :collection, path: "dakujeme"
       scope module: :drafts do
         resource :suggestions do
@@ -78,7 +79,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :uploads
+  resources :uploads do
+    patch :rotate, on: :member
+  end
 
   resources :praises, path: "pochvaly", path_names: { new: "nova" } do
     collection do

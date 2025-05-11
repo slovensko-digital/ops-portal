@@ -27,19 +27,27 @@
 
     <% if @draft.photos.attached? %>
       <div class="report-suggestion-pictures-block">
-        <% @draft.photos.each do |photo| %>
-          <figure>
-            <%= button_to issues_draft_destroy_photo_path(@draft, photo_id: photo.id, next: params[:next]), class: 'lens-image', method: :delete, data: { 'turbo-confirm': 'Určite chcete túto fotku odstrániť?' } do %>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
-                <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
-              </svg>
-            <% end %>
-            <picture>
-              <% image = photo.variable? ? photo.variant(:square) : 'otazka-znacka.png' %>
-              <%= image_tag image, alt: "Uploaded photo" %>
-            </picture>
-          </figure>
+        <% if @draft.persisted? %>
+          <% @draft.photos.each do |photo| %>
+            <figure>
+              <%= button_to issues_draft_destroy_photo_path(@draft, photo_id: photo.id, next: params[:next]), class: 'close-button', method: :delete, data: { 'turbo-confirm': 'Určite chcete túto fotku odstrániť?' } do %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                  <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
+                  <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
+                </svg>
+              <% end %>
+              <%= button_to issues_draft_rotate_photo_path(@draft, photo_id: photo.id, next: params[:next]), class: 'rotate-button', method: :patch do %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                  <path d="M19,2c9.37,0,17,7.63,17,17s-7.63,17-17,17S2,28.37,2,19,9.63,2,19,2M19,0C8.51,0,0,8.51,0,19s8.51,19,19,19,19-8.51,19-19S29.49,0,19,0h0Z"></path>
+                  <path d="M19,9c-4.74,0-8.71,3.31-9.73,7.74l-2.43-.38,2.94,4.04,4.04-2.94-2.57-.4c.87-3.47,4.01-6.05,7.75-6.05,4.41,0,8,3.59,8,8s-3.59,8-8,8v2c5.51,0,10-4.49,10-10s-4.49-10-10-10Z"></path>
+                </svg>
+              <% end %>
+              <picture>
+                <% image = photo.content_type.in?(UploadsController::ALLOWED_CONTENT_TYPES) ? photo.variant(:square) : 'otazka-znacka.png' %>
+                <%= image_tag image, alt: "Uploaded photo" %>
+              </picture>
+            </figure>
+          <% end %>
         <% end %>
       </div>
     <% end %>

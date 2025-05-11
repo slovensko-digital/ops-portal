@@ -5,14 +5,20 @@
   <%= button_tag "Upload", formaction: uploads_path, formmethod: :post, data: { turbo_frame: [ prefix, :uploads ].join('_') }, class: "uploads-submit sr-only" %>
   <% blobs.each do |blob| %>
     <figure class="small-picture" data-controller="removable" data-removable-target="removable">
-      <%= button_tag class: "lens-image", data: { action: "click->removable#remove", 'removable-confirm-param': "Naozaj chcete odstrániť túto fotografiu?" } do %>
+      <%= button_tag class: "close-button", data: { action: "click->removable#remove", 'removable-confirm-param': "Naozaj chcete odstrániť túto fotografiu?" } do %>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
           <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
           <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
         </svg>
       <% end %>
+      <%= button_tag "rotate", formaction: rotate_upload_path(id: blob.signed_id), formmethod: :patch, data: { turbo_frame: [ prefix, :uploads ].join('_') }, class: "rotate-button" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+          <path d="M19,2c9.37,0,17,7.63,17,17s-7.63,17-17,17S2,28.37,2,19,9.63,2,19,2M19,0C8.51,0,0,8.51,0,19s8.51,19,19,19,19-8.51,19-19S29.49,0,19,0h0Z"/>
+          <path d="M19,9c-4.74,0-8.71,3.31-9.73,7.74l-2.43-.38,2.94,4.04,4.04-2.94-2.57-.4c.87-3.47,4.01-6.05,7.75-6.05,4.41,0,8,3.59,8,8s-3.59,8-8,8v2c5.51,0,10-4.49,10-10s-4.49-10-10-10Z"/>
+        </svg>
+      <% end %>
       <picture>
-        <%= image_tag blob.variant(resize_to_fill: [ 320, 320 ]) %>
+        <%= image_tag blob.variant(resize_to_fill: [ 280, 280 ], rotate: blob.rotation) %>
         <% # TODO remove hardcoded values %>
         <%= hidden_field_tag "blobs[]", blob.signed_id %>
         <%= hidden_field_tag "issues_user_comment[attachments][]", blob.signed_id %>

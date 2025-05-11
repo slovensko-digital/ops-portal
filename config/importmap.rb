@@ -11,3 +11,4 @@ pin "tailwindcss-stimulus-components" # @6.1.3
 pin "@stimulus-components/auto-submit", to: "@stimulus-components--auto-submit.js" # @6.0.0
 pin "@stimulus-components/dropdown", to: "@stimulus-components--dropdown.js" # @3.0.0
 pin "stimulus-use" # @0.52.3
+pin "@stimulus-components/dialog", to: "@stimulus-components--dialog.js" # @1.0.1

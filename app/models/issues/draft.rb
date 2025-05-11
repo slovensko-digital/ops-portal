@@ -34,7 +34,7 @@
 #  subtype_id              :bigint
 #
 class Issues::Draft < ApplicationRecord
-  has_many_attached :photos, service: :draft_attachments do |photo|
+  has_many_attached :photos do |photo|
     photo.variant :llm, resize_to_limit: [ 800, 600 ], preprocessed: true
     photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
     photo.variant :square, resize_to_fill: [ 320, 320 ], preprocessed: true
@@ -47,6 +47,9 @@ class Issues::Draft < ApplicationRecord
 
   validates_presence_of :photos, on: :photos_step
   validates_presence_of :title, :description, on: :details_step
+  validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, on: :details_step
+  validates_length_of :description, minimum: 25, allow_blank: true, on: :details_step
+
   validate :latlon_present, on: :geo_step
   validates_numericality_of :zoom, greater_than: 14, allow_nil: true, on: :geo_step
   validate :photos_allowed_content_type, on: :photos_step
@@ -89,15 +92,8 @@ class Issues::Draft < ApplicationRecord
     # TODO delete draft after success
     self.update_attribute(:submitted, true)
 
-    # TODO consider moving to background job
     photos.each do |photo|
-      # move attachments between different storage services
-      io = StringIO.new(photo.download)
-      issue.photos.attach(
-        io: io,
-        filename: photo.filename,
-        content_type: photo.content_type
-      )
+      issue.photos.append photo
     end
 
     SyncIssueToTriageJob.perform_later(issue)
