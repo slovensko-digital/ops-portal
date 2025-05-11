@@ -65,7 +65,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :uploads
+  resources :uploads do
+    patch :rotate, on: :member
+  end
 
   resources :praises, path: "pochvaly", path_names: { new: "nova" } do
     collection do

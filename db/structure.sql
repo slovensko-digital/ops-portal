@@ -128,7 +128,8 @@ CREATE TABLE public.active_storage_blobs (
     service_name character varying NOT NULL,
     byte_size bigint NOT NULL,
     checksum character varying,
-    created_at timestamp(6) without time zone NOT NULL
+    created_at timestamp(6) without time zone NOT NULL,
+    rotation integer DEFAULT 0
 );
 
 
@@ -3769,6 +3770,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250511123651'),
 ('20250510115550'),
 ('20250510095126'),
 ('20250510002751'),

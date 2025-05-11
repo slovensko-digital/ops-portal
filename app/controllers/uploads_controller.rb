@@ -16,6 +16,14 @@ class UploadsController < ApplicationController
     render partial: "form", locals: { blobs: @blobs, prefix: params[:uploads_prefix], wrapper_class: "pictures-wrapper" }
   end
 
+  def rotate
+    blob = ActiveStorage::Blob.find_signed(params[:id])
+    blob.update!(rotation: (blob.rotation - 90) % 360)
+
+    @blobs = params[:blobs].map { |signed_id| ActiveStorage::Blob.find_signed(signed_id) }
+    render partial: "form", locals: { blobs: @blobs, prefix: params[:uploads_prefix], wrapper_class: "pictures-wrapper" }
+  end
+
   def destroy
     @blobs = params[:blobs]
   end
