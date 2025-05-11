@@ -1100,16 +1100,30 @@ section.report .report-suggestion-description {
   left: 14px;
   //margin: 0 -19px -19px 0;
   position: absolute;
-  opacity: 0.6;
   //right: 50%;
   top: 14px;
   width: 38px;
   z-index: 2;
   @include transition(all);
 }
-.report-suggestion-pictures-block figure a.lens-image:hover {
+// Rotate Button
+.report-suggestion-pictures-block figure .rotate-button {
+  box-sizing: border-box;
+  cursor: pointer;
+  fill: $white;
+  height: 38px;
+  right: 14px;
+  position: absolute;
+  opacity: 0.6;
+  top: 14px;
+  width: 38px;
+  z-index: 2;
+  @include transition(all);
+}
+.report-suggestion-pictures-block figure .rotate-button:hover {
   opacity: 1;
 }
+
 section.report .report-map-con {
   display: flex;
   flex-direction: column;
@@ -2254,7 +2268,6 @@ section.podnet .podnet-pictures-con figure.big-picture .lens-image {
   bottom: 20px;
   fill: $white;
   position: absolute;
-  opacity: 0.6;
   right: 20px;
   width: 38px;
   z-index: 2;
@@ -2268,10 +2281,10 @@ section.podnet .podnet-pictures-con figure picture {
 }
 section.podnet .podnet-pictures-con figure.small-picture,
 .uploads figure.small-picture {
-  height: 80px;
+  height: 140px;
   overflow: hidden;
   position: relative;
-  width: 80px;
+  width: 140px;
   @include rounded(10px);
 }
 section.podnet .podnet-pictures-con figure.small-picture .lens-image,
@@ -2280,7 +2293,6 @@ section.podnet .podnet-pictures-con figure.small-picture .lens-image,
   fill: $white;
   margin: 0 -19px -19px 0;
   position: absolute;
-  opacity: 0.6;
   right: 50%;
   width: 38px;
   z-index: 2;
@@ -2412,6 +2424,46 @@ section.podnet .podnet-information span.value,{
 }
 
 
+//Rotate button and close button
+section.podnet .podnet-discussion .add-comment-form figure {
+  height: 140px;
+  width: 140px;
+}
+// Close button
+.pictures-wrapper figure .close-button {
+  box-sizing: border-box;
+  cursor: pointer;
+  fill: $white;
+  height: 38px;
+  left: 14px;
+  position: absolute;
+  opacity: 0.6;
+  top: 14px;
+  width: 38px;
+  z-index: 2;
+  @include transition(all);
+}
+.pictures-wrapper figure .close-button:hover {
+  opacity: 1;
+}
+// Rotate button
+.pictures-wrapper figure .rotate-button {
+  box-sizing: border-box;
+  cursor: pointer;
+  fill: $white;
+  height: 38px;
+  right: 14px;
+  position: absolute;
+  opacity: 0.6;
+  top: 14px;
+  width: 38px;
+  z-index: 2;
+  @include transition(all);
+}
+.pictures-wrapper figure .rotate-button:hover {
+  opacity: 1;
+}
+
 section.podnet .podnet-discussion .podnet-discussion-con {
   display: grid;
   gap: 40px 0;
@@ -2512,10 +2564,10 @@ section.podnet .podnet-discussion figure picture {
   top: 0;
 }
 section.podnet .podnet-discussion figure.small-picture {
-  height: 80px;
+  height: 140px;
   overflow: hidden;
   position: relative;
-  width: 80px;
+  width: 140px;
   @include rounded(10px);
 }
 section.podnet .podnet-discussion figure.small-picture .lens-image {
@@ -2523,7 +2575,6 @@ section.podnet .podnet-discussion figure.small-picture .lens-image {
   fill: $white;
   margin: 0 -19px -19px 0;
   position: absolute;
-  opacity: 0.6;
   right: 50%;
   width: 38px;
   z-index: 2;
@@ -2589,10 +2640,7 @@ section.podnet .podnet-discussion .add-comment-form .pictures-wrapper,
   flex-wrap: wrap;
   gap: 10px;
 }
-section.podnet .podnet-discussion .add-comment-form figure {
-  height: 60px;
-  width: 60px;
-}
+
 .buttons-wrapper {
   display: flex;
   flex-wrap: wrap;

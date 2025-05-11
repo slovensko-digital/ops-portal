@@ -286,8 +286,15 @@ section.report .report-warning .button {
 
 
 // images with lens image
+.lens-image {
+  opacity: 0.6
+}
+
 figure:has(.lens-image) {
   cursor: zoom-in;
+}
+figure:hover .lens-image {
+  opacity: 1;
 }
 
 
