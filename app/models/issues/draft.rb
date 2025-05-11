@@ -47,6 +47,9 @@ class Issues::Draft < ApplicationRecord
 
   validates_presence_of :photos, on: :photos_step
   validates_presence_of :title, :description, on: :details_step
+  validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, on: :details_step
+  validates_length_of :description, minimum: 25, allow_blank: true, on: :details_step
+
   validate :latlon_present, on: :geo_step
   validates_numericality_of :zoom, greater_than: 14, allow_nil: true, on: :geo_step
   validate :photos_allowed_content_type, on: :photos_step

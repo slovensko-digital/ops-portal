@@ -27,19 +27,21 @@
 
     <% if @draft.photos.attached? %>
       <div class="report-suggestion-pictures-block">
-        <% @draft.photos.each do |photo| %>
-          <figure>
-            <%= button_to issues_draft_destroy_photo_path(@draft, photo_id: photo.id, next: params[:next]), class: 'close-button', method: :delete, data: { 'turbo-confirm': 'Určite chcete túto fotku odstrániť?' } do %>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
-                <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
-              </svg>
-            <% end %>
-            <picture>
-              <% image = photo.variable? ? photo.variant(:square) : 'otazka-znacka.png' %>
-              <%= image_tag image, alt: "Uploaded photo" %>
-            </picture>
-          </figure>
+        <% if @draft.persisted? %>
+          <% @draft.photos.each do |photo| %>
+            <figure>
+              <%= button_to issues_draft_destroy_photo_path(@draft, photo_id: photo.id, next: params[:next]), class: 'close-button', method: :delete, data: { 'turbo-confirm': 'Určite chcete túto fotku odstrániť?' } do %>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+                  <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
+                  <path d="M19,38C8.52,38,0,29.48,0,19S8.52,0,19,0s19,8.52,19,19-8.52,19-19,19ZM19,2C9.63,2,2,9.63,2,19s7.63,17,17,17,17-7.63,17-17S28.37,2,19,2Z"/>
+                </svg>
+              <% end %>
+              <picture>
+                <% image = photo.content_type.in?(UploadsController::ALLOWED_CONTENT_TYPES) ? photo.variant(:square) : 'otazka-znacka.png' %>
+                <%= image_tag image, alt: "Uploaded photo" %>
+              </picture>
+            </figure>
+          <% end %>
         <% end %>
       </div>
     <% end %>

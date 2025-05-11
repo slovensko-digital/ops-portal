@@ -59,7 +59,7 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     click_on "vyvaleny"
 
     assert_text "Popis podnetu"
-    fill_in "Názov", with: "Graffiti"
+    fill_in "Názov", with: "Graffiti na skrini"
     fill_in "Popis", with: "Je tu graffiti, treba vycistit"
     click_on "Pokračovať"
 

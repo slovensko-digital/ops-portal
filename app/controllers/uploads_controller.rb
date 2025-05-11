@@ -1,5 +1,5 @@
 class UploadsController < ApplicationController
-  ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png] # TODO more types?
+  ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic]
 
   def create
     new_blobs = params[:new_files].filter_map do |file|
