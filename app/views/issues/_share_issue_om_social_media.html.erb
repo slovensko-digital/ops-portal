@@ -1,0 +1,23 @@
+<a class="button button-transparent button-share-mobile" data-action="webshare#share" data-controller="webshare" data-webshare-supported-class="button-share-supported" data-webshare-title-value="<%= issue.title %>" data-webshare-text-value="Pozrite si tento podnet" data-webshare-url-value="<%= issue_url(issue) %>">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+    <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+    <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+  </svg>
+  <span>Zdielať</span>
+</a>
+
+<%= link_to "https://www.facebook.com/sharer/sharer.php?u=#{issue_url(issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+    <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+    <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+  </svg>
+  <span>Facebook</span>
+<% end %>
+
+<%= link_to "https://x.com/intent/tweet?url=#{issue_url(issue)}", target: '_blank', class: "button button-transparent button-share-desktop" do %>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+    <polygon points="14.35 4.35 10 0 5.65 4.35 6.71 5.41 9.25 2.87 9.25 11.86 10.75 11.86 10.75 2.87 13.29 5.41 14.35 4.35"/>
+    <path d="M16.55,20H3.45c-1.9,0-3.45-1.55-3.45-3.45v-6.3h1.5v6.3c0,1.08.88,1.95,1.95,1.95h13.1c1.08,0,1.95-.88,1.95-1.95v-6.3h1.5v6.3c0,1.9-1.55,3.45-3.45,3.45Z"/>
+  </svg>
+  <span>Twitter/X</span>
+<% end %>

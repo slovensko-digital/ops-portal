@@ -49,6 +49,10 @@ class Praise < Issue
     question.issue_type = "praise"
   end
 
+  before_create do |praise|
+    praise.state = Issues::State.find_by!(key: "waiting")
+  end
+
   after_create do |question|
     SyncIssueToTriageJob.perform_later(question)
   end

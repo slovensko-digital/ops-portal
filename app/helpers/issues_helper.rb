@@ -10,7 +10,7 @@ module IssuesHelper
     return parts.join(", ") if parts.any?
 
     # fallback for praises and legacy tickets
-    [ issue.municipality_district&.name, issue.municipality.name ].compact.join(", ")
+    [ issue.municipality_district&.name, issue.municipality&.name ].compact.join(", ")
   end
 
   def search_issues_path(params = {})

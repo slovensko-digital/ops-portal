@@ -1,0 +1,44 @@
+<section class="compliment">
+  <h1><%= issue.title %></h1>
+
+  <div class="compliment-con">
+    <div class="compliment-title">
+      <%= simple_format issue.description %>
+    </div>
+
+    <figure>
+      <picture>
+        <%= praise_image_tag(issue) %>
+      </picture>
+    </figure>
+
+    <div class="compliment-buttons-con">
+      <%= render partial: "issue_likes/button" %>
+
+      <%= render partial: "issues/share_issue_om_social_media", locals: { issue: issue } %>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-item">
+        <div class="info-block-description">Dátum</div>
+        <div class="info-block-value"><%= l issue.created_at.to_date %></div>
+      </div>
+      <div class="info-block-item">
+        <div class="info-block-description">Obec</div>
+        <div class="info-block-value"><%= issue.municipality.name %></div>
+      </div>
+      <% if issue.responsible_subject.present? %>
+        <div class="info-block-item">
+          <div class="info-block-description">Zodpovedný subjekt</div>
+          <div class="info-block-value">
+            <%= issue.responsible_subject.subject_name %>
+          </div>
+        </div>
+      <% end %>
+<!--      <div class="info-block-item">-->
+<!--        <div class="info-block-description">Viac info o&nbsp;adresátovi</div>-->
+<!--        <div class="info-block-value">Suspendisse viverra lectus sit amet mattis elementum.</div>-->
+<!--      </div>-->
+    </div>
+  </div>
+</section>

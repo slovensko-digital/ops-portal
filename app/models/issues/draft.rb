@@ -82,7 +82,7 @@ class Issues::Draft < ApplicationRecord
       category: category,
       subcategory: subcategory,
       subtype: subtype,
-      state: Issues::State.find_by(name: "Čakajúci"),
+      state: Issues::State.find_by!(key: "waiting"),
       municipality: municipality,
       municipality_district: municipality_district,
     )

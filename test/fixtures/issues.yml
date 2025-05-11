@@ -14,8 +14,8 @@ one:
   municipality: bratislava
 
 two:
-  title: MyString
-  description: MyString
+  title: Issue from Bratislava
+  description: Hello
   author: one
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
@@ -46,3 +46,23 @@ legacy1:
   municipality: bratislava
   responsible_subject: one
   legacy_id: 12345
+
+praise_published:
+  issue_type: praise
+  title: Finally cleaned
+  description: Very good!
+  municipality: bratislava
+  state: in_progress
+  created_at: 2024-11-05 09:59:21
+  last_synced_at: 2024-11-05 09:59:23
+  author: one
+
+praise_waiting:
+  issue_type: praise
+  title: Bike lanes are wide and safety
+  description: Very good job this time.
+  municipality: bratislava
+  state: waiting
+  created_at: 2024-11-05 09:59:21
+  last_synced_at: 2024-11-05 09:59:23
+  author: one
