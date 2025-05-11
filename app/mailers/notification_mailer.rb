@@ -65,9 +65,9 @@ class NotificationMailer < ApplicationMailer
   def ops_subject
     case @issue.issue_type
     when "issue"
-      "Odkaz pre starostu | Podnet číslo #{@issue.id}"
+      "Odkaz pre starostu | #{@issue.title} | #{@issue.id}"
     when "question"
-      "Odkaz pre starostu | Otázka číslo #{@issue.id}"
+      "Odkaz pre starostu | #{@issue.title} | #{@issue.id}"
     else
       raise NotImplementedError
     end
