@@ -4,7 +4,10 @@ class NotificationMailer < ApplicationMailer
   before_action { @subscription = params[:subscription] }
   before_action { @user = @subscription.subscriber }
   before_action { @issue = @subscription.issue }
-  default to: -> { @user.email }, headers: -> { list_unsubscribe_header }, subject: -> { ops_subject }
+  default to: -> { @user.email },
+    headers: -> { list_unsubscribe_header },
+    subject: -> { ops_subject },
+    from: email_address_with_name(ENV.fetch("NOTIFICATION_SMTP_USERNAME", "example@example.org"), "Odkaz pre starostu")
 
   def new_issue_user_comment(comment)
     @comment = comment
@@ -65,9 +68,9 @@ class NotificationMailer < ApplicationMailer
   def ops_subject
     case @issue.issue_type
     when "issue"
-      "Odkaz pre starostu | #{@issue.title} | #{@issue.id}"
+      "Odkaz pre starostu | #{@issue.title} (Podnet ##{@issue.id})"
     when "question"
-      "Odkaz pre starostu | #{@issue.title} | #{@issue.id}"
+      "Odkaz pre starostu | #{@issue.title} (Otázka ##{@issue.id})"
     else
       raise NotImplementedError
     end
