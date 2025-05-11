@@ -4,8 +4,8 @@ class NotificationMailer < ApplicationMailer
   before_action { @subscription = params[:subscription] }
   before_action { @user = @subscription.subscriber }
   before_action { @issue = @subscription.issue }
+  before_action :set_unsubscribe_headers
   default to: -> { @user.email },
-    headers: -> { list_unsubscribe_header },
     subject: -> { ops_subject },
     from: email_address_with_name(ENV.fetch("NOTIFICATION_SMTP_USERNAME", "example@example.org"), "Odkaz pre starostu")
 
@@ -58,11 +58,9 @@ class NotificationMailer < ApplicationMailer
 
   private
 
-  def list_unsubscribe_header
-    {
-      "List-Unsubscribe" => "<#{unsubscribe_global_subscriptions_url(token: @user.email_global_unsubscribe_token)}>",
-      "List-Unsubscribe-Post" => "<List-Unsubscribe=One-Click>"
-    }
+  def set_unsubscribe_headers
+    headers["List-Unsubscribe"] = "<#{unsubscribe_global_subscriptions_url(token: @user.email_global_unsubscribe_token)}>"
+    headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
   end
 
   def ops_subject
