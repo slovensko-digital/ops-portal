@@ -80,6 +80,10 @@ form[aria-busy='true'] .button-add-picture {
     animation: rotate360 1500ms linear infinite;
 }
 
+form[aria-busy='true'] .buttons-wrapper button[type="submit"] svg {
+  animation: rotate360 1500ms linear infinite;
+}
+
 @keyframes rotate360 {
     to {
         transform: rotate(360deg);
@@ -295,6 +299,12 @@ figure:has(.lens-image) {
 }
 figure:hover .lens-image {
   opacity: 1;
+}
+
+figure:has(.lens-image),
+figure:has(.close-button),
+figure:has(.rotate-button) {
+  background-color: #eee;
 }
 
 
