@@ -6,7 +6,7 @@ module Notifications
       issue.subscriptions.each do |subscription|
         next unless subscription.subscriber.email_notifiable?
 
-        case Issue::State.find(state_id_change.last).key
+        case Issues::State.find(state_id_change.last).key
         when "rejected"
           next unless issue.author == subscription.subscriber
           notification_mailer.with(subscription: subscription).issue_rejected.deliver_later
