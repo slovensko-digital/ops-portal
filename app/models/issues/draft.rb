@@ -34,7 +34,7 @@
 #  subtype_id              :bigint
 #
 class Issues::Draft < ApplicationRecord
-  has_many_attached :photos, service: :draft_attachments do |photo|
+  has_many_attached :photos do |photo|
     photo.variant :llm, resize_to_limit: [ 800, 600 ], preprocessed: true
     photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
     photo.variant :square, resize_to_fill: [ 320, 320 ], preprocessed: true
