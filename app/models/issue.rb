@@ -65,8 +65,9 @@ class Issue < ApplicationRecord
   has_many :likes, class_name: "IssueLike", dependent: :destroy
 
   has_many_attached :photos do |photo|
+    photo.variant :full, resize_to_limit: [ 1280, 960 ], preprocessed: true
     photo.variant :normal, resize_to_fill: [ 680, 680 ], preprocessed: true
-    photo.variant :small, resize_to_fill: [ 320, 320 ], preprocessed: true
+    photo.variant :small, resize_to_fill: [ 280, 280 ], preprocessed: true
     photo.variant :thumb, resize_to_fill: [ 160, 160 ], preprocessed: true
   end
 

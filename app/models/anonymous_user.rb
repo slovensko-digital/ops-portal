@@ -19,6 +19,10 @@ class AnonymousUser
     false
   end
 
+  def can_edit?(thing)
+    false
+  end
+
   def municipality
     nil
   end
