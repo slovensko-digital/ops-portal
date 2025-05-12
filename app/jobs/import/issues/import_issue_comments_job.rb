@@ -32,7 +32,7 @@ module Import
             type: comment_type
           )
           comment.imported_at ||= Time.now
-          comment.activity ||= issue.comment_activities.create!
+          comment.activity ||= issue.comment_activities.create!(created_at: comment.created_at)
           comment.save!
 
           import_photos_job.perform_later(comment: comment)

@@ -39,7 +39,8 @@ module Import
               created_at: convert_timestamp_value(legacy_record.ts),
               responsible_subject_author: Legacy::User.find_or_create_responsible_subjects_user(legacy_record.user)&.responsible_subject,
             )
-            communication.activity ||= issue.comment_activities.create!
+            communication.activity ||= issue.comment_activities.create!(created_at: communication.created_at)
+
           else
             communication_type = if legacy_record.user.nil? || legacy_record.user == 0
               "Legacy::Issues::AgentInternalCommunication"
@@ -72,7 +73,7 @@ module Import
               user_id: legacy_record.user,
               type: communication_type
             )
-            communication.activity ||= issue.legacy_communication_activities.create!
+            communication.activity ||= issue.legacy_communication_activities.create!(created_at: communication.created_at)
           end
           communication.imported_at ||= Time.now
           communication.save!

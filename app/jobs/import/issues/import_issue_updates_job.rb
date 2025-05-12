@@ -20,7 +20,7 @@ module Import
             confirmed_by: Legacy::User.find_or_create_user(legacy_record.confirmed_by)
           )
           update.imported_at ||= Time.now
-          update.activity ||= issue.update_activities.create!
+          update.activity ||= issue.update_activities.create!(created_at: update.created_at)
           update.save!
 
           import_photos_job.perform_later(update: update)
