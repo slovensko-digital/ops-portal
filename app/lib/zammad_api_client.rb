@@ -479,7 +479,7 @@ class ZammadApiClient
       process_type: ticket.process_type,
       title: ticket.title,
       description: ticket.body,
-      author: ticket.anonymous ? nil : User.find_by(external_id: ticket.origin_by_id || ticket.created_by_id),
+      author: ticket.anonymous ? nil : User.find_by(external_id: ticket.customer_id || ticket.created_by_id),
       author_response: build_author_response(:user_portal_comment, ticket.origin_by_id || ticket.created_by_id),
       responsible_subject: responsible_subject,
       issue_type: ticket.issue_type,
@@ -516,7 +516,9 @@ class ZammadApiClient
 
     author = case article_type
     when :user_portal_comment, :user_private_comment
-      unless ticket.anonymous? && article.origin_by_id == ticket.customer_id
+      if ticket.anonymous? && article.origin_by_id == ticket.customer_id
+        nil
+      else
         User.find_by(external_id: article.origin_by_id || article.created_by_id)
       end
     when :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment
