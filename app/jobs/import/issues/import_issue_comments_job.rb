@@ -22,7 +22,7 @@ module Import
             author_email: Legacy::User.generate_dummy_email(legacy_record.user.to_i), # TODO skip emails for now
             # author_email: legacy_record.email, # TODO skip emails for now
             author_name: legacy_record.meno,
-            hidden: !legacy_record.is_published,
+            hidden: legacy_record.is_published == 0,
             ip: legacy_record.ip,
             text: legacy_record.komentar,
             verification: legacy_record.verification,
