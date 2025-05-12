@@ -31,6 +31,7 @@ env:
     DISCOURSE_API_USERNAME: <%= ENV.fetch("DISCOURSE_API_USERNAME", "dummy") %>
     DISCOURSE_IMPORT_CATEGORY_IDS: <%= ENV.fetch("DISCOURSE_IMPORT_CATEGORY_IDS", "dummy") %>
     AWS_S3_REGION: <%= ENV.fetch("AWS_S3_REGION", "dummy") %>
+    ADMIN_EMAILS: <%= ENV.fetch("ADMIN_EMAILS", "dummy") %>
 
 proxy:
   host: ops.dev.slovensko.digital
