@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     namespace :webhooks do
       post :portal
       post :responsible_subject
+      post :common
     end
   end
 

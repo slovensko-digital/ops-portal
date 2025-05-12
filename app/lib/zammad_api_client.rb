@@ -220,16 +220,19 @@ class ZammadApiClient
     raise unless article.id
   end
 
-  def get_article(ticket_id, article_id, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, customer_articles: true, responsible_subject: nil)
+  def find_article(ticket_id, article_id)
     begin
       ticket = @client.ticket.find(ticket_id)
       article = ticket.articles.find { |a| a.id == article_id.to_i }
+      [  ticket, article ]
     rescue RuntimeError => e
       raise e unless e.message.include?("Couldn't find Ticket with") || e.message.include?("Couldn't find Article with")
       Rails.logger.info("Couldn't find article with id: #{article_id} in ticket with id: #{ticket_id}")
-      return
     end
+  end
 
+  def get_article(ticket_id, article_id, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, customer_articles: true, responsible_subject: nil)
+    ticket, article = find_article(ticket_id, article_id)
     result = build_article_response(ticket, article, allowed_article_types: allowed_article_types, responsible_subject: responsible_subject)
     return unless result.present?
     result
@@ -301,6 +304,15 @@ class ZammadApiClient
 
   def get_users
     @client.user.all
+  end
+
+  def find_user(user_id)
+    begin
+      @client.user.find(user_id)
+    rescue RuntimeError => e
+      raise e unless e.message.include?("Couldn't find User with")
+      Rails.logger.info("Couldn't find user with id: #{user_id}")
+    end
   end
 
   def add_user_to_group(user_identifier, group_name)
