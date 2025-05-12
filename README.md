@@ -10,27 +10,56 @@ Install this before running `bundle`:
 
 In case `mysql` gem failed to install anyway, try: `gem install mysql2 -v '0.5.6' -- --with-opt-dir=$(brew --prefix openssl) --with-ldflags=-L/opt/homebrew/opt/zstd/lib`
 
-## Other
+## Connect new Backoffice instance
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Tip: Use [CyberChef](https://gchq.github.io/CyberChef/#recipe=Pseudo-Random_Number_Generator(32,'Raw')To_Base62('0-9A-Za-z')) to generate secrets.
 
-Things you may want to cover:
+Example:
 
-* Ruby version
+```ruby
+new_backoffice_data = {
+  name: "Malacky",
+  url: "https://ops.dev.slovensko.digital/connector/webhook",
+  connector_zammad_url: "https://malacky.ops.dev.slovensko.digital/",
+  receive_customer_activities: true,
+  connector_zammad_api_token: "I3pDBKqAqjta3DtHfjCaXaz2jctfQSzDtdInh73YDP7",
+  connector_zammad_webhook_secret: "iQxdK0egeIWRFEghWqbNz7WnF1cSzCOGWynrjc2htRr"
+}
 
-* System dependencies
+def connect_backoffice(data)
+  responsible_subject = ResponsibleSubject.find_by!(name: data[:name])
 
-* Configuration
+  raise "ResponsibleSubject already PRO"
 
-* Database creation
+  responsible_subject.update_columns(
+    subject_name: data[:name],
+    active: true,
+    pro: true
+  )
 
-* Database initialization
+  client = Client.find_or_create_by!(name: data[:name])
+  tenant = Connector::Tenant.find_or_create_by!(name: data[:name])
 
-* How to run the test suite
+  api_key = OpenSSL::PKey::EC.generate("prime256v1")
+  webhook_key = OpenSSL::PKey::EC.generate("prime256v1")
 
-* Services (job queues, cache servers, search engines, etc.)
+  client.update_columns(
+    api_token_public_key: api_key.public_to_pem,
+    webhook_private_key: webhook_key.to_pem,
+    url: data[:url],
+    responsible_subject_id: responsible_subject.id
+  )
 
-* Deployment instructions
+  tenant.update_columns(
+    backoffice_api_token: data[:connector_zammad_api_token],
+    backoffice_webhook_secret: data[:connector_zammad_webhook_secret],
+    ops_api_token_private_key: api_key.to_pem,
+    ops_webhook_public_key: webhook_key.public_to_pem,
+    ops_api_subject_identifier: client.id,
+    backoffice_url: data[:connector_zammad_url],
+    receive_customer_activities: data[:receive_customer_activities]
+  )
+end
 
-* ...
+connect_backoffice new_backoffice_data
+```
