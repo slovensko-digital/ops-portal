@@ -117,7 +117,7 @@ class IssuesController < ApplicationController
           end,
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
-            ids = Issues::Subcategory.joins(:category)
+            ids = Issues::Subcategory
               .where(name: params[:podkategoria])
               .pluck(:id)
             scope.where(subcategory_id: ids)
