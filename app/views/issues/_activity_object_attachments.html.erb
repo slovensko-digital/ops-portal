@@ -8,7 +8,7 @@
         </svg>
       </div>
       <picture>
-        <%= image_tag photo.variant(:thumb), alt: "Fotka podnetu" %>
+        <%= responsive_image_tag photo, srcset: [:thumb, :small], alt: "Fotka podnetu" %>
       </picture>
     <% end %>
   <% end %>

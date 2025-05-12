@@ -93,7 +93,7 @@ class Issues::Draft < ApplicationRecord
     self.update_attribute(:submitted, true)
 
     photos.each do |photo|
-      issue.photos.append photo
+      issue.photos.attach(photo.blob)
     end
 
     SyncIssueToTriageJob.perform_later(issue)

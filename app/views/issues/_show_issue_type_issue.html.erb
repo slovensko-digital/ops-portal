@@ -16,7 +16,7 @@
               </svg>
             </div>
             <picture>
-              <%= image_tag issue.photos[0].variant(:normal) if issue.photos.attached? %>
+              <%= responsive_image_tag issue.photos[0], srcset: [:normal, :full]  if issue.photos.attached? %>
             </picture>
           <% end %>
           <% if issue.photos.count > 1 %>
@@ -29,7 +29,7 @@
                   </svg>
                 </div>
                 <picture>
-                  <%= image_tag photo.variant(:thumb) %>
+                  <%= responsive_image_tag photo, srcset: [:thumb, :small] %>
                 </picture>
               <% end %>
             <% end %>
