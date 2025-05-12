@@ -6,11 +6,7 @@ module IssuesHelper
   end
 
   def format_issue_address(issue)
-    parts = [ issue.address_street, issue.address_municipality, issue.address_city ].map(&:presence).compact
-    return parts.join(", ") if parts.any?
-
-    # fallback for praises and legacy tickets
-    [ issue.municipality_district&.name, issue.municipality&.name ].compact.join(", ")
+    [ issue.address_street, issue.municipality_district&.name, issue.municipality&.name ].compact.join(", ")
   end
 
   def search_issues_path(params = {})

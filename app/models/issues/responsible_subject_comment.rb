@@ -33,7 +33,7 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   end
 
   def author_display_name
-    responsible_subject_author.name
+    responsible_subject_author.subject_name
   end
 
   def backoffice_author

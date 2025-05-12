@@ -8,6 +8,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <meta property="og:title" content="<%= content_for?(:title) ? "#{content_for(:title)} | Odkaz pre starostu" : "Odkaz pre starostu"  %>">
+    <meta property="og:type" content="article" />
+    <meta property="og:description" content="Je vo vašom okolí potrebné niečo vyriešiť? Odfoťte, odošlite a sledujte riešenie podnetu samosprávou.">
+    <meta property="og:image" content="<%= image_url('og-image.png') %>">
+    <%= tag.meta property: "og:url", content: content_for?(:canonical_url) ? content_for(:canonical_url) : request.base_url + request.path %>
+    <meta name="twitter:card" content="summary_large_image">
 
     <%= yield :head %>
 
