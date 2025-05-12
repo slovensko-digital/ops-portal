@@ -12,7 +12,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:description" content="Je vo vašom okolí potrebné niečo vyriešiť? Odfoťte, odošlite a sledujte riešenie podnetu samosprávou.">
     <meta property="og:image" content="<%= image_url('og-image.png') %>">
-    <meta property="og:url" content="<%= content_for?(:canonical_url) ? content_for(:canonical_url) : url_for(only_path: false, overwrite_params: nil) %>">
+    <%= tag.meta property: "og:url", content: content_for?(:canonical_url) ? content_for(:canonical_url) : request.base_url + request.path %>
     <meta name="twitter:card" content="summary_large_image">
 
     <%= yield :head %>
