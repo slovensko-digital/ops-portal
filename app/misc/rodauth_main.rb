@@ -156,14 +156,7 @@ class RodauthMain < Rodauth::Rails::Auth
     before_create_account {
       custom_params = build_custom_params
 
-      candidate = nil
-      loop do
-        candidate = SecureRandom.urlsafe_base64(32)
-        unless User.exists?(email_global_unsubscribe_token: candidate)
-          break
-        end
-      end
-      account[:email_global_unsubscribe_token] = candidate
+      account[:email_global_unsubscribe_token] = generate_unsubscribe_token
 
       if validate_custom_params(custom_params)
         populate_account(custom_params)
@@ -176,6 +169,7 @@ class RodauthMain < Rodauth::Rails::Auth
     before_omniauth_create_account {
       account[:firstname] = omniauth_info["first_name"]
       account[:lastname] = omniauth_info["last_name"]
+      account[:email_global_unsubscribe_token] = generate_unsubscribe_token
     }
 
     # Add a handler for OmniAuth login failure
@@ -225,6 +219,13 @@ class RodauthMain < Rodauth::Rails::Auth
 
       def populate_account(custom_params)
         account[:firstname] = custom_params[:name]
+      end
+
+      def generate_unsubscribe_token
+        loop do
+          candidate = SecureRandom.urlsafe_base64(32)
+          return candidate unless User.exists?(email_global_unsubscribe_token: candidate)
+        end
       end
     end
   end
