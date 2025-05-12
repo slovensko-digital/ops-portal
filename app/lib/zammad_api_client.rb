@@ -241,7 +241,7 @@ class ZammadApiClient
     article = ticket.article(
       origin_by_id: activity_object.author&.external_id,
       content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
-      body: activity_object.triage_activity_body,
+      body: activity_object.triage_activity_body.presence || "(bez popisu)",
       type: DEFAULT_ARTICLE_TYPE,
       attachments: activity_object.attachments.map do |attachment|
         {
