@@ -85,14 +85,22 @@ class IssuesController < ApplicationController
           param_name: :stav,
           label: "Stav podnetu",
           items: -> { Issues::State.order(:name).pluck(:name) - %w[Čakajúci Neprijatý] },
-          filter: ->(scope, params) { scope.joins(:state).where(state: { name: params[:stav] }) },
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = Issues::State.where(name: params[:stav]).pluck(:id)
+            scope.where(state_id: ids)
+          end,
         ),
 
         SearchEngine::Controls::Dropdown.new(
           param_name: :kategoria,
           label: "Kategória",
           items: -> { Issues::Category.order(:name).pluck(:name) },
-          filter: ->(scope, params) { scope.joins(:category).where(issues_categories: { name: params[:kategoria] }) },
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = Issues::Category.where(name: params[:kategoria]).pluck(:id)
+            scope.where(category_id: ids)
+          end,
         ),
 
         SearchEngine::Controls::Dropdown.new(
@@ -107,17 +115,31 @@ class IssuesController < ApplicationController
               .pluck(:name)
               .uniq
           end,
-          filter: ->(scope, params) { scope.joins(:subcategory).where(issues_subcategories: { name: params[:podkategoria] }) }
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = Issues::Subcategory
+              .where(name: params[:podkategoria])
+              .pluck(:id)
+            scope.where(subcategory_id: ids)
+          end
         ),
 
         SearchEngine::Controls::Hidden.new(
           param_name: :typ,
-          filter: ->(scope, params) { scope.joins(:subtype).where(issues_subtypes: { name: params[:typ] }) }
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = Issues::Subtype.where(name: params[:typ]).pluck(:id)
+            scope.where(subtype_id: ids)
+          end
         ),
 
         SearchEngine::Controls::Hidden.new(
           param_name: :zodpovedny,
-          filter: ->(scope, params) { scope.joins(:responsible_subject).where(responsible_subject: { subject_name: params[:zodpovedny] }) }
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = ResponsibleSubject.where(subject_name: params[:zodpovedny]).pluck(:id)
+            scope.where(responsible_subject_id: ids)
+          end
         ),
 
         SearchEngine::Controls::Hidden.new(
@@ -143,7 +165,11 @@ class IssuesController < ApplicationController
           param_name: :obec,
           label: "Obec",
           items: -> { Municipality.active.order(:name).pluck(:name) },
-          filter: ->(scope, params) { scope.joins(:municipality).where(municipalities: { name: params[:obec] }) }
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = Municipality.where(name: params[:obec]).pluck(:id)
+            scope.where(municipality_id: ids)
+          end
         ),
 
         SearchEngine::Controls::Dropdown.new(
@@ -157,7 +183,11 @@ class IssuesController < ApplicationController
               .order(:name)
               .pluck(:name)
           end,
-          filter: ->(scope, params) { scope.joins(:municipality_district).where(municipality_districts: { name: params[:cast] }) }
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
+            scope.where(municipality_district_id: ids)
+          end
         ),
 
         SearchEngine::Controls::Dropdown.new(

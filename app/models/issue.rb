@@ -77,7 +77,7 @@ class Issue < ApplicationRecord
   validates_presence_of :title, :description, unless: -> { imported_at }
 
   scope :newest, -> { order(created_at: :desc) }
-  scope :publicly_visible, -> { joins(:state).where.not(state: { key: Issues::State::PRIVATE_KEYS }) }
+  scope :publicly_visible, -> { where.not(state_id: Issues::State.not_visible.pluck(:id)) }
   scope :currently_viewable_by, ->(user) do
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
   end
