@@ -12,4 +12,6 @@
 #
 class Issues::State < ApplicationRecord
   PRIVATE_KEYS = %w[waiting rejected]
+
+  scope :not_visible, -> { where(key: PRIVATE_KEYS) }
 end
