@@ -125,7 +125,18 @@ Rails.application.routes.draw do
   get "r/:municipality_slug/pridat-podnet" => "legacy/redirects#create_issue"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
-  mount GoodJob::Engine => "admin/good_job" # TODO authenticate!
+
+  class GoodJobAdmin
+    def self.matches?(request)
+      user = request.env["rodauth"].rails_account
+
+      ENV["ADMIN_EMAILS"].to_s.split(",").include?(user&.email)
+    end
+  end
+
+  constraints(GoodJobAdmin) do
+    mount GoodJob::Engine => "admin/good_job"
+  end
 
   constraints lambda { |req| !req.xhr? && req.format.html? && (req.path =~ %r{^/(rails|assets)/}).nil? } do
     get "*path" => "cms/pages#index", as: :cms_page
