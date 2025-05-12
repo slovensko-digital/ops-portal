@@ -85,7 +85,11 @@ class IssuesController < ApplicationController
           param_name: :stav,
           label: "Stav podnetu",
           items: -> { Issues::State.order(:name).pluck(:name) - %w[Čakajúci Neprijatý] },
-          filter: ->(scope, params) { scope.joins(:state).where(state: { name: params[:stav] }) },
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = Issues::State.where(name: params[:stav]).pluck(:id)
+            scope.where(state_id: ids)
+          end,
         ),
 
         SearchEngine::Controls::Dropdown.new(
