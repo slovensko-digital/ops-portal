@@ -139,6 +139,9 @@ Rails.application.routes.draw do
     mount GoodJob::Engine => "admin/good_job"
   end
 
+  match "/404", to: "errors#render_404", via: :all
+  match "/500", to: "errors#render_500", via: :all
+
   constraints lambda { |req| !req.xhr? && req.format.html? && (req.path =~ %r{^/(rails|assets)/}).nil? } do
     get "*path" => "cms/pages#index", as: :cms_page
   end

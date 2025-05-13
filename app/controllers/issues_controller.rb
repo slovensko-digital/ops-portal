@@ -28,6 +28,7 @@ class IssuesController < ApplicationController
 
   # GET /issues/1 or /issues/1.json
   def show
+    raise "Not implemented"
     @activity_objects = @issue.visible_activity_objects
   end
 

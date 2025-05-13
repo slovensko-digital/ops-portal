@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   http_basic_authenticate_with name: "ops", password: "odkazprestarostu" unless Rails.env.development? || Rails.env.test?
 
+  before_action :check_for_maintenance_mode
   before_action :current_user
 
   private
@@ -44,5 +45,15 @@ class ApplicationController < ActionController::Base
       format.turbo_stream { render turbo_stream: turbo_stream.redirect(path) }
       format.html { redirect_to path }
     end
+  end
+
+  def check_for_maintenance_mode
+    cookies.signed[:bypass] = {
+      value: params[:bypass],
+      expires: 1.day.from_now
+    } if params[:bypass]
+    return if cookies.signed[:bypass] == "1"
+
+    render template: "errors/render_503", layout: false, status: 503 if ENV["MAINTENANCE"] == "1"
   end
 end
