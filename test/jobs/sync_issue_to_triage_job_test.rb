@@ -130,7 +130,8 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     triage_zammad_client_mock.expect :get_groups, [
       OpenStruct.new(name: "Dobrovoľníci::Nitra"),
       OpenStruct.new(name: "Dobrovoľníci::Trenčín"),
-      OpenStruct.new(name: "Dobrovoľníci::Prešov")
+      OpenStruct.new(name: "Dobrovoľníci::Prešov"),
+      OpenStruct.new(name: "Dobrovoľníci::Bratislava")
     ]
     triage_zammad_client_mock.expect :update_ticket_from_issue!, nil, [ issue.triage_external_id, issue ], update_attachments: true
 

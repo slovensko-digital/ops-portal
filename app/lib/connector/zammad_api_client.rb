@@ -108,14 +108,14 @@ module Connector
       end
     end
 
-    def find_or_create_article_from_activity_object!(issue, activity_object, internal:, sender:)
+    def find_or_create_article_from_activity_object!(issue, activity_object, author_id: nil, internal:, sender:)
       ticket = find_ticket_for_issue!(issue)
 
       article = @tenant.activities.find_by(triage_external_id: activity_object.triage_external_id)
       return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
 
       new_article = ticket.article(
-        origin_by_id: create_or_find_agent(activity_object.backoffice_author),
+        origin_by_id: author_id,
         content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
         body: activity_object.backoffice_activity_body,
         type: DEFAULT_ARTICLE_TYPE,
@@ -241,6 +241,13 @@ module Connector
 
       ticket.owner_id = user_id
       ticket.save
+    end
+
+    def find_or_create_imported_article_agent_author(user)
+      user_id = create_or_find_agent(user)
+      add_user_to_group(user_id, IMPORT_GROUP)
+
+      user_id
     end
 
     def subscribe_ticket(agent, issue)
