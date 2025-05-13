@@ -427,6 +427,8 @@ class ZammadApiClient
   end
 
   def build_author_response(article_type, author, zammad_api_client: TriageZammadEnvironment.client.client)
+    return DEFAULT_OPS_ADMIN_USER if [ :agent_portal_comment, :agent_portal_and_backoffice_comment, :agent_backoffice_comment ].include?(article_type)
+
     return unless author
 
     if [ :user_portal_comment ].include?(article_type)
@@ -442,9 +444,6 @@ class ZammadApiClient
           uuid: user.uuid
         }
       end
-    elsif [ :agent_portal_comment, :agent_portal_and_backoffice_comment, :agent_backoffice_comment ].include?(article_type)
-      DEFAULT_OPS_ADMIN_USER
-
     elsif [ :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment ].include?(article_type)
       responsible_subject = zammad_api_client.user.find(author.external_id)
       if responsible_subject.nil?
