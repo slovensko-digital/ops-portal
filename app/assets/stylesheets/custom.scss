@@ -396,3 +396,17 @@ body:has(dialog[data-zoombox-target="dialog"][open]) {
 .rounded-image {
   border-radius: 15px;
 }
+
+
+// autoscrolls
+
+turbo-frame[autoscroll] > :first-child {
+  scroll-margin-top: 90px;
+}
+
+@media only screen and (min-width: 64em) {
+  turbo-frame[autoscroll] > :first-child {
+    scroll-margin-top: 155px;
+  }
+}
+
