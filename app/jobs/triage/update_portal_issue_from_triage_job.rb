@@ -28,6 +28,7 @@ class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
       subtype: ticket[:subtype],
       state: ticket[:ops_state],
       responsible_subject: ticket[:responsible_subject],
+      issue_type: ticket[:issue_type],
     )
 
     return unless issue.should_create_resolution_process?
