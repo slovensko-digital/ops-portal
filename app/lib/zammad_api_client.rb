@@ -480,7 +480,7 @@ class ZammadApiClient
       title: ticket.title,
       description: ticket.body,
       author: ticket.anonymous ? nil : User.find_by(external_id: ticket.customer_id || ticket.created_by_id),
-      author_response: build_author_response(:user_portal_comment, ticket.origin_by_id || ticket.created_by_id),
+      author_response: build_author_response(:user_portal_comment, ticket.customer_id || ticket.created_by_id),
       responsible_subject: responsible_subject,
       issue_type: ticket.issue_type,
       category: category,
