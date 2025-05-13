@@ -4,7 +4,6 @@ json.author @activity[:author_response]
 json.content_type @activity[:content_type]
 json.body @activity[:body]
 json.type @activity[:type]
-json.customer_activity [ :user_portal_comment, :unknown_user_portal_comment ].include?(@activity[:article_type])
 json.created_at @activity[:created_at]
 json.updated_at @activity[:updated_at]
 json.attachments @activity[:attachments] do |attachment|

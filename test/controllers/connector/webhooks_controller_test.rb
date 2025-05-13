@@ -88,7 +88,8 @@ class Connector::WebhooksControllerTest < ActionDispatch::IntegrationTest
       data: {
         subject_id: @tenant.ops_api_subject_identifier,
         issue_id: "12345",
-        activity_id: "67890"
+        activity_id: "67890",
+        activity_type: "agent_backoffice_comment"
       }
     }.to_json
 
@@ -227,18 +228,18 @@ class Connector::WebhooksControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "activity.created webhook should not enqueue job if customer_activity is boolean true and tenant.receive_customer_activities? is false" do
+  test "activity.created webhook should not enqueue job if user_portal_comment and tenant.receive_customer_activities? is false" do
     # Ensure the tenant does not want to receive customer activities
     @tenant.update(receive_customer_activities: false)
 
-    # Create a payload with customer_activity set to boolean true
+    # Create a payload with activity_type: "user_portal_comment"
     payload = {
       type: "activity.created",
       data: {
         subject_id: @tenant.ops_api_subject_identifier,
         issue_id: "12345",
         activity_id: "67890",
-        customer_activity: true
+        activity_type: "user_portal_comment"
       }
     }.to_json
     timestamp = Time.now.to_i.to_s
@@ -257,17 +258,18 @@ class Connector::WebhooksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "activity.created webhook should enqueue job if customer_activity is boolean true and tenant.receive_customer_activities? is true" do
+  test "activity.created webhook should enqueue job if activity_type is user_portal_comment and tenant.receive_customer_activities? is true" do
     # Ensure the tenant wants to receive customer activities
     @tenant.update(receive_customer_activities: true)
-    # Create a payload with customer_activity set to boolean true
+
+    # Create a payload with activity_type: "user_portal_comment"
     payload = {
       type: "activity.created",
       data: {
         subject_id: @tenant.ops_api_subject_identifier,
         issue_id: "12345",
         activity_id: "67890",
-        customer_activity: true
+        activity_type: "user_portal_comment"
       }
     }.to_json
     timestamp = Time.now.to_i.to_s
@@ -286,15 +288,18 @@ class Connector::WebhooksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "activity.created webhook should enqueue job if customer_activity is boolean false" do
-    # Create a payload with customer_activity set to boolean false
+  test "activity.created webhook should enqueue job if activity_type: agent_backoffice_comment and tenant.receive_customer_activities? is true" do
+    # Ensure the tenant wants to receive customer activities
+    @tenant.update(receive_customer_activities: true)
+
+    # Create a payload with activity_type: "agent_backoffice_comment"
     payload = {
       type: "activity.created",
       data: {
         subject_id: @tenant.ops_api_subject_identifier,
         issue_id: "12345",
         activity_id: "67890",
-        customer_activity: false
+        activity_type: "agent_backoffice_comment"
       }
     }.to_json
     timestamp = Time.now.to_i.to_s
@@ -313,80 +318,84 @@ class Connector::WebhooksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "activity.created webhook should not enqueue job if customer_activity is string true and tenant.receive_customer_activities? is false" do
+  test "activity.created webhook should enqueue job if activity_type: agent_backoffice_comment and tenant.receive_customer_activities? is false" do
     # Ensure the tenant does not want to receive customer activities
     @tenant.update(receive_customer_activities: false)
 
-    # Create a payload with customer_activity set to string true
+    # Create a payload with activity_type: "agent_backoffice_comment"
     payload = {
       type: "activity.created",
       data: {
         subject_id: @tenant.ops_api_subject_identifier,
         issue_id: "12345",
         activity_id: "67890",
-        customer_activity: "true"
+        activity_type: "agent_backoffice_comment"
+      }
+    }.to_json
+    timestamp = Time.now.to_i.to_s
+    hook_id = "test-id"
+    signature = generate_hmac_signature(payload, @tenant.ops_webhook_public_key, timestamp, hook_id)
+    assert_enqueued_with(job: Connector::CreateNewBackofficeActivityFromTriageJob) do
+      post connector_webhook_url,
+           params: payload,
+           headers: {
+             "Content-Type" => "application/json",
+             "webhook-timestamp" => timestamp,
+             "webhook-id" => hook_id,
+             "webhook-signature" => signature
+           }
+      assert_response :no_content
+    end
+  end
+
+  test "activity.created webhook should enqueue job if activity_type: agent_portal_comment and tenant.receive_customer_activities? is true" do
+    # Ensure the tenant wants to receive customer activities
+    @tenant.update(receive_customer_activities: true)
+
+    # Create a payload with activity_type: "agent_portal_comment"
+    payload = {
+      type: "activity.created",
+      data: {
+        subject_id: @tenant.ops_api_subject_identifier,
+        issue_id: "12345",
+        activity_id: "67890",
+        activity_type: "agent_portal_comment"
+      }
+    }.to_json
+    timestamp = Time.now.to_i.to_s
+    hook_id = "test-id"
+    signature = generate_hmac_signature(payload, @tenant.ops_webhook_public_key, timestamp, hook_id)
+    assert_enqueued_with(job: Connector::CreateNewBackofficeActivityFromTriageJob) do
+      post connector_webhook_url,
+           params: payload,
+           headers: {
+             "Content-Type" => "application/json",
+             "webhook-timestamp" => timestamp,
+             "webhook-id" => hook_id,
+             "webhook-signature" => signature
+           }
+      assert_response :no_content
+    end
+  end
+
+  test "activity.created webhook should enqueue no job if activity_type: agent_portal_comment and tenant.receive_customer_activities? is false" do
+    # Ensure the tenant does not want to receive customer activities
+    @tenant.update(receive_customer_activities: false)
+
+    # Create a payload with activity_type: "agent_portal_comment"
+    payload = {
+      type: "activity.created",
+      data: {
+        subject_id: @tenant.ops_api_subject_identifier,
+        issue_id: "12345",
+        activity_id: "67890",
+        activity_type: "agent_portal_comment"
       }
     }.to_json
     timestamp = Time.now.to_i.to_s
     hook_id = "test-id"
     signature = generate_hmac_signature(payload, @tenant.ops_webhook_public_key, timestamp, hook_id)
     assert_no_enqueued_jobs do
-      post connector_webhook_url,
-           params: payload,
-           headers: {
-             "Content-Type" => "application/json",
-             "webhook-timestamp" => timestamp,
-             "webhook-id" => hook_id,
-             "webhook-signature" => signature
-           }
-      assert_response :no_content
-    end
-  end
-
-  test "activity.created webhook should enqueue job if customer_activity is string true and tenant.receive_customer_activities? is true" do
-    # Ensure the tenant wants to receive customer activities
-    @tenant.update(receive_customer_activities: true)
-    # Create a payload with customer_activity set to string true
-    payload = {
-      type: "activity.created",
-      data: {
-        subject_id: @tenant.ops_api_subject_identifier,
-        issue_id: "12345",
-        activity_id: "67890",
-        customer_activity: "true"
-      }
-    }.to_json
-    timestamp = Time.now.to_i.to_s
-    hook_id = "test-id"
-    signature = generate_hmac_signature(payload, @tenant.ops_webhook_public_key, timestamp, hook_id)
-    assert_enqueued_with(job: Connector::CreateNewBackofficeActivityFromTriageJob) do
-      post connector_webhook_url,
-           params: payload,
-           headers: {
-             "Content-Type" => "application/json",
-             "webhook-timestamp" => timestamp,
-             "webhook-id" => hook_id,
-             "webhook-signature" => signature
-           }
-      assert_response :no_content
-    end
-  end
-
-  test "activity.created webhook should enqueue job if customer_activity is string false" do
-    # Create a payload with customer_activity set to string false
-    payload = {
-      type: "activity.created",
-      data: {
-        subject_id: @tenant.ops_api_subject_identifier,
-        issue_id: "12345",
-        activity_id: "67890",
-        customer_activity: "false"
-      }
-    }.to_json
-    timestamp = Time.now.to_i.to_s
-    hook_id = "test-id"
-    signature = generate_hmac_signature(payload, @tenant.ops_webhook_public_key, timestamp, hook_id)
-    assert_enqueued_with(job: Connector::CreateNewBackofficeActivityFromTriageJob) do
       post connector_webhook_url,
            params: payload,
            headers: {

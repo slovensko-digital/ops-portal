@@ -9,7 +9,8 @@ class Triage::ProcessNewActivityFromTriageJob < ApplicationJob
       :unknown_user_portal_comment,
       :user_portal_comment,
       :agent_portal_and_backoffice_comment,
-      :agent_backoffice_comment
+      :agent_backoffice_comment,
+      :agent_portal_comment
     ]
 
     article = triage_zammad_client.get_article(
@@ -24,7 +25,7 @@ class Triage::ProcessNewActivityFromTriageJob < ApplicationJob
     webhook_client.new(client).activity_created(
       ticket_id,
       article_id,
-      customer_activity: [ :unknown_user_portal_comment, :user_portal_comment ].include?(article[:article_type]),
+      activity_type: article[:article_type]
     )
   end
 end

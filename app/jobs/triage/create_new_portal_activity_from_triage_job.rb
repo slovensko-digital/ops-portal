@@ -15,7 +15,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
 
     article = triage_zammad_client.get_article(ticket_id, article_id, allowed_article_types: allowed_article_types)
     raise "Article not found" unless article
-    return if article[:customer_activity]
+    return if article[:article_type].in? [ :user_portal_comment, :unknown_user_portal_comment, :user_private_comment ]
 
     process_type = ticket[:process_type]
     case process_type

@@ -16,7 +16,7 @@ class WebhookClient
     Triage::FireWebhookJob.perform_later(@client, Random.uuid, payload)
   end
 
-  def activity_created(issue_id, activity_id, customer_activity:)
+  def activity_created(issue_id, activity_id, activity_type:)
     payload = {
       type: "activity.created",
       timestamp: Time.now.to_i,
@@ -24,7 +24,7 @@ class WebhookClient
         subject_id: @client.id,
         issue_id: issue_id,
         activity_id: activity_id,
-        customer_activity: customer_activity
+        activity_type: activity_type
       }
     }
 

@@ -8,7 +8,7 @@ class Connector::CreateNewBackofficeActivityFromTriageJob < ApplicationJob
     activity = ops_client.get_activity(issue_id, activity_id)
     raise "Activity not found" unless activity
 
-    return unless tenant.receive_customer_activities? || activity["customer_activity"] == false
+    return unless tenant.receive_customer_activities? || activity["activity_type"].in?([ "agent_portal_and_backoffice_comment", "agent_backoffice_comment" ])
 
     zammad_client.create_activity!(issue_id, activity)
   end
