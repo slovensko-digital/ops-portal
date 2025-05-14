@@ -26,9 +26,7 @@
 
   <div class="info-con">
     <div class="state-con">
-      <% if issue.issue_type.in? %w[issue question] %>
-        <div class="state state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
-      <% end %>
+      <div class="state state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
       <div class="icon-con">
         <% if issue.likes_count > 0 %>
           <div class="icon-block">
@@ -40,7 +38,7 @@
             <%= issue.likes_count %>
           </div>
         <% end %>
-        <% if issue.comments_count.nonzero? %>
+        <% if issue.issue_type.in? %w[issue question] && issue.comments_count.nonzero? %>
           <div class="icon-block">
             <div class="icon-comment">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
