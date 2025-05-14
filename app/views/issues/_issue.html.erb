@@ -38,7 +38,7 @@
             <%= issue.likes_count %>
           </div>
         <% end %>
-        <% if issue.issue_type.in? %w[issue question] && issue.comments_count.nonzero? %>
+        <% if issue.issue_type.in?(%w[issue question]) && issue.comments_count.nonzero? %>
           <div class="icon-block">
             <div class="icon-comment">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
