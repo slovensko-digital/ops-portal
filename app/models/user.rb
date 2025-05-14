@@ -50,7 +50,7 @@
 #
 class User < ApplicationRecord
   include Rodauth::Rails.model
-  # TODO: encrypt password field and access_token
+
   attr_accessor :phone_verification_number
 
   belongs_to :municipality, optional: true

@@ -18,5 +18,8 @@ class Connector::Tenant < ApplicationRecord
   has_many :issues, class_name: "Connector::Issue", dependent: :destroy, inverse_of: :tenant
   has_many :users, class_name: "Connector::User", dependent: :destroy, inverse_of: :tenant
   has_many :activities, class_name: "Connector::Activity", dependent: :destroy, inverse_of: :tenant
-  # TODO: encrypt secret fields
+
+  encrypts :backoffice_api_token
+  encrypts :backoffice_webhook_secret
+  encrypts :ops_api_token_private_key
 end

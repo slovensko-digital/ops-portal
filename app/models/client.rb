@@ -13,4 +13,6 @@
 #
 class Client < ApplicationRecord
   belongs_to :responsible_subject, optional: true
+
+  encrypts :webhook_private_key
 end
