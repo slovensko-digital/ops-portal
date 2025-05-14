@@ -81,7 +81,6 @@ module Legacy
         gdpr_accepted: legacy_record.gdpr_accepted,
         login: legacy_record.login,
         name: legacy_record.name,
-        password: ENV.fetch("EMAILS_IMPORT", nil) == "ON" ? legacy_record.password : generate_dummy_password, # TODO check
         photo: legacy_record.photo,
         token: legacy_record.remember_token,
         tooltips: legacy_record.tooltips,
