@@ -96,7 +96,7 @@ module Legacy
     end
 
     def self.generate_dummy_password
-      BCrypt::Password.create("12345")
+      BCrypt::Password.create(Random.uuid)
     end
 
     def self.convert_legacy_rights_value(value)
