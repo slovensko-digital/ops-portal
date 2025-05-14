@@ -56,6 +56,10 @@ class NotificationMailer < ApplicationMailer
     mail
   end
 
+  def praise_accepted
+    mail
+  end
+
   private
 
   def set_unsubscribe_headers
@@ -69,6 +73,8 @@ class NotificationMailer < ApplicationMailer
       "Odkaz pre starostu | #{@issue.title} (Podnet ##{@issue.id})"
     when "question"
       "Odkaz pre starostu | #{@issue.title} (Otázka ##{@issue.id})"
+    when "praise"
+      "Odkaz pre starostu | #{@issue.title} (Pochvala ##{@issue.id})"
     else
       raise NotImplementedError
     end

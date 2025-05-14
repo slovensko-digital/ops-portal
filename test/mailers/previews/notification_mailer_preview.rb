@@ -105,4 +105,20 @@ class NotificationMailerPreview < ActionMailer::Preview
       subscription: IssueSubscription.last
     ).issue_rejected
   end
+
+  def praise_accepted
+    issue = Praise.last
+    subscription = issue.subscriptions.first
+    NotificationMailer.with(
+      subscription: subscription
+    ).praise_accepted
+  end
+
+  def praise_rejected
+    issue = Praise.last
+    subscription = issue.subscriptions.first
+    NotificationMailer.with(
+      subscription: subscription
+    ).issue_rejected
+  end
 end

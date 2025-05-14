@@ -1,11 +1,18 @@
-<p class="ops-email-title">Podnet bol zamietnutý</p>
-<p class="ops-email-paragraph">
-  <% if @issue.author == @user %>
-    Ľutujeme, Váš podnet <%= ops_issue_link @issue %>, ktorý ste pridali <b><%= @issue.created_at.strftime("%d.%m.%Y") %></b> na portál Odkaz pre starostu, nespĺňal podmienky prijatia a preto bol zamietnutý.
-  <% else %>
-    Ľutujeme, podnet <%= ops_issue_link @issue %>, ktorý sledujete na portáli Odkaz pre starostu, nespĺňal podmienky prijatia a preto bol zamietnutý.
-  <% end %>
-</p>
+<% if @issue.issue_type == "praise" %>
+  <%= ops_title "Pochvala bola zamietnutá" %>
+  <p class="ops-email-paragraph">
+    Ľutujeme, Vaša pochvala <%= ops_issue_link @issue %>, ktorú ste pridali <b><%= @issue.created_at.strftime("%d.%m.%Y") %></b> na portál Odkaz pre starostu, nespĺňala podmienky prijatia a preto bola zamietnutá.
+  </p>
+<% else %>
+  <%= ops_title "Podnet bol zamietnutý" %>
+  <p class="ops-email-paragraph">
+    <% if @issue.author == @user %>
+      Ľutujeme, Váš podnet <%= ops_issue_link @issue %>, ktorý ste pridali <b><%= @issue.created_at.strftime("%d.%m.%Y") %></b> na portál Odkaz pre starostu, nespĺňal podmienky prijatia a preto bol zamietnutý.
+    <% else %>
+      Ľutujeme, podnet <%= ops_issue_link @issue %>, ktorý sledujete na portáli Odkaz pre starostu, nespĺňal podmienky prijatia a preto bol zamietnutý.
+    <% end %>
+  </p>
+<% end %>
 <p class="ops-email-paragraph">
   Viac informácií nájdete v sekcii <%= link_to "Pravidlá", url_for('/pravidla'), class: "ops-email-link", target: "_blank" %>.
 </p>

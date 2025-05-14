@@ -2,6 +2,7 @@ module Notifications
   class PublishNewIssueCommentJob < ApplicationJob
     def perform(comment, notification_mailer: NotificationMailer)
       issue = comment.issue
+      return if issue.issue_type == "praise"
 
       issue.subscriptions.each do |subscription|
         user = subscription.subscriber

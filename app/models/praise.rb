@@ -45,15 +45,28 @@
 class Praise < Issue
   validates :title, :description, :municipality_id, presence: true
 
-  after_initialize do |question|
-    question.issue_type = "praise"
+  after_initialize do |praise|
+    praise.issue_type = "praise"
   end
 
   before_create do |praise|
     praise.state = Issues::State.find_by!(key: "waiting")
   end
 
-  after_create do |question|
-    SyncIssueToTriageJob.perform_later(question)
+  after_create do |praise|
+    author.subscribe_to(praise)
+    SyncIssueToTriageJob.perform_later(praise)
+  end
+
+  after_update :notify_subscribers, if: :saved_change_to_state_id?
+
+  private
+
+  def notify_subscribers
+    if state.key.in? %w[resolved unresolved]
+      Notifications::PublishIssueAcceptedJob.perform_later(self)
+    elsif state.key == "rejected"
+      Notifications::PublishIssueStateChangedJob.perform_later(self, state_id_change: saved_change_to_state_id)
+    end
   end
 end
