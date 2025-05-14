@@ -32,6 +32,10 @@ module Ops
 
     config.active_job.queue_adapter = :good_job
 
+    config.good_job.smaller_number_is_higher_priority = true
+    config.good_job.cleanup_preserved_jobs_before_seconds_ago = 1.days
+    config.good_job.cleanup_discarded_jobs = false
+
     config.active_record.schema_format = :sql
 
     config.exceptions_app = routes
