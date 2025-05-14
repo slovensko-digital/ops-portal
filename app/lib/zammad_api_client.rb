@@ -126,6 +126,7 @@ class ZammadApiClient
       when "ops_state"
         ticket.ops_state = value
       when "responsible_subject"
+        next if value[:label] == ticket.responsible_subject[:label] && value[:value].to_s == ticket.responsible_subject[:value].to_s
         ticket.responsible_subject = value
       when "investment"
         ticket.investment = value
