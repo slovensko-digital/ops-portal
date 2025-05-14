@@ -74,4 +74,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
 
   config.hosts << /.*/
+
+  # uncomment this if you want to test error pages
+  # config.consider_all_requests_local = false
 end

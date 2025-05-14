@@ -3104,6 +3104,97 @@ section.loader-con h1 {
   padding-top: 30px;
 }
 
+
+
+// 404 error page
+section.error-page-con {
+  padding: per(50,320) per(30,320);
+  max-width: unset;
+  background: $blue;
+  text-align: center;
+}
+section.error-page-con .error-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+  margin: 0 auto;
+  max-width: 400px;
+}
+section.error-page-con figure {
+  margin: 0 auto 40px auto;
+  max-width: 350px;
+  width: 100%;
+}
+section.error-page-con h1.error-page-title {
+  font-size: em(36,16);
+  line-height: em(36,36);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+section.error-page-con .error-page-notice {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $semibold;
+  line-height: em(28,18);
+}
+section.error-page-con a.button {
+  margin: 0 auto;
+}
+section.error-page-con a.button:hover {
+  background: $white;
+}
+
+
+
+
+
+
+// Error Server
+body.error-server-body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+}
+.error-server {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+  max-width: 450px;
+  padding: per(30,320) 40px;
+  justify-content: center;
+  text-align: center;
+}
+.error-server figure.error-server-robot {
+  margin: 40px 0;
+  max-width: 260px;
+  width: 100%;
+}
+.error-server figure.error-server-logo {
+  max-width: 120px;
+  width: 100%;
+}
+.error-server h1.error-server-title {
+  font-size: em(36,16);
+  line-height: em(36,36);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.error-server .error-server-notice {
+  color: $black;
+  font-family: $general;
+  font-size: em(18,16);
+  font-weight: $semibold;
+  line-height: em(28,18);
+}
+
+
 // Kontakt
 section.contact {
   margin: 0 auto;

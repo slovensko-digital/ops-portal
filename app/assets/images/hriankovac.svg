@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 720 700">
+  <!-- Generator: Adobe Illustrator 29.5.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 137)  -->
+  <g>
+    <g>
+      <path d="M217.96,612.55c7.24-7.24,11.72-17.24,11.72-28.29h-80.01l-70.71,70.71c0,9.6,3.38,18.41,9.02,25.3,7.34,8.97,18.49,14.7,30.98,14.7,11.05,0,21.05-4.48,28.28-11.71h0s0,0,0,0c0,0,0,0,0,0h0s70.71-70.7,70.71-70.7h0Z" fill="#385384" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      <path d="M118.96,694.97c22.09,0,40-17.91,40-40h-80c0,22.09,17.91,40,40,40Z" fill="#385384" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    </g>
+    <g>
+      <path d="M582.27,612.55c7.24-7.24,11.72-17.24,11.72-28.29h-80.01l-70.71,70.71c0,9.6,3.38,18.41,9.02,25.3,7.34,8.97,18.49,14.7,30.98,14.7,11.05,0,21.05-4.48,28.28-11.71h0s0,0,0,0c0,0,0,0,0,0h0s70.71-70.7,70.71-70.7h0Z" fill="#385384" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      <path d="M483.27,694.97c22.09,0,40-17.91,40-40h-80c0,22.09,17.91,40,40,40Z" fill="#385384" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    </g>
+    <path d="M676.23,244.25c0-33.14-26.87-60.01-60.01-60.01H136.18c-16.57,0-31.57,6.72-42.43,17.58,0,0-.01.01-.01.01l-70.67,70.71h-.01c-10.85,10.87-17.56,25.87-17.56,42.43v280c0,4,.39,7.9,1.14,11.68,1.94,9.83,6.28,18.8,12.39,26.27,8.66,10.59,20.86,18.17,34.8,20.91,3.77.74,7.68,1.13,11.67,1.13h480c16.56,0,31.56-6.71,42.41-17.56,0,0,0,0,.01-.01l70.71-70.66h.01s.01-.03.01-.03c10.86-10.86,17.58-25.86,17.58-42.43V244.25Z" fill="#ffc200" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    <rect x="5.49" y="254.97" width="600" height="400" rx="60" ry="60" fill="#ffd400" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    <g>
+      <path d="M640.86,512.12c-2.81,0-5.09-2.28-5.09-5.09v-180.94c0-2.81,2.28-5.09,5.09-5.09s5.09,2.28,5.09,5.09v180.94c0,2.81-2.28,5.09-5.09,5.09Z" fill="#385384" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      <polyline points="635.78 354.59 657.15 354.59 657.15 368.99 635.78 368.99 635.78 354.59" fill="#00e59e" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      <g>
+        <path d="M705.43,338.9h-42.72c-5.01,0-9.07,10.25-9.07,22.89s4.06,22.89,9.07,22.89h42.72c5.01,0,9.07-10.25,9.07-22.89s-4.06-22.89-9.07-22.89Z" fill="#00e59e" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+        <ellipse cx="705.43" cy="361.79" rx="9.07" ry="22.89" fill="#00a07f" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      </g>
+    </g>
+    <polygon points="132.84 237.62 512.88 237.62 548.87 201.62 168.83 201.62 132.84 237.62" fill="#385384" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    <line x1="168.83" y1="201.62" x2="168.83" y2="237.62" fill="none" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    <path d="M397.71,494.23c0-43.92-35.6-79.52-79.52-79.52-21.96,0-41.84,8.9-56.23,23.29h0s0,0,0,0l-11.24,11.24h0c-14.39,14.4-23.29,34.27-23.29,56.23,0,19.08,6.72,36.6,17.93,50.3,14.58,17.84,36.76,29.22,61.6,29.22,21.96,0,41.84-8.9,56.23-23.29,0,0,0,0,0,0,0,0,0,0,0,0h0s11.24-11.24,11.24-11.24h0c14.39-14.4,23.29-34.28,23.29-56.24Z" fill="#ccc4a2" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    <circle cx="306.94" cy="505.47" r="79.52" fill="#efece1" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  </g>
+  <polyline points="201.58 34.48 210.62 107.61 245.95 74.95 254.63 142.74" fill="none" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  <polyline points="332.3 10.59 326.79 79.7 369.34 57.24 360.2 130.71" fill="none" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  <polyline points="467.45 34.48 438.81 93.24 486.62 87.87 460.49 142.74" fill="none" stroke="#213052" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+</svg>
