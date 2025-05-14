@@ -2,7 +2,7 @@ class SyncIssueToTriageJob < ApplicationJob
   def perform(issue, client: TriageZammadEnvironment.client, import: false, sync_activities_to_triage_job: SyncIssueActivitiesToTriageJob, sync_activities: true)
     client.check_import_mode! if import
 
-    triage_group = find_municipality_group(issue, client)
+    triage_group = find_municipality_group(issue, client) if import
 
     if issue.resolution_external_id.present?
       client.update_ticket_from_issue!(issue.resolution_external_id, issue)
