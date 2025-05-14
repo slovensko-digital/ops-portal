@@ -10,8 +10,7 @@ module Import
           ActiveRecord::Base.transaction do
             update = ::Issues::Update.find_or_initialize_by(
               legacy_id: legacy_record.id,
-              email: Legacy::User.generate_dummy_email(legacy_record.updated_by), # TODO skip emails for now
-              # email: legacy_record.email, # TODO skip emails for now
+              email: ENV.fetch("EMAILS_IMPORT", nil) == "ON" ? legacy_record.email : Legacy::User.generate_dummy_email(legacy_record.updated_by),
               ip: legacy_record.ip,
               name: legacy_record.meno,
               published: legacy_record.status,

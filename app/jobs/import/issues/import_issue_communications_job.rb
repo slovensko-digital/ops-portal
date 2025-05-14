@@ -16,8 +16,7 @@ module Import
             if legacy_record.direction == true
               communication = ::Issues::ResponsibleSubjectComment.find_or_initialize_by(
                 legacy_communication_id: legacy_record.id,
-                author_email: Legacy::User.generate_dummy_email(legacy_record.user.to_i), # TODO skip emails for now
-                # author_email: legacy_record.email, # TODO skip emails for now
+                author_email: ENV.fetch("EMAILS_IMPORT", nil) == "ON" ? legacy_record.email : Legacy::User.generate_dummy_email(legacy_record.user),
                 author_name: legacy_record.signature,
                 hidden: legacy_record.internal,
                 ip: legacy_record.ip,
@@ -54,8 +53,7 @@ module Import
                 agent_author: Legacy::User.find_or_create_agent(legacy_record.admin),
                 responsible_subjects_user_author: Legacy::User.find_or_create_responsible_subjects_user(legacy_record.user),
                 confirmation_needed: legacy_record.need_confirmation,
-                email: Legacy::User.generate_dummy_email(legacy_record.user), # TODO skip emails for now
-                # email: legacy_record.email, # TODO skip emails for now
+                email: ENV.fetch("EMAILS_IMPORT", nil) == "ON" ? legacy_record.email : Legacy::User.generate_dummy_email(legacy_record.user),
                 from_responsible_subject: legacy_record.direction,
                 internal: legacy_record.internal,
                 ip: legacy_record.ip,
