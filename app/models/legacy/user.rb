@@ -49,7 +49,7 @@ module Legacy
         banned: legacy_record.is_banned,
         birth: legacy_record.birth,
         created_from_app: legacy_record.created_from_app,
-        email: ENV.fetch("EMAILS_IMPORT", nil) == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id),
+        email: ENV["EMAILS_IMPORT"] == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id),
         email_notifiable: legacy_record.email_notification,
         exp: legacy_record.exp,
         fcm_token: legacy_record.fcm_token,
@@ -58,7 +58,7 @@ module Legacy
         lastname: legacy_record.priezvisko.presence,
         login: legacy_record.login,
         organization: legacy_record.is_organization,
-        password_hash: ENV.fetch("EMAILS_IMPORT", nil) == "ON" ? legacy_record.password : generate_dummy_password, # TODO check
+        password_hash: ENV["EMAILS_IMPORT"] == "ON" ? legacy_record.password : generate_dummy_password, # TODO check
         phone: legacy_record.telefon,
         resident: legacy_record.residency,
         sex: legacy_record.sex,
@@ -77,7 +77,7 @@ module Legacy
       {
         legacy_id: legacy_record.id,
         deleted_at: legacy_record.deleted_at,
-        email: ENV.fetch("EMAILS_IMPORT", nil) == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id),
+        email: ENV["EMAILS_IMPORT"] == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id),
         gdpr_accepted: legacy_record.gdpr_accepted,
         login: legacy_record.login,
         name: legacy_record.name,
