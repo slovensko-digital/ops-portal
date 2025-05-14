@@ -357,7 +357,8 @@ module Connector
 
     def find_or_create_ticket!(issue, state:, group:)
       ticket = @tenant.issues.find_by(triage_external_id: issue["triage_identifier"])
-      return @client.ticket.find(ticket.backoffice_external_id) if ticket
+      activity = @tenant.activities.find_by(triage_external_id: issue["triage_identifier"])
+      return @client.ticket.find(ticket.backoffice_external_id) if ticket && activity
 
       article = issue["activities"].first
       tmp_body = {
@@ -408,6 +409,7 @@ module Connector
       raise unless new_ticket.id
 
       @tenant.issues.create!(triage_external_id: issue["triage_identifier"], backoffice_external_id: new_ticket.id)
+      @tenant.activities.create!(triage_external_id: issue["triage_identifier"], backoffice_external_id: new_ticket.articles.first.id)
       new_ticket
     end
 
