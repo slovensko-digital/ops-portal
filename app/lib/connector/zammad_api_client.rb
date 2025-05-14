@@ -315,6 +315,7 @@ module Connector
         firstname: author.name,
         email: author.email,
         roles: [ "Agent" ],
+        active: author.deleted_at.nil?
       ).id
 
       user.update(firstname: author.name, external_id: zammad_identifier)
