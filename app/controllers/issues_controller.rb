@@ -54,7 +54,7 @@ class IssuesController < ApplicationController
   end
 
   def check_show_permissions
-    redirect_to root_path if !@issue.public? && !@issue.editable_by?(current_user)
+    redirect_to root_path unless @issue.viewable_by?(current_user)
   end
 
   def check_edit_permissions

@@ -108,7 +108,7 @@ class Issue < ApplicationRecord
   end
 
   def viewable_by?(user)
-    return false unless public? || user == author
+    return false unless publicly_visible? || user == author
 
     true
   end
@@ -120,7 +120,7 @@ class Issue < ApplicationRecord
     true
   end
 
-  def public?
+  def publicly_visible?
     !state.key.in? %w[waiting rejected]
   end
 
