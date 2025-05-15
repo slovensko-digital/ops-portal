@@ -103,7 +103,7 @@ gem "bcrypt", "~> 3.1"
 gem "tilt", "~> 2.4"
 
 # deployment
-gem "kamal", "~> 2.5"
+gem "kamal", "~> 2.6"
 
 # pagination
 gem "kaminari"
