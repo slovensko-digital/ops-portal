@@ -41,7 +41,7 @@
       "check_name": "Render",
       "message": "Render path contains parameter value",
       "file": "app/views/profiles/show.html.erb",
-      "line": 70,
+      "line": 71,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
       "code": "render(action => current_user.issues.newest.page(params[:page]).per(8), {})",
       "render_path": [
@@ -49,7 +49,7 @@
           "type": "controller",
           "class": "ProfilesController",
           "method": "show",
-          "line": 8,
+          "line": 14,
           "file": "app/controllers/profiles_controller.rb",
           "rendered": {
             "name": "profiles/show",
@@ -122,28 +122,6 @@
       "confidence": "Weak",
       "cwe_id": [
         22
-      ],
-      "note": ""
-    },
-    {
-      "warning_type": "Basic Auth",
-      "warning_code": 9,
-      "fingerprint": "c4718deab3712b04df0c8afb7b58436abfd058dadbd25a64338bc2242a3bec6e",
-      "check_name": "BasicAuth",
-      "message": "Basic authentication password stored in source code",
-      "file": "app/controllers/application_controller.rb",
-      "line": 5,
-      "link": "https://brakemanscanner.org/docs/warning_types/basic_auth/",
-      "code": "http_basic_authenticate_with(:name => \"ops\", :password => \"odkazprestarostu\")",
-      "render_path": null,
-      "location": {
-        "type": "controller",
-        "controller": "ApplicationController"
-      },
-      "user_input": null,
-      "confidence": "High",
-      "cwe_id": [
-        259
       ],
       "note": ""
     }

@@ -1,6 +1,7 @@
 class Issues::IssuesUserCommentsController < ApplicationController
   include IssueScoped
   before_action :require_user, only: [ :create, :edit, :update ]
+  before_action :check_permissions
 
   def show
     redirect_to @issue, status: :moved_permanently
@@ -52,5 +53,9 @@ class Issues::IssuesUserCommentsController < ApplicationController
     else
       params.require(:issues_user_comment).permit(:text, attachments: [])
     end
+  end
+
+  def check_permissions
+    render status: :unauthorized, body: nil unless current_user.can_view?(@issue)
   end
 end

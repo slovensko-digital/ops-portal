@@ -8,6 +8,6 @@ module IssueScoped
   private
 
   def set_issue
-    @issue = Issue.find(params[:issue_id]) # TODO security
+    @issue = Issue.find(params[:issue_id])
   end
 end

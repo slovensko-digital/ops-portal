@@ -25,8 +25,8 @@ two:
   municipality: bratislava
 
 without_triage_external_id:
-  title: New issue
-  description: New issue description
+  title: New issue with title
+  description: New issue description with longer text
   author: one
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
@@ -66,3 +66,15 @@ praise_waiting:
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   author: one
+
+resolved_private:
+  title: Private Resolved Issue
+  description: This issue has been resolved privately
+  issue_type: 1
+  state: resolved_private
+  latitude: 48.1484
+  longitude: 17.1073
+  address_street: Main Street 123
+  address_city: Bratislava
+  address_municipality: Bratislava
+  municipality: bratislava

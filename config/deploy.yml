@@ -11,7 +11,6 @@ servers:
     options:
       "add-host": host.docker.internal:host-gateway
 
-# TODO temporary
 deploy_timeout: 200
 
 proxy:
@@ -44,6 +43,7 @@ env:
     - ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
     - ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
     - ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+    - PORTAL_PASSWORD
 
   clear:
     GOOD_JOB_EXECUTION_MODE: external

@@ -78,6 +78,17 @@ sk:
               too_long: je príliš dlhý (maximálne %{count} znakov)
             description:
               too_short: je príliš krátky (minimálne %{count} znakov)
+              too_long: je príliš dlhý (maximálne %{count} znakov)
+        issue:
+          attributes:
+            photos:
+              blank: sú povinné. Nahrajte aspoň jednu.
+            title:
+              too_short: je príliš krátky (minimálne %{count} znakov)
+              too_long: je príliš dlhý (maximálne %{count} znakov)
+            description:
+              too_short: je príliš krátky (minimálne %{count} znakov)
+              too_long: je príliš dlhý (maximálne %{count} znakov)
         user:
           confirmation: "je nesprávny"
           attributes:
@@ -91,6 +102,7 @@ sk:
       issue:
         title: Názov
         description: Popis
+        photos: Fotky
       issues/draft:
         title: Názov
         description: Popis

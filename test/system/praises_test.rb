@@ -10,8 +10,8 @@ class PraisesTest < ApplicationSystemTestCase
     click_button "Odoslať pochvalu"
     assert_text "je povinná položka"
 
-    fill_in "Názov", with: "Upratane"
-    fill_in "Text", with: "Som spokojny"
+    fill_in "Názov", with: "Upratane listie je perfektne"
+    fill_in "Text", with: "Som spokojny so vsetkym mohli by ste to robit stale tak"
     select "Bratislava", from: "Mesto alebo obec"
 
     click_button "Odoslať pochvalu"
