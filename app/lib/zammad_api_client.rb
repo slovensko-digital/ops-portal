@@ -47,21 +47,47 @@ class ZammadApiClient
     end
 
     result = build_ticket_response(ticket)
-
     return unless result.present?
-    return result unless expand
 
-    result.merge({
-      activities: [ build_article_response(ticket, ticket.articles.first, allowed_article_types: allowed_article_types, first_article: true) ] +
-        ticket.articles[1..].map { |article|
-          build_article_response(
-            ticket,
-            article,
-            allowed_article_types: allowed_article_types,
-            responsible_subject: responsible_subject
-          )
-        }.compact
-    })
+    if ticket.issue_type == "praise"
+      result.merge({
+        activities: [
+          {
+            article_type: :user_portal_comment,
+            author: result[:author],
+            author_response: result[:author_response],
+            triage_identifier: ticket.articles.first.id,
+            content_type: ticket.articles.first.content_type,
+            body: result[:description],
+            created_at: result[:created_at],
+            updated_at: result[:updated_at],
+            attachments: ticket.articles.first.attachments.map do |attachment|
+              {
+                triage_identifier: attachment.id,
+                filename: attachment.filename,
+                content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
+                data64: Base64.strict_encode64(attachment.download)
+              }
+            end
+          }
+        ]
+      })
+
+    else
+      return result unless expand
+
+      result.merge({
+        activities: [ build_article_response(ticket, ticket.articles.first, allowed_article_types: allowed_article_types, first_article: true) ] +
+          ticket.articles[1..].map { |article|
+            build_article_response(
+              ticket,
+              article,
+              allowed_article_types: allowed_article_types,
+              responsible_subject: responsible_subject
+            )
+          }.compact
+      })
+    end
   end
 
   def create_ticket_from_issue!(issue, process_type: DEFAULT_PROCESS_TYPE, state: nil, group: DEFAULT_GROUP, sender: DEFAULT_SENDER, owner_id: nil)

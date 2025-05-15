@@ -60,6 +60,10 @@ class Praise < Issue
 
   after_update :notify_subscribers, if: :saved_change_to_state_id?
 
+  def should_create_resolution_process?
+    false
+  end
+
   private
 
   def notify_subscribers
