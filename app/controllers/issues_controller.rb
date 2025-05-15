@@ -19,8 +19,6 @@ class IssuesController < ApplicationController
         scope = scope.with_attached_photos
 
         @search_results = search_engine.search(scope, params)
-    when "map"
-        @search_results = search_engine.search(scope, params) # TODO
     when "stats"
         @search_results = search_engine.stats(scope, params)
     end
