@@ -12,7 +12,7 @@ export default class extends Controller {
             this.supportTargets.forEach(target => target.classList.add(this.supportedClass));
         }
 
-        this.map = L.map(this.mapTarget, {dragging: !L.Browser.mobile, scrollWheelZoom: false})
+        this.map = L.map(this.mapTarget, {dragging: !L.Browser.mobile})
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
