@@ -66,7 +66,7 @@ class ZammadApiClient
                 triage_identifier: attachment.id,
                 filename: attachment.filename,
                 content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
-                data64: Base64.strict_encode64(attachment.download)
+                data64: Base64.strict_encode64(attachment.variant(:full).processed.download)
               }
             end
           }
@@ -135,7 +135,7 @@ class ZammadApiClient
         attachments: issue.photos.map do |photo|
           {
             "filename" => photo.filename.to_s,
-            "data" => Base64.encode64(photo.variant(:full).processed.send(:record).image.blob.download),
+            "data" => Base64.encode64(photo.variant(:full).processed.download),
             "mime-type" => photo.content_type
           }
         end,
@@ -245,7 +245,7 @@ class ZammadApiClient
         {
           "filename" => attachment[:filename],
           "mime-type" => attachment[:content_type],
-          "data" => Base64.encode64(issue.photos.find { |photo| photo.filename == attachment[:filename] }.variant(:full).processed.send(:record).image.blob.download)
+          "data" => Base64.encode64(issue.photos.find { |photo| photo.filename == attachment[:filename] }.variant(:full).processed.download)
         }
       end
     )
@@ -283,7 +283,7 @@ class ZammadApiClient
         {
           "filename" => attachment.filename,
           "mime-type" => attachment.content_type,
-          "data" => Base64.encode64(attachment.variant(:full).processed.send(:record).image.blob.download)
+          "data" => Base64.encode64(attachment.variant(:full).processed.download)
         }
       end,
       created_at: activity_object.created_at,
