@@ -1,18 +1,18 @@
 class RodauthMailer < ApplicationMailer
-  default to: -> { @rodauth.email_to }, from: -> { @rodauth.email_from }
+  default to: -> { @rodauth.email_to }
 
   def verify_account(name, account_id, key)
     @rodauth = rodauth(name, account_id) { @verify_account_key_value = key }
     @account = @rodauth.rails_account
 
-    mail subject: @rodauth.email_subject_prefix + @rodauth.verify_account_email_subject
+    mail subject: "Odkaz pre starostu | #{t('rodauth.verify_account_email_subject')}"
   end
 
   def reset_password(name, account_id, key)
     @rodauth = rodauth(name, account_id) { @reset_password_key_value = key }
     @account = @rodauth.rails_account
 
-    mail subject: @rodauth.email_subject_prefix + @rodauth.reset_password_email_subject
+    mail subject: "Odkaz pre starostu | #{t('rodauth.reset_password_email_subject')}"
   end
 
   def verify_login_change(name, account_id, key)
@@ -20,7 +20,7 @@ class RodauthMailer < ApplicationMailer
     @account = @rodauth.rails_account
     @new_email = @account.login_change_key.login
 
-    mail to: @new_email, subject: @rodauth.email_subject_prefix + @rodauth.verify_login_change_email_subject
+    mail to: @new_email, subject: "Odkaz pre starostu | #{t('rodauth.verify_login_change_email_subject')}"
   end
 
   private

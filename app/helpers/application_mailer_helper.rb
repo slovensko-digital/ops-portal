@@ -1,4 +1,4 @@
-module NotificationMailerHelper
+module ApplicationMailerHelper
   def ops_button(label, url)
     link_to label, url, class: "ops-email-button", target: "_blank"
   end

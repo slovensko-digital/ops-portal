@@ -1,11 +1,11 @@
-<p class="ops-email-title">Zmena prihlasovacieho emailu na stránke Odkaz pre starostu</p>
+<p class="ops-email-title">Zmena prihlasovacieho emailu na portáli Odkaz pre starostu</p>
 
 <p class="ops-email-paragraph">
-  Dobrý deň, obdržali sme informáciu so žiadosťou o zmenu prihlasovacieho emailu na stránke Odkaz pre starostu.
+  Dobrý deň, obdržali sme informáciu so žiadosťou o zmenu prihlasovacieho emailu na portáli Odkaz pre starostu.
 </p>
 
 <p class="ops-email-paragraph">
-  Pre potvrdenie zmeny prihlasovacieho emailu pokračujte na <%= @rodauth.verify_login_change_email_link %>.
+  <%= ops_button "Potvrdiť zmenu emailu", @rodauth.verify_login_change_email_link %>
 </p>
 
 <p class="ops-email-paragraph">
@@ -16,4 +16,3 @@
   Ďakujeme za Vašu spoluprácu.
 </p>
 <%= render "signature" %>
-

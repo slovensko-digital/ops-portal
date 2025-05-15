@@ -1,13 +1,9 @@
 class NotificationMailer < ApplicationMailer
-  layout "notification_mailer"
-
   before_action { @subscription = params[:subscription] }
   before_action { @user = @subscription.subscriber }
   before_action { @issue = @subscription.issue }
   before_action :set_unsubscribe_headers
-  default to: -> { @user.email },
-    subject: -> { ops_subject },
-    from: email_address_with_name(ENV.fetch("NOTIFICATION_SMTP_USERNAME", "example@example.org"), "Odkaz pre starostu")
+  default to: -> { @user.email }, subject: -> { ops_subject }
 
   def new_issue_user_comment(comment)
     @comment = comment
