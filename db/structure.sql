@@ -1102,7 +1102,6 @@ CREATE TABLE public.legacy_agents (
     birth date,
     fcm_token character varying,
     gdpr_accepted boolean,
-    access_token character varying,
     exp integer,
     email_notifiable boolean DEFAULT true,
     created_at timestamp(6) without time zone NOT NULL,
@@ -1722,7 +1721,6 @@ CREATE TABLE public.users (
     birth date,
     fcm_token character varying,
     gdpr_accepted boolean,
-    access_token character varying,
     exp integer,
     email_notifiable boolean DEFAULT true,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -3799,6 +3797,8 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250515191606'),
+('20250515191500'),
 ('20250515155551'),
 ('20250515072103'),
 ('20250515000136'),

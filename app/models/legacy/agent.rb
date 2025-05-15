@@ -4,7 +4,6 @@
 #
 #  id               :bigint           not null, primary key
 #  about            :string
-#  access_token     :string
 #  active           :boolean
 #  admin_name       :string
 #  anonymous        :boolean          default(FALSE)
