@@ -1,7 +1,6 @@
 class ProfilesController < ApplicationController
   before_action :require_user, except: [ :please_create ]
   before_action :set_user, except: [ :please_create, :please_verify ]
-  before_action :ensure_user_onboarded, except: [ :edit, :update ]
 
   def please_create
   end
