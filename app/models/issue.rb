@@ -122,7 +122,7 @@ class Issue < ApplicationRecord
     state.key == "waiting"
   end
 
-  def showing_comments?
+  def showing_comments_count?
     issue_type.in?(%w[issue question]) && comments_count.nonzero?
   end
 
