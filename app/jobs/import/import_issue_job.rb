@@ -32,6 +32,7 @@ module Import
         address_municipality: MunicipalityDistrict.find_by(legacy_id: legacy_record.mestska_cast)&.name,
         anonymous: legacy_record.anonymous,
         description: legacy_record.description,
+        discussion_closed: legacy_record.allow_discussion == 0,
         latitude: legacy_record.map_x,
         legacy_data: {
           embed: legacy_record.embed,
