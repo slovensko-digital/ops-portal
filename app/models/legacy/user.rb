@@ -38,7 +38,7 @@ module Legacy
       ::ResponsibleSubjects::User.find_or_create_by!(self.responsible_subjects_user_params(legacy_record))
     end
 
-    def self.user_params(legacy_record, dummy_email: true, dummy_password: true)
+    def self.user_params(legacy_record)
       {
         legacy_id: legacy_record.id,
         about: legacy_record.about,
@@ -49,7 +49,7 @@ module Legacy
         banned: legacy_record.is_banned,
         birth: legacy_record.birth,
         created_from_app: legacy_record.created_from_app,
-        email: dummy_email ? self.generate_dummy_email(legacy_record.id) : legacy_record.email, # TODO skip emails for now
+        email: ENV["EMAILS_IMPORT"] == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id),
         email_notifiable: legacy_record.email_notification,
         exp: legacy_record.exp,
         fcm_token: legacy_record.fcm_token,
@@ -58,7 +58,7 @@ module Legacy
         lastname: legacy_record.priezvisko.presence,
         login: legacy_record.login,
         organization: legacy_record.is_organization,
-        password_hash: dummy_password ? generate_dummy_password : legacy_record.password,
+        password_hash: generate_dummy_password,
         phone: legacy_record.telefon,
         resident: legacy_record.residency,
         sex: legacy_record.sex,
@@ -69,19 +69,19 @@ module Legacy
         city_id: legacy_record.cityid,
         municipality: ::Municipality.find_by(legacy_id: legacy_record.mesto),
         street: ::Street.find_by(legacy_id: legacy_record.streetid),
-        onboarded: true
+        onboarded: true,
+        status: "verified"
       }
     end
 
-    def self.responsible_subjects_user_params(legacy_record, dummy_email: true, dummy_password: true)
+    def self.responsible_subjects_user_params(legacy_record)
       {
         legacy_id: legacy_record.id,
         deleted_at: legacy_record.deleted_at,
-        email: dummy_email ? self.generate_dummy_email(legacy_record.id) : legacy_record.email, # TODO skip emails for now
+        email: ENV["EMAILS_IMPORT"] == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id),
         gdpr_accepted: legacy_record.gdpr_accepted,
         login: legacy_record.login,
         name: legacy_record.name,
-        password: dummy_password ? generate_dummy_password : legacy_record.password,
         photo: legacy_record.photo,
         token: legacy_record.remember_token,
         tooltips: legacy_record.tooltips,
@@ -96,7 +96,7 @@ module Legacy
     end
 
     def self.generate_dummy_password
-      Random.uuid
+      BCrypt::Password.create(Random.uuid)
     end
 
     def self.convert_legacy_rights_value(value)

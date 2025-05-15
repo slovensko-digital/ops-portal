@@ -8,7 +8,6 @@
 #  gdpr_accepted          :boolean
 #  login                  :string
 #  name                   :string
-#  password               :string
 #  photo                  :string
 #  token                  :string
 #  tooltips               :boolean

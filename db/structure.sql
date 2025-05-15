@@ -1454,7 +1454,6 @@ CREATE TABLE public.responsible_subjects_users (
     responsible_subject_id bigint,
     role_id bigint NOT NULL,
     login character varying,
-    password character varying,
     name character varying,
     email character varying,
     token character varying,
@@ -3800,6 +3799,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20250514113116'),
+('20250514085552'),
 ('20250512170034'),
 ('20250512072300'),
 ('20250511124010'),
