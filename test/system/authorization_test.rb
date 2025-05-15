@@ -50,7 +50,7 @@ class AccountsTest < ApplicationSystemTestCase
     perform_enqueued_jobs # run enqueued email deliveries
     email = ActionMailer::Base.deliveries.last
 
-    verify_account_path = email.body.to_s.match(/(\/verify-account\S+)\./).captures[0]
+    verify_account_path = email.body.to_s.match(/(\/verify-account\S+)"/).captures[0]
 
     visit verify_account_path
 
