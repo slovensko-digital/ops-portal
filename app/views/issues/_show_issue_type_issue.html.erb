@@ -142,8 +142,8 @@
 
         <% if logged_in? %>
           <% if issue.discussion_closed? %>
-            <div class="no-login-notice-con">
-              <p>Diskusia k tomuto podnetu bola uzatvorená</p>
+            <div class="unverified-notice-con">
+              <div class="unverified-notice-title">Diskusia k tomuto podnetu bola uzatvorená.</div>
             </div>
           <% else %>
             <% if current_user.full_access? %>
