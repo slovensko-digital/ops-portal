@@ -121,7 +121,7 @@ class Issue < ApplicationRecord
   end
 
   def publicly_visible?
-    !state.key.in? %w[waiting rejected]
+    !state.key.in? %w[waiting rejected resolved_private]
   end
 
   def editable?
