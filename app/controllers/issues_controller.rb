@@ -19,8 +19,6 @@ class IssuesController < ApplicationController
         scope = scope.with_attached_photos
 
         @search_results = search_engine.search(scope, params)
-    when "map"
-        @search_results = search_engine.search(scope, params) # TODO
     when "stats"
         @search_results = search_engine.stats(scope, params)
     end
@@ -56,11 +54,11 @@ class IssuesController < ApplicationController
   end
 
   def check_show_permissions
-    redirect_to root_path if !@issue.public? && !@issue.editable_by?(current_user)
+    raise ActionController::RoutingError.new("Not Found") unless @issue.viewable_by?(current_user)
   end
 
   def check_edit_permissions
-    redirect_to root_path unless @issue.editable_by?(current_user)
+    raise ActionController::RoutingError.new("Not Found") unless @issue.editable_by?(current_user)
   end
 
   def search_engine

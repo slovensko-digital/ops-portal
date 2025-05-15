@@ -7,29 +7,25 @@ servers:
       - 88.99.99.215
 
 env:
-  # The dummy values are used to ensure that kamal can parse the config when calling exec commands from developer machines without the real values.
   clear:
     GOOD_JOB_MAX_THREADS: 10
     RAILS_ENV: production
     ROLLBAR_ENV: production
     APP_HOST: novy.odkazprestarostu.sk
-    RAILS_LOG_LEVEL: <%= ENV.fetch("RAILS_LOG_LEVEL", "info") %>
-    LEGACY_PORTAL_URL: <%= ENV.fetch("LEGACY_PORTAL_URL", "dummy") %>
-    CONNECTOR__OPS_API_URL: <%= ENV.fetch("CONNECTOR__OPS_API_URL", "dummy") %>
-    CONNECTOR_WEBHOOK_URL: <%= ENV.fetch("CONNECTOR_WEBHOOK_URL", "dummy") %>
-    CMS_ROOT_CATEGORY_ID: <%= ENV.fetch("CMS_ROOT_CATEGORY_ID", "dummy") %>
-    CMS_AI_CATEGORY_ID: <%= ENV.fetch("CMS_AI_CATEGORY_ID", "dummy") %>
-    TRIAGE_ZAMMAD_URL: <%= ENV.fetch("TRIAGE_ZAMMAD_URL", "dummy") %>
-    TRIAGE_ZAMMAD_TECH_USER_ID: <%= ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID", "dummy") %>
-    NOTIFICATION_SMTP_USERNAME: <%= ENV.fetch("NOTIFICATION_SMTP_USERNAME", "dummy") %>
-    NOTIFICATION_SMTP_SERVER: <%= ENV.fetch("NOTIFICATION_SMTP_SERVER", "dummy") %>
-    NOTIFICATION_SMTP_PORT: <%= ENV.fetch("NOTIFICATION_SMTP_PORT", "dummy") %>
-    DISCOURSE_URL: <%= ENV.fetch("DISCOURSE_URL", "dummy") %>
-    DISCOURSE_API_USERNAME: <%= ENV.fetch("DISCOURSE_API_USERNAME", "dummy") %>
-    DISCOURSE_IMPORT_CATEGORY_IDS: <%= ENV.fetch("DISCOURSE_IMPORT_CATEGORY_IDS", "dummy") %>
-    AWS_S3_REGION: <%= ENV.fetch("AWS_S3_REGION", "dummy") %>
-    ADMIN_EMAILS: <%= ENV.fetch("ADMIN_EMAILS", "dummy") %>
-    MAINTENANCE: <%= ENV.fetch("MAINTENANCE", "dummy") %>
+    LEGACY_PORTAL_URL: https://www.odkazprestarostu.sk
+    CONNECTOR__OPS_API_URL: https://novy.odkazprestarostu.sk/
+    CONNECTOR_WEBHOOK_URL: https://novy.odkazprestarostu.sk/connector/webhook
+    CMS_ROOT_CATEGORY_ID: 15
+    CMS_AI_CATEGORY_ID: 18
+    TRIAGE_ZAMMAD_URL: https://triaz.odkazprestarostu.sk/
+    NOTIFICATION_SMTP_USERNAME: notifikacie@odkazprestarostu.sk
+    NOTIFICATION_SMTP_SERVER: smtp.m1.websupport.sk
+    NOTIFICATION_SMTP_PORT: 587
+    DISCOURSE_URL: https://forum.odkazprestarostu.sk/
+    DISCOURSE_IMPORT_CATEGORY_IDS: "15,18"
+    AWS_S3_BUCKET: ops-prod-portal-storage
+    AWS_S3_REGION: eu-central-1
+    AWS_REGION: eu-central-1
 
 proxy:
   host: novy.odkazprestarostu.sk

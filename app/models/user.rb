@@ -119,6 +119,10 @@ class User < ApplicationRecord
     issue_subscriptions.create(issue: issue)
   end
 
+  def can_view?(thing)
+    thing.viewable_by?(self)
+  end
+
   def can_edit?(thing)
     thing.editable_by?(self)
   end

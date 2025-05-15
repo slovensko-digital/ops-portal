@@ -37,8 +37,6 @@ class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
     response = conn.get("/reverse", { lat: draft.latitude, lon: draft.longitude, format: :json })
     json = response.body
 
-    # TODO what if not a node?
-    # TODO handle errors
     osmtype = case json["osm_type"]
     when "way"
         "W"

@@ -8,6 +8,6 @@ module Issues::ActivityScoped
   private
 
   def set_activity
-    @activity = Issues::Activity.find(params[:activity_id]) # TODO security
+    @activity = Issues::Activity.find(params[:activity_id])
   end
 end

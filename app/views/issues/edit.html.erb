@@ -15,6 +15,9 @@
           <div class="error-message"><%= error %></div>
         <% end %>
       </div>
+      <% @issue.errors.full_messages_for(:photos).each do |error| %>
+        <div class="error-message"><%= error %></div>
+      <% end %>
       <%= render partial: "uploads/form", locals: { prefix: dom_id(@issue), blobs: @issue.photos.blobs, wrapper_class: "pictures-wrapper uploads" } %>
       <div class="buttons-wrapper">
         <%= f.button class: "button button-transparent", data: { action: 'delegate#click', delegate_selector_param: ".new-files" } do %>

@@ -48,7 +48,7 @@ class Issues::Draft < ApplicationRecord
   validates_presence_of :photos, on: :photos_step
   validates_presence_of :title, :description, on: :details_step
   validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, on: :details_step
-  validates_length_of :description, minimum: 25, allow_blank: true, on: :details_step
+  validates_length_of :description, minimum: 25, maximum: 1800, allow_blank: true, on: :details_step
 
   validate :latlon_present, on: :geo_step
   validates_numericality_of :zoom, greater_than: 14, allow_nil: true, on: :geo_step
@@ -58,45 +58,47 @@ class Issues::Draft < ApplicationRecord
   validate :checks_passed, on: :checks_step
 
   def confirm
-    # TODO handle error for unsupported areas
     municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb)
 
-    issue = Issue.create!(
-      issue_type: issue_type,
-      title: title,
-      description: description,
-      author: author,
-      anonymous: anonymous,
-      latitude: latitude,
-      longitude: longitude,
-      address_country: address_country,
-      address_country_code: address_country_code,
-      address_region: address_region,
-      address_suburb: address_suburb,
-      address_district: address_district,
-      address_city: address_city,
-      address_municipality: address_municipality,
-      address_street: address_street,
-      address_house_number: address_house_number,
-      address_postcode: address_postcode,
-      category: category,
-      subcategory: subcategory,
-      subtype: subtype,
-      state: Issues::State.find_by!(key: "waiting"),
-      municipality: municipality,
-      municipality_district: municipality_district,
-    )
+    Issue.transaction do
+      issue = Issue.new(
+        issue_type: issue_type,
+        title: title,
+        description: description,
+        author: author,
+        anonymous: anonymous,
+        latitude: latitude,
+        longitude: longitude,
+        address_country: address_country,
+        address_country_code: address_country_code,
+        address_region: address_region,
+        address_suburb: address_suburb,
+        address_district: address_district,
+        address_city: address_city,
+        address_municipality: address_municipality,
+        address_street: address_street,
+        address_house_number: address_house_number,
+        address_postcode: address_postcode,
+        category: category,
+        subcategory: subcategory,
+        subtype: subtype,
+        state: Issues::State.find_by!(key: "waiting"),
+        municipality: municipality,
+        municipality_district: municipality_district,
+      )
 
-    issue.author.subscribe_to(issue)
+      # TODO delete draft after success
+      self.update_attribute(:submitted, true)
 
-    # TODO delete draft after success
-    self.update_attribute(:submitted, true)
+      photos.each do |photo|
+        issue.photos.attach(photo.blob)
+      end
 
-    photos.each do |photo|
-      issue.photos.attach(photo.blob)
+      issue.save!
+      issue.author.subscribe_to(issue)
+
+      SyncIssueToTriageJob.perform_later(issue)
     end
-
-    SyncIssueToTriageJob.perform_later(issue)
   end
 
   def needs_editing?

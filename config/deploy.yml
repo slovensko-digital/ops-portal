@@ -11,7 +11,6 @@ servers:
     options:
       "add-host": host.docker.internal:host-gateway
 
-# TODO temporary
 deploy_timeout: 200
 
 proxy:
@@ -19,6 +18,14 @@ proxy:
   app_port: 3000
 
 env:
+  clear:
+    RAILS_LOG_LEVEL: <%= ENV.fetch("RAILS_LOG_LEVEL", "info") %>
+    TRIAGE_ZAMMAD_TECH_USER_ID: <%= ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID", "3") %>
+    DISCOURSE_API_USERNAME: <%= ENV.fetch("DISCOURSE_API_USERNAME", "dummy") %>
+    ADMIN_EMAILS: <%= ENV.fetch("ADMIN_EMAILS", "dummy") %>
+    MAINTENANCE: <%= ENV.fetch("MAINTENANCE", "0") %>
+    GOOD_JOB_EXECUTION_MODE: external
+
   secret:
     - SECRET_KEY_BASE
     - DATABASE_URL
@@ -36,17 +43,13 @@ env:
     - DISCOURSE_WEBHOOK_SECRET
     - AWS_S3_ACCESS_KEY_ID
     - AWS_S3_SECRET_ACCESS_KEY
-    - AWS_S3_BUCKET
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
-    - AWS_REGION
     - ROLLBAR_ACCESS_TOKEN
     - ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
     - ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
     - ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
-
-  clear:
-    GOOD_JOB_EXECUTION_MODE: external
+    - PORTAL_PASSWORD
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"

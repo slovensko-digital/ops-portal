@@ -24,4 +24,9 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     get issue_url(@issue)
     assert_response :success
   end
+
+  test "should not show resolved_private issues" do
+    get issue_url(issues(:resolved_private))
+    assert_response :not_found
+  end
 end
