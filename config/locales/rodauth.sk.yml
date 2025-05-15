@@ -94,9 +94,9 @@ sk:
     verify_account_button: Potvrdiť registráciu
     verify_account_email_recently_sent_error_flash: Prednedávnom sme Vám zaslali email s odkazom na overenie účtu.
     verify_account_email_sent_notice_flash: Zaslali sme Vám email odkazom na overenie účtu.
-    verify_account_email_subject: Potvrdenie registrácie
+    verify_account_email_subject: Potvrdenie vytvorenia účtu
     verify_account_error_flash: Unable to verify account
-    verify_account_notice_flash: Váš účet úspešne overený.
+    verify_account_notice_flash: Váš účet úspešne potvrdený.
     verify_account_page_title: Potvrdenie registrácie
     verify_account_resend_button: Poslať overovací email ešte raz
     verify_account_resend_error_flash: Unable to resend verify account email
