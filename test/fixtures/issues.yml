@@ -47,6 +47,19 @@ legacy1:
   responsible_subject: one
   legacy_id: 12345
 
+legacy_discussion_closed:
+  title: Legacy issue ľ
+  description: New issue description
+  author: two
+  created_at: 2024-11-05 09:59:21
+  last_synced_at: 2024-11-05 09:59:23
+  category: one
+  state: in_progress
+  municipality: bratislava
+  responsible_subject: one
+  legacy_id: 12346
+  discussion_closed: true
+
 praise_published:
   issue_type: praise
   title: Finally cleaned

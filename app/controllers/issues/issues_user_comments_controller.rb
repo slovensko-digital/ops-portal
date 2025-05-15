@@ -56,6 +56,6 @@ class Issues::IssuesUserCommentsController < ApplicationController
   end
 
   def check_permissions
-    render status: :unauthorized, body: nil unless current_user.can_view?(@issue)
+    render status: :unauthorized, body: nil unless current_user.can_view?(@issue) && @issue.discussion_closed?
   end
 end

@@ -132,18 +132,25 @@
             </svg>
           </button>-->
         </div>
+
         <%= turbo_frame_tag "activities", class: 'comment-con' do %>
           <%= render activity_objects %>
-          <% if activity_objects.empty? %>
+          <% if activity_objects.empty? && !issue.discussion_closed? %>
             <div class="be-first-comment-notice">Buďte prvý kto overí podnet alebo napíše komentár!</div>
           <% end %>
         <% end %>
 
         <% if logged_in? %>
-          <% if current_user.full_access? %>
-            <%= render partial: "issues/new_issue_activity_buttons" %>
+          <% if issue.discussion_closed? %>
+            <div class="unverified-notice-con">
+              <div class="unverified-notice-title">Diskusia k tomuto podnetu bola uzatvorená.</div>
+            </div>
           <% else %>
-            <%= render partial: "issues/comments_verified_profile_required" %>
+            <% if current_user.full_access? %>
+              <%= render partial: "issues/new_issue_activity_buttons" %>
+            <% else %>
+              <%= render partial: "issues/comments_verified_profile_required" %>
+            <% end %>
           <% end %>
         <% else %>
           <div class="no-login-notice-con">
@@ -159,7 +166,6 @@
             </div>
           </div>
         <% end %>
-
       </div>
     </div>
 
