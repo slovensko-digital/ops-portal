@@ -58,7 +58,6 @@ class Issues::Draft < ApplicationRecord
   validate :checks_passed, on: :checks_step
 
   def confirm
-    # TODO handle error for unsupported areas
     municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb)
 
     issue = Issue.create!(
