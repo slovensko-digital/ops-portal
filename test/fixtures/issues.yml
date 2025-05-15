@@ -25,8 +25,8 @@ two:
   municipality: bratislava
 
 without_triage_external_id:
-  title: New issue
-  description: New issue description
+  title: New issue with title
+  description: New issue description with longer text
   author: one
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
