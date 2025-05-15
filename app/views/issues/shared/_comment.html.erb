@@ -12,11 +12,12 @@
     <% if comment.text.present? %>
       <div class="comment-content">
         <% if comment.legacy_data.blank? %>
-          <%= simple_format(comment.text) %>
+          <div class="prose"><%= simple_format(comment.text) %></div>
         <% else %>
           <div class="comment-legacy">
             <div class="comment-legacy-text">
-              <%= simple_format(comment.legacy_data["plain_message"]) %>
+              <%# see legacy_id 85598 %>
+              <%= simple_format(comment.legacy_data["plain_message"].presence || comment.text) %>
             </div>
 
             <% if comment.legacy_data["solved_by"].present? %>
