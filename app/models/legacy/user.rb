@@ -32,7 +32,6 @@ module Legacy
       ::User.find_or_initialize_by(email: user_email).tap do |user|
         user.legacy_id = legacy_record.id
         user.about = legacy_record.about
-        user.access_token = legacy_record.access_token
         user.active = legacy_record.status
         user.admin_name = legacy_record.admin_name
         user.anonymous = legacy_record.anonymous
@@ -77,7 +76,6 @@ module Legacy
       {
         legacy_id: legacy_record.id,
         about: legacy_record.about,
-        access_token: legacy_record.access_token,
         active: legacy_record.status,
         admin_name: legacy_record.admin_name,
         anonymous: legacy_record.anonymous,
