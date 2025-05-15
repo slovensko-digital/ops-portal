@@ -92,7 +92,7 @@ module Import
 
     def update_issue_state(issue)
       return if issue.state&.key != "in_progress"
-      return if issue.comments.where(type: Issues::ResponsibleSubjectComment).any?
+      return if issue.comments.where(type: ::Issues::ResponsibleSubjectComment).any?
 
       issue.update(state: Issues::State.find_by(key: "sent_to_responsible"))
     end
