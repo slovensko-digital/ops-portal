@@ -107,6 +107,12 @@ class Issue < ApplicationRecord
     user.issue_likes.where(issue: self).exists?
   end
 
+  def viewable_by?(user)
+    return false unless public? || user == author
+
+    true
+  end
+
   def editable_by?(user)
     return false unless user == author
     return false unless editable?
