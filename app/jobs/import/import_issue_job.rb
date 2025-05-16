@@ -97,7 +97,7 @@ module Import
       import_updates_job.perform_later(issue: issue)
       import_comments_job.perform_later(issue: issue)
       import_communications_job.perform_later(issue: issue)
-      import_subscriptions_job.perform_later(issue: issue)
+      # import_subscriptions_job.perform_later(issue: issue) # TODO rather run after the whole import
       import_likes_job.perform_later(issue: issue)
     end
   end
