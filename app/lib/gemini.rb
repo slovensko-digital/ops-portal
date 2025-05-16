@@ -28,6 +28,11 @@ class Gemini
       req.body = body.to_json
     end
 
+    if res.status != 200
+      Rails.logger.error(res.body.to_s)
+      Rollbar.error(res.body.to_s)
+    end
+
     return [] unless res.body["candidates"]
     JSON.parse(res.body["candidates"].first.dig("content", "parts").first["text"])
   end
