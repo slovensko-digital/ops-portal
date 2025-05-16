@@ -25,6 +25,7 @@ module Import
       backoffice_owners = Legacy::Alerts::MunicipalityUser.where(alert_id: legacy_record.id).order(:id)
 
       issue = Issue.find_or_create_by(
+        id: legacy_record.id,
         legacy_id: legacy_record.id,
         address_city: Municipality.find_by(legacy_id: legacy_record.mesto)&.name,
         address_region: Municipality.find_by(legacy_id: legacy_record.mesto)&.district&.name,
