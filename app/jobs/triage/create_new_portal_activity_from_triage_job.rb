@@ -23,29 +23,38 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
       issue = Issue.find_by!(triage_external_id: ticket_id)
       return if issue.comments.find_by(triage_external_id: article_id)
 
-      Issues::AgentPrivateComment.create!(
+      comment = Issues::AgentPrivateComment.create!(
         triage_external_id: article_id,
         text: article[:body],
         activity: issue.comment_activities.create!,
       )
+      article[:attachments].each do |attachment|
+        comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
+      end
 
     when "portal_issue_resolution"
       issue = Issue.find_by!(resolution_external_id: ticket_id)
       return if issue.comments.find_by(triage_external_id: article_id)
 
       if [ :responsible_subject_portal_and_backoffice_comment, :responsible_subject_portal_comment ].include?(article[:article_type])
-        Issues::ResponsibleSubjectComment.create!(
+        comment = Issues::ResponsibleSubjectComment.create!(
           triage_external_id: article_id,
           text: article[:body],
           activity: issue.comment_activities.create!,
           responsible_subject_author: article[:author]
         )
+        article[:attachments].each do |attachment|
+          comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
+        end
       elsif [ :agent_portal_comment, :agent_portal_and_backoffice_comment ].include?(article[:article_type])
-        Issues::AgentComment.create!(
+        comment = Issues::AgentComment.create!(
           triage_external_id: article_id,
           text: article[:body],
           activity: issue.comment_activities.create!
         )
+        article[:attachments].each do |attachment|
+          comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
+        end
       end
     else
       # TODO add support for other process types
