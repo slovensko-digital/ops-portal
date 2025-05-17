@@ -72,6 +72,7 @@ class User < ApplicationRecord
 
   before_create :set_email_global_unsubscribe_token
   before_save do
+    self.firstname = "Používateľ bez mena ##{self.id}" if !self.firstname.present? && !self.lastname.present?
     self.display_name = self.anonymous? ? "Anonym ##{self.id}" : [ self.firstname, self.lastname ].compact.join(" ")
   end
 
