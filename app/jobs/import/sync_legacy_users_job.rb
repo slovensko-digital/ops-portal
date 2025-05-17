@@ -10,8 +10,8 @@ module Import
 
         begin
           user.avatar.attach(io: download_avatar_from_ops_portal(user.legacy_id), filename: "#{user.id}.jpg") unless user.avatar.attached?
-        rescue OpenURI::HTTPError
-          # Ignored
+        rescue OpenURI::HTTPError => e
+          raise e unless e.message == "404 Not Found"
         end
       end
     end
