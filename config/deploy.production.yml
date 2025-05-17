@@ -26,7 +26,7 @@ env:
     AWS_S3_BUCKET: ops-prod-portal-storage
     AWS_S3_REGION: eu-central-1
     AWS_REGION: eu-central-1
-    EMAILS_IMPORT: ON
+    EMAILS_IMPORT: "ON"
 
 proxy:
   host: novy.odkazprestarostu.sk

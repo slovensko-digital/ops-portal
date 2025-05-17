@@ -25,7 +25,7 @@
 class Issues::UserComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
-  validates :text, presence: true, if: -> { attachments.empty? }
+  validates :text, presence: true, if: -> { attachments.empty? }, unless: -> { legacy_id }
   validate :edited_within_editing_window, on: :edit
 
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
