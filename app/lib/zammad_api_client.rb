@@ -395,7 +395,7 @@ class ZammadApiClient
     begin
       zammad_user = @client.user.create(
         firstname: responsible_subject.subject_name,
-        login: "ops-zodpovedny-#{responsible_subject.id}",
+        login: "ops-rs-#{responsible_subject.id}",
         roles: [ "Zodpovedný Subjekt" ],
       )
       zammad_user.id
