@@ -67,10 +67,10 @@ class Issue < ApplicationRecord
   has_many :subscriptions, class_name: "IssueSubscription", dependent: :destroy
 
   has_many_attached :photos do |photo|
-    photo.variant :full, resize_to_limit: [ 1280, 960 ], preprocessed: true
-    photo.variant :normal, resize_to_fill: [ 800, 800 ], preprocessed: true
-    photo.variant :small, resize_to_fill: [ 360, 360 ], preprocessed: true
-    photo.variant :thumb, resize_to_fill: [ 160, 160 ], preprocessed: true
+    photo.variant :full, resize_to_limit: [ 1280, 960 ]# , preprocessed: true
+    photo.variant :normal, resize_to_fill: [ 800, 800 ]# , preprocessed: true
+    photo.variant :small, resize_to_fill: [ 360, 360 ]# , preprocessed: true
+    photo.variant :thumb, resize_to_fill: [ 160, 160 ]# , preprocessed: true
   end
 
   validates :triage_external_id, uniqueness: true, allow_nil: true

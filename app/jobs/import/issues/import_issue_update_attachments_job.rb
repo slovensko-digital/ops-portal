@@ -4,11 +4,10 @@ module Import
 
     include ImportMethods
 
-    def perform(update:, import_attachment_job: Issues::ImportIssueUpdateAttachmentJob)
-      Legacy::Alerts::UpdateImage.where(update_id: update.legacy_id).find_in_batches do |group|
-        group.each do |legacy_record|
-          import_attachment_job.perform_later(legacy_record, update: update)
-        end
+    def perform(update:)
+      Issue.transaction do
+        hrefs = Legacy::Alerts::UpdateImage.where(update_id: update.legacy_id).pluck(:href)
+        update.attachments.attach(download_attachables_from_ops_portal(hrefs))
       end
     end
   end

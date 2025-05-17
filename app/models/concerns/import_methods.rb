@@ -6,19 +6,21 @@ module ImportMethods
       Time.at(value).to_datetime
     end
 
+    def download_attachables_from_ops_portal(paths)
+      paths.map do |path|
+        {
+          io: download_from_ops_portal(path),
+          filename: File.basename(path)
+        }
+      end
+    end
+
     def download_from_ops_portal(path)
       URI.parse("#{ENV.fetch("LEGACY_PORTAL_URL")}/#{path}").open
     end
 
     def download_avatar_from_ops_portal(user_legacy_id)
       URI.parse("#{ENV.fetch("LEGACY_PORTAL_URL")}/public/avatar/#{user_legacy_id}.jpg").open
-    end
-
-    def attachment_persisted?(name:, content:, persisted_records:)
-      blob = ActiveStorage::Blob.new(filename: name)
-      blob.unfurl(content)
-
-      persisted_records.blobs.where(checksum: blob.checksum).exists?
     end
 
     def attachment_mimetype_by_name(name)

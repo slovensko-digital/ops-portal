@@ -4,11 +4,11 @@ module Import
 
     include ImportMethods
 
-    def perform(issue:, import_photo_job: Issues::ImportIssuePhotoJob)
-      Legacy::Alerts::Image.where(alert_id: issue.legacy_id).order(:position).find_in_batches do |group|
-        group.each do |legacy_record|
-          import_photo_job.perform_later(legacy_record, issue: issue)
-        end
+    def perform(issue:)
+      Issue.transaction do
+        paths = Legacy::Alerts::Image.where(alert_id: issue.legacy_id).order(:position).pluck(:original)
+
+        issue.photos.attach(download_attachables_from_ops_portal(paths))
       end
     end
   end
