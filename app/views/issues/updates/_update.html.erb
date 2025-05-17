@@ -24,21 +24,7 @@
       </div>
     <% end %>
     <% if comment.attachments.any? %>
-      <div class="comment-attachments">
-        <% comment.attachments.each do |photo| %>
-          <figure class="small-picture">
-            <div class="lens-image">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
-                <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
-                <polygon points="23 15 17 15 17 9 15 9 15 15 9 15 9 17 15 17 15 23 17 23 17 17 23 17 23 15"/>
-              </svg>
-            </div>
-            <picture>
-              <%= image_tag photo.variant(:thumb), alt: "Fotka podnetu" %>
-            </picture>
-          </figure>
-        <% end %>
-      </div>
+      <%= render "issues/activity_object_attachments", activity_object: comment %>
     <% end %>
 
     <div class="like-dislike-confirm-con">
