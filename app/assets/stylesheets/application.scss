@@ -2578,6 +2578,11 @@ section.podnet .podnet-discussion figure.small-picture {
   width: 140px;
   @include rounded(10px);
 }
+section.podnet .podnet-discussion figure.small-picture.smaller-picture {
+  width: 80px;
+  height: 80px;
+}
+
 section.podnet .podnet-discussion figure.small-picture .lens-image {
   bottom: 50%;
   fill: $white;
