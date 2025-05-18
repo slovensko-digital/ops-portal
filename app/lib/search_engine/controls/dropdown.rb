@@ -66,9 +66,7 @@ module SearchEngine
           )
         end
 
-        out.sort_by! do |i|
-          i.selected? ? [ -1, i.label ] : [ 1, i.label ]
-        end if @sort
+        out = out.partition(&:selected?).flatten if @sort
 
         out
       end

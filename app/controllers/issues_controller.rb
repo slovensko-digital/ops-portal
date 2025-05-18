@@ -93,7 +93,7 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :kategoria,
           label: "Kategória",
-          items: -> { Issues::Category.order(:name).pluck(:name) },
+          items: -> { Issues::Category.order(:name).distinct.pluck(:name) },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = Issues::Category.where(name: params[:kategoria]).pluck(:id)
@@ -162,7 +162,7 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :obec,
           label: "Obec",
-          items: -> { Municipality.active.order(:name).pluck(:name) },
+          items: -> { Municipality.active.order(Arel.sql("name COLLATE unicode")).pluck(:name) },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = Municipality.where(name: params[:obec]).pluck(:id)
@@ -178,7 +178,7 @@ class IssuesController < ApplicationController
 
             MunicipalityDistrict.joins(:municipality)
               .where(municipalities: { name: params[:obec], active: true })
-              .order(:name)
+              .order(Arel.sql("municipality_districts.name COLLATE unicode"))
               .pluck(:name)
           end,
           filter: ->(scope, params) do
