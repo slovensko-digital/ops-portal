@@ -135,7 +135,7 @@ class ZammadApiClient
         attachments: issue.photos.map do |photo|
           {
             "filename" => photo.filename.to_s,
-            "data" => Base64.encode64(photo.variant(:full).processed.download),
+            "data" => Base64.encode64(photo.variable? ? photo.variant(:full).processed.download : photo.download),
             "mime-type" => photo.content_type
           }
         end,
@@ -217,7 +217,8 @@ class ZammadApiClient
       {
         filename: photo.filename.to_s,
         content_type: photo.content_type,
-        size: photo.variant(:full).processed.send(:record).image.blob.byte_size
+        size: photo.variable? ? photo.variant(:full).processed.send(:record).image.blob.byte_size : photo.byte_size,
+        attachment_object: photo
       }
     end
 
@@ -245,7 +246,10 @@ class ZammadApiClient
         {
           "filename" => attachment[:filename],
           "mime-type" => attachment[:content_type],
-          "data" => Base64.encode64(issue.photos.find { |photo| photo.filename == attachment[:filename] }.variant(:full).processed.download)
+          "data" => Base64.encode64(
+            attachment[:attachment_object].variable? ?
+              attachment[:attachment_object].variant(:full).processed.download : attachment[:attachment_object].download
+          )
         }
       end
     )
@@ -283,7 +287,7 @@ class ZammadApiClient
         {
           "filename" => attachment.filename,
           "mime-type" => attachment.content_type,
-          "data" => Base64.encode64(attachment.variant(:full).processed.download)
+          "data" => Base64.encode64(attachment.variable? ? attachment.variant(:full).processed.download : attachment.download)
         }
       end,
       created_at: activity_object.created_at,
