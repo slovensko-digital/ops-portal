@@ -32,9 +32,20 @@ module Ops
 
     config.active_job.queue_adapter = :good_job
 
+    config.good_job.enable_cron = true
     config.good_job.smaller_number_is_higher_priority = true
     config.good_job.cleanup_preserved_jobs_before_seconds_ago = 1.days
     config.good_job.cleanup_discarded_jobs = false
+
+    if ENV["AUTO_SYNC_LEGACY_USERS"] == "ON"
+      config.good_job.cron = {
+        sync_legacy_users: {
+          cron: "every hour",
+          class: "Import::SyncLegacyUsersJob",
+          description: "Regular job to synchronize legacy users"
+        }
+      }
+    end
 
     config.active_record.schema_format = :sql
 
