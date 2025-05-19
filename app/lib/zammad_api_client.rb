@@ -509,6 +509,8 @@ class ZammadApiClient
   end
 
   def build_ticket_response(ticket)
+    raise "Ticket from triage #{ticket.id} is missing address municipality" unless ticket.address_municipality.present?
+
     municipality_name, district_name = ticket.address_municipality.split("::", 2)
     municipality = Municipality.find_by!(name: municipality_name)
     municipality_district = municipality&.municipality_districts&.find_by(name: district_name)
