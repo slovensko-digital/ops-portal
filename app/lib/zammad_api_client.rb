@@ -420,11 +420,15 @@ class ZammadApiClient
     @client.ticket.find(ticket_id).responsible_subject
   end
 
-  def check_import_mode!
+  def check_import_mode!(force: false)
+    return if !force && @last_import_mode_check && @last_import_mode_check > 1.minute.ago
+
     response_body = raw_api_request(:get, "settings")
     import_mode_on = response_body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
 
     raise "Import mode OFF" unless import_mode_on
+
+    @last_import_mode_check = Time.now
   end
 
   def link_tickets!(parent_ticket_id:, child_ticket_id:)
