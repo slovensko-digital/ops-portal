@@ -40,7 +40,7 @@ module Ops
     if ENV["AUTO_SYNC_LEGACY_USERS"] == "ON"
       config.good_job.cron = {
         sync_legacy_users: {
-          cron: "0 * * * *", # run every hour
+          cron: "every hour",
           class: "Import::SyncLegacyUsersJob",
           description: "Regular job to synchronize legacy users"
         }
