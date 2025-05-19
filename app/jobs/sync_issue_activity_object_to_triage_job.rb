@@ -37,11 +37,15 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
     case activity_object
     when Issues::AgentComment, Issues::AgentPrivateComment
       "Agent"
+    when Legacy::Issues::AgentInternalCommunication
+      "Agent"
     when Issues::UserComment, Issues::UserPrivateComment
       "Customer"
     when Issues::ResponsibleSubjectComment
       "Customer"
     when Issues::Update
+      "Customer"
+    when Legacy::Issues::ResponsibleSubjectInternalCommunication
       "Customer"
     else
       raise "Unknown activity object type: #{activity_object.class.name}"
