@@ -47,3 +47,8 @@
 /Dockerfile*
 
 /.github/
+
+/.kamal/
+/.config/deploy.yml
+/.config/deploy.staging.yml
+/.config/deploy.production.yml
