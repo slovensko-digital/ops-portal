@@ -19,17 +19,17 @@ Example:
 ```ruby
 new_backoffice_data = {
   name: "Malacky",
-  url: "https://ops.dev.slovensko.digital/connector/webhook",
-  connector_zammad_url: "https://malacky.ops.dev.slovensko.digital/",
-  receive_customer_activities: true,
-  connector_zammad_api_token: "I3pDBKqAqjta3DtHfjCaXaz2jctfQSzDtdInh73YDP7",
-  connector_zammad_webhook_secret: "iQxdK0egeIWRFEghWqbNz7WnF1cSzCOGWynrjc2htRr"
+  url: "https://novy.odkazprestarostu.sk/connector/webhook",
+  connector_zammad_url: "https://malacky.odkazprestarostu.sk/",
+  receive_customer_activities: false,
+  connector_zammad_api_token: "tokenvalue",
+  connector_zammad_webhook_secret: "secretvalue"
 }
 
 def connect_backoffice(data)
   responsible_subject = ResponsibleSubject.find_by!(name: data[:name])
 
-  raise "ResponsibleSubject already PRO"
+  raise "ResponsibleSubject already PRO" if responsible_subject.pro?
 
   responsible_subject.update_columns(
     subject_name: data[:name],
