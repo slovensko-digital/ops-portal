@@ -1,8 +1,8 @@
 class Connector::Legacy::ImportInternalBackofficeActivityFromLegacyDbToBackofficeJob < ApplicationJob
   include ImportMethods
 
-  def perform(tenant, triage_issue_id, zammad_api_client: Connector::ZammadApiClient)
-    zammad_client = zammad_api_client.new(tenant)
+  def perform(tenant, triage_issue_id, zammad_environment: Connector::BackofficeZammadEnvironment)
+    zammad_client = zammad_environment.client(tenant)
     zammad_client.check_import_mode!
 
     issue = Issue.find_by(resolution_external_id: triage_issue_id)

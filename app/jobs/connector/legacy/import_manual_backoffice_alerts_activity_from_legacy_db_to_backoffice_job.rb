@@ -1,8 +1,8 @@
 class Connector::Legacy::ImportManualBackofficeAlertsActivityFromLegacyDbToBackofficeJob < ApplicationJob
   include ImportMethods
 
-  def perform(tenant, legacy_issue_id, zammad_api_client: Connector::ZammadApiClient)
-    zammad_client = zammad_api_client.new(tenant)
+  def perform(tenant, legacy_issue_id, zammad_environment: Connector::BackofficeZammadEnvironment)
+    zammad_client = zammad_environment.client(tenant)
     zammad_client.check_import_mode!
 
     Legacy::Alerts::Communication.where(alert: legacy_issue_id).find_in_batches do |group|
