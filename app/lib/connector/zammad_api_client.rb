@@ -279,11 +279,15 @@ module Connector
       raise "Ticket subscription not successful!" unless response_status == 201
     end
 
-    def check_import_mode!
+    def check_import_mode!(force: false)
+      return if !force && @last_import_mode_check && @last_import_mode_check > 1.minute.ago
+
       response_body, _ = raw_api_request(:get, "settings")
       import_mode_on = response_body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
 
       raise "Import mode OFF" unless import_mode_on
+
+      @last_import_mode_check = Time.now
     end
 
     private

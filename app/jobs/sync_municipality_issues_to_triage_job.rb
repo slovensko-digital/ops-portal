@@ -6,7 +6,7 @@ class SyncMunicipalityIssuesToTriageJob < ApplicationJob
     import: false,
     sync_issue_to_triage_job: SyncIssueToTriageJob
   )
-    client.check_import_mode! if import
+    client.check_import_mode!(force: true) if import
 
     Issue.where(municipality: municipality).where(municipality_district: municipality_district).find_each do |issue|
       sync_issue_to_triage_job.perform_later(issue, import: import)

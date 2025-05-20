@@ -5,14 +5,13 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     tenant,
     issue_id,
     import: false,
-    zammad_api_client: Connector::ZammadApiClient,
+    zammad_client: Connector::BackofficeZammadEnvironment.client(tenant),
     ops_api_client: Connector::OpsApiClient,
     import_legacy_backoffice_activity_job: Connector::Legacy::ImportBackofficeActivityFromTriageToBackofficeJob,
     import_legacy_internal_backoffice_activity_job: Connector::Legacy::ImportInternalBackofficeActivityFromLegacyDbToBackofficeJob,
     set_ticket_owner_job: Connector::Legacy::SetBackofficeTicketOwnerJob
   )
     ops_client = ops_api_client.new(tenant)
-    zammad_client = zammad_api_client.new(tenant)
 
     issue_data = ops_client.get_issue(issue_id, include_customer_activities: tenant.receive_customer_activities?, exclude_responsible_subject_articles: import)
     raise "Failed to get issue data!" unless issue_data
