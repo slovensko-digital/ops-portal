@@ -10,10 +10,7 @@ module ImportMethods
       paths.map do |path|
         ::Legacy::PrefetchedBlob.get(
           "#{ENV.fetch("LEGACY_PORTAL_URL")}/#{path}",
-          File.basename(path),
-          variants: [
-            { resize_to_limit: [ 1280, 960 ] }
-          ]
+          File.basename(path)
         )
       end
     end

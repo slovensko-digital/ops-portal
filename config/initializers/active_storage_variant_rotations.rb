@@ -12,15 +12,4 @@ Rails.application.config.to_prepare do
       blob.representation(transformations)
     end
   end
-
-  module ActiveStorage::Blob::Representable
-    def variant(transformations)
-      if variable?
-        transformations[:rotate] = rotation if self.rotation
-        variant_class.new(self, ActiveStorage::Variation.wrap(transformations).default_to(default_variant_transformations))
-      else
-        raise ActiveStorage::InvariableError, "Can't transform blob with ID=#{id} and content_type=#{content_type}"
-      end
-    end
-  end
 end
