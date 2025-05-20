@@ -10,7 +10,7 @@ module ImportMethods
       paths.map do |path|
         {
           io: download_from_ops_portal(path),
-          filename: File.basename(path)
+          filename: attachment_filename(path)
         }
       end
     end
@@ -21,6 +21,11 @@ module ImportMethods
 
     def download_avatar_from_ops_portal(user_legacy_id)
       URI.parse("#{ENV.fetch("LEGACY_PORTAL_URL")}/public/avatar/#{user_legacy_id}.jpg").open
+    end
+
+    def attachment_filename(path)
+      # Save jfif files as jpeg because of transformations, see https://github.com/rails/rails/issues/39921#issuecomment-1827874622
+      File.basename(path).gsub(/\.jfif\z/i, ".jpeg")
     end
 
     def attachment_mimetype_by_name(name)

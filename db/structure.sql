@@ -3797,6 +3797,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250520103118'),
 ('20250516065423'),
 ('20250515191606'),
 ('20250515191500'),
