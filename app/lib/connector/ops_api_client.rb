@@ -27,7 +27,12 @@ module Connector
     end
 
     def create_activity!(issue_id, activity)
-      response = @provider.post(URI.join(@url, "api/v1/issues/#{issue_id}/activities"), { activity: activity, token: jwt_token })
+      response = @provider.post(
+        URI.join(@url, "api/v1/issues/#{issue_id}/activities"),
+        { activity: activity }.to_json,
+        { "Content-Type" => "application/json", "Authorization" => "Bearer #{jwt_token}" }
+      )
+
       raise unless response.status == 200
 
       JSON.parse(response.body)["activity_id"]

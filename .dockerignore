@@ -48,4 +48,9 @@
 
 /.github/
 
+/.kamal/
+/.config/deploy.yml
+/.config/deploy.staging.yml
+/.config/deploy.production.yml
+
 /README.md

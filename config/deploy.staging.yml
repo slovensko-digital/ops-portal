@@ -11,7 +11,9 @@ x-load-env:
 
 env:
   clear:
-    GOOD_JOB_MAX_THREADS: 10
+    WEB_CONCURRENCY: 4
+    RAILS_MAX_THREADS: 5
+    GOOD_JOB_MAX_THREADS: 20
     RAILS_ENV: production
     ROLLBAR_ENV: dev
     APP_HOST: ops.dev.slovensko.digital

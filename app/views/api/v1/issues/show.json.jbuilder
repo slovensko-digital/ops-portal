@@ -1,4 +1,5 @@
 json.triage_identifier @issue[:triage_identifier]
+json.ops_issue_identifier @issue[:ops_issue_identifier]
 json.ops_state @issue[:ops_state].key
 json.title @issue[:title]
 json.responsible_subject {
