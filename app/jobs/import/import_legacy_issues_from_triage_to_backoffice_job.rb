@@ -6,6 +6,9 @@ module Import
       client = ::Client.find_by(responsible_subject: responsible_subject)
       tenant = ::Connector::Tenant.find_by(ops_api_subject_identifier: client.id)
 
+      zammad_api_client = Connector::ZammadApiClient.new(tenant)
+      zammad_api_client.check_import_mode!(force: true)
+
       Issue.where.not(legacy_id: nil).where(responsible_subject: responsible_subject).find_in_batches do |group|
         group.each do |issue|
           import_issue_from_triage_job.perform_later(tenant, issue.resolution_external_id, import: true)
