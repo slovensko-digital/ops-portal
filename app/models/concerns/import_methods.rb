@@ -25,7 +25,7 @@ module ImportMethods
 
     def attachment_filename(path)
       # Save jfif files as jpeg because of transformations, see https://github.com/rails/rails/issues/39921#issuecomment-1827874622
-      File.basename(path).gsub(/\.jfif/i, '.jpeg')
+      File.basename(path).gsub(/\.jfif/i, ".jpeg")
     end
 
     def attachment_mimetype_by_name(name)
