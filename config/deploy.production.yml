@@ -10,7 +10,7 @@ env:
   clear:
     WEB_CONCURRENCY: 4
     RAILS_MAX_THREADS: 5
-    GOOD_JOB_MAX_THREADS: 10
+    GOOD_JOB_MAX_THREADS: 20
     RAILS_ENV: production
     ROLLBAR_ENV: production
     APP_HOST: novy.odkazprestarostu.sk
@@ -29,6 +29,7 @@ env:
     AWS_S3_REGION: eu-central-1
     AWS_REGION: eu-central-1
     EMAILS_IMPORT: "ON"
+    AUTO_SYNC_LEGACY_USERS: "ON"
 
 proxy:
   host: novy.odkazprestarostu.sk

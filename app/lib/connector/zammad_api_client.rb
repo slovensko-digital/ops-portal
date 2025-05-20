@@ -173,6 +173,7 @@ module Connector
       return @client.ticket.find(tenant_issue.backoffice_external_id) if tenant_issue
 
       tmp_body = {
+        number: "M-#{legacy_data.id.to_s.rjust(4, '0')}",
         state: state,
         group: group,
         title: legacy_data.title,
@@ -278,11 +279,15 @@ module Connector
       raise "Ticket subscription not successful!" unless response_status == 201
     end
 
-    def check_import_mode!
+    def check_import_mode!(force: false)
+      return if !force && @last_import_mode_check && @last_import_mode_check > 1.minute.ago
+
       response_body, _ = raw_api_request(:get, "settings")
       import_mode_on = response_body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
 
       raise "Import mode OFF" unless import_mode_on
+
+      @last_import_mode_check = Time.now
     end
 
     private
@@ -363,6 +368,7 @@ module Connector
 
       article = issue["activities"].first
       tmp_body = {
+        number: "OPS-#{issue['ops_issue_identifier'].to_s.rjust(4, '0')}",
         state: state,
         group: group,
         origin: OPS_ORIGIN,
@@ -371,6 +377,7 @@ module Connector
         origin_by_id: create_or_find_customer(issue["author"]),
         customer_id: create_or_find_customer(issue["author"]),
         ops_issue_type: issue["issue_type"],
+        ops_issue_identifier: issue["ops_issue_identifier"],
         ops_responsible_subject: issue["responsible_subject"],
         ops_category: issue["category"],
         ops_subcategory: issue["subcategory"],

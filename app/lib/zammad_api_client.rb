@@ -96,7 +96,18 @@ class ZammadApiClient
       ops_state = "unresolved"
     end
 
+    case process_type
+    when "portal_issue_triage"
+      number_prefix = "T"
+    when "portal_issue_resolution"
+      number_prefix = "R"
+    else
+      raise "Unsupported process type: #{process_type}"
+    end
+
     ticket = @client.ticket.create(
+      number: "#{number_prefix}-#{issue.id.to_s.rjust(4, '0')}",
+      ops_issue_identifier: issue.id,
       process_type: process_type,
       issue_type: issue.issue_type,
       title: issue.title.presence || "Bez názvu",
@@ -135,7 +146,7 @@ class ZammadApiClient
         attachments: issue.photos.map do |photo|
           {
             "filename" => photo.filename.to_s,
-            "data" => Base64.encode64(photo.variant(:full).processed.download),
+            "data" => Base64.encode64(photo.variable? ? photo.variant(:full).processed.download : photo.download),
             "mime-type" => photo.content_type
           }
         end,
@@ -217,7 +228,8 @@ class ZammadApiClient
       {
         filename: photo.filename.to_s,
         content_type: photo.content_type,
-        size: photo.variant(:full).processed.send(:record).image.blob.byte_size
+        size: photo.variable? ? photo.variant(:full).processed.send(:record).image.blob.byte_size : photo.byte_size,
+        attachment_object: photo
       }
     end
 
@@ -245,7 +257,10 @@ class ZammadApiClient
         {
           "filename" => attachment[:filename],
           "mime-type" => attachment[:content_type],
-          "data" => Base64.encode64(issue.photos.find { |photo| photo.filename == attachment[:filename] }.variant(:full).processed.download)
+          "data" => Base64.encode64(
+            attachment[:attachment_object].variable? ?
+              attachment[:attachment_object].variant(:full).processed.download : attachment[:attachment_object].download
+          )
         }
       end
     )
@@ -283,7 +298,7 @@ class ZammadApiClient
         {
           "filename" => attachment.filename,
           "mime-type" => attachment.content_type,
-          "data" => Base64.encode64(attachment.variant(:full).processed.download)
+          "data" => Base64.encode64(attachment.variable? ? attachment.variant(:full).processed.download : attachment.download)
         }
       end,
       created_at: activity_object.created_at,
@@ -416,11 +431,15 @@ class ZammadApiClient
     @client.ticket.find(ticket_id).responsible_subject
   end
 
-  def check_import_mode!
+  def check_import_mode!(force: false)
+    return if !force && @last_import_mode_check && @last_import_mode_check > 1.minute.ago
+
     response_body = raw_api_request(:get, "settings")
     import_mode_on = response_body.select { |attribute| attribute["name"] == "import_mode" }.first["state_current"]["value"]
 
     raise "Import mode OFF" unless import_mode_on
+
+    @last_import_mode_check = Time.now
   end
 
   def link_tickets!(parent_ticket_id:, child_ticket_id:)
@@ -505,6 +524,8 @@ class ZammadApiClient
   end
 
   def build_ticket_response(ticket)
+    raise "Ticket from triage #{ticket.id} is missing address municipality" unless ticket.address_municipality.present?
+
     municipality_name, district_name = ticket.address_municipality.split("::", 2)
     municipality = Municipality.find_by!(name: municipality_name)
     municipality_district = municipality&.municipality_districts&.find_by(name: district_name)
@@ -519,6 +540,7 @@ class ZammadApiClient
 
     {
       triage_identifier: ticket.id,
+      ops_issue_identifier: ticket.ops_issue_identifier,
       triage_group: ticket.group,
       triage_owner_id: ticket.owner_id,
       ops_state: ops_state,

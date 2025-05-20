@@ -1,7 +1,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -672,15 +671,15 @@ CREATE TABLE public.issues (
     address_house_number character varying,
     address_postcode character varying,
     issue_type integer DEFAULT 1,
+    resolution_external_id integer,
     address_country character varying,
     address_country_code character varying,
     address_district character varying,
-    resolution_external_id integer,
-    likes_count integer DEFAULT 0 NOT NULL,
     imported_at timestamp(6) without time zone,
+    likes_count integer DEFAULT 0 NOT NULL,
     public boolean DEFAULT false NOT NULL,
-    responsible_subject_last_contact_at timestamp(6) without time zone,
     address_suburb character varying,
+    responsible_subject_last_contact_at timestamp(6) without time zone,
     comments_count integer DEFAULT 0 NOT NULL,
     fulltext_extra character varying,
     discussion_closed boolean DEFAULT false
@@ -809,14 +808,14 @@ CREATE TABLE public.issues_comments (
     updated_at timestamp(6) without time zone NOT NULL,
     triage_external_id integer,
     user_author_id bigint,
-    agent_author_id bigint,
     responsible_subject_author_id bigint,
     hidden boolean DEFAULT false,
     legacy_data jsonb,
     type character varying,
     imported_at timestamp(6) without time zone,
     legacy_comment_id integer,
-    legacy_communication_id integer
+    legacy_communication_id integer,
+    agent_author_id bigint
 );
 
 
@@ -1182,37 +1181,6 @@ CREATE SEQUENCE public.legacy_issues_communications_id_seq
 --
 
 ALTER SEQUENCE public.legacy_issues_communications_id_seq OWNED BY public.legacy_issues_communications.id;
-
-
---
--- Name: legacy_prefetched_blobs; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.legacy_prefetched_blobs (
-    id bigint NOT NULL,
-    url character varying NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: legacy_prefetched_blobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.legacy_prefetched_blobs_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: legacy_prefetched_blobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.legacy_prefetched_blobs_id_seq OWNED BY public.legacy_prefetched_blobs.id;
 
 
 --
@@ -1971,13 +1939,6 @@ ALTER TABLE ONLY public.legacy_issues_communications ALTER COLUMN id SET DEFAULT
 
 
 --
--- Name: legacy_prefetched_blobs id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_prefetched_blobs ALTER COLUMN id SET DEFAULT nextval('public.legacy_prefetched_blobs_id_seq'::regclass);
-
-
---
 -- Name: municipalities id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2328,14 +2289,6 @@ ALTER TABLE ONLY public.legacy_agents
 
 ALTER TABLE ONLY public.legacy_issues_communications
     ADD CONSTRAINT legacy_issues_communications_pkey PRIMARY KEY (id);
-
-
---
--- Name: legacy_prefetched_blobs legacy_prefetched_blobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_prefetched_blobs
-    ADD CONSTRAINT legacy_prefetched_blobs_pkey PRIMARY KEY (id);
 
 
 --
@@ -3083,13 +3036,6 @@ CREATE UNIQUE INDEX index_legacy_issues_communications_on_legacy_id ON public.le
 
 
 --
--- Name: index_legacy_prefetched_blobs_on_url; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_legacy_prefetched_blobs_on_url ON public.legacy_prefetched_blobs USING btree (url);
-
-
---
 -- Name: index_municipalities_on_active; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3349,20 +3295,6 @@ CREATE INDEX issues_fulltext_idx ON public.issues USING gin ((((((to_tsvector('s
 
 
 --
--- Name: test_js_g1; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX test_js_g1 ON public.issues USING btree (public.st_geohash(public.st_point(longitude, latitude), 6));
-
-
---
--- Name: test_js_geo; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX test_js_geo ON public.issues USING btree (public.st_geohash(public.st_point(longitude, latitude, 4326), 6));
-
-
---
 -- Name: municipalities fk_rails_03f4031592; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3411,14 +3343,6 @@ ALTER TABLE ONLY public.legacy_agents
 
 
 --
--- Name: legacy_issues_communications fk_rails_1cf0f8a10b; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_1cf0f8a10b FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
-
-
---
 -- Name: issue_subscriptions fk_rails_270021a150; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3451,6 +3375,14 @@ ALTER TABLE ONLY public.issues_drafts
 
 
 --
+-- Name: legacy_issues_communications fk_rails_35b4962c3d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_35b4962c3d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
+
+
+--
 -- Name: issues fk_rails_44771000d0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3480,14 +3412,6 @@ ALTER TABLE ONLY public.issues_updates
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_4e60020611 FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
-
-
---
--- Name: legacy_issues_communications fk_rails_51ea2fa86c; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_51ea2fa86c FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
 
 
 --
@@ -3739,6 +3663,14 @@ ALTER TABLE ONLY public.responsible_subjects
 
 
 --
+-- Name: legacy_issues_communications fk_rails_b3a0e7e7b7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_b3a0e7e7b7 FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
+
+
+--
 -- Name: user_verification_keys fk_rails_b5d6b8f85b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3835,6 +3767,14 @@ ALTER TABLE ONLY public.issues_activities
 
 
 --
+-- Name: legacy_issues_communications fk_rails_f4db0cf30b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_f4db0cf30b FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
+
+
+--
 -- Name: issues_updates fk_rails_f6e3cb8d90; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3851,21 +3791,13 @@ ALTER TABLE ONLY public.cms_categories
 
 
 --
--- Name: legacy_issues_communications fk_rails_f9284d111d; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_f9284d111d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
-
-
---
 -- PostgreSQL database dump complete
 --
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20250518052059'),
+('20250520103118'),
 ('20250516065423'),
 ('20250515191606'),
 ('20250515191500'),
@@ -3896,6 +3828,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250507082225'),
 ('20250506192830'),
 ('20250506143910'),
+('20250506075307'),
 ('20250505201144'),
 ('20250504104256'),
 ('20250503192457'),

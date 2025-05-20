@@ -7,7 +7,7 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
     find_or_create_triage_portal_user!(activity_object.author, client, user_group: triage_group) if activity_object.author && !activity_object.author.external_id
 
     external_id = issue.triage_process? ? issue.triage_external_id : issue.resolution_external_id
-    article_id = client.create_article!(external_id, activity_object, sender: sender_type(activity_object.author))
+    article_id = client.create_article!(external_id, activity_object, sender: sender_type(activity_object))
 
     raise unless article_id
 
@@ -33,15 +33,22 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
     user
   end
 
-  def sender_type(user)
-    if user.is_a?(User) || user.is_a?(::ResponsibleSubjects::User) || user.is_a?(::ResponsibleSubject)
-      "Customer"
-    elsif user.is_a?(Legacy::Agent)
+  def sender_type(activity_object)
+    case activity_object
+    when Issues::AgentComment, Issues::AgentPrivateComment
       "Agent"
-    elsif user.is_a?(NilClass)
+    when Legacy::Issues::AgentInternalCommunication
+      "Agent"
+    when Issues::UserComment, Issues::UserPrivateComment
+      "Customer"
+    when Issues::ResponsibleSubjectComment
+      "Customer"
+    when Issues::Update
+      "Customer"
+    when Legacy::Issues::ResponsibleSubjectInternalCommunication
       "Customer"
     else
-      raise "Unknown author type: #{user.class.name}"
+      raise "Unknown activity object type: #{activity_object.class.name}"
     end
   end
 end

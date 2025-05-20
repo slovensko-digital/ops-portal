@@ -4,10 +4,9 @@ class Connector::Legacy::ImportManualBackofficeAlertFromLegacyDbToBackofficeJob 
   def perform(
     tenant,
     legacy_record,
-    zammad_api_client: Connector::ZammadApiClient,
+    zammad_client: Connector::BackofficeZammadEnvironment.client(tenant),
     import_activities_job: Connector::Legacy::ImportManualBackofficeAlertsActivityFromLegacyDbToBackofficeJob
   )
-    zammad_client = zammad_api_client.new(tenant)
     zammad_client.check_import_mode!
 
     tenant_responsible_subject = ::Client.find(tenant.ops_api_subject_identifier).responsible_subject
