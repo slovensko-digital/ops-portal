@@ -16,7 +16,7 @@ module ImportMethods
     end
 
     def download_from_ops_portal(path)
-      URI.parse().open
+      URI.parse("#{ENV.fetch("LEGACY_PORTAL_URL")}/#{path}").open
     end
 
     def download_avatar_from_ops_portal(user_legacy_id)
