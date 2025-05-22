@@ -816,7 +816,8 @@ CREATE TABLE public.issues_comments (
     type character varying,
     imported_at timestamp(6) without time zone,
     legacy_comment_id integer,
-    legacy_communication_id integer
+    legacy_communication_id integer,
+    uuid uuid
 );
 
 
@@ -1045,7 +1046,8 @@ CREATE TABLE public.issues_updates (
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
     triage_external_id integer,
-    imported_at timestamp(6) without time zone
+    imported_at timestamp(6) without time zone,
+    uuid uuid
 );
 
 
@@ -1161,7 +1163,8 @@ CREATE TABLE public.legacy_issues_communications (
     agent_author_id bigint,
     responsible_subjects_user_author_id bigint,
     type character varying,
-    imported_at timestamp(6) without time zone
+    imported_at timestamp(6) without time zone,
+    uuid uuid
 );
 
 
@@ -2852,6 +2855,13 @@ CREATE INDEX index_issues_comments_on_user_author_id ON public.issues_comments U
 
 
 --
+-- Name: index_issues_comments_on_uuid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_issues_comments_on_uuid ON public.issues_comments USING btree (uuid);
+
+
+--
 -- Name: index_issues_default_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3041,6 +3051,13 @@ CREATE UNIQUE INDEX index_issues_updates_on_legacy_id ON public.issues_updates U
 
 
 --
+-- Name: index_issues_updates_on_uuid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_issues_updates_on_uuid ON public.issues_updates USING btree (uuid);
+
+
+--
 -- Name: index_legacy_agents_on_external_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3080,6 +3097,13 @@ CREATE INDEX index_legacy_issues_communications_on_agent_author_id ON public.leg
 --
 
 CREATE UNIQUE INDEX index_legacy_issues_communications_on_legacy_id ON public.legacy_issues_communications USING btree (legacy_id);
+
+
+--
+-- Name: index_legacy_issues_communications_on_uuid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_legacy_issues_communications_on_uuid ON public.legacy_issues_communications USING btree (uuid);
 
 
 --
@@ -3865,6 +3889,9 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250522111247'),
+('20250522105736'),
+('20250522105410'),
 ('20250520103118'),
 ('20250518052059'),
 ('20250516065423'),

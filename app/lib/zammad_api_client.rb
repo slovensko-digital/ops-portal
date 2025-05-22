@@ -281,6 +281,7 @@ class ZammadApiClient
     ticket = @client.ticket.find(issue_id)
 
     article = ticket.article(
+      uuid: activity_object.uuid,
       origin_by_id: activity_object.author&.external_id,
       content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
       body: activity_object.triage_activity_body.presence || "(bez popisu)",

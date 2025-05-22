@@ -11,6 +11,7 @@
 #  legacy_data                   :jsonb
 #  text                          :string
 #  type                          :string
+#  uuid                          :uuid
 #  verification                  :integer
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -30,6 +31,8 @@ class Issues::Comment < ApplicationRecord
   delegate :issue, to: :activity
 
   include Issues::ActivityObjectAttachments
+
+  before_create -> { self.uuid = SecureRandom.uuid }
 
   def legacy_id
     legacy_comment_id || legacy_communication_id

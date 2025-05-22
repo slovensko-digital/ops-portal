@@ -11,6 +11,7 @@
 #  legacy_data                   :jsonb
 #  text                          :string
 #  type                          :string
+#  uuid                          :uuid
 #  verification                  :integer
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
