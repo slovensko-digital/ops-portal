@@ -6,7 +6,7 @@ module IssuesHelper
   end
 
   def format_issue_address(issue)
-    [ issue.address_street, issue.municipality_district&.name, issue.municipality&.name ].compact.join(", ")
+    [ issue.address_street.presence, issue.municipality_district&.name, issue.municipality&.name ].compact.join(", ")
   end
 
   def search_issues_path(params = {})

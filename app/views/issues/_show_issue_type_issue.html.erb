@@ -106,7 +106,7 @@
         <div class="information-wrapper">
           <div class="label">Poloha:</div>
           <div class="value-con">
-            <%= link_to issue.address_street, issues_path(ulica: issue.address_street, cast: issue.municipality_district&.name, obec: issue.municipality&.name), class: "value" %>
+            <% if issue.address_street.present? %><%= link_to issue.address_street, issues_path(ulica: issue.address_street, cast: issue.municipality_district&.name, obec: issue.municipality&.name), class: "value" %><% end %>
             <% if issue.municipality_district %><%= link_to issue.municipality_district.name, issues_path(cast: issue.municipality_district.name, obec: issue.municipality.name), class: "value" %>
             <% end %>
             <%= link_to issue.municipality.name, issues_path(obec: issue.municipality.name), class: "value" %>
