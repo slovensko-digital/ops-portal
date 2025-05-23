@@ -19,6 +19,7 @@
 #  subject                             :string
 #  text                                :string
 #  type                                :string
+#  uuid                                :uuid
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  activity_id                         :bigint           not null
@@ -36,6 +37,8 @@ class Legacy::Issues::Communication < ApplicationRecord
   belongs_to :responsible_subjects_user_author, optional: true, class_name: "ResponsibleSubjects::User"
 
   include ::Issues::ActivityObjectAttachments
+
+  before_create -> { self.uuid = SecureRandom.uuid }
 
   def triage_activity_body
     message

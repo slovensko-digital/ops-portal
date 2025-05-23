@@ -7,13 +7,26 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
     find_or_create_triage_portal_user!(activity_object.author, client, user_group: triage_group) if activity_object.author && !activity_object.author.external_id
 
     external_id = issue.triage_process? ? issue.triage_external_id : issue.resolution_external_id
-    article_id = client.create_article!(external_id, activity_object, sender: sender_type(activity_object))
 
-    raise unless article_id
+    begin
+      article_id = client.create_article!(external_id, activity_object, sender: sender_type(activity_object))
 
-    activity_object.update!(
-      triage_external_id: article_id
-    )
+      raise unless article_id
+
+      activity_object.update!(
+        triage_external_id: article_id
+      )
+    rescue RuntimeError => e
+      raise e unless /.*This object already exists/.match?(e.message)
+
+      search_result = client.client.ticket.find(external_id).articles.select { |a| a.uuid == activity_object.uuid }
+
+      raise e unless search_result.count == 1
+
+      activity_object.update!(
+        triage_external_id: search_result.first.id
+      )
+    end
   end
 
   def find_or_create_triage_portal_user!(user, client, user_group: nil)

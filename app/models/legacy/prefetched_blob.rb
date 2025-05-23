@@ -26,8 +26,6 @@ class Legacy::PrefetchedBlob < ApplicationRecord
     )
     prefetched_blob = create!(url: url, attachment: blob)
 
-    prefetched_blob.attachment.variant(:full).processed
-
     prefetched_blob.attachment.blob
   end
 end

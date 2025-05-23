@@ -24,6 +24,8 @@ class Issues::Update < ApplicationRecord
 
   include Issues::ActivityObjectAttachments
 
+  before_create -> { self.uuid = SecureRandom.uuid }
+
   def author_display_name
     author.display_name
   end

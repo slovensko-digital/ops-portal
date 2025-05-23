@@ -20,6 +20,7 @@
 #  subject                             :string
 #  text                                :string
 #  type                                :string
+#  uuid                                :uuid
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  activity_id                         :bigint           not null
