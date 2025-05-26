@@ -38,6 +38,6 @@ class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
 
     return unless issue.should_create_resolution_process?
 
-    create_issue_resolution_process_ticket_job.perform_later(issue, triage_group: ticket[:group], triage_owner_id: ticket[:owner_id])
+    create_issue_resolution_process_ticket_job.perform_later(issue, triage_group: ticket[:triage_group], triage_owner_id: ticket[:triage_owner_id])
   end
 end
