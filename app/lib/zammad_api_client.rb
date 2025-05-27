@@ -565,6 +565,7 @@ class ZammadApiClient
 
   def build_article_response(ticket, article, allowed_article_types:, responsible_subject: nil, first_article: false)
     article_type = get_article_type(article, ticket.process_type)
+    puts "Article type: #{article_type} for article id: #{article.id} in ticket id: #{ticket.id}" if Rails.env.development?
     return unless first_article || allowed_article_types.include?(article_type)
 
     if article_type == :agent_backoffice_comment
@@ -586,23 +587,31 @@ class ZammadApiClient
       ResponsibleSubject.find_by(external_id: article.origin_by_id || article.created_by_id)
     end
 
+    body = article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, "")
+    content_type = article.content_type
+    if article.type == "email"
+      body = EmailParser.parse_text(body)
+      content_type = "text/plain"
+    end
+
     {
       article_type: article_type,
       author: author,
       author_response: build_author_response(article_type, author),
       triage_identifier: article.id,
-      content_type: article.content_type,
-      body: article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, ""),
+      content_type: content_type,
+      body: body,
       created_at: article.created_at,
       updated_at: article.updated_at,
       attachments: article.attachments.map do |attachment|
+        content_type = attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type")
         {
           triage_identifier: attachment.id,
           filename: attachment.filename,
-          content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
+          content_type: content_type,
           data64: Base64.strict_encode64(attachment.download)
-        }
-      end
+        } unless content_type == "text/html"
+      end.compact
     }
   end
 
@@ -621,7 +630,18 @@ class ZammadApiClient
       return :user_portal_comment if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id || article.created_by_id)&.origin == "portal"
 
       if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
-        return :responsible_subject_portal_and_backoffice_comment if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id || article.created_by_id)&.roles&.include?("Zodpovedný Subjekt")
+        if article.sender == "Customer" && zammad_api_client.user.find(article.origin_by_id || article.created_by_id)&.roles&.include?("Zodpovedný Subjekt")
+          if article.type == "email"
+            body = EmailParser.parse_text(article.body)
+            if body.first(100).include?(OPS_PORTAL_ARTICLE_TAG)
+              return :responsible_subject_portal_and_backoffice_comment
+            else
+              return :responsible_subject_backoffice_comment
+            end
+          else
+            return :responsible_subject_portal_and_backoffice_comment
+          end
+        end
 
         if article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
           return :agent_portal_and_backoffice_comment if article.sender == "Agent"

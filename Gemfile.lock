@@ -142,6 +142,7 @@ GEM
     dotenv (3.1.8)
     drb (2.2.1)
     ed25519 (1.4.0)
+    email_reply_parser (0.5.11)
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
@@ -583,6 +584,7 @@ DEPENDENCIES
   debug
   discourse_api
   dotenv
+  email_reply_parser (~> 0.5.11)
   exif
   faker
   faraday-patron

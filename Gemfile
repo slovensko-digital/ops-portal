@@ -114,3 +114,5 @@ gem "aws-sdk-s3"
 gem "aws-sdk-sns"
 
 gem "rollbar"
+
+gem "email_reply_parser", "~> 0.5.11"

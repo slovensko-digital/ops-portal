@@ -121,4 +121,28 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     end
     assert_equal "Unknown process type: unknown_process", error.message
   end
+
+  test "email from responsible subject without portal tag returns responsible_subject_backoffice_comment" do
+    article = @article_struct.new(sender: "Customer", type: "email", origin_by_id: 123, body: File.read("test/fixtures/files/responsible_subject_emails/backoffice_comment.html"))
+    zammad_user = OpenStruct.new(origin: nil, roles: [ "Zodpovedný Subjekt" ])
+    zammad_user_client = DummyUserClient.new(zammad_user)
+    zammad_api_client = OpenStruct.new(user: zammad_user_client)
+    assert_equal :responsible_subject_backoffice_comment, @subject.send(:get_article_type, article, "portal_issue_resolution", zammad_api_client: zammad_api_client)
+  end
+
+  test "email from responsible subject with portal tag in the main part returns responsible_subject_portal_and_backoffice_comment" do
+    article = @article_struct.new(sender: "Customer", type: "email", origin_by_id: 123, body: File.read("test/fixtures/files/responsible_subject_emails/backoffice_and_portal_comment.html"))
+    zammad_user = OpenStruct.new(origin: nil, roles: [ "Zodpovedný Subjekt" ])
+    zammad_user_client = DummyUserClient.new(zammad_user)
+    zammad_api_client = OpenStruct.new(user: zammad_user_client)
+    assert_equal :responsible_subject_portal_and_backoffice_comment, @subject.send(:get_article_type, article, "portal_issue_resolution", zammad_api_client: zammad_api_client)
+  end
+
+  test "email from responsible subject with portal tag in the footer returns responsible_subject_backoffice_comment" do
+    article = @article_struct.new(sender: "Customer", type: "email", origin_by_id: 123, body: File.read("test/fixtures/files/responsible_subject_emails/backoffice_comment_with_tag_in_history.html"))
+    zammad_user = OpenStruct.new(origin: nil, roles: [ "Zodpovedný Subjekt" ])
+    zammad_user_client = DummyUserClient.new(zammad_user)
+    zammad_api_client = OpenStruct.new(user: zammad_user_client)
+    assert_equal :responsible_subject_backoffice_comment, @subject.send(:get_article_type, article, "portal_issue_resolution", zammad_api_client: zammad_api_client)
+  end
 end
