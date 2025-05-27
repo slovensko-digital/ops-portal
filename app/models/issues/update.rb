@@ -9,6 +9,7 @@
 #  name               :string
 #  published          :boolean
 #  text               :string
+#  uuid               :uuid
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  activity_id        :bigint           not null

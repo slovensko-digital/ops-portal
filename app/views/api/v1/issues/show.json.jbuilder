@@ -25,6 +25,7 @@ json.updated_at @issue[:updated_at]
 json.activities @issue[:activities] do |activity|
   json.triage_identifier activity[:triage_identifier]
   json.activity_type activity[:article_type]
+  json.uuid activity[:uuid]
   json.author activity[:author_response]
   json.content_type activity[:content_type]
   json.body activity[:body]
