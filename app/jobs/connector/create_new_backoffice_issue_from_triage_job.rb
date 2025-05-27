@@ -21,7 +21,7 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     return zammad_client.create_issue!(issue_data) unless import
 
     zammad_client.check_import_mode!
-    zammad_group = zammad_api_client::IMPORT_GROUP
+    zammad_group = zammad_client.class.const_get("IMPORT_GROUP")
     backoffice_state = ISSUE_OPS_STATE_TO_BACKOFFICE_STATE.fetch(issue_data["ops_state"])
 
     zammad_client.create_issue!(issue_data, state: backoffice_state, group: zammad_group)

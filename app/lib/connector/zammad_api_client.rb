@@ -115,6 +115,7 @@ module Connector
       return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
 
       new_article = ticket.article(
+        uuid: activity_object.uuid,
         origin_by_id: author_id,
         content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
         body: activity_object.backoffice_activity_body,
@@ -146,6 +147,7 @@ module Connector
       return ticket.articles.find { |a| article.backoffice_external_id == a.id } if article
 
       new_article = ticket.article(
+        # TODO no uuid?
         origin_by_id: create_or_find_agent(legacy_data.author),
         content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
         body: legacy_data.body,
@@ -426,6 +428,7 @@ module Connector
       return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
 
       new_article = ticket.article(
+        uuid: activity["uuid"],
         origin_by_id: create_or_find_customer(activity["author"]),
         content_type: activity["content_type"],
         body: activity["body"],
