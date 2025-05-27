@@ -11,12 +11,10 @@ module Import
       zammad_api_client = ::Connector::BackofficeZammadEnvironment.client(tenant)
       zammad_api_client.check_import_mode!(force: true)
 
-      Issue.where.not(legacy_id: nil).where(responsible_subject: responsible_subject).find_in_batches do |group|
-        group.each do |issue|
-          next if SKIPPED_TICKETS_OPS_STATES.include?(issue.state&.key)
+      Issue.where.not(legacy_id: nil).where(responsible_subject: responsible_subject).find_each do |issue|
+        next if SKIPPED_TICKETS_OPS_STATES.include?(issue.state&.key)
 
-          import_issue_from_triage_job.perform_later(tenant, issue.resolution_external_id, import: true)
-        end
+        import_issue_from_triage_job.perform_later(tenant, issue.resolution_external_id, import: true)
       end
 
       import_manual_issues_job.perform_later(tenant)
