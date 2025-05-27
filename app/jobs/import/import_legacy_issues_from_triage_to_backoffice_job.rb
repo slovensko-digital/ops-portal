@@ -2,6 +2,8 @@ module Import
   class ImportLegacyIssuesFromTriageToBackofficeJob < ApplicationJob
     queue_with_priority 100
 
+    SKIPPED_TICKETS_OPS_STATES = %w[waiting rejected]
+
     def perform(responsible_subject, import_issue_from_triage_job: ::Connector::CreateNewBackofficeIssueFromTriageJob, import_manual_issues_job: ::Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob)
       client = ::Client.find_by(responsible_subject: responsible_subject)
       tenant = ::Connector::Tenant.find_by(ops_api_subject_identifier: client.id)
@@ -11,6 +13,8 @@ module Import
 
       Issue.where.not(legacy_id: nil).where(responsible_subject: responsible_subject).find_in_batches do |group|
         group.each do |issue|
+          next if SKIPPED_TICKETS_OPS_STATES.include?(issue.state&.key)
+
           import_issue_from_triage_job.perform_later(tenant, issue.resolution_external_id, import: true)
         end
       end
