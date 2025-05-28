@@ -565,7 +565,6 @@ class ZammadApiClient
 
   def build_article_response(ticket, article, allowed_article_types:, responsible_subject: nil, first_article: false)
     article_type = get_article_type(article, ticket.process_type)
-    puts "Article type: #{article_type} for article id: #{article.id} in ticket id: #{ticket.id}" if Rails.env.development?
     return unless first_article || allowed_article_types.include?(article_type)
 
     if article_type == :agent_backoffice_comment
