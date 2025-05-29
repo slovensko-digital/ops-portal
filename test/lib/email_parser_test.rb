@@ -53,4 +53,11 @@ laoreet eros sed ante blandit, mattis volutpat urna accumsan. Ut pellentesque to
             Meno"
     assert_equal(expected, result)
   end
+
+  test "responsible_subject_email from outlook handlova" do
+    html = File.read("test/fixtures/files/responsible_subject_emails/backoffice_outlook_handlova.html")
+    result = EmailParser.parse_text(html)
+    expected = "Dobrý deň,\n\nkosenie sa uskutočňuje v dvoch fázach. Najprv zamestnanci spoločnosti HATER-HANDLOVÁ pokosia väčšie plochy, kde sa využívajú aj mechanizmy a následne miesta dokončia manuálne aktivační pracovníci, ktorí sa postarajú o ťažšie prístupné miesta ako aj odvoz pohrabanej trávy.\n\nĎakujeme za trpezlivosť.\nMeno\nreferentka oddelenia marketingu a komunikácie\n0912345678\n046/1234567\nexample@example\nwww.handlova.sk\n\nMestský úrad Handlová\nNám. baníkov 7\n972 51 Handlová"
+    assert_equal(expected, result)
+  end
 end
