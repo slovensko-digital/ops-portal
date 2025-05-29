@@ -26,7 +26,13 @@ class EmailParser
   /^From:\s.+?<[^@>]+@[^>]+>$/i,
   /^Sent:\s.+$/i,
   /^To:\s.+$/i,
-  /^Subject:\s.+$/i
+  /^Subject:\s.+$/i,
+
+  # Slovak Outlook-style header block
+  /^Od:\s.+?<[^@>]+@[^>]+>$/i,
+  /^Odoslané:\s.+$/i,
+  /^Komu:\s.+$/i,
+  /^Predmet:\s.+$/i
 ]
 
 
