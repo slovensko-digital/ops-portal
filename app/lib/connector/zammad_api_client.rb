@@ -150,13 +150,14 @@ module Connector
       new_article
     end
 
-    def find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, sender:)
+    def find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, uuid:, sender:)
       ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
 
       article = @tenant.activities.find_by(legacy_id: legacy_data.id)
       return ticket.articles.find { |a| article.backoffice_external_id == a.id } if article
 
       new_article = ticket.article(
+        uuid: uuid,
         origin_by_id: create_or_find_agent(legacy_data.author),
         content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
         body: legacy_data.body,
