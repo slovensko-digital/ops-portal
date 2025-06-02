@@ -375,7 +375,11 @@ class ZammadApiClient
       )
       zammad_user.id
     rescue RuntimeError => e
-      raise e
+      raise e unless e.message.include? "is already used for another user."
+
+      result = find_zammad_user("ops-user-#{user.id}")
+      raise "Can't find nor create triage zammad user with login: ops-user-#{user.id}" unless result
+      result.id
     end
   end
 
