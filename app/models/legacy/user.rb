@@ -29,12 +29,7 @@ module Legacy
     def self.create_user_from_legacy_record(legacy_record)
       user_email = ENV["EMAILS_IMPORT"] == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id)
 
-      user = if ::User.exists?([ "lower(email) = ?", user_email.downcase ])
-        ::User.where("lower(email) = ?", user_email.downcase).take
-      else
-        ::User.find_or_initialize_by(email: user_email)
-      end
-
+      user = ::User.where(email: user_email.downcase).take || ::User.find_or_initialize_by(email: user_email)
       user.tap do |u|
         u.legacy_id = legacy_record.id
         u.about = legacy_record.about
