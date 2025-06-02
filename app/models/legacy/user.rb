@@ -29,39 +29,42 @@ module Legacy
     def self.create_user_from_legacy_record(legacy_record)
       user_email = ENV["EMAILS_IMPORT"] == "ON" ? legacy_record.email : generate_dummy_email(legacy_record.id)
 
-      ::User.find_or_initialize_by(email: user_email).tap do |user|
-        user.legacy_id = legacy_record.id
-        user.about = legacy_record.about
-        user.active = legacy_record.status
-        user.admin_name = legacy_record.admin_name
-        user.anonymous = legacy_record.anonymous
-        user.banned = legacy_record.is_banned
-        user.birth = legacy_record.birth
-        user.created_from_app = legacy_record.created_from_app
-        user.email_notifiable = legacy_record.email_notification
-        user.exp = legacy_record.exp
-        user.fcm_token = legacy_record.fcm_token
-        user.firstname = legacy_record.meno
-        user.gdpr_accepted = legacy_record.gdpr_accepted
-        user.lastname = legacy_record.priezvisko.presence
-        user.login = legacy_record.login
-        user.organization = legacy_record.is_organization
-        user.password_hash = generate_dummy_password
-        user.phone = legacy_record.telefon
-        user.resident = legacy_record.residency
-        user.sex = legacy_record.sex
-        user.signature = legacy_record.signature
-        user.timestamp = Time.at(legacy_record.timestamp).to_datetime
-        user.verification = legacy_record.verification
-        user.verified = legacy_record.verified
-        user.city_id = legacy_record.cityid
-        user.municipality = ::Municipality.find_by(legacy_id: legacy_record.mesto)
-        user.street = ::Street.find_by(legacy_id: legacy_record.streetid)
-        user.onboarded ||= false
-        user.status = "verified"
+      user = ::User.where(email: user_email.downcase).first || ::User.find_or_initialize_by(email: user_email)
+      user.tap do |u|
+        u.legacy_id = legacy_record.id
+        u.about = legacy_record.about
+        u.active = legacy_record.status
+        u.admin_name = legacy_record.admin_name
+        u.anonymous = legacy_record.anonymous
+        u.banned = legacy_record.is_banned
+        u.birth = legacy_record.birth
+        u.created_from_app = legacy_record.created_from_app
+        u.email_notifiable = legacy_record.email_notification
+        u.exp = legacy_record.exp
+        u.fcm_token = legacy_record.fcm_token
+        u.firstname = legacy_record.meno
+        u.gdpr_accepted = legacy_record.gdpr_accepted
+        u.lastname = legacy_record.priezvisko.presence
+        u.login = legacy_record.login
+        u.organization = legacy_record.is_organization
+        u.password_hash = generate_dummy_password
+        u.phone = legacy_record.telefon
+        u.resident = legacy_record.residency
+        u.sex = legacy_record.sex
+        u.signature = legacy_record.signature
+        u.timestamp = Time.at(legacy_record.timestamp).to_datetime
+        u.verification = legacy_record.verification
+        u.verified = legacy_record.verified
+        u.city_id = legacy_record.cityid
+        u.municipality = ::Municipality.find_by(legacy_id: legacy_record.mesto)
+        u.street = ::Street.find_by(legacy_id: legacy_record.streetid)
+        u.onboarded ||= false
+        u.status = "verified"
 
-        user.save!
-      end
+        u.save!
+      end unless user.legacy_id.present?
+
+      user
     end
 
     def self.create_agent_from_legacy_record(legacy_record)
