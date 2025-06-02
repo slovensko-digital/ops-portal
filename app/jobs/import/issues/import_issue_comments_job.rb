@@ -13,9 +13,17 @@ module Import
         group.each do |legacy_record|
           ActiveRecord::Base.transaction do
             comment_type = if Legacy::User.find_or_create_agent(legacy_record.user).present?
-             "Issues::AgentComment"
+              if issue.state.key == "waiting"
+               "Issues::AgentPrivateComment"
+              else
+               "Issues::AgentComment"
+              end
             else
-             "Issues::UserComment"
+              if issue.state.key == "waiting"
+                "Issues::UserPrivateComment"
+              else
+                "Issues::UserComment"
+              end
             end
 
             comment = ::Issues::Comment.find_or_initialize_by(
