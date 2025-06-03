@@ -6,15 +6,17 @@ class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
     details = fetch_osm_details(draft)
 
     address = details["address"]
+    address = address.sort { |a, b| a["rank_address"] <=> b["rank_address"] } if address.is_a?(Array)
+    administratives = address.select { it["type"] == "administrative" && it["isaddress"] }
 
     draft.address_house_number = address.find { _1["type"] == "house_number" }&.dig("localname")
     draft.address_street = address.find { _1["class"] == "highway" }&.dig("localname")
-    draft.address_suburb = address.find { _1["type"] == "administrative" && _1["admin_level"] == 10 }&.dig("localname")
-    draft.address_municipality = address.find { _1["type"] == "administrative" && _1["admin_level"] == 9 }&.dig("localname")
-    draft.address_district = address.find { _1["type"] == "administrative" && _1["admin_level"] == 8 }&.dig("localname")
-    draft.address_city = address.find { _1["type"] == "administrative" && _1["admin_level"] == 6 }&.dig("localname")
+    draft.address_suburb = administratives.find { _1["admin_level"] == 10 }&.dig("localname")
+    draft.address_municipality = administratives.find { _1["admin_level"] == 9 }&.dig("localname")
+    draft.address_district = administratives.find { _1["admin_level"] == 8 }&.dig("localname")
+    draft.address_city = administratives.find { _1["admin_level"] == 6 }&.dig("localname")
     draft.address_postcode = address.find { _1["type"] == "postcode" }&.dig("localname")
-    draft.address_region = address.find { _1["type"] == "administrative" && _1["admin_level"] == 4 }&.dig("localname")
+    draft.address_region = administratives.find { _1["admin_level"] == 4 }&.dig("localname")
     draft.address_country = address.find { _1["type"] == "country" }&.dig("localname")
     draft.address_country_code = address.find { _1["type"] == "country_code" }&.dig("localname")
     draft.address_data = details
