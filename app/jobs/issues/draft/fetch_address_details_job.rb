@@ -7,12 +7,16 @@ class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
 
     address = details["address"]
     address = address.sort { |a, b| a["rank_address"] <=> b["rank_address"] } if address.is_a?(Array)
-    administratives = address.select { it["type"] == "administrative" && it["isaddress"] }
+    administratives = address.select { it["type"] == "administrative" }
+
+    level_9 = administratives.select { it["admin_level"] == 9 }
+    address_municipality = level_9.find { _1["isaddress"] }&.dig("localname")
+    address_municipality ||= level_9.first&.dig("localname")
 
     draft.address_house_number = address.find { _1["type"] == "house_number" }&.dig("localname")
     draft.address_street = address.find { _1["class"] == "highway" }&.dig("localname")
     draft.address_suburb = administratives.find { _1["admin_level"] == 10 }&.dig("localname")
-    draft.address_municipality = administratives.find { _1["admin_level"] == 9 }&.dig("localname")
+    draft.address_municipality = address_municipality
     draft.address_district = administratives.find { _1["admin_level"] == 8 }&.dig("localname")
     draft.address_city = administratives.find { _1["admin_level"] == 6 }&.dig("localname")
     draft.address_postcode = address.find { _1["type"] == "postcode" }&.dig("localname")
