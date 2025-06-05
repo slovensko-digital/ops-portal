@@ -165,7 +165,7 @@ class Issues::Draft < ApplicationRecord
     if Issue
          .publicly_visible
          .within_distance_from_point(latitude, longitude, 500)
-         .where(category: category, subcategory: subcategory, subtype: subtype).count > 0
+         .where(category: category, subcategory: subcategory, subtype: subtype).any?
 
       errors.add(:base, :duplicates_nearby)
     end
