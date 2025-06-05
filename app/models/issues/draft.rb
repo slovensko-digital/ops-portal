@@ -163,9 +163,10 @@ class Issues::Draft < ApplicationRecord
 
   def no_duplicates_nearby
     if Issue
-         .publicly_visible
-         .within_distance_from_point(latitude, longitude, 500)
-         .where(category: category, subcategory: subcategory, subtype: subtype).any?
+      .publicly_visible
+      .within_distance_from_point(latitude, longitude, 500)
+      .where(category: category, subcategory: subcategory, subtype: subtype)
+      .any?
 
       errors.add(:base, :duplicates_nearby)
     end
