@@ -218,7 +218,8 @@ module Connector
             }
           end,
           created_at: legacy_data.created_at
-        }
+        },
+        tags: legacy_data.tags
       }
 
       begin
@@ -268,6 +269,22 @@ module Connector
 
       ticket.owner_id = user_id
       ticket.save
+    end
+
+    def add_ticket_tag(issue, tag_name)
+      ticket = find_ticket_for_issue!(issue)
+
+      _, response_status = raw_api_request(
+        :post,
+        "tags/add",
+        params: {
+          item: tag_name,
+          o_id: ticket.id,
+          object: "Ticket"
+        }
+      )
+
+      raise "Tag not successfully added!" unless response_status == 201
     end
 
     def find_or_create_imported_article_agent_author(user)

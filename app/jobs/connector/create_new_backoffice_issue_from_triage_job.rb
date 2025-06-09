@@ -9,7 +9,8 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     ops_api_client: Connector::OpsApiClient,
     import_legacy_backoffice_activity_job: Connector::Legacy::ImportBackofficeActivityFromTriageToBackofficeJob,
     import_legacy_internal_backoffice_activity_job: Connector::Legacy::ImportInternalBackofficeActivityFromLegacyDbToBackofficeJob,
-    set_ticket_owner_job: Connector::Legacy::SetBackofficeTicketOwnerJob
+    set_ticket_owner_job: Connector::Legacy::SetBackofficeTicketOwnerJob,
+    add_ticket_tag_job: Connector::Legacy::AddTicketTagJob
   )
     ops_client = ops_api_client.new(tenant)
 
@@ -29,6 +30,7 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     import_legacy_backoffice_activity_job.perform_later(tenant, issue_id)
     import_legacy_internal_backoffice_activity_job.perform_later(tenant, issue_id)
     set_ticket_owner_job.perform_later(tenant, issue_id)
+    add_ticket_tag_job.perform_later(tenant, issue_id)
   end
 
   ISSUE_OPS_STATE_TO_BACKOFFICE_STATE = {
