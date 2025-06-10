@@ -30,7 +30,7 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     import_legacy_backoffice_activity_job.perform_later(tenant, issue_id)
     import_legacy_internal_backoffice_activity_job.perform_later(tenant, issue_id)
     set_ticket_owner_job.perform_later(tenant, issue_id)
-    add_ticket_tag_job.perform_later(tenant, issue_id)
+    add_ticket_tag_job.perform_later(tenant, issue_id) if tenant.migrate_legacy_labels?
   end
 
   ISSUE_OPS_STATE_TO_BACKOFFICE_STATE = {

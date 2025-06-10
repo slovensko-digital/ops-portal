@@ -381,7 +381,8 @@ CREATE TABLE public.connector_tenants (
     backoffice_url character varying,
     backoffice_api_token character varying,
     backoffice_webhook_secret character varying,
-    receive_customer_activities boolean DEFAULT false NOT NULL
+    receive_customer_activities boolean DEFAULT false NOT NULL,
+    migrate_legacy_labels boolean DEFAULT true
 );
 
 
@@ -3955,6 +3956,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250610165558'),
 ('20250609144952'),
 ('20250522111247'),
 ('20250522105736'),
