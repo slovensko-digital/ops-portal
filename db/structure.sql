@@ -1323,7 +1323,8 @@ CREATE TABLE public.responsible_subjects (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
-    external_id character varying
+    external_id character varying,
+    deleted_at timestamp(6) without time zone
 );
 
 
@@ -3191,6 +3192,13 @@ CREATE UNIQUE INDEX index_responsible_subjects_categories_on_legacy_id ON public
 
 
 --
+-- Name: index_responsible_subjects_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_responsible_subjects_on_deleted_at ON public.responsible_subjects USING btree (deleted_at);
+
+
+--
 -- Name: index_responsible_subjects_on_district_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3889,6 +3897,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250610094451'),
 ('20250522111247'),
 ('20250522105736'),
 ('20250522105410'),
