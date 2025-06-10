@@ -4,7 +4,7 @@ module Import
 
     def perform(municipality:, municipality_district: nil, import_issue_job: ::SyncIssueToTriageJob)
       conditions = {
-        municipality: municipality,
+        municipality: municipality
       }
       conditions.merge!(municipality_district: municipality_district) if municipality_district
 
