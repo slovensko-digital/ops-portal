@@ -72,6 +72,7 @@ module Import
           parent_id: legacy_record.parent_id,
           organization_unit_id2: legacy_record.organizational_unit_id2,
           legacy_responsible_subject_id: legacy_record.zodpovednost,
+          legacy_municipality_district_id: legacy_record.mestska_cast,
           backoffice_owner_legacy_id: backoffice_owners&.last&.municipality_user_id,
           other_backoffice_owners_legacy_ids: backoffice_owners[0..-2]&.map(&:municipality_user_id)
         },
