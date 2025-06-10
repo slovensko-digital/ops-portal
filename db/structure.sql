@@ -3156,6 +3156,13 @@ CREATE UNIQUE INDEX index_legacy_issues_communications_on_uuid ON public.legacy_
 
 
 --
+-- Name: index_legacy_labels_on_legacy_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_legacy_labels_on_legacy_id ON public.legacy_labels USING btree (legacy_id);
+
+
+--
 -- Name: index_legacy_labels_on_responsible_subject_id; Type: INDEX; Schema: public; Owner: -
 --
 
