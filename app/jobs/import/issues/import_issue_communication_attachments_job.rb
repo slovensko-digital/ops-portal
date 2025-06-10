@@ -8,7 +8,7 @@ module Import
       Issue.transaction do
         communication.attachments.purge
 
-        paths = Legacy::Alerts::CommunicationAttachment.where(communication_id: communication.legacy_id).pluck(:path)
+        paths = Legacy::Alerts::CommunicationAttachment.where(communication_id: communication.legacy_id).pluck(:path).uniq
         communication.attachments.attach(download_attachables_from_ops_portal(paths))
       end
     end
