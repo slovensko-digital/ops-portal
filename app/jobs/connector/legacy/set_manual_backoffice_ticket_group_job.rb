@@ -5,7 +5,7 @@ class Connector::Legacy::SetManualBackofficeTicketGroupJob < ApplicationJob
     legacy_record = Legacy::Alert.find(legacy_alert_id)
     tenant_issue = tenant.issues.find_by(legacy_id: legacy_alert_id)
 
-    legacy_org_units = ResponsibleSubjects::OrganizationUnit.where(legacy_id: [ legacy_record.organizational_unit_id, legacy_record.organizational_unit_id2 ])
+    legacy_org_units = ResponsibleSubjects::OrganizationUnit.where(legacy_id: [ legacy_record.organizational_unit_id, legacy_record.organizational_unit_id2 ].compact)
     backoffice_owner_legacy_id = Legacy::Alerts::MunicipalityUser.where(alert_id: legacy_record.id).order(:id).last&.municipality_user_id
     backoffice_owner = ResponsibleSubjects::User.find_by(legacy_id: backoffice_owner_legacy_id)
 

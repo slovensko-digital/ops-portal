@@ -4,7 +4,7 @@ class Connector::Legacy::SetBackofficeTicketGroupJob < ApplicationJob
 
     issue = Issue.find_by(resolution_external_id: triage_issue_id)
 
-    legacy_org_units = ResponsibleSubjects::OrganizationUnit.where(legacy_id: [ issue.legacy_data&.fetch("organizational_unit_id"), issue.legacy_data&.fetch("organization_unit_id2") ])
+    legacy_org_units = ResponsibleSubjects::OrganizationUnit.where(legacy_id: [ issue.legacy_data&.fetch("organizational_unit_id"), issue.legacy_data&.fetch("organization_unit_id2") ].compact)
 
     return unless legacy_org_units.any?
 
