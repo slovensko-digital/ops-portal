@@ -16,6 +16,7 @@
 #
 class MunicipalityDistrict < ApplicationRecord
   belongs_to :municipality
+  has_many :streets, dependent: :nullify
 
   def self.find_by_address(city:, municipality:, suburb:)
     result = MunicipalityDistrict.joins(:municipality)
