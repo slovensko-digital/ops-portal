@@ -60,7 +60,7 @@ class Connector::Legacy::ImportManualBackofficeAlertFromLegacyDbToBackofficeJob 
       group: zammad_client.class.const_get("IMPORT_GROUP")
     )
 
-    import_activities_job.perform_later(tenant, legacy_record.id)
+    import_activities_job.set(queue: queue_name).perform_later(tenant, legacy_record.id)
   end
 
   ISSUE_OPS_STATE_TO_BACKOFFICE_STATE = {

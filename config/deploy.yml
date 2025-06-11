@@ -7,7 +7,7 @@ servers:
     options:
       "add-host": host.docker.internal:host-gateway
   worker:
-    cmd: bundle exec good_job start
+    cmd: bundle exec good_job start --queues=default
     options:
       "add-host": host.docker.internal:host-gateway
 
