@@ -59,7 +59,7 @@ class SyncIssueToTriageJob < ApplicationJob
   private
 
   def create_new_triage_ticket(issue, triage_group:, process_type:, client:, import:)
-    find_or_create_triage_portal_user!(issue.author, client) unless issue.author.external_id
+    find_or_create_triage_portal_user!(issue.author, client) unless issue.author&.external_id
 
     issue_number = generate_issue_number(issue, process_type: process_type)
 
