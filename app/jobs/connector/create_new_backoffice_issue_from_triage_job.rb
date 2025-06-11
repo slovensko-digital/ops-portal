@@ -26,7 +26,7 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     backoffice_state = ISSUE_OPS_STATE_TO_BACKOFFICE_STATE.fetch(issue_data["ops_state"])
 
     zammad_client.create_issue!(issue_data, state: backoffice_state, group: zammad_group)
-    
+
     import_legacy_backoffice_activity_job.set(queue: queue_name).perform_later(tenant, issue_id)
     import_legacy_internal_backoffice_activity_job.set(queue: queue_name).perform_later(tenant, issue_id)
     set_ticket_owner_job.set(queue: queue_name).perform_later(tenant, issue_id)
