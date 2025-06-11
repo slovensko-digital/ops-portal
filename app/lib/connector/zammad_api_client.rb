@@ -339,7 +339,7 @@ module Connector
     end
 
     def find_or_create_group(group_name)
-      group = @client.group.all.select{ |g| g.name == group_name }&.first
+      group = @client.group.all.select { |g| g.name == group_name }&.first
 
       return group if group
 
@@ -420,7 +420,7 @@ module Connector
     end
 
     def get_tech_user_id
-      @client.user.all.select{|u| u.firstname == "Aplikácia" && u.lastname == "Odkaz pre starostu" && "OPS Tech Account".in?(u.roles)}.first.id
+      @client.user.all.select { |u| u.firstname == "Aplikácia" && u.lastname == "Odkaz pre starostu" && "OPS Tech Account".in?(u.roles) }.first.id
     end
 
     def add_user_to_group(user_identifier, group_name)
