@@ -162,7 +162,7 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :obec,
           label: "Obec",
-          items: -> { Municipality.active.order(Arel.sql("name COLLATE unicode")).pluck(:name) },
+          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = Municipality.where(name: params[:obec]).pluck(:id)
