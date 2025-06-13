@@ -80,4 +80,11 @@ laoreet eros sed ante blandit, mattis volutpat urna accumsan. Ut pellentesque to
     expected = File.read("test/fixtures/files/responsible_subject_emails/ivanka_expected.txt").strip
     assert_equal(expected, result)
   end
+
+  test "email from Puchov" do
+    html = File.read("test/fixtures/files/responsible_subject_emails/puchov.html")
+    result = EmailParser.parse_text(html)
+    expected = File.read("test/fixtures/files/responsible_subject_emails/puchov_expected.txt").strip
+    assert_equal(expected, result)
+  end
 end
