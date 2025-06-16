@@ -587,7 +587,14 @@ class ZammadApiClient
         User.find_by(external_id: article.origin_by_id || article.created_by_id)
       end
     when :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment
-      ResponsibleSubject.find_by(external_id: article.origin_by_id || article.created_by_id)
+      result = ResponsibleSubject.find_by(external_id: article.origin_by_id || article.created_by_id)
+      return result if result.present?
+
+      article_author = @client.user.find(article.origin_by_id || article.created_by_id)
+      organization = article_author&.organization
+      raise "Responsible subject article author has no organization" unless organization.present?
+
+      ResponsibleSubject.find_by(subject_name: organization)
     end
 
     body = article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, "")
@@ -636,7 +643,7 @@ class ZammadApiClient
       return :user_portal_comment if article.sender == "Customer" && article_author&.origin == "portal"
 
       if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
-        if article.sender == "Customer" && (article_author&.roles & [ "Zodpovedný Subjekt", "Externý zodpovedný subjekt" ]).present?
+        if article.sender == "Customer" && (article_author&.organization.present? || article_author&.roles&.include?("Zodpovedný Subjekt"))
           if article.type == "email"
             body = EmailParser.parse_text(article.body)
             if body.first(100).include?(OPS_PORTAL_ARTICLE_TAG)
@@ -657,7 +664,7 @@ class ZammadApiClient
       elsif article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
         return :agent_backoffice_comment if article.sender == "Agent"
       else
-        return nil unless article.sender == "Customer" && (article_author&.roles & [ "Zodpovedný Subjekt", "Externý zodpovedný subjekt" ]).present?
+        return nil unless article.sender == "Customer" && (article_author&.organization.present? || article_author&.roles&.include?("Zodpovedný Subjekt"))
         return :responsible_subject_backoffice_comment
       end
     else
