@@ -588,13 +588,16 @@ class ZammadApiClient
       end
     when :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment
       result = ResponsibleSubject.find_by(external_id: article.origin_by_id || article.created_by_id)
-      return result if result.present?
 
-      article_author = @client.user.find(article.origin_by_id || article.created_by_id)
-      organization = article_author&.organization
-      raise "Responsible subject article author has no organization" unless organization.present?
+      unless result.present?
+        article_author = @client.user.find(article.origin_by_id || article.created_by_id)
+        organization = article_author&.organization
+        raise "Responsible subject article author has no organization" unless organization.present?
 
-      ResponsibleSubject.find_by(subject_name: organization)
+        result = ResponsibleSubject.find_by(subject_name: organization)
+      end
+
+      result
     end
 
     body = article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, "")
