@@ -462,7 +462,7 @@ module Connector
         ops_subcategory: issue["subcategory"],
         ops_subtype: issue["subtype"],
         address_municipality: issue["address_municipality"].split("::").first,
-        address_municipality_district: issue["address_municipality"].split("::").last,
+        address_municipality_district: issue["address_municipality"].split("::").second,
         address_street: issue["address_street"],
         address_house_number: issue["address_house_number"],
         address_postcode: issue["address_postcode"],
