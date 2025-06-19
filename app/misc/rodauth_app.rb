@@ -7,22 +7,7 @@ class RodauthApp < Rodauth::Rails::App
 
   route do |r|
     rodauth.load_memory # autologin remembered users
-    rodauth.check_active_session
     r.rodauth # route rodauth requests
-
-    if rodauth.logged_in?
-      account = rodauth.account_from_session
-      if account[:banned]
-        rodauth.disable_remember_login
-        rodauth.remove_all_active_sessions
-
-        rodauth.logout
-
-        rodauth.flash[:alert] = "Váš účet bol zablokovaný."
-        r.redirect "/"
-        return
-      end
-    end
 
     # ==> Authenticating requests
     # Call `rodauth.require_account` for requests that you want to
