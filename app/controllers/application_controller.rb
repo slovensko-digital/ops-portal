@@ -61,7 +61,6 @@ class ApplicationController < ActionController::Base
   def check_banned_user
     if logged_in? && current_user[:banned]
       rodauth.disable_remember_login
-      rodauth.remove_all_active_sessions
       rodauth.logout
 
       flash[:alert] = "Váš účet bol zablokovaný."

@@ -6,7 +6,7 @@ class RodauthMain < Rodauth::Rails::Auth
     enable :create_account, :verify_account,
            :login, :logout, :remember,
            :reset_password, :change_password, :change_login, :verify_login_change,
-           :close_account, :active_sessions
+           :close_account
 
     # Omniauth
     enable :omniauth
@@ -36,8 +36,6 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Change prefix of table and foreign key column names from default "account"
     accounts_table :users
-    active_sessions_table :user_active_session_keys
-    active_sessions_account_id_column :user_id
     verify_account_table :user_verification_keys
     verify_login_change_table :user_login_change_keys
     reset_password_table :user_password_reset_keys
@@ -114,7 +112,6 @@ class RodauthMain < Rodauth::Rails::Auth
     # create_account_notice_flash "Your account has been created. Please verify your account by visiting the confirmation link sent to your email address."
     # require_login_error_flash "Login is required for accessing this page"
     # login_notice_flash nil
-    active_sessions_error_flash nil
 
     # ==> Validation
     # Override default validation error messages.

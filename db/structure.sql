@@ -1638,18 +1638,6 @@ ALTER SEQUENCE public.streets_id_seq OWNED BY public.streets.id;
 
 
 --
--- Name: user_active_session_keys; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.user_active_session_keys (
-    user_id bigint NOT NULL,
-    session_id character varying NOT NULL,
-    created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    last_use timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-
---
 -- Name: user_identities; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2529,14 +2517,6 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.streets
     ADD CONSTRAINT streets_pkey PRIMARY KEY (id);
-
-
---
--- Name: user_active_session_keys user_active_session_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_active_session_keys
-    ADD CONSTRAINT user_active_session_keys_pkey PRIMARY KEY (user_id, session_id);
 
 
 --
@@ -3456,13 +3436,6 @@ CREATE INDEX index_streets_on_municipality_id ON public.streets USING btree (mun
 
 
 --
--- Name: index_user_active_session_keys_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_user_active_session_keys_on_user_id ON public.user_active_session_keys USING btree (user_id);
-
-
---
 -- Name: index_user_identities_on_provider_and_uid; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3697,14 +3670,6 @@ ALTER TABLE ONLY public.streets
 
 ALTER TABLE ONLY public.responsible_subjects_categories
     ADD CONSTRAINT fk_rails_5506f30cd0 FOREIGN KEY (issues_category_id) REFERENCES public.issues_categories(id);
-
-
---
--- Name: user_active_session_keys fk_rails_5521c36c43; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_active_session_keys
-    ADD CONSTRAINT fk_rails_5521c36c43 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -4061,7 +4026,6 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20250618114034'),
 ('20250610165558'),
 ('20250610121625'),
 ('20250609144952'),
