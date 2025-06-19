@@ -18,7 +18,7 @@ class Connector::Legacy::SetManualBackofficeTicketGroupJob < ApplicationJob
     end
     group = zammad_client.find_or_create_group(selected_organization_unit.name)
 
-    zammad_client.add_manual_ticket_to_group(tenant_issue, group.name)
     zammad_client.add_agent_to_group(backoffice_owner, group.name) if backoffice_owner
+    zammad_client.add_manual_ticket_to_group(tenant_issue, group.name)
   end
 end
