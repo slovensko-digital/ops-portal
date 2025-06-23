@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_banned_user
-    if logged_in? && current_user[:banned]
+    if current_user.banned?
       rodauth.disable_remember_login
       rodauth.logout
 

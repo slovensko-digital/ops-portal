@@ -23,6 +23,10 @@ class AnonymousUser
     false
   end
 
+  def banned?
+    false
+  end
+
   def municipality
     nil
   end
