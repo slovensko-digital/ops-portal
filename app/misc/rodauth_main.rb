@@ -141,14 +141,6 @@ class RodauthMain < Rodauth::Rails::Auth
     # Remember all logged in users.
     after_login { remember_login }
 
-    # Check for banned users before login
-    before_login do
-      if account[:banned]
-        set_redirect_error_flash "Váš účet bol zablokovaný."
-        redirect login_path
-      end
-    end
-
     # Or only remember users that have ticked a "Remember Me" checkbox on login.
     # after_login { remember_login if param_or_nil("remember") }
 
