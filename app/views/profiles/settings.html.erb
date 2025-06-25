@@ -4,7 +4,7 @@
   <h1>Môj účet</h1>
 
   <div class="account-wrapper">
-    <% unless @user.phone_verified? %>
+    <% unless true #@user.phone_verified? %>
       <div class="account-info-con account-delete">
         <div class="title">Overiť totožnosť</div>
         <div class="description">Aby ste mohli využívať všetky funkcie portálu Odkaz pre starostu, je potrebné overiť váš účet pomocou
