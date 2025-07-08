@@ -1,5 +1,10 @@
 class SyncIssueActivityObjectToTriageJob < ApplicationJob
   def perform(issue:, activity_object:, triage_group: nil, client: TriageZammadEnvironment.client, import: false)
+    if activity_object.is_a?(Issues::Update)
+      create_portal_issue_verification_process(activity_object, client) unless activity_object.external_id.present?
+      return unless activity_object.confirmed? && activity_object.published?
+    end
+
     return if activity_object.triage_external_id.present?
 
     client.check_import_mode! if import
@@ -27,6 +32,22 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
         triage_external_id: search_result.first.id
       )
     end
+  end
+
+  def create_portal_issue_verification_process(issue_update, client)
+    external_id = client.create_ticket_from_issue_update!(issue_update)
+    issue_update.update!(external_id: external_id)
+
+  rescue RuntimeError => e
+    raise e unless /.*This object already exists/.match?(e.message)
+
+    search_result = client.client.ticket.search(query: "\"#{issue_update.ticket_number}\"").select { |r| r.number == issue_update.ticket_number }
+
+    raise e if search_result.count == 0
+    raise "Found multiple matches for ticket!" unless search_result.count == 1
+
+    ticket = search_result.first
+    issue_update.update!(external_id: ticket.id)
   end
 
   def find_or_create_triage_portal_user!(user, client, user_group: nil)

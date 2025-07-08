@@ -55,6 +55,8 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
           comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
         end
       end
+    when "portal_issue_verification"
+      # pass
     else
       # TODO add support for other process types
       raise "Process type not yet supported: #{process_type}"

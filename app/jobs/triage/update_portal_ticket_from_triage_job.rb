@@ -1,12 +1,23 @@
-class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
+class Triage::UpdatePortalTicketFromTriageJob < ApplicationJob
   def perform(ticket_id, triage_zammad_client: TriageZammadEnvironment.client, create_issue_resolution_process_ticket_job: Triage::CreateIssueResolutionProcessTicketJob)
     ticket = triage_zammad_client.get_ticket(ticket_id)
     raise "Ticket not found" unless ticket
 
+    case ticket[:process_type]
+    when "portal_issue_triage", "portal_issue_resolution"
+      update_issue(ticket)
+    when "portal_issue_verification"
+      update_issue_update(ticket)
+    else
+      raise "Process type not yet supported: #{ticket[:process_type]}"
+    end
+  end
+
+  def update_issue(ticket)
     issue = if ticket[:process_type] == "portal_issue_triage"
-      Issue.find_by!(triage_external_id: ticket_id)
+      Issue.find_by!(triage_external_id: ticket[:triage_identifier])
     elsif ticket[:process_type] == "portal_issue_resolution"
-      Issue.find_by!(resolution_external_id: ticket_id)
+      Issue.find_by!(resolution_external_id: ticket[:triage_identifier])
     else
       raise "Invalid process type"
     end
@@ -39,5 +50,18 @@ class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
     return unless issue.should_create_resolution_process?
 
     create_issue_resolution_process_ticket_job.perform_later(issue, triage_group: ticket[:triage_group], triage_owner_id: ticket[:triage_owner_id])
+  end
+
+  def update_issue_update(ticket)
+    issue_update = Issues::Update.find_by!(external_id: ticket[:triage_identifier])
+    issue_update.update!(description: ticket[:description])
+    case ticket[:ops_state].key
+    when "rejected"
+      issue_update.update!(confirmed: false, published: false)
+    when "resolved"
+      issue_update.update!(confirmed: true, published: true)
+    end
+
+    ::SyncIssueActivityObjectToTriageJob.perform_later(issue: issue_update.issue, activity_object: issue_update, triage_group: ticket[:triage_group])
   end
 end

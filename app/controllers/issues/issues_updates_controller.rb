@@ -40,7 +40,7 @@ class Issues::IssuesUpdatesController < ApplicationController
         format.turbo_stream
         format.html { redirect_to @issue, notice: "Overenie podnetu bolo pridané" }
       end
-      Issues::SyncIssueUpdateToTriageJob.set(wait_until: @update.editing_window_end).perform_later(@update)
+      Issues::SyncEditableActivityToTriageJob.perform_later(@update, sync_job: SyncIssueActivityObjectToTriageJob)
     else
       render :new, status: :unprocessable_entity
     end
