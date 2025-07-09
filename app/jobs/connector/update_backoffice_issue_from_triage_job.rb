@@ -9,7 +9,8 @@ class Connector::UpdateBackofficeIssueFromTriageJob < ApplicationJob
       zammad_client.update_issue!(issue_id, issue_data)
     rescue => e
       # it is OK that rejected issue is not found in BackOffice
-      raise e unless e.message.include?("Issue not found") && issue_data["ops_state"] == "rejected"
+      return if e.message.include?("Issue not found") && issue_data["ops_state"] == "rejected"
+      raise e
     end
   end
 end
