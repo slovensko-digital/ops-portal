@@ -94,7 +94,7 @@ class ZammadApiClient
       {
         triage_identifier: ticket.id,
         triage_group: ticket.group,
-        ops_state: Issues::State.find_by!(key: ticket.ops_state),
+        ops_state_key: ticket.ops_state,
         origin: ticket.origin,
         process_type: ticket.process_type,
         title: ticket.title,
