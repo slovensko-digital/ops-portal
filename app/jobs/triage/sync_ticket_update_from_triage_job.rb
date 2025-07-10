@@ -5,9 +5,9 @@ class Triage::SyncTicketUpdateFromTriageJob < ApplicationJob
 
     case ticket[:process_type]
     when "portal_issue_triage", "portal_issue_resolution"
-      update_issue(ticket)
+      Triage::UpdatePortalIssueFromTriageJob.perform_later(ticket)
     when "portal_issue_verification"
-      update_issue_update(ticket)
+      Triage::UpdatePortalIssueUpdateFromTriageJob.perform_later(ticket)
     else
       raise "Process type not yet supported: #{ticket[:process_type]}"
     end
