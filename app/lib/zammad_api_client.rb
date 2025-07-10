@@ -174,6 +174,10 @@ class ZammadApiClient
     issue = issue_update.activity.issue
     issue_ticket = @client.ticket.find(issue.resolution_external_id)
 
+    unless issue_update.author.external_id
+      issue_update.author.update!(external_id: create_customer!(issue_update.author))
+    end
+
     ticket = @client.ticket.create(
       number: issue_update.ticket_number,
       ops_issue_identifier: issue_update.id,
@@ -184,7 +188,7 @@ class ZammadApiClient
       customer_id: issue_update.author.external_id,
       origin_by_id: issue_update.author.external_id,
       ops_state: "waiting",
-      portal_url: Rails.application.routes.url_helpers.issue_issues_update_url(issue, issue_update),
+      portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
       likes_count: issue_update.activity.likes_count,
       origin: DEFAULT_ORIGIN,
       article: {
