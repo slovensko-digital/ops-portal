@@ -86,7 +86,7 @@ end
 
 gem "good_job"
 
-gem "rack-cors", "~> 2.0"
+gem "rack-cors", "~> 3.0"
 
 # Auth
 gem "rodauth-rails", "~> 2.1"
