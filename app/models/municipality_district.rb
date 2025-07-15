@@ -4,6 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  aliases         :string           default([]), not null, is an Array
+#  archived        :boolean          default(FALSE)
 #  description     :string
 #  genitiv         :string
 #  logo            :string
@@ -16,6 +17,8 @@
 #
 class MunicipalityDistrict < ApplicationRecord
   belongs_to :municipality
+
+  scope :archived, -> { where(archived: true) }
 
   def self.find_by_address(city:, municipality:, suburb:)
     result = MunicipalityDistrict.joins(:municipality)

@@ -2,6 +2,8 @@ module Import
   class ImportIssueJob < ApplicationJob
     queue_with_priority 100
 
+    ARCHIVE_THRESHOLD = Date.parse("2020-01-01").beginning_of_day
+
     include ImportMethods
 
     def perform(
@@ -14,6 +16,7 @@ module Import
       import_likes_job: Issues::ImportIssueLikesJob
     )
       municipality = Municipality.find_by(legacy_id: legacy_record.mesto)
+      municipality_district = municipality&.municipality_districts.find_by(legacy_id: legacy_record.mestska_cast)
       subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
       subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
       category = subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
@@ -93,7 +96,7 @@ module Import
         subcategory: subcategory,
         subtype: subtype,
         municipality: municipality,
-        municipality_district: municipality&.municipality_districts.find_by(legacy_id: legacy_record.mestska_cast),
+        municipality_district: municipality_district,
         responsible_subject: Legacy::ResponsibleSubject.find_or_create_responsible_subject(legacy_record.zodpovednost),
         state: state,
         archived_state: archived_state

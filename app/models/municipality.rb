@@ -6,6 +6,7 @@
 #  active                     :boolean
 #  active_on_old_portal       :boolean          default(FALSE), not null
 #  aliases                    :string           default([]), not null, is an Array
+#  archived                   :boolean          default(FALSE)
 #  category                   :integer
 #  email                      :string
 #  handled_by                 :integer
@@ -29,6 +30,7 @@ class Municipality < ApplicationRecord
   has_many :streets
 
   scope :active, -> { where(active: true) }
+  scope :archived, -> { where(archived: true) }
 
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # TODO Pomenovanie ciselnych hodnot iba podla nasho usudku

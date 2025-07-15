@@ -5,6 +5,7 @@
 #  id                 :bigint           not null, primary key
 #  confirmed          :boolean          default(FALSE)
 #  email              :string
+#  hidden             :boolean          default(FALSE)
 #  imported_at        :datetime
 #  ip                 :inet
 #  name               :string

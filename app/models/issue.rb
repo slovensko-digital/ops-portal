@@ -30,6 +30,7 @@
 #  title                               :string           not null
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
+#  archived_state_id                   :bigint
 #  author_id                           :bigint
 #  category_id                         :bigint
 #  legacy_id                           :integer
@@ -135,6 +136,10 @@ class Issue < ApplicationRecord
 
   def editable?
     state.key == "waiting"
+  end
+
+  def archived?
+    state.key == "archived" || municipality.archived? || municipality_district&.archived?
   end
 
   def showing_comments_count?

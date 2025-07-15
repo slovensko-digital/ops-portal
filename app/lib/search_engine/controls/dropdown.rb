@@ -15,7 +15,7 @@ module SearchEngine
         delegate :to_partial_path, to: :control
       end
 
-      def initialize(param_name:, label:, items:, filter:, filter_label: -> { _1 }, multiple: true, default_label: "Všetko", sort: true)
+      def initialize(param_name:, label:, items:, filter:, filter_label: -> { _1 }, multiple: true, default_label: "Všetko", sort: true, always_filter: false)
         @param_name = param_name
         @label = label
         @items = items
@@ -24,10 +24,11 @@ module SearchEngine
         @multiple = multiple
         @default_label = default_label
         @sort = sort
+        @always_filter = always_filter
       end
 
       def apply(scope, params)
-        return scope unless params[@param_name].present?
+        return scope if !params[@param_name].present? && !@always_filter
         @filter.call(scope, params)
       end
 
