@@ -34,6 +34,8 @@ class Issues::Update < ApplicationRecord
 
   before_create -> { self.uuid = SecureRandom.uuid }
 
+  after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_external_id?
+
   def author_display_name
     author.display_name
   end
@@ -63,5 +65,11 @@ class Issues::Update < ApplicationRecord
 
   def ticket_number
     "U-#{id.to_s.rjust(4, '0')}"
+  end
+
+  private
+
+  def notify_subscribers
+    Notifications::PublishNewIssueCommentJob.perform_later(self)
   end
 end
