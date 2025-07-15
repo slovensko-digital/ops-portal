@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -672,18 +673,19 @@ CREATE TABLE public.issues (
     address_house_number character varying,
     address_postcode character varying,
     issue_type integer DEFAULT 1,
-    resolution_external_id integer,
     address_country character varying,
     address_country_code character varying,
     address_district character varying,
-    imported_at timestamp(6) without time zone,
+    resolution_external_id integer,
     likes_count integer DEFAULT 0 NOT NULL,
+    imported_at timestamp(6) without time zone,
     public boolean DEFAULT false NOT NULL,
-    address_suburb character varying,
     responsible_subject_last_contact_at timestamp(6) without time zone,
+    address_suburb character varying,
     comments_count integer DEFAULT 0 NOT NULL,
     fulltext_extra character varying,
-    discussion_closed boolean DEFAULT false
+    discussion_closed boolean DEFAULT false,
+    archived_state_id bigint
 );
 
 
@@ -809,6 +811,7 @@ CREATE TABLE public.issues_comments (
     updated_at timestamp(6) without time zone NOT NULL,
     triage_external_id integer,
     user_author_id bigint,
+    agent_author_id bigint,
     responsible_subject_author_id bigint,
     hidden boolean DEFAULT false,
     legacy_data jsonb,
@@ -816,7 +819,6 @@ CREATE TABLE public.issues_comments (
     imported_at timestamp(6) without time zone,
     legacy_comment_id integer,
     legacy_communication_id integer,
-    agent_author_id bigint,
     uuid uuid
 );
 
@@ -1312,7 +1314,8 @@ CREATE TABLE public.municipalities (
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
-    active_on_old_portal boolean DEFAULT false NOT NULL
+    active_on_old_portal boolean DEFAULT false NOT NULL,
+    archived boolean DEFAULT false
 );
 
 
@@ -1350,7 +1353,8 @@ CREATE TABLE public.municipality_districts (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
-    aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL
+    aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
+    archived boolean DEFAULT false
 );
 
 
@@ -2965,7 +2969,7 @@ CREATE UNIQUE INDEX index_issues_comments_on_uuid ON public.issues_comments USIN
 -- Name: index_issues_default_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_issues_default_search_hot_path ON public.issues USING btree (created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint]));
+CREATE INDEX index_issues_default_search_hot_path ON public.issues USING btree (created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint]));
 
 
 --
@@ -3000,7 +3004,14 @@ CREATE INDEX index_issues_drafts_on_subtype_id ON public.issues_drafts USING btr
 -- Name: index_issues_municipality_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_issues_municipality_search_hot_path ON public.issues USING btree (municipality_id, created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint]));
+CREATE INDEX index_issues_municipality_search_hot_path ON public.issues USING btree (municipality_id, created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint]));
+
+
+--
+-- Name: index_issues_on_archived_state_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_on_archived_state_id ON public.issues USING btree (archived_state_id);
 
 
 --
@@ -3085,6 +3096,13 @@ CREATE INDEX index_issues_on_subcategory_id ON public.issues USING btree (subcat
 --
 
 CREATE INDEX index_issues_on_subtype_id ON public.issues USING btree (subtype_id);
+
+
+--
+-- Name: index_issues_states_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_issues_states_on_key ON public.issues_states USING btree (key);
 
 
 --
@@ -3564,6 +3582,14 @@ ALTER TABLE ONLY public.legacy_agents
 
 
 --
+-- Name: legacy_issues_communications fk_rails_1cf0f8a10b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_1cf0f8a10b FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
+
+
+--
 -- Name: issue_subscriptions fk_rails_270021a150; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3596,14 +3622,6 @@ ALTER TABLE ONLY public.issues_drafts
 
 
 --
--- Name: legacy_issues_communications fk_rails_35b4962c3d; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_35b4962c3d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
-
-
---
 -- Name: issues fk_rails_44771000d0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3633,6 +3651,14 @@ ALTER TABLE ONLY public.issues_updates
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_4e60020611 FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
+
+
+--
+-- Name: legacy_issues_communications fk_rails_51ea2fa86c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_51ea2fa86c FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
 
 
 --
@@ -3729,6 +3755,14 @@ ALTER TABLE ONLY public.issue_subscriptions
 
 ALTER TABLE ONLY public.user_identities
     ADD CONSTRAINT fk_rails_684b0e1ce0 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: issues fk_rails_6e8f6d948e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues
+    ADD CONSTRAINT fk_rails_6e8f6d948e FOREIGN KEY (archived_state_id) REFERENCES public.issues_states(id);
 
 
 --
@@ -3892,14 +3926,6 @@ ALTER TABLE ONLY public.responsible_subjects
 
 
 --
--- Name: legacy_issues_communications fk_rails_b3a0e7e7b7; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_b3a0e7e7b7 FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
-
-
---
 -- Name: user_verification_keys fk_rails_b5d6b8f85b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3996,14 +4022,6 @@ ALTER TABLE ONLY public.issues_activities
 
 
 --
--- Name: legacy_issues_communications fk_rails_f4db0cf30b; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_f4db0cf30b FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
-
-
---
 -- Name: issues_updates fk_rails_f6e3cb8d90; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4020,18 +4038,30 @@ ALTER TABLE ONLY public.cms_categories
 
 
 --
+-- Name: legacy_issues_communications fk_rails_f9284d111d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_f9284d111d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250715090801'),
 ('20250708140537'),
 ('20250610165558'),
 ('20250610121625'),
 ('20250609144952'),
+('20250605200853'),
 ('20250605192922'),
 ('20250605190746'),
+('20250522185556'),
+('20250522184502'),
 ('20250522111247'),
 ('20250522105736'),
 ('20250522105410'),
@@ -4067,7 +4097,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250507082225'),
 ('20250506192830'),
 ('20250506143910'),
-('20250506075307'),
 ('20250505201144'),
 ('20250504104256'),
 ('20250503192457'),

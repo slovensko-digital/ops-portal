@@ -50,7 +50,7 @@ class Issues::IssuesUpdatesController < ApplicationController
   private
 
   def check_permissions
-    render status: :unauthorized, body: nil if !current_user.can_view?(@issue) || @issue.discussion_closed?
+    render status: :unauthorized, body: nil if !current_user.can_view?(@issue) || @issue.discussion_closed? || @issue.archived?
   end
 
   def update_params

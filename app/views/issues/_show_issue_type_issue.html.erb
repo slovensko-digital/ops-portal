@@ -131,10 +131,12 @@
           </button>-->
         </div>
 
-        <%= turbo_frame_tag "activities", class: 'comment-con' do %>
-          <%= render activity_objects %>
-          <% if activity_objects.empty? && !issue.discussion_closed? %>
-            <div class="be-first-comment-notice">Buďte prvý kto overí podnet alebo napíše komentár!</div>
+        <% if !issue.discussion_closed? && !issue.archived? %>
+          <%= turbo_frame_tag "activities", class: 'comment-con' do %>
+            <%= render activity_objects %>
+            <% if activity_objects.empty? && !issue.discussion_closed? && !issue.archived? %>
+              <div class="be-first-comment-notice">Buďte prvý kto overí podnet alebo napíše komentár!</div>
+            <% end %>
           <% end %>
         <% end %>
 
@@ -142,6 +144,10 @@
           <% if issue.discussion_closed? %>
             <div class="unverified-notice-con">
               <div class="unverified-notice-title">Diskusia k tomuto podnetu bola uzatvorená.</div>
+            </div>
+          <% elsif issue.archived? %>
+            <div class="unverified-notice-con">
+              <div class="unverified-notice-title">Tento podnet bol archivovaný a&nbsp;preto bola diskusia k&nbsp;nemu uzatvorená.</div>
             </div>
           <% else %>
             <% if current_user.full_access? %>

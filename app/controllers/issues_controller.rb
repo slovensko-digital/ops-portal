@@ -14,6 +14,11 @@ class IssuesController < ApplicationController
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
     scope = Issue.publicly_visible.includes(:state)
+
+    # do not allow searching for archived municipalities
+    scope = scope.where.not(municipality_id: Municipality.archived.pluck(:id))
+    scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
+
     case @tab
     when "list"
         scope = scope.with_attached_photos
@@ -82,7 +87,11 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :stav,
           label: "Stav podnetu",
-          items: -> { Issues::State.order(:name).pluck(:name) - [ "Čakajúci", "Neprijatý", "Vyriešený (skrytý)" ] },
+          items: -> do
+            Issues::State.order(:name).pluck(:name) -
+            [ "Archivovaný", "Čakajúci", "Neprijatý", "Vyriešený (skrytý)" ] +
+            [ "Archivovaný" ] # add as last option
+          end,
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = Issues::State.where(name: params[:stav]).pluck(:id)
@@ -165,7 +174,7 @@ class IssuesController < ApplicationController
           items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
-            ids = Municipality.where(name: params[:obec]).pluck(:id)
+            ids = Municipality.active.where(name: params[:obec]).pluck(:id)
             scope.where(municipality_id: ids)
           end
         ),
@@ -177,13 +186,13 @@ class IssuesController < ApplicationController
             return [] unless params[:obec].present?
 
             MunicipalityDistrict.joins(:municipality)
-              .where(municipalities: { name: params[:obec], active: true })
+              .where(municipalities: { name: params[:obec], active: true }, archived: false)
               .order(Arel.sql("municipality_districts.name COLLATE unicode"))
               .pluck(:name)
           end,
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
-            ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
+            ids = MunicipalityDistrict.where(name: params[:cast], archived: false).pluck(:id)
             scope.where(municipality_district_id: ids)
           end
         ),

@@ -30,6 +30,7 @@
 #  title                               :string           not null
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
+#  archived_state_id                   :bigint
 #  author_id                           :bigint
 #  category_id                         :bigint
 #  legacy_id                           :integer
@@ -57,6 +58,7 @@ class Issue < ApplicationRecord
   belongs_to :municipality_district, optional: true
   belongs_to :responsible_subject, optional: true
   belongs_to :state, class_name: "Issues::State", optional: true
+  belongs_to :archived_state, class_name: "Issues::State", optional: true
 
   has_many :activities, class_name: "Issues::Activity", dependent: :destroy
   has_many :comment_activities, class_name: "Issues::CommentActivity", dependent: :destroy
@@ -134,6 +136,10 @@ class Issue < ApplicationRecord
 
   def editable?
     state.key == "waiting"
+  end
+
+  def archived?
+    state.key == "archived" || municipality.archived? || municipality_district&.archived?
   end
 
   def showing_comments_count?
