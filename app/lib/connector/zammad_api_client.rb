@@ -30,7 +30,7 @@ module Connector
 
     def update_issue!(issue_id, issue_data)
       issue = @tenant.issues.find_by(triage_external_id: issue_id)
-      raise "Issue not found" unless issue
+      return create_issue!(issue_data) unless issue
 
       ticket = @client.ticket.find(issue.backoffice_external_id)
       for key, value in issue_data
