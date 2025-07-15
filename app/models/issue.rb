@@ -57,6 +57,7 @@ class Issue < ApplicationRecord
   belongs_to :municipality_district, optional: true
   belongs_to :responsible_subject, optional: true
   belongs_to :state, class_name: "Issues::State", optional: true
+  belongs_to :archived_state, class_name: "Issues::State", optional: true
 
   has_many :activities, class_name: "Issues::Activity", dependent: :destroy
   has_many :comment_activities, class_name: "Issues::CommentActivity", dependent: :destroy

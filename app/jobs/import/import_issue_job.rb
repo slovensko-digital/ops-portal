@@ -24,6 +24,15 @@ module Import
       end
       backoffice_owners = Legacy::Alerts::MunicipalityUser.where(alert_id: legacy_record.id).order(:id)
 
+      state = ::Issues::State.find_by(legacy_id: legacy_record.status)
+      archived_state = nil
+
+      if convert_timestamp_value(legacy_record.posted_time) < ARCHIVE_THRESHOLD ||
+         municipality.archived? || municipality_district&.archived?
+        archived_state = state
+        state = ::Issues::State.find_by(key: "archived")
+      end
+
       issue = Issue.find_or_create_by(
         id: legacy_record.id,
         legacy_id: legacy_record.id,
@@ -86,7 +95,8 @@ module Import
         municipality: municipality,
         municipality_district: municipality&.municipality_districts.find_by(legacy_id: legacy_record.mestska_cast),
         responsible_subject: Legacy::ResponsibleSubject.find_or_create_responsible_subject(legacy_record.zodpovednost),
-        state: ::Issues::State.find_by(legacy_id: legacy_record.status)
+        state: state,
+        archived_state: archived_state
       ).tap do |issue|
         issue.imported_at = Time.now
         issue.updated_at = convert_timestamp_value(legacy_record.modified_time) if legacy_record.modified_time
