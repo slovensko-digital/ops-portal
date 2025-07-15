@@ -39,7 +39,7 @@ class Issues::IssuesUserCommentsController < ApplicationController
         format.turbo_stream
         format.html { redirect_to @issue, notice: "Komentár bol pridaný" }
       end
-      Issues::SyncUserCommentToTriageJob.set(wait_until: @comment.editing_window_end).perform_later(@comment)
+      Issues::SyncEditableActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
     else
       render :new, status: :unprocessable_entity
     end

@@ -123,6 +123,9 @@ sk:
         municipality_id: "Mesto alebo obec"
       issues/user_comment:
         text: "Text komentára"
+      issues/update:
+        attachments: "Fotografia pri overovaní podnetu"
+
 
   issues/drafts:
     new_issue: "Nový podnet"

@@ -27,7 +27,8 @@ class Issues::UserComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
   validates :text, presence: true, if: -> { attachments.empty? }, unless: -> { legacy_id }
-  validate :edited_within_editing_window, on: :edit
+
+  include EditableWithinEditingWindow
 
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
 
@@ -48,17 +49,5 @@ class Issues::UserComment < Issues::Comment
     return false unless within_editing_window?
 
     true
-  end
-
-  def editing_window_end
-    created_at + ENV.fetch("COMMENT_EDITING_WINDOW_SECONDS", 300).to_i # TODO
-  end
-
-  def within_editing_window?
-    Time.now < editing_window_end
-  end
-
-  def edited_within_editing_window
-    errors.add(:base, "Komentár je možné upravovať len 5 minút od jeho vytvorenia.") unless within_editing_window?
   end
 end

@@ -60,6 +60,7 @@ class User < ApplicationRecord
   has_many :issue_subscriptions, foreign_key: :subscriber_id
   has_many :watched_issues, through: :issue_subscriptions, source: :issue
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
+  has_many :issues_updates, class_name: "Issues::Update", foreign_key: :author_id
   has_one_attached :avatar do |avatar|
     avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
     avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
@@ -140,6 +141,14 @@ class User < ApplicationRecord
   def regenerate_phone_verification_code!
     code = 5.times.map { rand(9) }.join
     update!(phone_verification_code: code)
+  end
+
+  def create_issue_limit_exceeded?
+    issues.where(created_at: 1.month.ago..).count >= 10
+  end
+
+  def create_issue_update_limit_exceeded?
+    issues_updates.where(created_at: 1.day.ago...).count >= 5
   end
 
   private
