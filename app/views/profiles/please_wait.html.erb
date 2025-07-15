@@ -1,0 +1,16 @@
+<%= content_for :title, "Dosiahli ste limit pre túto funkciu" %>
+<%= turbo_page_requires_reload %>
+
+<section class="identity">
+  <h1 class="text-center">Dosiahli ste limit pre túto funkciu!</h1>
+
+  <div class="form-other-con">
+    <%= image_tag "max-limit.svg", style: "max-width: 50%; margin: 0 auto;", alt: "" %>
+    <div class="form-description prose">
+      <p>Niektoré funkcie na portáli Odkaz pre starostu majú nastavené limity, aby sa zabránilo zneužívaniu ich nadmerným používaním.</p>
+      <p>Ak ste dosiahli limit, stačí počkať a&nbsp;vykonať takúto akciu neskôr. Viac o konkrétnych limitoch sa dočítate nižšie.</p>
+    </div>
+
+    <%= link_to "Viac o limitoch", cms_page_path('zavedenie-limitov'), class: "button button-transparent" %>
+  </div>
+</section>

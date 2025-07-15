@@ -95,6 +95,7 @@ Rails.application.routes.draw do
     collection do
       get :please_create, path: "potrebne-zalozit"
       get :please_verify, path: "potrebne-overit"
+      get :please_wait, path: "potrebne-pockat"
       get :watched_issues, path: "sledovane"
       get :verified_issues, path: "overene"
       get :settings, path: "nastavenia"

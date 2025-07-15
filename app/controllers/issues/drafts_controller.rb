@@ -1,6 +1,7 @@
 class Issues::DraftsController < ApplicationController
   before_action :require_full_access_user
   before_action :ensure_user_onboarded
+  before_action :check_rate_limit, only: [ :new, :new_question, :create ]
   before_action :load_draft, except: [ :new, :new_question, :create, :thanks ]
 
   def new
@@ -52,6 +53,10 @@ class Issues::DraftsController < ApplicationController
   end
 
   private
+
+  def check_rate_limit
+    redirect_to please_wait_profile_path if current_user.create_issue_limit_exceeded?
+  end
 
   def draft_params
     params.expect(issues_draft: [ :issue_type, { photos: [] } ])

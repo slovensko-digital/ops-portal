@@ -143,6 +143,14 @@ class User < ApplicationRecord
     update!(phone_verification_code: code)
   end
 
+  def create_issue_limit_exceeded?
+    issues.where(created_at: 1.month.ago..).count >= 10
+  end
+
+  def create_issue_update_limit_exceeded?
+    issues_updates.where(created_at: 1.day.ago...).count >= 5
+  end
+
   private
 
   def set_email_global_unsubscribe_token

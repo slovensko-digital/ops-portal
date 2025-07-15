@@ -20,6 +20,7 @@ two:
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 2
+  resolution_external_id: 3
   category: one
   state: in_progress
   municipality: bratislava
