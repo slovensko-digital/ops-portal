@@ -156,25 +156,35 @@ module Connector
       article = @tenant.activities.find_by(legacy_id: legacy_data.id)
       return ticket.articles.find { |a| article.backoffice_external_id == a.id } if article
 
-      new_article = ticket.article(
-        uuid: uuid,
-        origin_by_id: create_or_find_agent(legacy_data.author),
-        content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
-        body: legacy_data.body,
-        type: DEFAULT_ARTICLE_TYPE,
-        internal: legacy_data.internal,
-        attachments: legacy_data.attachments.map do |attachment|
-          {
-            "filename" => attachment.filename,
-            "mime-type" => attachment.mimetype,
-            "data" => Base64.encode64(attachment.content)
-          }
-        end,
-        sender: sender,
-        created_at: legacy_data.created_at
-      )
+      begin
+        new_article = ticket.article(
+          uuid: uuid,
+          origin_by_id: create_or_find_agent(legacy_data.author),
+          content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
+          body: legacy_data.body,
+          type: DEFAULT_ARTICLE_TYPE,
+          internal: legacy_data.internal,
+          attachments: legacy_data.attachments.map do |attachment|
+            {
+              "filename" => attachment.filename,
+              "mime-type" => attachment.mimetype,
+              "data" => Base64.encode64(attachment.content)
+            }
+          end,
+          sender: sender,
+          created_at: legacy_data.created_at
+        )
 
-      raise unless new_article.id
+        raise unless new_article.id
+      rescue RuntimeError => e
+        raise e unless /.*This object already exists/.match?(e.message)
+
+        search_result = ticket.articles.select { |a| a.uuid == uuid }
+
+        raise e unless search_result.count == 1
+
+        new_article = search_result.first
+      end
 
       @tenant.activities.create!(legacy_id: legacy_data.id, backoffice_external_id: new_article.id)
       new_article
@@ -199,7 +209,7 @@ module Connector
         ops_subcategory: legacy_data.subcategory&.name,
         ops_subtype: legacy_data.subtype&.name,
         address_municipality: legacy_data.municipality&.name,
-        address_municipality_district: legacy_data.municipality_district.name,
+        address_municipality_district: legacy_data.municipality_district&.name,
         address_street: legacy_data.address_street,
         address_lat: legacy_data.latitude,
         address_lon: legacy_data.longitude,
@@ -218,7 +228,8 @@ module Connector
             }
           end,
           created_at: legacy_data.created_at
-        }
+        },
+        tags: legacy_data.tags
       }
 
       begin
@@ -270,11 +281,49 @@ module Connector
       ticket.save
     end
 
+    def add_agent_to_group(owner, group_name)
+      user_id = create_or_find_agent(owner)
+      add_user_to_group(user_id, group_name)
+    end
+
+    def add_ticket_tag(issue, tag_name)
+      ticket = find_ticket_for_issue!(issue)
+
+      _, response_status = raw_api_request(
+        :post,
+        "tags/add",
+        params: {
+          item: tag_name,
+          o_id: ticket.id,
+          object: "Ticket"
+        }
+      )
+
+      raise "Tag not successfully added!" unless response_status == 201
+    end
+
     def find_or_create_imported_article_agent_author(user)
       user_id = create_or_find_agent(user)
       add_user_to_group(user_id, IMPORT_GROUP)
 
       user_id
+    end
+
+    def find_or_create_inactive_responsible_subject_user(responsible_subject)
+      return ANONYMOUS_USER_ID unless responsible_subject
+
+      user = @tenant.users.find_or_initialize_by(email: responsible_subject.email)
+      return user.external_id unless user.new_record?
+
+      zammad_identifier = find_or_create_user!(
+        firstname: responsible_subject.subject_name,
+        login: "ops-rs-#{responsible_subject.id}",
+        active: false
+      ).id
+
+      user.update(firstname: responsible_subject.name, external_id: zammad_identifier)
+
+      zammad_identifier
     end
 
     def subscribe_ticket(agent, issue)
@@ -314,6 +363,31 @@ module Connector
       raise "Import mode OFF" unless import_mode_on
 
       @last_import_mode_check = Time.now
+    end
+
+    def find_or_create_group(group_name)
+      group = @client.group.all.select { |g| g.name == group_name }&.first
+
+      return group if group
+
+      group = @client.group.create(name: group_name)
+      # add tech user to the new group
+      add_user_to_group(get_tech_user_id, group_name)
+      group
+    end
+
+    def add_ticket_to_group(issue, group_name)
+      ticket = find_ticket_for_issue!(issue)
+
+      ticket.group = group_name
+      ticket.save
+    end
+
+    def add_manual_ticket_to_group(tenant_issue, group_name)
+      ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
+
+      ticket.group = group_name
+      ticket.save
     end
 
     private
@@ -373,6 +447,10 @@ module Connector
       end
     end
 
+    def get_tech_user_id
+      @client.user.all.select { |u| u.firstname == "Aplikácia" && u.lastname == "Odkaz pre starostu" && "OPS Tech Account".in?(u.roles) }.first.id
+    end
+
     def add_user_to_group(user_identifier, group_name)
       user = get_user(user_identifier)
       user_groups = user.groups
@@ -411,7 +489,7 @@ module Connector
         ops_subcategory: issue["subcategory"],
         ops_subtype: issue["subtype"],
         address_municipality: issue["address_municipality"].split("::").first,
-        address_municipality_district: issue["address_municipality"].split("::").last,
+        address_municipality_district: issue["address_municipality"].split("::").second,
         address_street: issue["address_street"],
         address_house_number: issue["address_house_number"],
         address_postcode: issue["address_postcode"],

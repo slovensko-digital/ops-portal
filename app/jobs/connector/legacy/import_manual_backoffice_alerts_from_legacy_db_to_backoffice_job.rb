@@ -11,7 +11,7 @@ class Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob
       .where(zodpovednost: tenant_responsible_subject.legacy_id)
       .where("posted_time >= ?", import_since.to_i).find_in_batches do |group|
       group.each do |legacy_record|
-        import_alert_job.perform_later(tenant, legacy_record)
+        import_alert_job.set(queue: queue_name).perform_later(tenant, legacy_record)
       end
     end
   end

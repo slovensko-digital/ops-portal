@@ -1,6 +1,8 @@
 <%= turbo_frame_tag "new_issue_activity" do %>
   <div class="add-buttons">
     <%= link_to "Pridať komentár", new_issue_issues_user_comment_path(@issue), class: "button add-comment-button" %>
-    <%= link_to "Overiť podnet", new_issue_issues_update_path(@issue), class: "button button-transparent" %>
+    <% unless @issue.triage_process? %>
+      <%= link_to "Overiť podnet", new_issue_issues_update_path(@issue), class: "button button-transparent" %>
+    <% end %>
   </div>
 <% end %>

@@ -17,6 +17,7 @@
 #
 class MunicipalityDistrict < ApplicationRecord
   belongs_to :municipality
+  has_many :streets, dependent: :nullify
 
   scope :archived, -> { where(archived: true) }
 

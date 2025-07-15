@@ -25,6 +25,7 @@ class Issues::Update < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
   belongs_to :author, optional: true, class_name: "User"
   belongs_to :confirmed_by, optional: true, class_name: "User"
+  delegate :issue, to: :activity
 
   include Issues::ActivityObjectAttachments
   include EditableWithinEditingWindow
@@ -32,6 +33,8 @@ class Issues::Update < ApplicationRecord
   validates_presence_of :attachments, unless: -> { legacy_id }
 
   before_create -> { self.uuid = SecureRandom.uuid }
+
+  after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_external_id?
 
   def author_display_name
     author.display_name
@@ -46,7 +49,7 @@ class Issues::Update < ApplicationRecord
   end
 
   def visible?
-    published
+    published && !hidden
   end
 
   def confirmed?
@@ -58,5 +61,15 @@ class Issues::Update < ApplicationRecord
     return false unless within_editing_window?
 
     true
+  end
+
+  def ticket_number
+    "U-#{id.to_s.rjust(4, '0')}"
+  end
+
+  private
+
+  def notify_subscribers
+    Notifications::PublishNewIssueCommentJob.perform_later(self)
   end
 end

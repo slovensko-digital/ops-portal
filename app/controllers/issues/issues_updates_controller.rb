@@ -2,6 +2,7 @@ class Issues::IssuesUpdatesController < ApplicationController
   include IssueScoped
   before_action :require_user, only: [ :create, :edit, :update ]
   before_action :check_permissions
+  before_action :check_rate_limit, only: [ :new, :create ]
 
   def show
     redirect_to @issue, status: :moved_permanently
@@ -40,7 +41,7 @@ class Issues::IssuesUpdatesController < ApplicationController
         format.turbo_stream
         format.html { redirect_to @issue, notice: "Overenie podnetu bolo pridané" }
       end
-      Issues::SyncIssueUpdateToTriageJob.set(wait_until: @update.editing_window_end).perform_later(@update)
+      Issues::SyncEditableActivityToTriageJob.perform_later(@update, sync_job: SyncIssueActivityObjectToTriageJob)
     else
       render :new, status: :unprocessable_entity
     end
@@ -54,5 +55,9 @@ class Issues::IssuesUpdatesController < ApplicationController
 
   def update_params
     params.require(:issues_update).permit(:text, attachments: [])
+  end
+
+  def check_rate_limit
+    redirect_to_with_turbo please_wait_profile_path if current_user.create_issue_update_limit_exceeded?
   end
 end

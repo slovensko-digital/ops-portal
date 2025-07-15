@@ -7,6 +7,7 @@ module Import
         group.each do |legacy_record|
           ::ResponsibleSubjects::OrganizationUnit.find_or_create_by!(
             legacy_id: legacy_record.id,
+            name: legacy_record.name,
             responsible_subject: ResponsibleSubject.find_by(legacy_id: legacy_record.zodpovednost_id)
           )
         end

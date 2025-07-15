@@ -12,7 +12,7 @@ module ImportMethods
           "#{ENV.fetch("LEGACY_PORTAL_URL")}/#{path}",
           attachment_filename(path)
         )
-      end
+      end.compact
     end
 
     def download_from_ops_portal(path)

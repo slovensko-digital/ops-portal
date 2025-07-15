@@ -46,47 +46,66 @@ class ZammadApiClient
       return
     end
 
-    result = build_ticket_response(ticket)
-    return unless result.present?
+    case ticket.process_type
+    when "portal_issue_triage", "portal_issue_resolution"
+      result = build_issue_ticket_response(ticket)
+      return unless result.present?
 
-    if ticket.issue_type == "praise"
-      result.merge({
-        activities: [
-          {
-            article_type: :user_portal_comment,
-            author: result[:author],
-            author_response: result[:author_response],
-            triage_identifier: ticket.articles.first.id,
-            content_type: ticket.articles.first.content_type,
-            body: result[:description],
-            created_at: result[:created_at],
-            updated_at: result[:updated_at],
-            attachments: ticket.articles.first.attachments.map do |attachment|
-              {
-                triage_identifier: attachment.id,
-                filename: attachment.filename,
-                content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
-                data64: Base64.strict_encode64(attachment.download)
-              }
-            end
-          }
-        ]
-      })
+      if ticket.issue_type == "praise"
+        result.merge({
+          activities: [
+            {
+              article_type: :user_portal_comment,
+              author: result[:author],
+              author_response: result[:author_response],
+              triage_identifier: ticket.articles.first.id,
+              content_type: ticket.articles.first.content_type,
+              body: result[:description],
+              created_at: result[:created_at],
+              updated_at: result[:updated_at],
+              attachments: ticket.articles.first.attachments.map do |attachment|
+                {
+                  triage_identifier: attachment.id,
+                  filename: attachment.filename,
+                  content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
+                  data64: Base64.strict_encode64(attachment.download)
+                }
+              end
+            }
+          ]
+        })
 
+      else
+        return result unless expand
+
+        result.merge({
+          activities: [ build_article_response(ticket, ticket.articles.first, allowed_article_types: allowed_article_types, first_article: true) ] +
+            ticket.articles[1..].map { |article|
+              build_article_response(
+                ticket,
+                article,
+                allowed_article_types: allowed_article_types,
+                responsible_subject: responsible_subject
+              )
+            }.compact
+        })
+      end
+    when "portal_issue_verification"
+      {
+        triage_identifier: ticket.id,
+        triage_group: ticket.group,
+        ops_state_key: ticket.ops_state,
+        origin: ticket.origin,
+        process_type: ticket.process_type,
+        title: ticket.title,
+        description: ticket.body,
+        likes_count: ticket.likes_count,
+        portal_url: ticket.portal_url,
+        created_at: ticket.created_at,
+        updated_at: ticket.updated_at
+      }
     else
-      return result unless expand
-
-      result.merge({
-        activities: [ build_article_response(ticket, ticket.articles.first, allowed_article_types: allowed_article_types, first_article: true) ] +
-          ticket.articles[1..].map { |article|
-            build_article_response(
-              ticket,
-              article,
-              allowed_article_types: allowed_article_types,
-              responsible_subject: responsible_subject
-            )
-          }.compact
-      })
+      raise "Process type not yet supported: #{ticket.process_type}"
     end
   end
 
@@ -148,6 +167,49 @@ class ZammadApiClient
 
     # TODO custom error
     raise unless ticket.id
+    ticket.id
+  end
+
+  def create_ticket_from_issue_update!(issue_update)
+    issue = issue_update.activity.issue
+    issue_ticket = @client.ticket.find(issue.resolution_external_id)
+
+    unless issue_update.author.external_id
+      issue_update.author.update!(external_id: create_customer!(issue_update.author))
+    end
+
+    ticket = @client.ticket.create(
+      number: issue_update.ticket_number,
+      ops_issue_identifier: issue_update.id,
+      process_type: "portal_issue_verification",
+      title: "Aktualizácia podnetu #{issue.title || 'Bez názvu'}",
+      body: issue_update.text.presence || "(bez popisu)",
+      group: issue_ticket.group,
+      customer_id: issue_update.author.external_id,
+      origin_by_id: issue_update.author.external_id,
+      ops_state: "waiting",
+      portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
+      likes_count: issue_update.activity.likes_count,
+      origin: DEFAULT_ORIGIN,
+      article: {
+        origin_by_id: issue_update.author.external_id,
+        sender: DEFAULT_SENDER,
+        type: DEFAULT_ARTICLE_TYPE,
+        body: issue_update.text.presence || "(bez popisu)",
+        attachments: issue_update.attachments.map do |photo|
+          {
+            "filename" => photo.filename.to_s,
+            "data" => Base64.encode64(photo.variable? ? photo.variant(:full).processed.download : photo.download),
+            "mime-type" => photo.content_type
+          }
+        end
+      }
+    )
+
+    raise unless ticket.id
+
+    link_tickets!(parent_ticket_id: issue.resolution_external_id, child_ticket_id: ticket.id)
+
     ticket.id
   end
 
@@ -519,7 +581,7 @@ class ZammadApiClient
     end
   end
 
-  def build_ticket_response(ticket)
+  def build_issue_ticket_response(ticket)
     raise "Ticket from triage #{ticket.id} is missing address municipality" unless ticket.address_municipality.present?
 
     municipality_name, district_name = ticket.address_municipality.split("::", 2)
@@ -587,7 +649,17 @@ class ZammadApiClient
         User.find_by(external_id: article.origin_by_id || article.created_by_id)
       end
     when :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment
-      ResponsibleSubject.find_by(external_id: article.origin_by_id || article.created_by_id)
+      result = ResponsibleSubject.find_by(external_id: article.origin_by_id || article.created_by_id)
+
+      unless result.present?
+        article_author = @client.user.find(article.origin_by_id || article.created_by_id)
+        organization = article_author&.organization
+        raise "Responsible subject article author has no organization" unless organization.present?
+
+        result = ResponsibleSubject.find_by(subject_name: organization)
+      end
+
+      result
     end
 
     body = article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, "")
@@ -636,7 +708,7 @@ class ZammadApiClient
       return :user_portal_comment if article.sender == "Customer" && article_author&.origin == "portal"
 
       if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
-        if article.sender == "Customer" && (article_author&.roles & [ "Zodpovedný Subjekt", "Externý zodpovedný subjekt" ]).present?
+        if article.sender == "Customer" && (article_author&.organization.present? || article_author&.roles&.include?("Zodpovedný Subjekt"))
           if article.type == "email"
             body = EmailParser.parse_text(article.body)
             if body.first(100).include?(OPS_PORTAL_ARTICLE_TAG)
@@ -657,7 +729,7 @@ class ZammadApiClient
       elsif article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
         return :agent_backoffice_comment if article.sender == "Agent"
       else
-        return nil unless article.sender == "Customer" && (article_author&.roles & [ "Zodpovedný Subjekt", "Externý zodpovedný subjekt" ]).present?
+        return nil unless article.sender == "Customer" && (article_author&.organization.present? || article_author&.roles&.include?("Zodpovedný Subjekt"))
         return :responsible_subject_backoffice_comment
       end
     else

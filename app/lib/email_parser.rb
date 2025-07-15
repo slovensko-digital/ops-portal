@@ -45,11 +45,19 @@ class EmailParser
     # Remove everything after signature marker if present
     sig_marker = doc.at_css(".js-signatureMarker")
     if sig_marker
-      current = sig_marker.parent
-      while current
-        nxt = current.next_sibling
-        current.remove
-        current = nxt
+      current = sig_marker
+      parent = current.parent
+      while parent && parent.element?
+        current = current.next_sibling
+        # remove all current's next siblings
+        while current
+          nxt = current.next_sibling
+          current.remove
+          current = nxt
+        end
+        # move to removing parent's next siblings
+        current = parent
+        parent = parent.parent
       end
       # Remove the marker itself
       sig_marker.remove
