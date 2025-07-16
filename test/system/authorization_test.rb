@@ -44,6 +44,35 @@ class AccountsTest < ApplicationSystemTestCase
     assert_selector "a.login", text: "Prihlásiť"
   end
 
+  test "banned user cannot login" do
+    user = users(:one)
+    user.update!(banned: true)
+
+    visit "/login"
+
+    fill_in "Email", with: user.email
+    fill_in "Heslo", with: "password"
+
+    click_button "Prihlásiť"
+
+    assert_selector ".flash-message-container", text: "Váš účet bol zablokovaný."
+    assert_selector "a.login", text: "Prihlásiť"
+  end
+
+  test "banned user gets logged out if already logged in" do
+    user = users(:one)
+
+    login(user.email, "password")
+    assert_selector "a.login", text: user.firstname
+
+    user.update!(banned: true)
+
+    visit root_path
+
+    assert_selector ".flash-message-container", text: "Váš účet bol zablokovaný."
+    assert_selector "a.login", text: "Prihlásiť"
+  end
+
   private
 
   def verify_account

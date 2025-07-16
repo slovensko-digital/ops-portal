@@ -86,7 +86,7 @@ end
 
 gem "good_job"
 
-gem "rack-cors", "~> 2.0"
+gem "rack-cors"
 
 # Auth
 gem "rodauth-rails", "~> 2.1"
@@ -114,3 +114,5 @@ gem "aws-sdk-s3"
 gem "aws-sdk-sns"
 
 gem "rollbar"
+
+gem "email_reply_parser", "~> 0.5.11"

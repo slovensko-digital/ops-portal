@@ -39,7 +39,7 @@ class Issues::IssuesUserCommentsController < ApplicationController
         format.turbo_stream
         format.html { redirect_to @issue, notice: "Komentár bol pridaný" }
       end
-      Issues::SyncUserCommentToTriageJob.set(wait_until: @comment.editing_window_end).perform_later(@comment)
+      Issues::SyncEditableActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
     else
       render :new, status: :unprocessable_entity
     end
@@ -56,6 +56,6 @@ class Issues::IssuesUserCommentsController < ApplicationController
   end
 
   def check_permissions
-    render status: :unauthorized, body: nil if !current_user.can_view?(@issue) || @issue.discussion_closed?
+    render status: :unauthorized, body: nil if !current_user.can_view?(@issue) || @issue.discussion_closed? || @issue.archived?
   end
 end

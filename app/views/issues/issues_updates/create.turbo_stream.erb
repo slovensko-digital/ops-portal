@@ -1,0 +1,7 @@
+<%= turbo_stream.append "activities" do %>
+  <%= render @update %>
+<% end %>
+<%= turbo_stream.update "new_issue_activity" do %>
+  <%= render partial: "issues/new_issue_activity_buttons" %>
+<% end %>
+<%= turbo_stream.remove_all ".be-first-comment-notice" %>

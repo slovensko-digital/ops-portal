@@ -11,7 +11,7 @@ class Api::V1::IssuesController < ApiController
       params.require(:id),
       responsible_subject: @client.responsible_subject,
       allowed_article_types: allowed_article_types,
-      expand: true
+      expand: params[:expand] != "false"
     )
   end
 

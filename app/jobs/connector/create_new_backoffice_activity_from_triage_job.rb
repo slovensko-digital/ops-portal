@@ -8,6 +8,16 @@ class Connector::CreateNewBackofficeActivityFromTriageJob < ApplicationJob
 
     return unless tenant.receive_customer_activities? || activity["activity_type"].in?([ "agent_portal_and_backoffice_comment", "agent_backoffice_comment" ])
 
-    zammad_client.create_activity!(issue_id, activity)
+    begin
+      zammad_client.create_activity!(issue_id, activity)
+    rescue => e
+      # it is OK that rejected issue is not found in BackOffice
+      if e.message.include?("Issue not found")
+        issue = ops_client.get_issue(issue_id, expand: false)
+        return if issue["ops_state"] == "rejected"
+      end
+
+      raise e
+    end
   end
 end

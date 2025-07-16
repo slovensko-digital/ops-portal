@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     resource :issue_subscription, as: :subscription
     resources :issues_user_comments, path: "komentare", module: :issues
     resources :issues_user_private_comments, path: "komentare", module: :issues, controller: "issues_user_comments"
+    resources :issues_updates, path: "overenia", module: :issues, controller: "issues_updates"
   end
 
   namespace :issues, path: "dopyty" do
@@ -94,6 +95,7 @@ Rails.application.routes.draw do
     collection do
       get :please_create, path: "potrebne-zalozit"
       get :please_verify, path: "potrebne-overit"
+      get :please_wait, path: "potrebne-pockat"
       get :watched_issues, path: "sledovane"
       get :verified_issues, path: "overene"
       get :settings, path: "nastavenia"

@@ -200,6 +200,7 @@ a.button-transparent:hover {
 .state-odstupeny { background: $odstupene; }
 .state-cakajuci { background: $cakajuce; }
 .state-uzavrety { background: $uzavrete; }
+.state-archivovany { background: $uzavrete; }
 
 .statistics-block-category-komunikacie,
 .statistics-block-category-cesty-a-chodniky { background: #C4F8FF; }
@@ -2131,7 +2132,8 @@ a.podnet-block .state-nerieseny {
   background: $neriesene;
 }
 a.podnet-block .state-uzavrety,
-a.podnet-block .state-neprijaty {
+a.podnet-block .state-neprijaty,
+a.podnet-block .state-archivovany {
   background: $uzavrete;
 }
 a.podnet-block .icon-con {

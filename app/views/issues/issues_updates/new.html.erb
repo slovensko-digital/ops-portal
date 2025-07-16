@@ -1,0 +1,9 @@
+<%= turbo_frame_tag "new_issue_activity" do %>
+  <div class="add-comment-form-con" data-controller="autofocus delegate" data-autofocus-target="scrollAnchor" data-delegate-target="selectorRoot">
+    <div class="add-comment-form">
+      <div class="title">Overiť podnet</div>
+      <div class="description">Pri overovaní podnetu je potrebné vždy pridať aj fotografiu, ktorá dokumentuje aktuálny stav.</div>
+      <%= render "form", issue: @issue, update: @update %>
+    </div>
+  </div>
+<% end %>

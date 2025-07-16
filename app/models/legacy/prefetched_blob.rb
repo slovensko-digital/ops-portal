@@ -24,6 +24,12 @@ class Legacy::PrefetchedBlob < ApplicationRecord
       io: URI.parse(url).open,
       filename: filename
     )
+
+    if blob.byte_size == 0
+      blob.destroy
+      return
+    end
+
     prefetched_blob = create!(url: url, attachment: blob)
 
     prefetched_blob.attachment.blob

@@ -1,0 +1,6 @@
+<%= turbo_frame_tag @update do %>
+  <div class="add-comment-form edit-comment-form" data-controller="autofocus delegate" data-delegate-target="selectorRoot">
+    <div class="title">Upraviť overenie podnetu</div>
+    <%= render "form", issue: @issue, update: @update %>
+  </div>
+<% end %>

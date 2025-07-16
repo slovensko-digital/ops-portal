@@ -23,6 +23,7 @@
         <%= hidden_field_tag "blobs[]", blob.signed_id %>
         <%= hidden_field_tag "issues_user_comment[attachments][]", blob.signed_id %>
         <%= hidden_field_tag "issues_user_private_comment[attachments][]", blob.signed_id %>
+        <%= hidden_field_tag "issues_update[attachments][]", blob.signed_id %>
         <%= hidden_field_tag "issue[photos][]", blob.signed_id %>
       </picture>
     </figure>

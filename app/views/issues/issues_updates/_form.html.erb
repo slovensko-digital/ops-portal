@@ -1,0 +1,27 @@
+<%= form_with model: [ issue, update ], multipart: true do |f| %>
+  <% if update.errors[:base].any? %>
+    <% update.errors[:base].each do |error| %>
+      <div class="error-message"><%= error %></div>
+    <% end %>
+  <% else %>
+    <%= f.text_area :text, placeholder: "Sem napíšte váš komentár", data: { autofocus_target: "input" }, class: "#{update.errors[:text].any? ? 'error' : ''}" %>
+    <% update.errors.full_messages_for(:text).each do |error| %>
+      <div class="error-message"><%= error %></div>
+    <% end %>
+    <% update.errors.full_messages_for(:attachments).each do |error| %>
+      <div class="error-message"><%= error %></div>
+    <% end %>
+
+    <%= render partial: "uploads/form", locals: { prefix: dom_id(update), blobs: update.attachments.blobs, wrapper_class: "pictures-wrapper" } %>
+
+    <div class="buttons-wrapper">
+      <%= f.button class: "button button-transparent", data: { action: 'delegate#click', delegate_selector_param: ".new-files" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
+          <polygon points="16 9.25 8.75 9.25 8.75 2 7.25 2 7.25 9.25 0 9.25 0 10.75 7.25 10.75 7.25 18 8.75 18 8.75 10.75 16 10.75 16 9.25" fill="#1c3054"/>
+        </svg>
+        <span>Pridať fotografiu</span>
+      <% end %>
+      <%= f.submit update.new_record? ? "Odoslať" : "Uložiť zmeny", class: "button submit" %>
+    </div>
+  <% end %>
+<% end %>

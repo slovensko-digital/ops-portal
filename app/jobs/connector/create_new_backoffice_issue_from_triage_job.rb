@@ -9,7 +9,8 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     ops_api_client: Connector::OpsApiClient,
     import_legacy_backoffice_activity_job: Connector::Legacy::ImportBackofficeActivityFromTriageToBackofficeJob,
     import_legacy_internal_backoffice_activity_job: Connector::Legacy::ImportInternalBackofficeActivityFromLegacyDbToBackofficeJob,
-    set_ticket_owner_job: Connector::Legacy::SetBackofficeTicketOwnerJob
+    set_ticket_owner_and_group_job: Connector::Legacy::SetBackofficeTicketOwnerAndGroupJob,
+    add_ticket_tag_job: Connector::Legacy::AddTicketTagJob
   )
     ops_client = ops_api_client.new(tenant)
 
@@ -21,14 +22,15 @@ class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
     return zammad_client.create_issue!(issue_data) unless import
 
     zammad_client.check_import_mode!
-    zammad_group = zammad_api_client::IMPORT_GROUP
+    zammad_group = zammad_client.class.const_get("IMPORT_GROUP")
     backoffice_state = ISSUE_OPS_STATE_TO_BACKOFFICE_STATE.fetch(issue_data["ops_state"])
 
     zammad_client.create_issue!(issue_data, state: backoffice_state, group: zammad_group)
 
-    import_legacy_backoffice_activity_job.perform_later(tenant, issue_id)
-    import_legacy_internal_backoffice_activity_job.perform_later(tenant, issue_id)
-    set_ticket_owner_job.perform_later(tenant, issue_id)
+    import_legacy_backoffice_activity_job.set(queue: queue_name).perform_later(tenant, issue_id)
+    import_legacy_internal_backoffice_activity_job.set(queue: queue_name).perform_later(tenant, issue_id)
+    set_ticket_owner_and_group_job.set(queue: queue_name).perform_later(tenant, issue_id)
+    add_ticket_tag_job.set(queue: queue_name).perform_later(tenant, issue_id) if tenant.migrate_legacy_labels?
   end
 
   ISSUE_OPS_STATE_TO_BACKOFFICE_STATE = {

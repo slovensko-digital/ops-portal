@@ -381,7 +381,8 @@ CREATE TABLE public.connector_tenants (
     backoffice_url character varying,
     backoffice_api_token character varying,
     backoffice_webhook_secret character varying,
-    receive_customer_activities boolean DEFAULT false NOT NULL
+    receive_customer_activities boolean DEFAULT false NOT NULL,
+    migrate_legacy_labels boolean DEFAULT true
 );
 
 
@@ -683,7 +684,8 @@ CREATE TABLE public.issues (
     address_suburb character varying,
     comments_count integer DEFAULT 0 NOT NULL,
     fulltext_extra character varying,
-    discussion_closed boolean DEFAULT false
+    discussion_closed boolean DEFAULT false,
+    archived_state_id bigint
 );
 
 
@@ -1047,7 +1049,10 @@ CREATE TABLE public.issues_updates (
     legacy_id integer,
     triage_external_id integer,
     imported_at timestamp(6) without time zone,
-    uuid uuid
+    uuid uuid,
+    confirmed boolean DEFAULT false,
+    external_id character varying,
+    hidden boolean DEFAULT false
 );
 
 
@@ -1133,6 +1138,39 @@ ALTER SEQUENCE public.legacy_agents_id_seq OWNED BY public.legacy_agents.id;
 
 
 --
+-- Name: legacy_alerts_sources; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.legacy_alerts_sources (
+    id bigint NOT NULL,
+    legacy_id integer,
+    responsible_subject_id bigint NOT NULL,
+    name character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: legacy_alerts_sources_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.legacy_alerts_sources_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: legacy_alerts_sources_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.legacy_alerts_sources_id_seq OWNED BY public.legacy_alerts_sources.id;
+
+
+--
 -- Name: legacy_issues_communications; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1185,6 +1223,40 @@ CREATE SEQUENCE public.legacy_issues_communications_id_seq
 --
 
 ALTER SEQUENCE public.legacy_issues_communications_id_seq OWNED BY public.legacy_issues_communications.id;
+
+
+--
+-- Name: legacy_labels; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.legacy_labels (
+    id bigint NOT NULL,
+    legacy_id integer,
+    responsible_subject_id bigint NOT NULL,
+    name character varying,
+    color character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: legacy_labels_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.legacy_labels_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: legacy_labels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.legacy_labels_id_seq OWNED BY public.legacy_labels.id;
 
 
 --
@@ -1242,7 +1314,8 @@ CREATE TABLE public.municipalities (
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
-    active_on_old_portal boolean DEFAULT false NOT NULL
+    active_on_old_portal boolean DEFAULT false NOT NULL,
+    archived boolean DEFAULT false
 );
 
 
@@ -1280,7 +1353,8 @@ CREATE TABLE public.municipality_districts (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
-    aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL
+    aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
+    archived boolean DEFAULT false
 );
 
 
@@ -1967,10 +2041,24 @@ ALTER TABLE ONLY public.legacy_agents ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Name: legacy_alerts_sources id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_alerts_sources ALTER COLUMN id SET DEFAULT nextval('public.legacy_alerts_sources_id_seq'::regclass);
+
+
+--
 -- Name: legacy_issues_communications id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.legacy_issues_communications ALTER COLUMN id SET DEFAULT nextval('public.legacy_issues_communications_id_seq'::regclass);
+
+
+--
+-- Name: legacy_labels id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_labels ALTER COLUMN id SET DEFAULT nextval('public.legacy_labels_id_seq'::regclass);
 
 
 --
@@ -2326,11 +2414,27 @@ ALTER TABLE ONLY public.legacy_agents
 
 
 --
+-- Name: legacy_alerts_sources legacy_alerts_sources_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_alerts_sources
+    ADD CONSTRAINT legacy_alerts_sources_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: legacy_issues_communications legacy_issues_communications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.legacy_issues_communications
     ADD CONSTRAINT legacy_issues_communications_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: legacy_labels legacy_labels_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_labels
+    ADD CONSTRAINT legacy_labels_pkey PRIMARY KEY (id);
 
 
 --
@@ -2904,6 +3008,13 @@ CREATE INDEX index_issues_municipality_search_hot_path ON public.issues USING bt
 
 
 --
+-- Name: index_issues_on_archived_state_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_on_archived_state_id ON public.issues USING btree (archived_state_id);
+
+
+--
 -- Name: index_issues_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2988,6 +3099,13 @@ CREATE INDEX index_issues_on_subtype_id ON public.issues USING btree (subtype_id
 
 
 --
+-- Name: index_issues_states_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_issues_states_on_key ON public.issues_states USING btree (key);
+
+
+--
 -- Name: index_issues_states_on_legacy_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3044,6 +3162,13 @@ CREATE INDEX index_issues_updates_on_confirmed_by_id ON public.issues_updates US
 
 
 --
+-- Name: index_issues_updates_on_external_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_issues_updates_on_external_id ON public.issues_updates USING btree (external_id);
+
+
+--
 -- Name: index_issues_updates_on_legacy_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3079,6 +3204,20 @@ CREATE INDEX index_legacy_agents_on_street_id ON public.legacy_agents USING btre
 
 
 --
+-- Name: index_legacy_alerts_sources_on_legacy_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_legacy_alerts_sources_on_legacy_id ON public.legacy_alerts_sources USING btree (legacy_id);
+
+
+--
+-- Name: index_legacy_alerts_sources_on_responsible_subject_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_legacy_alerts_sources_on_responsible_subject_id ON public.legacy_alerts_sources USING btree (responsible_subject_id);
+
+
+--
 -- Name: index_legacy_issues_communications_on_activity_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3104,6 +3243,20 @@ CREATE UNIQUE INDEX index_legacy_issues_communications_on_legacy_id ON public.le
 --
 
 CREATE UNIQUE INDEX index_legacy_issues_communications_on_uuid ON public.legacy_issues_communications USING btree (uuid);
+
+
+--
+-- Name: index_legacy_labels_on_legacy_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_legacy_labels_on_legacy_id ON public.legacy_labels USING btree (legacy_id);
+
+
+--
+-- Name: index_legacy_labels_on_responsible_subject_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_legacy_labels_on_responsible_subject_id ON public.legacy_labels USING btree (responsible_subject_id);
 
 
 --
@@ -3373,20 +3526,6 @@ CREATE INDEX issues_fulltext_idx ON public.issues USING gin ((((((to_tsvector('s
 
 
 --
--- Name: test_js_g1; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX test_js_g1 ON public.issues USING btree (public.st_geohash(public.st_point(longitude, latitude), 6));
-
-
---
--- Name: test_js_geo; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX test_js_geo ON public.issues USING btree (public.st_geohash(public.st_point(longitude, latitude, 4326), 6));
-
-
---
 -- Name: municipalities fk_rails_03f4031592; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3400,6 +3539,14 @@ ALTER TABLE ONLY public.municipalities
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_05f1e72feb FOREIGN KEY (author_id) REFERENCES public.users(id);
+
+
+--
+-- Name: legacy_alerts_sources fk_rails_0e2f527795; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_alerts_sources
+    ADD CONSTRAINT fk_rails_0e2f527795 FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
 
 
 --
@@ -3611,6 +3758,14 @@ ALTER TABLE ONLY public.user_identities
 
 
 --
+-- Name: issues fk_rails_6e8f6d948e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues
+    ADD CONSTRAINT fk_rails_6e8f6d948e FOREIGN KEY (archived_state_id) REFERENCES public.issues_states(id);
+
+
+--
 -- Name: issues_drafts fk_rails_754b96099f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3680,6 +3835,14 @@ ALTER TABLE ONLY public.issue_likes
 
 ALTER TABLE ONLY public.connector_activities
     ADD CONSTRAINT fk_rails_90e9990402 FOREIGN KEY (connector_tenant_id) REFERENCES public.connector_tenants(id);
+
+
+--
+-- Name: legacy_labels fk_rails_91c3a6c92e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_labels
+    ADD CONSTRAINT fk_rails_91c3a6c92e FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
 
 
 --
@@ -3889,6 +4052,16 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250715090801'),
+('20250708140537'),
+('20250610165558'),
+('20250610121625'),
+('20250609144952'),
+('20250605200853'),
+('20250605192922'),
+('20250605190746'),
+('20250522185556'),
+('20250522184502'),
 ('20250522111247'),
 ('20250522105736'),
 ('20250522105410'),

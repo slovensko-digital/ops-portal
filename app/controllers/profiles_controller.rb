@@ -8,6 +8,9 @@ class ProfilesController < ApplicationController
   def please_verify
   end
 
+  def please_wait
+  end
+
   def show
     @tab = :my
     @issues = current_user.issues.newest.page(params[:page]).per(8)

@@ -6,7 +6,7 @@ class Triage::WebhooksController < ActionController::API
 
     case event_type
     when "ticket.updated"
-      Triage::UpdatePortalIssueFromTriageJob.perform_later(data.require(:ticket_id))
+      Triage::SyncTicketUpdateFromTriageJob.perform_later(data.require(:ticket_id))
     when "article.created"
       Triage::CreateNewPortalActivityFromTriageJob.perform_later(data.require(:ticket_id), data.require(:article_id))
     else

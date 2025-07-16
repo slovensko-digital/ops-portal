@@ -14,8 +14,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
     ]
 
     article = triage_zammad_client.get_article(ticket_id, article_id, allowed_article_types: allowed_article_types)
-    raise "Article not found" unless article
-    return if article[:article_type].in? [ :user_portal_comment, :unknown_user_portal_comment, :user_private_comment ]
+    return unless article
 
     process_type = ticket[:process_type]
     case process_type
@@ -56,6 +55,8 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
           comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
         end
       end
+    when "portal_issue_verification"
+      # pass
     else
       # TODO add support for other process types
       raise "Process type not yet supported: #{process_type}"

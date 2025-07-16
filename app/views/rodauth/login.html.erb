@@ -2,7 +2,7 @@
   <h1>Prihlásenie</h1>
 
   <div class="form-other-con">
-    <% if cookies[:legacy_visit] %>
+    <% if true #cookies[:legacy_visit] %>
       <div class="form-description">
         <strong>Mali ste účet na pôvodnom portáli Odkaz&nbsp;pre&nbsp;starostu a chcete sa prihlásiť do svojho účtu?</strong> Pred prvým prihlásením si kvôli bezpečnosti musíte <%= link_to 'vyžiadať nové heslo', rodauth.reset_password_request_route, class: :link %>.
       </div>

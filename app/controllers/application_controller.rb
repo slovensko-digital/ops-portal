@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_action :check_for_maintenance_mode
   before_action :current_user
+  before_action :check_banned_user
 
   private
 
@@ -55,5 +56,15 @@ class ApplicationController < ActionController::Base
     return if cookies.signed[:bypass] == "1"
 
     render template: "errors/render_503", layout: false, status: 503 if ENV["MAINTENANCE"] == "1"
+  end
+
+  def check_banned_user
+    if current_user.banned?
+      rodauth.disable_remember_login
+      rodauth.logout
+
+      flash[:alert] = "Váš účet bol zablokovaný."
+      redirect_to root_path
+    end
   end
 end

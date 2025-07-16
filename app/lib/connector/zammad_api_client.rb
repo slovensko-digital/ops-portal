@@ -30,7 +30,7 @@ module Connector
 
     def update_issue!(issue_id, issue_data)
       issue = @tenant.issues.find_by(triage_external_id: issue_id)
-      raise "Issue not found" unless issue
+      return create_issue!(issue_data) unless issue
 
       ticket = @client.ticket.find(issue.backoffice_external_id)
       for key, value in issue_data
@@ -114,55 +114,77 @@ module Connector
       article = @tenant.activities.find_by(triage_external_id: activity_object.triage_external_id)
       return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
 
-      new_article = ticket.article(
-        origin_by_id: author_id,
-        content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
-        body: activity_object.backoffice_activity_body,
-        type: DEFAULT_ARTICLE_TYPE,
-        internal: internal,
-        triage_created_at: activity_object.created_at,
-        attachments: activity_object.attachments.map do |attachment|
-          {
-            "filename" => attachment.filename,
-            "mime-type" => attachment.content_type,
-            "data" => Base64.encode64(attachment.blob.download)
-          }
-        end,
-        sender: sender,
-        created_at: activity_object.created_at
-      )
+      begin
+        new_article = ticket.article(
+          uuid: activity_object.uuid,
+          origin_by_id: author_id,
+          content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
+          body: activity_object.backoffice_activity_body,
+          type: DEFAULT_ARTICLE_TYPE,
+          internal: internal,
+          triage_created_at: activity_object.created_at,
+          attachments: activity_object.attachments.map do |attachment|
+            {
+              "filename" => attachment.filename,
+              "mime-type" => attachment.content_type,
+              "data" => Base64.encode64(attachment.blob.download)
+            }
+          end,
+          sender: sender,
+          created_at: activity_object.created_at
+        )
 
-      # TODO custom error
-      raise unless new_article.id
+        # TODO custom error
+        raise unless new_article.id
+      rescue RuntimeError => e
+        raise e unless /.*This object already exists/.match?(e.message)
+
+        search_result = @client.ticket.find(ticket.id).articles.select { |a| a.uuid == activity_object.uuid }
+
+        raise e unless search_result.count == 1
+
+        new_article = search_result.first
+      end
 
       @tenant.activities.create!(triage_external_id: activity_object.triage_external_id, backoffice_external_id: new_article.id)
       new_article
     end
 
-    def find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, sender:)
+    def find_or_create_article_from_legacy_data!(legacy_data, tenant_issue, uuid:, sender:)
       ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
 
       article = @tenant.activities.find_by(legacy_id: legacy_data.id)
       return ticket.articles.find { |a| article.backoffice_external_id == a.id } if article
 
-      new_article = ticket.article(
-        origin_by_id: create_or_find_agent(legacy_data.author),
-        content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
-        body: legacy_data.body,
-        type: DEFAULT_ARTICLE_TYPE,
-        internal: legacy_data.internal,
-        attachments: legacy_data.attachments.map do |attachment|
-          {
-            "filename" => attachment.filename,
-            "mime-type" => attachment.mimetype,
-            "data" => Base64.encode64(attachment.content)
-          }
-        end,
-        sender: sender,
-        created_at: legacy_data.created_at
-      )
+      begin
+        new_article = ticket.article(
+          uuid: uuid,
+          origin_by_id: create_or_find_agent(legacy_data.author),
+          content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
+          body: legacy_data.body,
+          type: DEFAULT_ARTICLE_TYPE,
+          internal: legacy_data.internal,
+          attachments: legacy_data.attachments.map do |attachment|
+            {
+              "filename" => attachment.filename,
+              "mime-type" => attachment.mimetype,
+              "data" => Base64.encode64(attachment.content)
+            }
+          end,
+          sender: sender,
+          created_at: legacy_data.created_at
+        )
 
-      raise unless new_article.id
+        raise unless new_article.id
+      rescue RuntimeError => e
+        raise e unless /.*This object already exists/.match?(e.message)
+
+        search_result = ticket.articles.select { |a| a.uuid == uuid }
+
+        raise e unless search_result.count == 1
+
+        new_article = search_result.first
+      end
 
       @tenant.activities.create!(legacy_id: legacy_data.id, backoffice_external_id: new_article.id)
       new_article
@@ -172,8 +194,10 @@ module Connector
       tenant_issue = @tenant.issues.find_by(legacy_id: legacy_data.id)
       return @client.ticket.find(tenant_issue.backoffice_external_id) if tenant_issue
 
+      issue_number = "M-#{legacy_data.id.to_s.rjust(4, '0')}"
+
       tmp_body = {
-        number: "M-#{legacy_data.id.to_s.rjust(4, '0')}",
+        number: issue_number,
         state: state,
         group: group,
         title: legacy_data.title,
@@ -185,7 +209,7 @@ module Connector
         ops_subcategory: legacy_data.subcategory&.name,
         ops_subtype: legacy_data.subtype&.name,
         address_municipality: legacy_data.municipality&.name,
-        address_municipality_district: legacy_data.municipality_district.name,
+        address_municipality_district: legacy_data.municipality_district&.name,
         address_street: legacy_data.address_street,
         address_lat: legacy_data.latitude,
         address_lon: legacy_data.longitude,
@@ -204,12 +228,25 @@ module Connector
             }
           end,
           created_at: legacy_data.created_at
-        }
+        },
+        tags: legacy_data.tags
       }
 
-      new_ticket = @client.ticket.create(tmp_body)
-      # TODO custom error
-      raise unless new_ticket.id
+      begin
+        new_ticket = @client.ticket.create(tmp_body)
+        # TODO custom error
+        raise unless new_ticket.id
+      rescue RuntimeError => e
+        raise e unless /.*This object already exists/.match?(e.message)
+
+        search_result = @client.ticket.search(query: "\"#{issue_number}\"").select { |r| r.number == issue_number }
+
+        raise e if search_result.count == 0
+
+        raise "Found multiple matches for ticket!" unless search_result.count == 1
+
+        new_ticket = search_result.first
+      end
 
       @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
 
@@ -244,11 +281,49 @@ module Connector
       ticket.save
     end
 
+    def add_agent_to_group(owner, group_name)
+      user_id = create_or_find_agent(owner)
+      add_user_to_group(user_id, group_name)
+    end
+
+    def add_ticket_tag(issue, tag_name)
+      ticket = find_ticket_for_issue!(issue)
+
+      _, response_status = raw_api_request(
+        :post,
+        "tags/add",
+        params: {
+          item: tag_name,
+          o_id: ticket.id,
+          object: "Ticket"
+        }
+      )
+
+      raise "Tag not successfully added!" unless response_status == 201
+    end
+
     def find_or_create_imported_article_agent_author(user)
       user_id = create_or_find_agent(user)
       add_user_to_group(user_id, IMPORT_GROUP)
 
       user_id
+    end
+
+    def find_or_create_inactive_responsible_subject_user(responsible_subject)
+      return ANONYMOUS_USER_ID unless responsible_subject
+
+      user = @tenant.users.find_or_initialize_by(email: responsible_subject.email)
+      return user.external_id unless user.new_record?
+
+      zammad_identifier = find_or_create_user!(
+        firstname: responsible_subject.subject_name,
+        login: "ops-rs-#{responsible_subject.id}",
+        active: false
+      ).id
+
+      user.update(firstname: responsible_subject.name, external_id: zammad_identifier)
+
+      zammad_identifier
     end
 
     def subscribe_ticket(agent, issue)
@@ -288,6 +363,31 @@ module Connector
       raise "Import mode OFF" unless import_mode_on
 
       @last_import_mode_check = Time.now
+    end
+
+    def find_or_create_group(group_name)
+      group = @client.group.all.select { |g| g.name == group_name }&.first
+
+      return group if group
+
+      group = @client.group.create(name: group_name)
+      # add tech user to the new group
+      add_user_to_group(get_tech_user_id, group_name)
+      group
+    end
+
+    def add_ticket_to_group(issue, group_name)
+      ticket = find_ticket_for_issue!(issue)
+
+      ticket.group = group_name
+      ticket.save
+    end
+
+    def add_manual_ticket_to_group(tenant_issue, group_name)
+      ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
+
+      ticket.group = group_name
+      ticket.save
     end
 
     private
@@ -347,6 +447,10 @@ module Connector
       end
     end
 
+    def get_tech_user_id
+      @client.user.all.select { |u| u.firstname == "Aplikácia" && u.lastname == "Odkaz pre starostu" && "OPS Tech Account".in?(u.roles) }.first.id
+    end
+
     def add_user_to_group(user_identifier, group_name)
       user = get_user(user_identifier)
       user_groups = user.groups
@@ -366,9 +470,11 @@ module Connector
       activity = @tenant.activities.find_by(triage_external_id: issue["triage_identifier"])
       return @client.ticket.find(ticket.backoffice_external_id) if ticket && activity
 
+      issue_number = "OPS-#{issue['ops_issue_identifier'].to_s.rjust(4, '0')}"
+
       article = issue["activities"].first
       tmp_body = {
-        number: "OPS-#{issue['ops_issue_identifier'].to_s.rjust(4, '0')}",
+        number: issue_number,
         state: state,
         group: group,
         origin: OPS_ORIGIN,
@@ -383,7 +489,7 @@ module Connector
         ops_subcategory: issue["subcategory"],
         ops_subtype: issue["subtype"],
         address_municipality: issue["address_municipality"].split("::").first,
-        address_municipality_district: issue["address_municipality"].split("::").last,
+        address_municipality_district: issue["address_municipality"].split("::").second,
         address_street: issue["address_street"],
         address_house_number: issue["address_house_number"],
         address_postcode: issue["address_postcode"],
@@ -412,9 +518,21 @@ module Connector
         }
       }
 
-      new_ticket = @client.ticket.create(tmp_body)
-      # TODO custom error
-      raise unless new_ticket.id
+      begin
+        new_ticket = @client.ticket.create(tmp_body)
+        # TODO custom error
+        raise unless new_ticket.id
+      rescue RuntimeError => e
+        raise e unless /.*This object already exists/.match?(e.message)
+
+        search_result = @client.ticket.search(query: "\"#{issue_number}\"").select { |r| r.number == issue_number }
+
+        raise e if search_result.count == 0
+
+        raise "Found multiple matches for ticket!" unless search_result.count == 1
+
+        new_ticket = search_result.first
+      end
 
       @tenant.issues.create!(triage_external_id: issue["triage_identifier"], backoffice_external_id: new_ticket.id)
       @tenant.activities.create!(triage_external_id: issue["triage_identifier"], backoffice_external_id: new_ticket.articles.first.id)
@@ -425,26 +543,37 @@ module Connector
       article = @tenant.activities.find_by(triage_external_id: activity["triage_identifier"])
       return @client.ticket.find(ticket.id).articles.find { |a| article.backoffice_external_id == a.id } if article
 
-      new_article = ticket.article(
-        origin_by_id: create_or_find_customer(activity["author"]),
-        content_type: activity["content_type"],
-        body: activity["body"],
-        type: DEFAULT_ARTICLE_TYPE,
-        internal: false,
-        triage_created_at: activity["created_at"],
-        attachments: activity["attachments"].map do |attachment|
-          {
-            "filename" => attachment["filename"],
-            "mime-type" => attachment["content_type"],
-            "data" => attachment["data64"]
-          }
-        end,
-        sender: sender,
-        created_at: activity["created_at"]
-      )
+      begin
+        new_article = ticket.article(
+          uuid: activity["uuid"],
+          origin_by_id: create_or_find_customer(activity["author"]),
+          content_type: activity["content_type"],
+          body: activity["body"],
+          type: DEFAULT_ARTICLE_TYPE,
+          internal: false,
+          triage_created_at: activity["created_at"],
+          attachments: activity["attachments"].map do |attachment|
+            {
+              "filename" => attachment["filename"],
+              "mime-type" => attachment["content_type"],
+              "data" => attachment["data64"]
+            }
+          end,
+          sender: sender,
+          created_at: activity["created_at"]
+        )
 
-      # TODO custom error
-      raise unless new_article.id
+        # TODO custom error
+        raise unless new_article.id
+      rescue RuntimeError => e
+        raise e unless /.*This object already exists/.match?(e.message)
+
+        search_result = @client.ticket.find(ticket.id).articles.select { |a| a.uuid == activity["uuid"] }
+
+        raise e unless search_result.count == 1
+
+        new_article = search_result.first
+      end
 
       @tenant.activities.create!(triage_external_id: activity["triage_identifier"], backoffice_external_id: new_article.id)
       new_article
