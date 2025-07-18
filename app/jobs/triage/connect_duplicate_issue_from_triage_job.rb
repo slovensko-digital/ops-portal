@@ -61,7 +61,7 @@ class Triage::ConnectDuplicateIssueFromTriageJob < ApplicationJob
   end
 
   def reject_duplicate(ticket)
-    @triage_zammad_client.update_ticket!(ticket[:triage_identifier], "ops_state" => ticket[:ops_state])
+    @triage_zammad_client.update_ticket!(ticket[:triage_identifier], "ops_state" => ticket[:ops_state].key)
     @triage_zammad_client.create_system_note!(
       ticket[:triage_identifier],
       "Aby bol tento podnet označený ako duplicitný, musí byť k nemu nalinkovaný pôvodný podnet v procese Riešenie podnetu ako rodič.",
