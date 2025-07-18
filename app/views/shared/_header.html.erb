@@ -59,7 +59,7 @@
           </div>
         </div>
         <div class="buttons-con">
-          <%= link_to "Nahlásiť podnet", new_issues_draft_path, class: "add-button" %>
+          <%= link_to current_user.current_draft ? "Neodoslaný podnet" : "Nahlásiť podnet", new_issues_draft_path, class: "add-button" %>
           <%= link_to relevant_issues_path, class: "icon search" do %>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
               <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke-miterlimit="10"/>
@@ -111,7 +111,7 @@
 
     <div class="nav-wrap-main">
       <div class="nav-con-main">
-        <%= link_to "Nahlásiť&nbsp;podnet".html_safe, new_issues_draft_path, class: "button-main" %>
+        <%= link_to current_user.current_draft ? "Neodoslaný podnet" : "Nahlásiť&nbsp;podnet".html_safe, new_issues_draft_path, class: "button-main" %>
         <%= link_to "Položiť otázku".html_safe, new_question_issues_drafts_path %>
         <%= link_to "Dať pochvalu".html_safe, new_praise_path %>
         <div class="search-con">

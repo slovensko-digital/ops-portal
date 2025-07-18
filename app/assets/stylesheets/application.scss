@@ -1317,8 +1317,13 @@ section.report .report-warning .description {
 section.report .button-transparent {
   background: transparent !important;
 }
-section.report .button-transparent:hover {
+section.report .button-transparent:hover,
+section.report .report-warning .button:hover
+{
   background: $blue !important;
+}
+section.report .report-warning .button {
+  background: $yellow;
 }
 
 

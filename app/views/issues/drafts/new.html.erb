@@ -1,4 +1,16 @@
 <section class="report">
+  <% if @previous_draft %>
+    <div class="report-summary-block-con">
+      <div class="report-warning">
+        <div class="title">Máte neodoslaný podnet</div>
+        <div class="description">Máte jeden rozpracovaný neodoslaný podnet. Chcete sa k nemu vrátiť alebo nahlásiť nový podnet?</div>
+        <%= link_to "Zobraziť neodoslaný podnet", issues_draft_summary_path(@previous_draft), class: "button button-transparent" %>
+      </div>
+    </div>
+
+    <div class="report-suggestion-description"></div>
+  <% end %>
+
   <h1><%= t "issues/drafts.new_#{@draft.issue_type}" %></h1>
 
   <div class="report-suggestion-description">Nahrajte fotografiu k podnetu. Ak používate mobil, odporúčame zapnúť

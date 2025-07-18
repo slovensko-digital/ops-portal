@@ -27,6 +27,17 @@
     </div>
 
     <%= link_to "Upraviť podnet", issues_draft_summary_path(@draft), class: "button button-transparent" %>
+  <% elsif @draft.errors.added?(:base, :duplicates_nearby)  %>
+    <div class="report-summary-block-con">
+      <div class="report-warning">
+        <div class="title">Skontrolujte podobné podnety nablízku</div>
+        <div class="description">
+          <p>V blízkosti podnetu sa už nachádzajú podnety z&nbsp;rovnakej kategórie. Skontrolujte, prosím, či nenahlasujete rovnaký podnet.</p>
+          <p><strong>K tomuto neodoslanému podnetu sa môžete neskôr jednoducho vrátiť.</strong></p>
+        </div>
+        <%= button_to "Zobraziť podobné podnety", issues_draft_duplicates_path(@draft), method: :patch, class: "button" %>
+      </div>
+    </div>
   <% elsif @draft.errors[:checks].any? %>
     <%= render partial: 'checks', object: @draft.checks %>
   <% end %>

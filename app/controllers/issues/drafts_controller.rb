@@ -5,6 +5,7 @@ class Issues::DraftsController < ApplicationController
   before_action :load_draft, except: [ :new, :new_question, :create, :thanks ]
 
   def new
+    @previous_draft = current_user.current_draft
     @draft = Issues::Draft.new(issue_type: :issue)
   end
 
@@ -47,6 +48,12 @@ class Issues::DraftsController < ApplicationController
     blob = @draft.photos.find(params[:photo_id]).blob
     blob.update!(rotation: (blob.rotation - 90) % 360)
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
+  end
+
+  def duplicates
+    @draft.update(duplicates_shown: true)
+
+    redirect_to issues_path(pin: "#{@draft.latitude},#{@draft.longitude}", kategoria: @draft.category&.name, podkategoria: @draft.subcategory&.name, typ: @draft.subtype&.name)
   end
 
   def thanks

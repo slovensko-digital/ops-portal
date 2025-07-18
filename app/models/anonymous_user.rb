@@ -30,4 +30,8 @@ class AnonymousUser
   def municipality
     nil
   end
+
+  def current_draft
+    nil
+  end
 end

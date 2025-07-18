@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       get :new_question, on: :collection, path: "otazka"
       delete :destroy_photo
       patch :rotate_photo
+      patch :duplicates
       get :thanks, on: :collection, path: "dakujeme"
       scope module: :drafts do
         resource :suggestions do

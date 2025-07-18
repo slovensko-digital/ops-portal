@@ -2,7 +2,7 @@ class Issues::Drafts::CategoriesController < ApplicationController
   include Issues::DraftScoped
 
   def show
-    @categories = ::Issues::Category.non_legacy.all
+    @categories = ::Issues::Category.non_legacy.includes(:subcategories).all
   end
 
   def update

@@ -21,7 +21,7 @@
         <%= hidden_field_tag :next, params[:next] %>
         <div class="report-summary-wrapper">
           <div class="title"><%= category.name %></div>
-          <div class="description"><%= category.description %></div>
+          <% if category.subcategories.length > 1 %><div class="description"><%= category.subcategories.map(&:name).join(', ') %></div><% end %>
         </div>
         <div class="icon-arrow">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">

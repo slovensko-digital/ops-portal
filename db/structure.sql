@@ -876,7 +876,8 @@ CREATE TABLE public.issues_drafts (
     submitted boolean DEFAULT false NOT NULL,
     address_suburb character varying,
     zoom integer,
-    issue_type character varying DEFAULT 'issue'::character varying NOT NULL
+    issue_type character varying DEFAULT 'issue'::character varying NOT NULL,
+    duplicates_shown boolean DEFAULT false NOT NULL
 );
 
 
@@ -4052,6 +4053,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250717093710'),
 ('20250715090801'),
 ('20250708140537'),
 ('20250610165558'),
