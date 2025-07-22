@@ -25,6 +25,7 @@ env:
     ADMIN_EMAILS: <%= ENV.fetch("ADMIN_EMAILS", "dummy") %>
     MAINTENANCE: <%= ENV.fetch("MAINTENANCE", "0") %>
     GOOD_JOB_EXECUTION_MODE: external
+    AWS_PINPOINT_PROTECT_CONFIGURATION_ID: protect-2e66ded0c0a9477e909d8850e0ba16e9
 
   secret:
     - SECRET_KEY_BASE

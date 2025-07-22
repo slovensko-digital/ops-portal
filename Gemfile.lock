@@ -90,12 +90,12 @@ GEM
     aws-sdk-kms (1.106.0)
       aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
+    aws-sdk-pinpointsmsvoicev2 (1.38.0)
+      aws-sdk-core (~> 3, >= 3.225.0)
+      aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.192.0)
       aws-sdk-core (~> 3, >= 3.225.0)
       aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.5)
-    aws-sdk-sns (1.100.0)
-      aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
@@ -578,8 +578,8 @@ PLATFORMS
 
 DEPENDENCIES
   annotaterb
+  aws-sdk-pinpointsmsvoicev2
   aws-sdk-s3
-  aws-sdk-sns
   bcrypt (~> 3.1)
   bootsnap
   brakeman

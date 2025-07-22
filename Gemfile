@@ -111,7 +111,7 @@ gem "kaminari"
 gem "discourse_api"
 
 gem "aws-sdk-s3"
-gem "aws-sdk-sns"
+gem "aws-sdk-pinpointsmsvoicev2"
 
 gem "rollbar"
 
