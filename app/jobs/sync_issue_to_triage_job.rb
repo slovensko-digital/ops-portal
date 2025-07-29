@@ -1,5 +1,7 @@
 class SyncIssueToTriageJob < ApplicationJob
   def perform(issue, client: TriageZammadEnvironment.client, import: false, sync_activities_to_triage_job: SyncIssueActivitiesToTriageJob, sync_activities: true)
+    return if issue.archived?
+
     client.check_import_mode! if import
 
     triage_group = find_municipality_group(issue, client) if import
