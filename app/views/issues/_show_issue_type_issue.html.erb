@@ -78,7 +78,20 @@
 
         <div class="information-wrapper">
           <div class="label">ID:</div>
-          <div class="value">#<%= issue.id %></div>
+          <div class="value">
+            #<%= issue.id %>
+            <button
+              data-controller="copy"
+              data-copy-content-value="<%= issue.id %>"
+              data-action="click->copy#copy"
+              class="copy-button">
+              <span data-copy-target="iconContainer">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                  <path d="M16 1H4a2 2 0 00-2 2v14h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/>
+                </svg>
+              </span>
+            </button>
+          </div>
         </div>
 
         <div class="information-wrapper">

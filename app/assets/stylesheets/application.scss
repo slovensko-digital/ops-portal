@@ -2436,7 +2436,12 @@ section.podnet .podnet-information span.value,{
   padding: 6px 11px;
   @include rounded(25px);
 }
-
+section.podnet .podnet-information .copy-button {
+  vertical-align: middle;
+  line-height: 1;
+  margin-left: 5px;
+  color: $black;
+}
 
 //Rotate button and close button
 section.podnet .podnet-discussion .add-comment-form figure {
