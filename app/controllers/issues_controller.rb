@@ -232,7 +232,7 @@ class IssuesController < ApplicationController
             if id_match.present?
               scope.where(id: id_match).or(scope.fulltext_search(
                 query,
-                against: [:title, :description, :legacy_id, :id, :fulltext_extra],
+                against: [ :title, :description, :legacy_id, :id, :fulltext_extra ],
                 unaccent_f: :f_unaccent
               ))
             else
