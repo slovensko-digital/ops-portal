@@ -37,7 +37,8 @@ class Issues::Update < ApplicationRecord
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_external_id?
 
   def author_display_name
-    author.display_name
+    return author.display_name if author
+    "Neznámy autor"
   end
 
   def triage_activity_body
