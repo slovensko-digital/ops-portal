@@ -33,8 +33,8 @@ Rails.application.routes.draw do
 
   resources :issues, path: "dopyty" do
     get :relevant, on: :collection, path: :r
-    resource :issue_like, as: :like
-    resource :issue_subscription, as: :subscription
+    resource :issue_like, as: :like, only: [ :create, :destroy ]
+    resource :issue_subscription, as: :subscription, only: [ :create, :destroy ]
     resources :issues_user_comments, path: "komentare", module: :issues
     resources :issues_user_private_comments, path: "komentare", module: :issues, controller: "issues_user_comments"
     resources :issues_updates, path: "overenia", module: :issues, controller: "issues_updates"
@@ -124,8 +124,12 @@ Rails.application.routes.draw do
   # legacy urls redirects
   get "r/:municipality_slug" => "legacy/redirects#index"
   get "r/:municipality_slug/vsetky-podnety" => "legacy/redirects#search_list"
+  get "r/:municipality_slug/podnety/ulica" => "legacy/redirects#search_list"
+  get "r/:municipality_slug/podnety/ulica/*" => "legacy/redirects#search_list"
   get "r/:municipality_slug/statistiky" => "legacy/redirects#search_stats"
+  get "r/:municipality_slug/podnety/:legacy_id/:slug/aktualizovat-podnet" => "legacy/redirects#show_issue"
   get "r/:municipality_slug/podnety/:legacy_id/:slug" => "legacy/redirects#show_issue"
+  get "r/:municipality_slug/podnety/:municipality_district_slug" => "legacy/redirects#search_list"
   get "r/:municipality_slug/pridat-podnet" => "legacy/redirects#create_issue"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?

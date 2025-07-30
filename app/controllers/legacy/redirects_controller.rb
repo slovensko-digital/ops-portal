@@ -7,8 +7,14 @@ class Legacy::RedirectsController < ApplicationController
 
   def search_list
     municipality = Municipality.find_by("? = ANY(aliases)", params[:municipality_slug])
+    return redirect_to issues_path unless municipality
 
-    redirect_to issues_path(obec: municipality.name)
+    municipality_district = municipality.municipality_districts.where("? = ANY(aliases)", params[:municipality_district_slug]).first
+    if municipality_district
+      redirect_to issues_path(obec: municipality.name, cast: municipality_district.name)
+    else
+      redirect_to issues_path(obec: municipality.name)
+    end
   end
 
   def search_stats
