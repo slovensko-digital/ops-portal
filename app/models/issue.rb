@@ -76,7 +76,7 @@ class Issue < ApplicationRecord
   end
 
   validates :triage_external_id, uniqueness: true, allow_nil: true
-  validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" }
+  validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" || issue.archived? }
   validates_presence_of :title, :description, unless: :imported?
   validates_presence_of :photos, unless: -> { :imported? || issue_type == "praise" }
   validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, unless: :imported?
