@@ -1,0 +1,187 @@
+class CategoryMapper
+  CATEGORY_MAPPING = {
+    ["Cesty a chodníky", "schody", "poškodené"] => ["Komunikácie", "schody", "poškodená"], # TODO nesedí rod subtypu
+    ["Cesty a chodníky", "schody", "neodhrnuté"] => ["Komunikácie", "schody", "neodhrnutá"], # TODO nesedí rod subtypu
+    ["Cesty a chodníky", "schody", "neposypané"] => ["Komunikácie", "schody", "neposypaná"], # TODO nesedí rod subtypu
+    ["Cesty a chodníky", "schody", "znečistené"] => ["Komunikácie", "schody", "znečistená"], # TODO nesedí rod subtypu
+    ["Cesty a chodníky", "cesta", "výtlk"] => ["Komunikácie", "cesta", "výtlk"],
+    ["Cesty a chodníky", "cesta", "rozbitá (väčší úsek)"] => ["Komunikácie", "cesta", "rozbitá cesta (väčší úsek)"],
+    ["Cesty a chodníky", "cesta", "znečistená"] => ["Komunikácie", "cesta", "znečistená"],
+    ["Cesty a chodníky", "cesta", "neodhrnutá"] => ["Komunikácie", "cesta", "neodhrnutá"],
+    ["Cesty a chodníky", "cesta", "neposypaná"] => ["Komunikácie", "cesta", "neposypaná"],
+    ["Cesty a chodníky", "cesta", "rozkopaná"] => ["Komunikácie", "cesta", "rozkopaná"],
+    ["Cesty a chodníky", "cesta", "poškodená dlažba"] => ["Komunikácie", "cesta", "poškodená dlažba"],
+    ["Cesty a chodníky", "chodník", "výtlk"] => ["Komunikácie", "chodník", "výtlk"],
+    ["Cesty a chodníky", "chodník", "znečistený"] => ["Komunikácie", "chodník", "znečistený"],
+    ["Cesty a chodníky", "chodník", "neodhrnutý"] => ["Komunikácie", "chodník", "neodhrnutý"],
+    ["Cesty a chodníky", "chodník", "neposypaný"] => ["Komunikácie", "chodník", "neposypaný"],
+    ["Cesty a chodníky", "chodník", "bariérový"] => ["Komunikácie", "chodník", "bariéra na chodníku"],
+    ["Cesty a chodníky", "chodník", "rozkopaný"] => ["Komunikácie", "chodník", "rozkopaný"],
+    ["Cesty a chodníky", "chodník", "chýbajúci"] => ["Komunikácie", "chodník", "chýbajúci"],
+    ["Cesty a chodníky", "chodník", "poškodená dlažba"] => ["Komunikácie", "chodník", "poškodená dlažba"],
+    ["Cesty a chodníky", "chodník", "bariéra na chodníku"] => ["Komunikácie", "chodník", "bariéra na chodníku"],
+    ["Cesty a chodníky", "cyklotrasa", "poškodená"] => ["Komunikácie", "cyklotrasa", "poškodená"],
+    ["Cesty a chodníky", "cyklotrasa", "chýbajúca"] => ["Komunikácie", "cyklotrasa", "chýbajúca"],
+    ["Cesty a chodníky", "cyklotrasa", "neoznačená"] => ["Komunikácie", "cyklotrasa", "neoznačená"],
+    ["Cesty a chodníky", "cyklotrasa", "znečistená"] => ["Komunikácie", "cyklotrasa", "znečistená"],
+    ["Cesty a chodníky", "cyklotrasa", "neodhrnutá"] => ["Komunikácie", "cyklotrasa", "neodhrnutá"],
+    ["Cesty a chodníky", "cyklotrasa", "neposypaná"] => ["Komunikácie", "cyklotrasa", "neposypaná"],
+    ["Cesty a chodníky", "zábradlie", "chýbajúce"] => ["Mobiliár", "zábradlie/oplotenie", "chýbajúce"],
+    ["Cesty a chodníky", "zábradlie", "poškodené"] => ["Mobiliár", "zábradlie/oplotenie", "poškodené"],
+    ["Cesty a chodníky", "zábradlie", "zhrdzavené"] => ["Mobiliár", "zábradlie/oplotenie", "zhrdzavené"],
+    ["Cesty a chodníky", "oplotenie", "chýbajúce"] => ["Mobiliár", "zábradlie/oplotenie", "chýbajúce"],
+    ["Cesty a chodníky", "oplotenie", "poškodené"] => ["Mobiliár", "zábradlie/oplotenie", "poškodené"],
+    ["Cesty a chodníky", "oplotenie", "zhrdzavené"] => ["Mobiliár", "zábradlie/oplotenie", "zhrdzavené"],
+    ["Cesty a chodníky", "iné", nil] => [], # TODO
+    ["Zeleň a životné prostredie", "neporiadok a odpadky", "neodpratané lístie"] => ["Verejný poriadok", "neporiadok vo verejnom priestranstve", "neodpratané lístie"],
+    ["Zeleň a životné prostredie", "neporiadok a odpadky", "čierne skládky"] => ["Skládky a vraky", "nelegálne skládky", nil],
+    ["Zeleň a životné prostredie", "neporiadok a odpadky", "neporiadok vo verejnom priestranstve"] => ["Verejný poriadok", "neporiadok vo verejnom priestranstve", "neporiadok vo verejnom priestore"],
+    ["Zeleň a životné prostredie", "strom", "suchý"] => ["Zeleň a znečisťovanie", "strom", "suchý"],
+    ["Zeleň a životné prostredie", "strom", "chýbajúci"] => ["Zeleň a znečisťovanie", "strom", "chýbajúci"],
+    ["Zeleň a životné prostredie", "strom", "neorezaný"] => ["Zeleň a znečisťovanie", "strom", "neorezaný"],
+    ["Zeleň a životné prostredie", "strom", "zlomený konár"] => ["Zeleň a znečisťovanie", "strom", "zlomený konár"],
+    ["Zeleň a životné prostredie", "strom", "napadnutý"] => ["Zeleň a znečisťovanie", "strom", "napadnutý"],
+    ["Zeleň a životné prostredie", "strom", "invazívna rastlina"] => ["Zeleň a znečisťovanie", "strom", "invazívna rastlina"],
+    ["Zeleň a životné prostredie", "strom", "poškodená podpera"] => ["Zeleň a znečisťovanie", "strom", "poškodená podpera"],
+    ["Zeleň a životné prostredie", "trávnatá plocha", "nepokosená"] => ["Zeleň a znečisťovanie", "kosenie", "nepravidelne"],
+    ["Zeleň a životné prostredie", "trávnatá plocha", "vyschnutá"] => [],  # TODO
+    ["Zeleň a životné prostredie", "trávnatá plocha", "vyjazdené koľaje"] => [],  # TODO
+    ["Zeleň a životné prostredie", "krík", "suchý"] => ["Zeleň a znečisťovanie", "krík", "suchý"],
+    ["Zeleň a životné prostredie", "krík", "neostrihaný"] => ["Zeleň a znečisťovanie", "krík", "neorezaný"],
+    ["Zeleň a životné prostredie", "krík", "chýbajúci"] => ["Zeleň a znečisťovanie", "krík", "chýbajúci"],
+    ["Zeleň a životné prostredie", "zviera", "túlavé"] => ["Zvieratá", "výbehy pre zvieratá", "túlavé mačky/psy"],
+    ["Zeleň a životné prostredie", "zviera", "uhynuté"] => ["Zvieratá", "mŕtvy živočích", nil],
+    ["Zeleň a životné prostredie", "zviera", "deratizácia"] => [], # TODO
+    ["Zeleň a životné prostredie", "znečisťovanie", "ovzdušia"] => ["Zeleň a znečisťovanie", "znečisťovanie", "voda, pôda, ovzdušie"],
+    ["Zeleň a životné prostredie", "znečisťovanie", "vody"] => ["Zeleň a znečisťovanie", "znečisťovanie", "voda, pôda, ovzdušie"],
+    ["Zeleň a životné prostredie", "znečisťovanie", "pôdy"] => ["Zeleň a znečisťovanie", "znečisťovanie", "voda, pôda, ovzdušie"],
+    ["Zeleň a životné prostredie", "iné", nil] => [], # TODO
+    ["Dopravné značenie", "priechod pre chodcov", "chýbajúci"] => ["Značenie", "priechod pre chodcov", "chýbajúci"],
+    ["Dopravné značenie", "priechod pre chodcov", "zle viditeľný"] => ["Značenie", "priechod pre chodcov", "zle viditeľný"],
+    ["Dopravné značenie", "semafor", "nefunkčný"] => ["Značenie", "semafor", "nefunkčný"],
+    ["Dopravné značenie", "semafor", "zle nastavený"] => ["Značenie", "semafor", "zle nastavený"],
+    ["Dopravné značenie", "semafor", "chýbajúci"] => ["Značenie", "semafor", "chýbajúci"],
+    ["Dopravné značenie", "dopravné zrkadlo", "chýbajúce"] => ["Značenie", "dopravné zrkadlo", "chýbajúce"],
+    ["Dopravné značenie", "dopravné zrkadlo", "zle natočené"] => ["Značenie", "dopravné zrkadlo", "zle natočené"],
+    ["Dopravné značenie", "dopravné zrkadlo", "poškodené"] => ["Značenie", "dopravné zrkadlo", "poškodené"],
+    ["Dopravné značenie", "vodorovná značka", "chýbajúca"] => ["Značenie", "vodorovné dopravné značenie", "chýbajúce"],
+    ["Dopravné značenie", "vodorovná značka", "neaktuálna"] => ["Značenie", "vodorovné dopravné značenie", "neaktuálne"],
+    ["Dopravné značenie", "vodorovná značka", "zle viditeľná"] => ["Značenie", "vodorovné dopravné značenie", "zle viditeľné"],
+    ["Dopravné značenie", "riešenie dopravnej situácie", "nebezpečné"] => ["Dopravné riešenie", "nebezpečné", "návrh na riešenie"],
+    ["Dopravné značenie", "riešenie dopravnej situácie", "dopravu spomaľujúce"] => ["Dopravné riešenie", "dopravu spomaľujúce", "návrh na riešenie"],
+    ["Dopravné značenie", "riešenie dopravnej situácie", "nedodržiavanie dopravných predpisov"] => [], # TODO
+    ["Dopravné značenie", "zvislá značka", "poškodená"] => ["Značenie", "zvislé dopravné značenie", "poškodené"],
+    ["Dopravné značenie", "zvislá značka", "neaktuálna"] => ["Značenie", "zvislé dopravné značenie", "neaktuálne"],
+    ["Dopravné značenie", "zvislá značka", "chýbajúca"] => ["Značenie", "zvislé dopravné značenie", "chýbajúce"],
+    ["Dopravné značenie", "zvislá značka", "vyblednutá"] => ["Značenie", "zvislé dopravné značenie", "vyblednuté"],
+    ["Dopravné značenie", "zvislá značka", "zle otočená"] => ["Značenie", "zvislé dopravné značenie", "zle otočené"],
+    ["Dopravné značenie", "spomaľovač", "chýbajúci"] => ["Značenie", "spomaľovač", "chýbajúci"],
+    ["Dopravné značenie", "spomaľovač", "poškodený"] => ["Značenie", "spomaľovač", "poškodený"],
+    ["Dopravné značenie", "betónová zábrana (biskupský klobúk)", "chýbajúca"] => ["Značenie", "protiparkovacia zábrana/stĺpik/biskupský klobúk", "chýbajúca"],
+    ["Dopravné značenie", "betónová zábrana (biskupský klobúk)", "posunutá"] => ["Značenie", "protiparkovacia zábrana/stĺpik/biskupský klobúk", "posunutá"],
+    ["Dopravné značenie", "betónová zábrana (biskupský klobúk)", "poškodená"] => ["Značenie", "protiparkovacia zábrana/stĺpik/biskupský klobúk", "poškodená"],
+    ["Dopravné značenie", "stĺpik", "chýbajúci"] => ["Značenie", "protiparkovacia zábrana/stĺpik/biskupský klobúk", "chýbajúca"],
+    ["Dopravné značenie", "stĺpik", "poškodený"] => ["Značenie", "protiparkovacia zábrana/stĺpik/biskupský klobúk", "poškodená"],
+    ["Dopravné značenie", "stĺpik", "nadbytočný"] => ["Značenie", "protiparkovacia zábrana/stĺpik/biskupský klobúk", ""], # TODO
+    ["Dopravné značenie", "iné", nil] => [], # TODO
+    ["Mestský mobiliár", "lavička", "chýbajúca"] => ["Mobiliár", "lavička", "chýbajúca"],
+    ["Mestský mobiliár", "lavička", "poškodená"] => ["Mobiliár", "lavička", "poškodená"],
+    ["Mestský mobiliár", "lavička", "znečistená"] => ["Mobiliár", "lavička", "znečistená"],
+    ["Mestský mobiliár", "socha, pamätník", "znečistená"] => ["Mobiliár", "socha/pamätník/pietne miesto", "znečistené"],
+    ["Mestský mobiliár", "socha, pamätník", "poškodená"] => ["Mobiliár", "socha/pamätník/pietne miesto", "poškodené"],
+    ["Mestský mobiliár", "zastávka MHD", "poškodená"] => ["Mestská hromadná doprava", "MHD zastávka", "poškodená"],
+    ["Mestský mobiliár", "zastávka MHD", "chýbajúca"] => ["Mestská hromadná doprava", "MHD zastávka", "chýbajúca"],
+    ["Mestský mobiliár", "zastávka MHD", "znečistená"] => ["Mestská hromadná doprava", "MHD zastávka", "znečistená"],
+    ["Mestský mobiliár", "kôš", "poškodený"] => ["Mobiliár", "kôš", "poškodený"],
+    ["Mestský mobiliár", "kôš", "preplnený"] => ["Mobiliár", "kôš", "preplnený"],
+    ["Mestský mobiliár", "kôš", "chýbajúci"] => ["Mobiliár", "kôš", "chýbajúci"],
+    ["Mestský mobiliár", "kôš", "nevhodne umiestnený"] => ["Mobiliár", "kôš", "nevhodne umiestnený"],
+    ["Mestský mobiliár", "kôš", "chýbajúce sáčky"] => ["Mobiliár", "kôš", "chýbajúce sáčky"],
+    ["Mestský mobiliár", "detské ihrisko", "poškodené"] => ["Ihrisko", "detské ihrisko", "poškodené"],
+    ["Mestský mobiliár", "detské ihrisko", "chýbajúce"] => ["Ihrisko", "detské ihrisko", "chýbajúce"],
+    ["Mestský mobiliár", "detské ihrisko", "potrebná údržba"] => ["Ihrisko", "detské ihrisko", "potrebná údržba"],
+    ["Mestský mobiliár", "cyklostojan", "chýbajúci"] => ["Mobiliár", "cyklostojan", "chýbajúci"],
+    ["Mestský mobiliár", "cyklostojan", "poškodený"] => ["Mobiliár", "cyklostojan", "poškodený"],
+    ["Mestský mobiliár", "cyklostojan", "zle umiestnený"] => ["Mobiliár", "cyklostojan", "zle umiestnený"],
+    ["Mestský mobiliár", "fontánka", "nefunkčná"] => ["Mobiliár", "pitná fontána", "nefunkčná"],
+    ["Mestský mobiliár", "fontánka", "poškodená"] => ["Mobiliár", "pitná fontána", "poškodená"],
+    ["Mestský mobiliár", "fontánka", "znečistená"] => ["Mobiliár", "pitná fontána", "znečistená"],
+    ["Mestský mobiliár", "informačná tabuľa", "poškodená"] => ["Mobiliár", "informačná/smerová tabuľa", "poškodená"],
+    ["Mestský mobiliár", "informačná tabuľa", "zle otočená"] => ["Mobiliár", "informačná/smerová tabuľa", "zle otočená"],
+    ["Mestský mobiliár", "informačná tabuľa", "zle umiestnená"] => ["Mobiliár", "informačná/smerová tabuľa", "zle umiestnená"],
+    ["Mestský mobiliár", "informačná tabuľa", "chýbajúca"] => ["Mobiliár", "informačná/smerová tabuľa", "chýbajúca"],
+    ["Mestský mobiliár", "kvetináč", "poškodený"] => ["Mobiliár", "kvetináč", "poškodený"],
+    ["Mestský mobiliár", "kvetináč", "posunutý"] => ["Mobiliár", "kvetináč", "posunutý"],
+    ["Mestský mobiliár", "kvetináč", "zanedbaný"] => ["Mobiliár", "kvetináč", "zanedbaný"],
+    ["Mestský mobiliár", "kvetináč", "chýbajúci"] => ["Mobiliár", "kvetináč", "chýbajúci"],
+    ["Mestský mobiliár", "iné", nil] => [], # TODO
+    ["Automobily", "dlhodobo odstavené vozidlá", "vozidlo s EČV, s platnou TK a EK"] => ["Skládky a vraky", "vraky motorových vozidiel", nil],
+    ["Automobily", "dlhodobo odstavené vozidlá", "vozidlo bez EČV, bez platnej TK a EK"] => ["Skládky a vraky", "vraky motorových vozidiel", nil],
+    ["Automobily", "dlhodobo odstavené vozidlá", "vozidlo s EČV, bez platnej TK a EK"] => ["Skládky a vraky", "vraky motorových vozidiel", nil],
+    ["Automobily", "dlhodobo odstavené vozidlá", "nezistené EČV a TK a EK"] => ["Skládky a vraky", "vraky motorových vozidiel", nil],
+    ["Automobily", "dlhodobo odstavené vozidlá", "zahraničné vozidlo"] => ["Skládky a vraky", "vraky motorových vozidiel", nil],
+    ["Automobily", "dlhodobo odstavené vozidlá", "vozidlo bez EČV, s platnou TK a EK"] => ["Skládky a vraky", "vraky motorových vozidiel", nil],
+    ["Automobily", "parkovanie", "problémové"] => [], # TODO
+    ["Automobily", "parkovanie", "chýbajúce miesta"] => [], # TODO
+    ["Automobily", "parkovanie", "nevyznačené miesta"] => [], # TODO
+    ["Automobily", "iné", nil] => [], # TODO
+    ["Verejné služby", "MHD", "technické problémy"] => [], # TODO
+    ["Verejné služby", "MHD", "meškanie spojov"] => ["Mestská hromadná doprava", "služby hromadnej dopravy", "meškanie spojov"],
+    ["Verejné služby", "MHD", "poškodené vozidlo"] => ["Mestská hromadná doprava", "grafikon / zlé nastavenie cestovného poriadku", "poškodenie vozidla"],
+    ["Verejné služby", "MHD", "zlé nastavenie cestovného poriadku"] => ["Mestská hromadná doprava", "grafikon / zlé nastavenie cestovného poriadku", nil],
+    ["Verejné služby", "kanalizácia", "upchatá"] => ["Kanalizácia", "kanalizáčná vpusť", "upchatá"], # TODO nesprávne dĺžen v subkategórii
+    ["Verejné služby", "kanalizácia", "chýbajúci kanalizačný poklop"] => ["Kanalizácia", "kanalizáčná vpusť", "chýbajúci kanalizačný poklop"], # TODO nesprávne dĺžen v subkategórii
+    ["Verejné služby", "kanalizácia", "havária kanalizačného potrubia"] => ["Kanalizácia", "kanalizáčná vpusť", "havária kanalizačného potrubia"], # TODO nesprávne dĺžen v subkategórii
+    ["Verejné služby", "kanalizácia", "poškodený kanalizačný poklop"] => ["Kanalizácia", "kanalizáčná vpusť", "poškodený kanalizačný poklop"], # TODO nesprávne dĺžen v subkategórii
+    ["Verejné služby", "osvetlenie", "nefunkčné"] => ["Osvetlenie", "osvetlenie", "nefunknčné"], # TODO preklep v subtype
+    ["Verejné služby", "osvetlenie", "poškodené stĺpy"] => ["Osvetlenie", "osvetlenie", "poškodený stĺp"],
+    ["Verejné služby", "osvetlenie", "chýbajúce/nedostatočné"] => ["Osvetlenie", "osvetlenie", "chýbajúce"],
+    ["Verejné služby", "osvetlenie", "nevhodné (silné a pod.)"] => ["Osvetlenie", "osvetlenie", "nevhodné (silné a pod.)"],
+    ["Verejné služby", "webová stránka mesta", "chýbajúce informácie"] => ["Kontakt so samosprávou", "webová stránka mesta", "chýbajúca informácia"],
+    ["Verejné služby", "webová stránka mesta", "neaktuálne informácie"] => ["Kontakt so samosprávou", "webová stránka mesta", "neaktuálne informácie"],
+    ["Verejné služby", "webová stránka mesta", "nesprávne informácie"] => [], # TODO
+    ["Verejné služby", "webová stránka mesta", "nefunkčná stránka"] => ["Kontakt so samosprávou", "webová stránka mesta", "nefunkčná stránka"],
+    ["Verejné služby", "rozvodné siete", "poškodená rozvodná skriňa"] => ["Mobiliár", "rozvodná skriňa", "poškodená rozvodná skriňa"],
+    ["Verejné služby", "rozvodné siete", "nebezpečný kábel"] => ["Mobiliár", "rozvodná skriňa", "nebezpečný kábel"],
+    ["Verejné služby", "zdieľaná mobilita", "nevhodne zaparkovaný dopravný prostriedok"] => [], # TODO
+    ["Verejné služby", "zdieľaná mobilita", "nevhodne umiestnené parkovisko"] => [], # TODO
+    ["Verejné služby", "zdieľaná mobilita", "obmedzenie rýchlosti v zóne"] => [], # TODO
+    ["Verejné služby", "zdieľaná mobilita", "iné"] => [], # TODO
+    ["Verejné služby", "iné", nil] => [], # TODO
+    ["Verejný poriadok", "stavby a budovy", "neohlásené stavebné úpravy"] => [], # TODO
+    ["Verejný poriadok", "stavby a budovy", "prekračovanie limitov hluku"] => [], # TODO
+    ["Verejný poriadok", "stavby a budovy", "prekračovanie limitov prašnosti"] => [], # TODO
+    ["Verejný poriadok", "stavby a budovy", "opustená budova"] => ["Stavby", "budova", "nevyužívaná"],
+    ["Verejný poriadok", "stavby a budovy", "zlý stav budovy"] => ["Stavby", "budova", "poškodená"],
+    ["Verejný poriadok", "vandalizmus", "graffiti"] => ["Stavby", "budova", "grafiti"],
+    ["Verejný poriadok", "vandalizmus", "rušenie nočného pokoja"] => ["Verejný poriadok", "vandalizmus", "rušenie nočného pokoja"],
+    ["Verejný poriadok", "vandalizmus", "pitie alkoholu na verejnosti"] => ["Verejný poriadok", "vandalizmus", "pitie alkoholu na verejnom priestore"],
+    ["Verejný poriadok", "reklama", "vizuálny smog"] => [], # TODO
+    ["Verejný poriadok", "reklama", "nevhodne umiestnená (na chodníku a pod.)"] => ["Verejný poriadok", "reklama", "nevhodne umiestnená"],
+    ["Verejný poriadok", "reklama", "vylepené plagáty"] => ["Verejný poriadok", "reklama", "nelegálna reklama"],
+    ["Verejný poriadok", "reklama", "nebezpečná (na spadnutie a pod.)"] => ["Verejný poriadok", "reklama", "nebezpečná (na spadnutie a pod)"],
+    ["Verejný poriadok", "iné", nil] => [], # TODO
+    ["Všetko ostatné", nil, nil] => [], # TODO
+  }
+
+  def self.new_category_set(old_category_name, old_subcategory_name, old_subtype_name)
+    old_key = [old_category_name, old_subcategory_name, old_subtype_name]
+    new_names = CATEGORY_MAPPING[old_key]
+    raise "Unable to do the mapping!" unless new_names
+    
+    category = Issues::Category.find_by(name: new_names[0])
+    raise "Unable to map category!" unless category
+
+    subcategory = category.subcategories.find_by(name: new_names[1])
+    raise "Unable to map subcategory!" unless subcategory
+
+    subtype = subcategory.subtypes.find_by(name: new_names[2])
+    raise "Unable to map subtype!" if !subtype && new_names[2].present?
+
+    {
+      category: category,
+      subcategory: subcategory,
+      subtype: subtype
+    }
+  end
+end
