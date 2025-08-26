@@ -6,18 +6,23 @@ export default class extends Zoombox {
   connect() {
     super.connect();
     this.currentIndex = 0;
-    this.images = Array.from(document.querySelectorAll('[data-zoombox-img-src-param]'))
-      .map(element => ({
-        src: element.dataset.zoomboxImgSrcParam,
-        index: parseInt(element.dataset.zoomboxImgIndexParam)
-      }));
     this.handleKeydown = this.handleKeydown.bind(this);
   }
 
   open(event) {
+    const group = event.params.group;
+
+    this.images = Array.from(
+      document.querySelectorAll(`[data-zoombox-group-param="${group}"]`)
+    ).map(element => ({
+      src: element.dataset.zoomboxImgSrcParam,
+      index: parseInt(element.dataset.zoomboxImgIndexParam)
+    }));
+
     this.currentIndex = parseInt(event.params.imgIndex);
     this.imageTarget.src = ""; // prevent flickering
     this.imageTarget.src = event.params.imgSrc;
+
     super.open(event);
     this.updateArrows();
     document.addEventListener('keydown', this.handleKeydown);
