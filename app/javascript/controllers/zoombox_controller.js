@@ -6,7 +6,6 @@ export default class extends Zoombox {
   connect() {
     super.connect();
     this.currentIndex = 0;
-    this.handleKeydown = this.handleKeydown.bind(this);
   }
 
   open(event) {
@@ -24,23 +23,8 @@ export default class extends Zoombox {
     this.imageTarget.src = event.params.imgSrc;
 
     super.open(event);
+    this.dialogTarget.focus()
     this.updateArrows();
-    document.addEventListener('keydown', this.handleKeydown);
-  }
-
-  close(event) {
-    super.close(event);
-    document.removeEventListener('keydown', this.handleKeydown);
-  }
-
-  handleKeydown(event) {
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      this.prevImage(event);
-    } else if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      this.nextImage(event);
-    }
   }
 
   prevImage(event) {
@@ -49,6 +33,7 @@ export default class extends Zoombox {
       this.currentIndex--;
       this.updateImage();
     }
+    this.dialogTarget.focus();
   }
 
   nextImage(event) {
@@ -57,6 +42,7 @@ export default class extends Zoombox {
       this.currentIndex++;
       this.updateImage();
     }
+    this.dialogTarget.focus();
   }
 
   updateImage() {
