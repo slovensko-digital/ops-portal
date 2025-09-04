@@ -23,7 +23,7 @@
 #  triage_external_id            :integer
 #  user_author_id                :bigint
 #
-class Issues::DuplicateComment < Issues::Comment
+class Issues::DuplicateIssueComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
   validates :text, presence: true, if: -> { attachments.empty? }, unless: -> { legacy_id }

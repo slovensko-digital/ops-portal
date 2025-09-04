@@ -48,7 +48,7 @@ class Triage::ConnectDuplicateIssueFromTriageJob < ApplicationJob
       end,
       user_author: issue.author
     }
-    comment = Issues::DuplicateComment.new(comment_params)
+    comment = Issues::DuplicateIssueComment.new(comment_params)
     comment.build_activity(issue: parent_issue, type: Issues::CommentActivity)
     comment.save!
 

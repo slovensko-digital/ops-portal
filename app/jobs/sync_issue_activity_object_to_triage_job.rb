@@ -75,7 +75,7 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
       "Agent"
     when Legacy::Issues::AgentInternalCommunication
       "Agent"
-    when Issues::UserComment, Issues::UserPrivateComment, Issues::DuplicateComment
+    when Issues::UserComment, Issues::UserPrivateComment, Issues::DuplicateIssueComment
       "Customer"
     when Issues::ResponsibleSubjectComment
       "Customer"
