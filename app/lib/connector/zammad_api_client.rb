@@ -51,7 +51,7 @@ module Connector
           ticket.ops_subtype = value
         when "address_municipality"
           ticket.address_municipality = value&.split("::").first
-          ticket.address_municipality_district = value&.split("::").last
+          ticket.address_municipality_district = value&.split("::").last || ""
         when "address_street"
           ticket.address_street = value
         when "address_house_number"
@@ -209,7 +209,7 @@ module Connector
         ops_subcategory: legacy_data.subcategory&.name,
         ops_subtype: legacy_data.subtype&.name,
         address_municipality: legacy_data.municipality&.name,
-        address_municipality_district: legacy_data.municipality_district&.name,
+        address_municipality_district: legacy_data.municipality_district&.name || "",
         address_street: legacy_data.address_street,
         address_lat: legacy_data.latitude,
         address_lon: legacy_data.longitude,
@@ -489,7 +489,7 @@ module Connector
         ops_subcategory: issue["subcategory"],
         ops_subtype: issue["subtype"],
         address_municipality: issue["address_municipality"].split("::").first,
-        address_municipality_district: issue["address_municipality"].split("::").second,
+        address_municipality_district: issue["address_municipality"].split("::").second || "",
         address_street: issue["address_street"],
         address_house_number: issue["address_house_number"],
         address_postcode: issue["address_postcode"],
