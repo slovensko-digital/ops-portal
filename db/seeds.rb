@@ -122,7 +122,7 @@ end
     key: "marked_as_resolved"
   },
   {
-    name: "Duplikát",
+    name: "Duplicitný",
     key: "duplicate"
   }
 ].each do |state_data|
