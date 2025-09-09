@@ -52,6 +52,10 @@ class NotificationMailer < ApplicationMailer
     mail
   end
 
+  def issue_marked_as_duplicate
+    mail
+  end
+
   def praise_accepted
     mail
   end

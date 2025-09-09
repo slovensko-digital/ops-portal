@@ -10,7 +10,7 @@ module Notifications
         next if comment.author == user
 
         case comment
-        when Issues::UserComment, Issues::AgentComment, Issues::AgentPrivateComment
+        when Issues::UserComment, Issues::AgentComment, Issues::AgentPrivateComment, Issues::DuplicateIssueComment
           notification_mailer.with(subscription: subscription).new_issue_user_comment(comment).deliver_later
         when Issues::ResponsibleSubjectComment
           notification_mailer.with(subscription: subscription).new_issue_responsible_subject_comment(comment).deliver_later

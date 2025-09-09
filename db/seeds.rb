@@ -120,6 +120,10 @@ end
   {
     name: "Označený za vyriešený",
     key: "marked_as_resolved"
+  },
+  {
+    name: "Duplicitný",
+    key: "duplicate"
   }
 ].each do |state_data|
   Issues::State.find_or_create_by!(key: state_data[:key]).tap do |issues_state|

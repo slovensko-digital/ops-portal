@@ -1,0 +1,16 @@
+<%= ops_title "Podnet bol označený ako duplikát" %>
+<p class="ops-email-paragraph">
+<% if @issue.author == @user %>
+    Váš podnet <%= ops_issue_link @issue %>, ktorý ste pridali <b><%= @issue.created_at.strftime("%d.%m.%Y") %></b> na portál Odkaz pre starostu, bol označený ako duplikát iného nahláseného podnetu.
+<% else %>
+    Podnet <%= ops_issue_link @issue %>, ktorý sledujete na portáli Odkaz pre starostu, bol označený ako duplikát iného nahláseného podnetu.
+<% end %>
+</p>
+<p class="ops-email-paragraph">
+  O reakcii samosprávy, ako aj prípadnej reakcii ostatných návštevníkov portálu, na duplikovaný podnet Vás zakaždým upozorníme e-mailom.
+</p>
+<p class="ops-email-paragraph">
+  Ďakujeme za Vašu spoluprácu.
+</p>
+<%= render "signature" %>
+<%= render "unsubscribe" %>

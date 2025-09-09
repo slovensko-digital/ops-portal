@@ -9,7 +9,7 @@ class Triage::CloseIssueUpdateTriageTicketJob < ApplicationJob
     when "accepted"
       "prijatá"
     end
-    triage_zammad_client.create_internal_system_note!(
+    triage_zammad_client.create_system_note!(
       issue_update.external_id,
       "Aktualizácia podnetu bola #{human_text}."
     )

@@ -23,34 +23,15 @@
 #  triage_external_id            :integer
 #  user_author_id                :bigint
 #
-class Issues::ResponsibleSubjectComment < Issues::Comment
+class Issues::DuplicateIssueComment < Issues::Comment
   validates :agent_author_id, absence: true
-  validates :user_author_id, absence: true
+  validates :responsible_subject_author_id, absence: true
+  validates :text, presence: true, if: -> { attachments.empty? }, unless: -> { legacy_id }
 
-  after_create_commit :notify_subscribers, unless: -> { legacy_id }
+  after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
 
   def author
-    responsible_subject_author
-  end
-
-  def author_display_name
-    responsible_subject_author&.subject_name || "Odpoveď zodpovedného subjektu"
-  end
-
-  def backoffice_author
-    Legacy::User.find_or_create_responsible_subjects_user(legacy_data&.fetch("user_id"))
-  end
-
-  def triage_activity_body
-    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, super ].join(" ")
-  end
-
-  def backoffice_activity_body
-    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, text ].join(" ")
-  end
-
-  def internal?
-    false
+    user_author
   end
 
   def visible?
@@ -61,11 +42,11 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
     visible?
   end
 
-  def triage_activity_body
-    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, super ].join(" ")
+  def editable_by?(user)
+    false
   end
 
-  def responsible_subject?
+  def duplicate?
     true
   end
 end

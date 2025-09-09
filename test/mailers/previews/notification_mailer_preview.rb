@@ -36,6 +36,12 @@ class NotificationMailerPreview < ActionMailer::Preview
     ).issue_accepted
   end
 
+  def issue_marked_as_duplicate
+    NotificationMailer.with(
+      subscription: IssueSubscription.last
+    ).issue_marked_as_duplicate
+  end
+
   def issue_unresolved
     issue = Issue.publicly_visible.last
     subscription = issue.subscriptions.where.not(subscriber: issue.author).first

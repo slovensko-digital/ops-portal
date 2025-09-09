@@ -126,7 +126,8 @@ class SyncIssueToTriageJob < ApplicationJob
     "Uzavretý" => "portal_issue_resolution",
     "Neriešený" => "portal_issue_resolution",
     "Neprijatý" => "portal_issue_resolution",
-    "Zamietnutý" => "portal_issue_resolution"
+    "Zamietnutý" => "portal_issue_resolution",
+    "Duplicitný" => "portal_issue_triage"
   }
 
   ISSUE_OPS_STATE_TO_TRIAGE_STATE = {
@@ -139,6 +140,7 @@ class SyncIssueToTriageJob < ApplicationJob
     "Uzavretý" => "closed",
     "Neriešený" => "closed",
     "Neprijatý" => "closed",
-    "Zamietnutý" => "closed"
+    "Zamietnutý" => "closed",
+    "Duplicitný" => "closed"
   }
 end

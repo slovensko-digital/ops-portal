@@ -1,5 +1,5 @@
 <%= turbo_frame_tag comment do %>
-  <div class="<%= class_names("comment", government: responsible_subject) %>" id="komentar_<%= comment.id %>">
+  <div class="<%= class_names("comment", government: comment.responsible_subject?, duplicate: comment.duplicate?) %>" id="komentar_<%= comment.id %>">
     <div class="subject">
       <figure>
         <picture>
@@ -10,28 +10,30 @@
     </div>
     <div class="date"><%= l comment.created_at.to_date %></div>
     <% if comment.text.present? %>
-      <div class="comment-content">
-        <% if comment.legacy_data.blank? %>
-          <div class="prose"><%= simple_format(comment.text) %></div>
-        <% else %>
-          <div class="comment-legacy">
-            <div class="comment-legacy-text">
-              <%# see legacy_id 85598 %>
-              <%= simple_format(comment.legacy_data["plain_message"].presence || comment.text) %>
-            </div>
+      <turbo-frame target="_top">
+        <div class="comment-content">
+          <% if comment.legacy_data.blank? %>
+            <div class="prose"><%= simple_format(comment.text) %></div>
+          <% else %>
+            <div class="comment-legacy">
+              <div class="comment-legacy-text">
+                <%# see legacy_id 85598 %>
+                <%= simple_format(comment.legacy_data["plain_message"].presence || comment.text) %>
+              </div>
 
-            <% if comment.legacy_data["solved_by"].present? %>
-              <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
-            <% end %>
-            <% if comment.legacy_data["solved_in"].present? %>
-              <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
-            <% end %>
-            <% if comment.legacy_data["signature"].present? %>
-              <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
+              <% if comment.legacy_data["solved_by"].present? %>
+                <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
+              <% end %>
+              <% if comment.legacy_data["solved_in"].present? %>
+                <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
+              <% end %>
+              <% if comment.legacy_data["signature"].present? %>
+                <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </turbo-frame>
     <% end %>
     <% if comment.attachments.any? %>
       <%= render "issues/activity_object_attachments", activity_object: comment %>

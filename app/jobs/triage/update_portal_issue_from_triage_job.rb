@@ -1,12 +1,6 @@
 class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
-  def perform(ticket, triage_zammad_client: TriageZammadEnvironment.client)
-    issue = if ticket[:process_type] == "portal_issue_triage"
-      Issue.find_by!(triage_external_id: ticket[:triage_identifier])
-    elsif ticket[:process_type] == "portal_issue_resolution"
-      Issue.find_by!(resolution_external_id: ticket[:triage_identifier])
-    else
-      raise "Invalid process type"
-    end
+  def perform(ticket)
+    issue = TriageUtils.get_issue_from_ticket(ticket)
 
     ops_state = ticket[:ops_state]
     if ticket[:issue_type] == "praise" && ops_state.key == "unresolved"
