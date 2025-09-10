@@ -66,6 +66,8 @@ class IssuesController < ApplicationController
     raise ActionController::RoutingError.new("Not Found") unless @issue.editable_by?(current_user)
   end
 
+  ZAMMAD_TICKET_NAME_REGEXP = /Tic?ket#.-(\d+)/ # Ticket#T-300000, Tiket#R-300000
+
   def search_engine
     SearchEngine.new(
       filters: [
@@ -226,7 +228,7 @@ class IssuesController < ApplicationController
           param_name: :q,
           label: "Textové vyhľadávanie",
           filter: ->(scope, params) do
-            id_match = params[:q][/Tiket#T-(\d+)/, 1]
+            id_match = params[:q][ZAMMAD_TICKET_NAME_REGEXP, 1]
 
             if id_match.present?
               scope.where(id: id_match)
