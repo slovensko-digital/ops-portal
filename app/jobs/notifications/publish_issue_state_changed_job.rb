@@ -10,6 +10,8 @@ module Notifications
         when "rejected"
           next unless issue.author == subscription.subscriber
           notification_mailer.with(subscription: subscription).issue_rejected.deliver_later
+        when "duplicate"
+          notification_mailer.with(subscription: subscription).issue_marked_as_duplicate.deliver_later
         when "resolved"
           notification_mailer.with(subscription: subscription).issue_resolved.deliver_later
         when "unresolved"

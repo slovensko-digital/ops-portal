@@ -3,7 +3,6 @@ json.activity_type @activity[:article_type]
 json.author @activity[:author_response]
 json.content_type @activity[:content_type]
 json.body @activity[:body]
-json.type @activity[:type]
 json.created_at @activity[:created_at]
 json.updated_at @activity[:updated_at]
 json.attachments @activity[:attachments] do |attachment|

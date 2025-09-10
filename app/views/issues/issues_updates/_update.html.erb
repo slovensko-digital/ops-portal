@@ -1,6 +1,6 @@
 <% comment = update %>
 <%= turbo_frame_tag comment do %>
-  <div class="<%= class_names("comment confirm-commnet") %>" id="komentar_<%= comment.id %>">
+  <div class="<%= class_names("comment confirm-comment") %>" id="komentar_<%= comment.id %>">
     <% if comment.confirmed_by_id? || comment.confirmed? %>
       <div class="confirm-status-con">
         <div class="confirm-status">

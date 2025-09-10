@@ -334,6 +334,8 @@ class ZammadApiClient
 
   def get_article(ticket_id, article_id, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, customer_articles: true, responsible_subject: nil)
     ticket, article = find_article(ticket_id, article_id)
+    return unless ticket && article
+
     result = build_article_response(ticket, article, allowed_article_types: allowed_article_types, responsible_subject: responsible_subject)
     return unless result.present?
     result
@@ -388,15 +390,15 @@ class ZammadApiClient
     article.id
   end
 
-  def create_internal_system_note!(ticket_id, body)
+  def create_system_note!(ticket_id, body, content_type: "text/plain", type: "note", internal: true, sender: "System")
     ticket = @client.ticket.find(ticket_id)
 
     article = ticket.article(
-      content_type: "text/plain",
+      content_type: content_type,
       body: body,
-      type: "note",
-      internal: true,
-      sender: "System"
+      type: type,
+      internal: internal,
+      sender: sender
     )
 
     # TODO custom error
@@ -509,6 +511,14 @@ class ZammadApiClient
       link_object_source: "Ticket",
       link_object_source_number: child_ticket_number
     })
+  end
+
+  def get_ticket_resolution_parent_links(ticket_id)
+    links = raw_api_request(:get, "links", { link_object: "Ticket", link_object_value: ticket_id })&.dig("links")
+    return [] unless links
+
+    ticket_ids = links.select { |link| link["link_object"] == "Ticket" && link["link_type"] == "parent" }.map { |link| link["link_object_value"] }
+    ticket_ids.select { |id| @client.ticket.find(id).process_type == "portal_issue_resolution" }
   end
 
   def raw_api_request(method, endpoint, params = {})

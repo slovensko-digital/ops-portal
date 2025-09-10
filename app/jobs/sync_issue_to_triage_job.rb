@@ -1,5 +1,7 @@
 class SyncIssueToTriageJob < ApplicationJob
   def perform(issue, client: TriageZammadEnvironment.client, import: false, sync_activities_to_triage_job: SyncIssueActivitiesToTriageJob, sync_activities: true)
+    return if issue.archived?
+
     client.check_import_mode! if import
 
     triage_group = find_municipality_group(issue, client) if import
@@ -124,7 +126,8 @@ class SyncIssueToTriageJob < ApplicationJob
     "Uzavretý" => "portal_issue_resolution",
     "Neriešený" => "portal_issue_resolution",
     "Neprijatý" => "portal_issue_resolution",
-    "Zamietnutý" => "portal_issue_resolution"
+    "Zamietnutý" => "portal_issue_resolution",
+    "Duplicitný" => "portal_issue_triage"
   }
 
   ISSUE_OPS_STATE_TO_TRIAGE_STATE = {
@@ -137,6 +140,7 @@ class SyncIssueToTriageJob < ApplicationJob
     "Uzavretý" => "closed",
     "Neriešený" => "closed",
     "Neprijatý" => "closed",
-    "Zamietnutý" => "closed"
+    "Zamietnutý" => "closed",
+    "Duplicitný" => "closed"
   }
 end

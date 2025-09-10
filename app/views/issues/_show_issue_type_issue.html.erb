@@ -66,7 +66,7 @@
                   <%= user_avatar(issue.author, variant: :medium) %>
                 </picture>
               </figure>
-              <div class="name"><%= issue.author.display_name %></div>
+              <div class="name"><%= issue.author.present? ? issue.author.display_name : "Neznámy autor" %></div>
             </div>
           <% end %>
         </div>
@@ -94,16 +94,18 @@
           </div>
         </div>
 
-        <div class="information-wrapper">
-          <div class="label">Kategórie:</div>
-          <div class="value-con">
-            <%= link_to issue.category.name, issues_path(kategoria: issue.category.name), class: "value" %>
-            <% if issue.subcategory %><%= link_to issue.subcategory.name, issues_path(kategoria: issue.category.name, podkategoria: issue.subcategory.name), class: "value" %>
-            <% end %>
-            <% if issue.subtype.present? %><%= link_to issue.subtype.name, issues_path(kategoria: issue.category.name, podkategoria: issue.subcategory.name, typ: issue.subtype.name), class: "value" %>
-            <% end %>
+        <% if issue.category.present? %>
+          <div class="information-wrapper">
+            <div class="label">Kategórie:</div>
+            <div class="value-con">
+              <%= link_to issue.category.name, issues_path(kategoria: issue.category.name), class: "value" %>
+              <% if issue.subcategory %><%= link_to issue.subcategory.name, issues_path(kategoria: issue.category.name, podkategoria: issue.subcategory.name), class: "value" %>
+              <% end %>
+              <% if issue.subtype.present? %><%= link_to issue.subtype.name, issues_path(kategoria: issue.category.name, podkategoria: issue.subcategory.name, typ: issue.subtype.name), class: "value" %>
+              <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
 
         <div class="information-wrapper">
           <div class="label">Zodpovedný:</div>
@@ -144,12 +146,10 @@
           </button>-->
         </div>
 
-        <% if !issue.discussion_closed? && !issue.archived? %>
-          <%= turbo_frame_tag "activities", class: 'comment-con' do %>
-            <%= render activity_objects %>
-            <% if activity_objects.empty? && !issue.discussion_closed? && !issue.archived? %>
-              <div class="be-first-comment-notice">Buďte prvý kto overí podnet alebo napíše komentár!</div>
-            <% end %>
+        <%= turbo_frame_tag "activities", class: 'comment-con' do %>
+          <%= render activity_objects %>
+          <% if activity_objects.empty? && !issue.discussion_closed? && !issue.archived? %>
+            <div class="be-first-comment-notice">Buďte prvý kto overí podnet alebo napíše komentár!</div>
           <% end %>
         <% end %>
 

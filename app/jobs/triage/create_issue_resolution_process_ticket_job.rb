@@ -20,7 +20,7 @@ class Triage::CreateIssueResolutionProcessTicketJob < ApplicationJob
       child_ticket_id: resolution_external_id
     )
 
-    triage_zammad_client.create_internal_system_note!(
+    triage_zammad_client.create_system_note!(
       issue.triage_external_id,
       "Triáž podnetu bola ukončená a bol vytvorený nový tiket na jeho vyriešenie."
     )

@@ -31,6 +31,7 @@ $pink: rgba(255, 210, 230, 1); // #ffd2e6
 $pink-fifty: rgba(255, 210, 230, 0.5); // #ffd2e6
 $red: rgba(255, 71, 97, 1); // #ff4761
 $yellow: rgba(255, 212, 0, 1); // #ffd400
+$yellow-light: rgba(255, 239, 190, 0.5); // #ffefbe
 $yellow-middle: rgba(255, 224, 124, 1); // #ffd400
 $white: rgba(255, 255, 255, 1); // #FFFFFF
 
@@ -45,6 +46,7 @@ $zamietnute: rgba(0, 0, 0, 0.2);
 $odstupene: rgba(151, 71, 255, 0.7);
 $cakajuce: rgba(255, 203, 37, 1);
 $uzavrete: rgba(220, 188, 189, 1);
+$duplicitny: rgba(220, 188, 189, 1);
 
 
 // General
@@ -201,6 +203,7 @@ a.button-transparent:hover {
 .state-cakajuci { background: $cakajuce; }
 .state-uzavrety { background: $uzavrete; }
 .state-archivovany { background: $uzavrete; }
+.state-duplicitny { background: $zamietnute; }
 
 .statistics-block-category-komunikacie,
 .statistics-block-category-cesty-a-chodniky { background: #C4F8FF; }
@@ -2141,6 +2144,9 @@ a.podnet-block .state-neprijaty,
 a.podnet-block .state-archivovany {
   background: $uzavrete;
 }
+a.podnet-block .state-duplicitny {
+  background: $duplicitny;
+}
 a.podnet-block .icon-con {
   align-items: center;
   display: flex;
@@ -2498,13 +2504,16 @@ section.podnet .podnet-discussion .comment {
   padding: 30px 20px;
   word-break: break-word;
 }
+section.podnet .podnet-discussion .duplicate {
+  background: $green-light;
+}
 section.podnet .podnet-discussion .government {
   background: $blue-light;
 }
-section.podnet .podnet-discussion .confirm-commnet {
+section.podnet .podnet-discussion .confirm-comment {
   background: $green-light;
 }
-section.podnet .podnet-discussion .confirm-commnet .confirm-status {
+section.podnet .podnet-discussion .confirm-comment .confirm-status {
   background: $green;
   align-items: center;
   box-sizing: border-box;
@@ -2523,7 +2532,7 @@ section.podnet .podnet-discussion .confirm-commnet .confirm-status {
   @include rounded(25px);
   @include transition(all);
 }
-section.podnet .podnet-discussion .confirm-commnet .confirm-status svg {
+section.podnet .podnet-discussion .confirm-comment .confirm-status svg {
   width: 18px;
 }
 section.podnet .podnet-discussion .comment,

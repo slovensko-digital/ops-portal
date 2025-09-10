@@ -5,6 +5,8 @@ class Triage::SyncTicketUpdateFromTriageJob < ApplicationJob
 
     case ticket[:process_type]
     when "portal_issue_triage", "portal_issue_resolution"
+      return Triage::ConnectDuplicateIssueFromTriageJob.perform_later(ticket) if ticket[:ops_state].key == "duplicate"
+
       Triage::UpdatePortalIssueFromTriageJob.perform_later(ticket)
     when "portal_issue_verification"
       Triage::UpdatePortalIssueUpdateFromTriageJob.perform_later(ticket)

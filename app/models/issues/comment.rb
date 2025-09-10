@@ -57,6 +57,14 @@ class Issues::Comment < ApplicationRecord
     author_name
   end
 
+  def duplicate?
+    false
+  end
+
+  def responsible_subject?
+    false
+  end
+
   private
 
   def notify_subscribers

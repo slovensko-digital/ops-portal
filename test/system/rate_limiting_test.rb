@@ -12,6 +12,8 @@ class RateLimitingTest < ApplicationSystemTestCase
         title: "Test Issue #{i}",
         description: "Description for test issue #{i}",
         category: issues_categories(:one),
+        state: Issues::State.find_by!(key: "waiting"),
+        municipality: Municipality.first,
         author: @user,
         created_at: 20.days.ago
       )

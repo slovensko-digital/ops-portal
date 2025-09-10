@@ -11,7 +11,7 @@
 #  legacy_id  :integer
 #
 class Issues::State < ApplicationRecord
-  PRIVATE_KEYS = %w[waiting rejected resolved_private]
+  PRIVATE_KEYS = %w[waiting rejected resolved_private duplicate]
 
   scope :not_visible, -> { where(key: PRIVATE_KEYS) }
   scope :archived, -> { where(key: "archived") }
