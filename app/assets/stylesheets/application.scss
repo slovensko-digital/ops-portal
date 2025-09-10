@@ -2444,13 +2444,14 @@ section.podnet .podnet-information span.value,{
 }
 section.podnet .podnet-information .clipboard-button {
   vertical-align: middle;
-  line-height: 1;
+  line-height: 1em;
   margin-left: 5px;
   color: $black;
-  display: none
-}
-section.podnet .podnet-information .clipboard--supported .clipboard-button {
   display: initial;
+  visibility: hidden;
+}
+section.podnet .podnet-information .clipboard--supported:hover .clipboard-button {
+  visibility: visible;
 }
 
 //Rotate button and close button
