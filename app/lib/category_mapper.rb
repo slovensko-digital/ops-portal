@@ -164,12 +164,12 @@ class CategoryMapper
     [ "Všetko ostatné", nil, nil ] => [ "Ostatné", "iné", nil ]
   }
 
-  def self.new_category_set(old_category_name, old_subcategory_name, old_subtype_name)
-    old_key = [ old_category_name, old_subcategory_name, old_subtype_name ]
-    new_names = CATEGORY_MAPPING[old_key]
+  def self.map_legacy_categories_to_new(legacy_category, legacy_subcategory, legacy_subtype)
+    legacy_key = [ legacy_category&.name, legacy_subcategory&.name, legacy_subtype&.name ]
+    new_names = CATEGORY_MAPPING[legacy_key]
     raise "Unable to do the mapping!" unless new_names
 
-    category = Issues::Category.find_by(name: new_names[0])
+    category = Issues::Category.where(legacy_id: nil).find_by(name: new_names[0])
     raise "Unable to map category!" unless category
 
     subcategory = category.subcategories.find_by(name: new_names[1])
@@ -178,10 +178,6 @@ class CategoryMapper
     subtype = subcategory.subtypes.find_by(name: new_names[2])
     raise "Unable to map subtype!" if !subtype && new_names[2].present?
 
-    {
-      category: category,
-      subcategory: subcategory,
-      subtype: subtype
-    }
+    [ category, subcategory, subtype ]
   end
 end
