@@ -26,6 +26,7 @@
 #  likes_count                         :integer          default(0), not null
 #  longitude                           :float
 #  public                              :boolean          default(FALSE), not null
+#  resolution_started_at               :datetime
 #  responsible_subject_last_contact_at :datetime
 #  title                               :string           not null
 #  created_at                          :datetime         not null

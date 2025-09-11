@@ -12,6 +12,7 @@ class Triage::CreateIssueResolutionProcessTicketJob < ApplicationJob
 
     issue.update!(
       resolution_external_id: resolution_external_id,
+      resolution_started_at: Time.current,
       last_synced_at: Time.now
     )
 

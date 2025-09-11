@@ -26,6 +26,7 @@
 #  likes_count                         :integer          default(0), not null
 #  longitude                           :float
 #  public                              :boolean          default(FALSE), not null
+#  resolution_started_at               :datetime
 #  responsible_subject_last_contact_at :datetime
 #  title                               :string           not null
 #  created_at                          :datetime         not null
@@ -82,7 +83,7 @@ class Issue < ApplicationRecord
   validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, unless: :imported?
   validates_length_of :description, minimum: 25, maximum: 1800, allow_blank: true, unless: :imported?
 
-  scope :newest, -> { order(created_at: :desc) }
+  scope :newest, -> { order(Arel.sql("COALESCE(issues.resolution_started_at, issues.created_at) DESC")) }
   scope :publicly_visible, -> { where.not(state_id: Issues::State.not_visible.pluck(:id)) }
   scope :currently_viewable_by, ->(user) do
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
@@ -208,5 +209,9 @@ class Issue < ApplicationRecord
     elsif saved_change_to_state_id?
       Notifications::PublishIssueStateChangedJob.perform_later(self, state_id_change: saved_change_to_state_id)
     end
+  end
+
+  def effective_date
+    resolution_started_at || created_at
   end
 end
