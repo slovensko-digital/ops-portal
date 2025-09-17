@@ -20,13 +20,13 @@ class IssuesController < ApplicationController
     scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
 
     case @tab
-      when "list"
+    when "list"
         scope = scope.with_attached_photos
 
         @search_results = search_engine.search(scope, params)
-      when "stats"
+    when "stats"
         @search_results = search_engine.stats(scope, params)
-      when "map"
+    when "map"
         @search_results = search_engine.stats(scope, params)
     end
   end
@@ -38,7 +38,7 @@ class IssuesController < ApplicationController
     scope = scope.where.not(municipality_id: Municipality.archived.pluck(:id))
     scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
 
-    #scope.includes(:municipality, :municipality_district)
+    # scope.includes(:municipality, :municipality_district)
 
     @search_results = search_engine.map(scope, params)
   end

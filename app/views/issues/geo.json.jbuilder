@@ -4,7 +4,7 @@ json.features @search_results.stats do |issue|
 
   json.properties do
     json.count issue.count
-    json.nice_count number_to_human(issue.count, format: '%n%u', units: { thousand: 'K' }, separator: '.', precision: 0)
+    json.nice_count number_to_human(issue.count, format: "%n%u", units: { thousand: "K" }, separator: ".", precision: 0)
 
     if issue.count > 1
       json.min_latitude issue.min_latitude

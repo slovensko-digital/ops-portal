@@ -38,20 +38,20 @@ module SearchEngine
 
     def map(scope, params)
       target_zoom = case params[:z].to_i
-        when 1..5
+      when 1..5
           2
-        when 6..7
+      when 6..7
           3
-        when 8..10
+      when 8..10
           4
-        when 11..12
-        when 13..15
+      when 11..12
+      when 13..15
           6
-        when 16..17
+      when 16..17
           7
-        when 18
+      when 18
           18
-        else
+      else
           4
       end
 
