@@ -49,7 +49,7 @@ module SearchEngine
           6
       when 16..17
           7
-      when 18
+      when 18..20
           18
       else
           4

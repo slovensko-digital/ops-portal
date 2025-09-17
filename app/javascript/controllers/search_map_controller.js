@@ -6,12 +6,14 @@ export default class extends Controller {
     static values = {geoJsonUrl: String}
 
     connect() {
-        const map = L.map(this.mapTarget, {dragging: !L.Browser.mobile}).setView([48.1478, 17.1072], 10);
+        const map = L.map(this.mapTarget, {dragging: !L.Browser.mobile, maxZoom: 19}).setView([48.1478, 17.1072], 10);
         let geoJsonLayer;
         let isInitialLoad = true;
 
         L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
+            attribution: '© OpenStreetMap',
+            maxNativeZoom: 18,
+            maxZoom: 19,
         }).addTo(map);
 
         const loadGeoJson = () => {
@@ -40,16 +42,17 @@ export default class extends Controller {
                                 });
                                 return marker;
                             } else {
-                                // Use circle marker for single items or count <= 1
+                                const radius = map.getZoom() > 18 ? 10 : 6;
+
                                 const marker = L.circleMarker(latlng, {
                                     color: '#ff4761',
                                     fillColor: '#ff4761',
                                     fillOpacity: 0.3,
-                                    radius: 5
+                                    radius: radius
                                 });
                                 marker.on('mouseover', function () {
                                     this.setStyle({
-                                        radius: 5,
+                                        radius: radius,
                                         fillColor: '#00F',
                                         color: '#00F',
                                         fillOpacity: 0.5
@@ -60,7 +63,7 @@ export default class extends Controller {
                                         color: '#ff4761',
                                         fillColor: '#ff4761',
                                         fillOpacity: 0.3,
-                                        radius: 5
+                                        radius: radius
                                     });
                                 });
                                 return marker;
@@ -71,24 +74,30 @@ export default class extends Controller {
                             if (feature.properties.count === 0) {
                             } else if (feature.properties.count === 1) {
                                 const popupContent = `
-                                <div class="map-popup">
+                                <a href="${feature.properties.url}" class="map-popup">
                                     <div class="title">${feature.properties.title}</div>
                                     <div class="location">${feature.properties.address}</div>
                                     <div class="date">${feature.properties.created_at}</div>
-                                </div>
+                                </a>
                             `;
                                 layer.bindPopup(popupContent);
-                                layer.on('mouseover', function () {
-                                    this.openPopup();
-                                });
+                                if (L.Browser.mobile) {
+                                    layer.on('click', function () {
+                                        this.openPopup();
+                                    });
+                                } else {
+                                    layer.on('mouseover', function () {
+                                        this.openPopup();
+                                    });
 
-                                layer.on('mouseout', function () {
-                                    this.closePopup();
-                                });
+                                    layer.on('mouseout', function () {
+                                        this.closePopup();
+                                    });
 
-                                layer.on('click', function () {
-                                    window.location.href = feature.properties.url;
-                                });
+                                    layer.on('click', function () {
+                                        window.location.href = feature.properties.url;
+                                    });
+                                }
                             } else {
                                 layer.on('click', function () {
                                     const bounds = [
