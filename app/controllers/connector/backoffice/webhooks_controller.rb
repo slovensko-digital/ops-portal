@@ -7,7 +7,7 @@ class Connector::Backoffice::WebhooksController < ActionController::API
 
     case event_type
     when "article.created"
-      Connector::SendNewActivityToTriageFromBackofficeJob.perform_later(@tenant, data.require(:ticket_id), data.require(:article_id))
+      Connector::ProcessNewBackofficeArticleJob.perform_later(@tenant, data.require(:ticket_id), data.require(:article_id))
     when "ticket.updated"
       Connector::UpdateTriageIssueFromBackofficeJob.perform_later(@tenant, data.require(:ticket_id))
     else

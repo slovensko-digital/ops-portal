@@ -9,6 +9,8 @@ module Connector
     DEFAULT_STATE = "new"
     DEFAULT_SENDER = "Customer"
     OPS_ORIGIN = "ops"
+    SUBTASK_ORIGIN = "subtask"
+    SUBTASK_ARTICLE_CONTENT_TYPE = "text/plain"
     DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
     DEFAULT_ARTICLE_TYPE = "note"
     DEFAULT_FIRST_ARTICLE_TYPE = "web"
@@ -85,27 +87,96 @@ module Connector
       }
     end
 
-    def get_activity(ticket_id, activity_id)
-      begin
-        ticket = @client.ticket.find(ticket_id)
-        article = ticket.articles.find { |a| activity_id == a.id.to_i }
+    def create_subtask(parent_ticket_id, author_id, number, title, user_id, due_date = nil)
+      parent_ticket = @client.ticket.find(parent_ticket_id)
+      assignee = @client.user.find(user_id)
+      author = @client.user.find(author_id)
 
-        {
-          content_type: article.content_type,
-          body: article.body,
-          type: article.type,
-          attachments: article.attachments.map do |attachment|
-            {
-              filename: attachment.filename,
-              content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
-              data64: Base64.strict_encode64(attachment.download)
-            }
-          end
+      issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
+      group = find_or_create_group(parent_ticket.group || DEFAULT_GROUP)
+
+      tmp_body = {
+        number: issue_number,
+        group_id: group.id,
+        origin: SUBTASK_ORIGIN,
+        title: title,
+        origin_by_id: author.id,
+        customer_id: author.id,
+        owner_id: assignee.id,
+        ops_portal_url: parent_ticket["portal_url"],
+        article: {
+          origin_by_id: author.id,
+          content_type: SUBTASK_ARTICLE_CONTENT_TYPE,
+          body: title,
+          type: DEFAULT_FIRST_ARTICLE_TYPE,
+          sender: DEFAULT_SENDER
         }
+      }
 
-      rescue RuntimeError => e
-        raise e unless e.message.include? "Couldn't find Ticket with"
+      if due_date
+        tmp_body[:pending_time] = due_date.to_time.beginning_of_day + 8.hours
+        tmp_body[:state] = "pending reminder"
       end
+
+      subtask_ticket = nil
+      begin
+        subtask_ticket = @client.ticket.create(tmp_body)
+      rescue RuntimeError => e
+        raise e unless /.*This object already exists/.match?(e.message) || e.message.include?("Can't save object")
+        search_result = @client.ticket.search(query: "\"#{issue_number}\"").select { |r| r.number == issue_number }
+        raise e unless search_result.count == 1
+        subtask_ticket = search_result.first
+      end
+
+      raise "Subtask ticket not created" unless subtask_ticket
+
+      parent_ticket_json = raw_api_request(:get, "tickets/#{parent_ticket_id}").first
+      raise "Parent ticket not found" unless parent_ticket_json
+
+      checklist_id = parent_ticket_json["checklist_id"]
+      unless checklist_id
+        r = raw_api_request(:post, "checklists", params: { ticket_id: parent_ticket_id })
+        raise "Checklist not created" unless r.second < 300
+
+        checklist_id = r.first["id"]
+      end
+
+      checklist = raw_api_request(:get, "checklists/#{checklist_id}").first
+      raise "Checklist not found" unless checklist
+
+      checklist_items = checklist["item_ids"].map do |item_id|
+        raw_api_request(:get, "checklist_items/#{item_id}").first
+      end
+
+      unless checklist_items.any? { |i| i["ticket_id"] == subtask_ticket.id }
+        r = raw_api_request(:post, "checklist_items", params: { checklist_id: checklist_id, text: "Tiket##{subtask_ticket.number}", checked: false })
+        raise "Checklist item not created" unless r.second < 300
+      end
+    end
+
+    def get_article(ticket_id, article_id)
+      ticket = @client.ticket.find(ticket_id)
+      ticket.articles.find { |a| article_id == a.id.to_i }
+    rescue RuntimeError => e
+      raise e unless e.message.include? "Couldn't find Ticket with"
+      nil
+    end
+
+    def get_activity(ticket_id, activity_id)
+      article = get_article(ticket_id, activity_id)
+
+      {
+        content_type: article.content_type,
+        body: article.body,
+        type: article.type,
+        attachments: article.attachments.map do |attachment|
+          {
+            filename: attachment.filename,
+            content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
+            data64: Base64.strict_encode64(attachment.download)
+          }
+        end
+      }
     end
 
     def find_or_create_article_from_activity_object!(issue, activity_object, author_id: nil, internal:, sender:)
