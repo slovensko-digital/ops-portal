@@ -158,6 +158,28 @@ class User < ApplicationRecord
     draft
   end
 
+  def anonymize!
+    avatar.purge if avatar.attached?
+
+    update!(
+      email: "anonymized#{id}@close.gdpr",
+      firstname: "anonymized",
+      lastname: nil,
+      login: nil,
+      phone: nil,
+      password_hash: nil,
+      about: nil,
+      organization: nil,
+      signature: nil,
+      resident: nil,
+      sex: nil,
+      birth: nil,
+      email_notifiable: false,
+      display_name: nil,
+      anonymous: true
+    )
+  end
+
   private
 
   def set_email_global_unsubscribe_token
