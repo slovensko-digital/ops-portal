@@ -3229,6 +3229,81 @@ body.error-server-body {
   line-height: em(28,18);
 }
 
+.wrapper-map .container-map {
+  padding-bottom: 100%;
+}
+
+// Mapa Popup
+.map-popup {
+  background: $white;
+  box-shadow: 0px 0px 5px 1px $black-ten;
+  display: flex;
+  flex-direction: column;
+  gap: 4px 0;
+  max-width: 200px;
+  padding: 10px 12px;
+  @include rounded(6px);
+}
+.map-popup .title {
+  color: $black;
+  font-family: $general;
+  font-size: em(14,16) * 1.2;
+  font-weight: $semibold;
+  line-height: em(20,14);
+}
+.map-popup .location, .map-popup .date {
+  color: $black;
+  font-family: $general;
+  font-size: em(12,16) * 1.2;
+  font-weight: $medium;
+  line-height: em(18,12);
+}
+
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+.leaflet-popup-tip-container {
+  display: none !important;
+}
+.leaflet-popup-close-button {
+  display: none !important;
+}
+
+.custom-cluster-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.cluster-marker {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: #ff4761;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cluster-marker:hover {
+  transform: scale(1.1);
+}
+
+.cluster-marker-inner {
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1;
+}
+
 
 // Kontakt
 section.contact {

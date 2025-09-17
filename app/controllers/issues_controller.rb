@@ -20,13 +20,27 @@ class IssuesController < ApplicationController
     scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
 
     case @tab
-    when "list"
+      when "list"
         scope = scope.with_attached_photos
 
         @search_results = search_engine.search(scope, params)
-    when "stats"
+      when "stats"
+        @search_results = search_engine.stats(scope, params)
+      when "map"
         @search_results = search_engine.stats(scope, params)
     end
+  end
+
+  def geo
+    scope = Issue.publicly_visible.includes(:state)
+
+    # do not allow searching for archived municipalities
+    scope = scope.where.not(municipality_id: Municipality.archived.pluck(:id))
+    scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
+
+    #scope.includes(:municipality, :municipality_district)
+
+    @search_results = search_engine.map(scope, params)
   end
 
   # GET /issues/1 or /issues/1.json

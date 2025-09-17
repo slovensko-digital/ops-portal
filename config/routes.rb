@@ -38,7 +38,10 @@ Rails.application.routes.draw do
     resources :issues_user_comments, path: "komentare", module: :issues
     resources :issues_user_private_comments, path: "komentare", module: :issues, controller: "issues_user_comments"
     resources :issues_updates, path: "overenia", module: :issues, controller: "issues_updates"
+    get :geo, on: :collection
   end
+
+
 
   namespace :issues, path: "dopyty" do
     resources :drafts, path: "novy-dopyt", path_names: { new: "podnet" } do

@@ -36,6 +36,53 @@ module SearchEngine
       results
     end
 
+    def map(scope, params)
+      target_zoom = case params[:z].to_i
+        when 1..5
+          2
+        when 6..7
+          3
+        when 8..10
+          4
+        when 11..12
+        when 13..15
+          6
+        when 16..17
+          7
+        when 18
+          18
+        else
+          4
+      end
+
+      scope = apply_filters(scope, params)
+      scope = scope.reorder("") # reset order due to optional fulltext search
+
+      issues_groups_scope = scope
+        .select("avg(latitude) avg_latitude, avg(longitude) as avg_longitude,
+                min(latitude) as min_latitude, max(latitude) as max_latitude,
+                min(longitude) as min_longitude, max(longitude) as max_longitude,
+                count(*) as count")
+        .group("st_geohash(st_point(issues.longitude, issues.latitude, 4326), #{target_zoom})")
+        .where("st_point(longitude, latitude, 4326) && st_makeenvelope(?, ?, ?, ?, 4326)", *params[:bbox].split(",").map(&:to_f))
+        .reorder("").to_sql
+
+      results = build_results_with_filters(params)
+
+      lateral_join_scope = scope.unscoped
+        .where("st_point(longitude, latitude, 4326) && st_point(issue_groups.avg_longitude, issue_groups.avg_latitude, 4326)")
+        .limit(1)
+
+      scope = scope.unscoped
+        .select("i.*, issue_groups.*")
+        .joins("LEFT JOIN LATERAL (#{lateral_join_scope.to_sql}) AS i ON true")
+        .from("(#{issues_groups_scope}) issue_groups")
+
+      results.stats = scope
+
+      results
+    end
+
     private
 
     def apply_filters(scope, params)
