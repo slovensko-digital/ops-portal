@@ -1,7 +1,18 @@
 <!-- Mapa podnetov -->
 <% if @search_results.stats.length > 0 %>
-  <div class="wrapper-map">
-    <div class="container-map" id="map" data-controller="search-map" data-search-map-target="map" data-search-map-geo-json-url-value="<%= geo_issues_path(@search_results.search_params.except(:tab, :sort)) %>"></div>
+  <div class="wrapper-map" style="position: relative;"
+       data-controller="search-map"
+       data-search-map-target="map"
+       data-search-map-geo-json-url-value="<%= geo_issues_path(@search_results.search_params.except(:tab, :sort)) %>"
+       data-search-map-base-search-url-value="<%= issues_path(@search_results.search_params.merge(tab: :list)) %>"
+       data-search-map-bbox-filter-value="<%= @search_results.search_params[:oblast] %>"
+       data-search-map-geo-filter-param-value="oblast"
+  >
+    <div class="container-map" id="map">
+    </div>
+    <div class="button-container" style="position: absolute; bottom: 1rem; width: 100%; z-index: 1000;">
+      <button class="button" style="margin: 0 auto;" data-action="click->search-map#geofilter">Filtrovať oblasť</button>
+    </div>
   </div>
 <% else %>
   <section class="search-result-blank">

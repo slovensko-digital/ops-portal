@@ -3,7 +3,7 @@ import L from 'leaflet';
 
 export default class extends Controller {
     static targets = ["map"]
-    static values = {geoJsonUrl: String}
+    static values = {geoJsonUrl: String, baseSearchUrl: String, bboxFilter: String, geoFilterParam: String}
 
     connect() {
         const map = L.map(this.mapTarget, {dragging: !L.Browser.mobile, maxZoom: 19}).setView([48.1478, 17.1072], 10);
@@ -15,6 +15,23 @@ export default class extends Controller {
             maxNativeZoom: 18,
             maxZoom: 19,
         }).addTo(map);
+
+        // Display bbox filter as rectangle if present
+        if (this.bboxFilterValue && this.bboxFilterValue.trim()) {
+            const coords = this.bboxFilterValue.split(',').map(coord => parseFloat(coord.trim()));
+            if (coords.length === 4) {
+                const [minX, minY, maxX, maxY] = coords;
+                const bounds = [[minY, minX], [maxY, maxX]];
+
+                L.rectangle(bounds, {
+                    color: '#007bff',
+                    weight: 2,
+                    fillColor: '#007bff',
+                    fillOpacity: 0.1,
+                    dashArray: '5, 5'
+                }).addTo(map);
+            }
+        }
 
         const loadGeoJson = () => {
             const baseUrl = this.geoJsonUrlValue;
@@ -124,7 +141,7 @@ export default class extends Controller {
                             Math.max(...geoJsonLayer.getLayers().map(layer => layer.feature.properties.max_longitude || layer.getLatLng().lng))
                         ]];
                         map.fitBounds(bounds, {
-                            padding: [20, 20]
+                            padding: [0, 0]
                         });
                         isInitialLoad = false;
                     }
@@ -134,5 +151,16 @@ export default class extends Controller {
         map.on('zoomend', loadGeoJson);
         map.on('moveend', loadGeoJson);
         loadGeoJson();
+
+        // Store map reference for use in other methods
+        this.map = map;
+    }
+
+    geofilter() {
+        const currentBounds = this.map.getBounds();
+        const url = new URL(this.baseSearchUrlValue, window.location.origin);
+        url.searchParams.set(this.geoFilterParamValue, currentBounds.toBBoxString());
+
+        Turbo.visit(url.toString());
     }
 }

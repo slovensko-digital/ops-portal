@@ -13,11 +13,7 @@ class IssuesController < ApplicationController
   def index
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
-    scope = Issue.publicly_visible.includes(:state)
-
-    # do not allow searching for archived municipalities
-    scope = scope.where.not(municipality_id: Municipality.archived.pluck(:id))
-    scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
+    scope = Issue.searchable.includes(:state)
 
     case @tab
     when "list"
@@ -32,15 +28,10 @@ class IssuesController < ApplicationController
   end
 
   def geo
-    scope = Issue.publicly_visible.includes(:state)
-
-    # do not allow searching for archived municipalities
-    scope = scope.where.not(municipality_id: Municipality.archived.pluck(:id))
-    scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
-
-    # scope.includes(:municipality, :municipality_district)
+    scope = Issue.searchable.includes(:state) # TODO searchable scope?
 
     @search_results = search_engine.map(scope, params)
+    @search_results.stats = @search_results.stats.includes(:municipality, :municipality_district)
   end
 
   # GET /issues/1 or /issues/1.json
@@ -181,6 +172,18 @@ class IssuesController < ApplicationController
             lat, lon = params[:pin].split(",", 2).map(&:to_f)
 
             scope.within_distance_from_point(lat, lon, distance)
+          end
+        ),
+
+        SearchEngine::Controls::Hidden.new(
+          param_name: :oblast,
+          filter_label: "vybratá oblasť na mape",
+          filter: ->(scope, params) do
+            return scope unless params[:oblast].present?
+
+            bbox = params[:oblast].split(",", 4).map(&:to_f)
+
+            scope.within_bbox(bbox)
           end
         ),
 

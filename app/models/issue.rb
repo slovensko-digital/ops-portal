@@ -87,6 +87,11 @@ class Issue < ApplicationRecord
   scope :currently_viewable_by, ->(user) do
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
   end
+  scope :not_archived, -> do
+    where.not(municipality_id: Municipality.archived.pluck(:id))
+      .where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
+  end
+  scope :searchable, -> { publicly_visible.not_archived }
 
   before_save :recalculate_computed_fields
   after_update :notify_subscribers
@@ -164,6 +169,10 @@ class Issue < ApplicationRecord
 
   def self.within_distance_from_point(lat, lon, distance)
     where("ST_DWithin(ST_Point(issues.longitude, issues.latitude, 4326)::geography, ST_Point(?, ?, 4326)::geography, ?)", lon, lat, distance)
+  end
+
+  def self.within_bbox(bbox)
+    where("ST_Point(longitude, latitude, 4326) && ST_MakeEnvelope(?, ?, ?, ?, 4326)", *bbox.first(4))
   end
 
   def self.order_by_distance_from_point(lat, lon)
