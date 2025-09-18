@@ -1,5 +1,5 @@
 json.type "FeatureCollection"
-json.features @search_results.stats do |issue|
+json.features @search_results.stats[:aggs_by_geohash] do |issue|
   json.type "Feature"
 
   json.properties do

@@ -1,5 +1,5 @@
 <!-- Mapa podnetov -->
-<% if @search_results.stats.length > 0 %>
+<% if @search_results.hits.length > 0 %>
   <div class="wrapper-map" style="position: relative;"
        data-controller="search-map"
        data-search-map-target="map"
@@ -8,10 +8,9 @@
        data-search-map-bbox-filter-value="<%= @search_results.search_params[:oblast] %>"
        data-search-map-geo-filter-param-value="oblast"
   >
-    <div class="container-map" id="map">
-    </div>
-    <div class="button-container" style="position: absolute; bottom: 1rem; width: 100%; z-index: 1000;">
-      <button class="button" style="margin: 0 auto;" data-action="click->search-map#geofilter">Filtrovať oblasť</button>
+    <div class="container-map" id="map"></div>
+    <div style="position: absolute; bottom: 1rem; width: 100%; z-index: 1000;">
+      <button class="button" style="margin: 0 auto;" data-action="click->search-map#geofilter">Zobraziť dopyty z mapy</button>
     </div>
   </div>
 <% else %>
