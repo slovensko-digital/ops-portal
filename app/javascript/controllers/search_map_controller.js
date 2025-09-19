@@ -6,7 +6,10 @@ export default class extends Controller {
     static values = {geoJsonUrl: String, baseSearchUrl: String, bboxFilter: String, geoFilterParam: String, pin: String}
 
     connect() {
-        const map = L.map(this.mapTarget, {dragging: !L.Browser.mobile, maxZoom: 19}).setView([48.1478, 17.1072], 10);
+        const map = L.map(this.mapTarget, {
+            dragging: !L.Browser.mobile,
+            maxZoom: 19
+        }).fitBounds([[47.483, 15.781], [50.032, 22.813]]);
         let geoJsonLayer;
         let isInitialLoad = true;
 

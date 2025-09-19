@@ -62,7 +62,7 @@ class IssuesController < ApplicationController
                 count(*) as count")
         .group("st_geohash(st_point(issues.longitude, issues.latitude, 4326), #{target_zoom})")
         .where("st_point(longitude, latitude, 4326) && st_makeenvelope(?, ?, ?, ?, 4326)", *params[:bbox].split(",").map(&:to_f))
-        .reorder("").to_sql
+        .reorder("")
 
       lateral_join_scope = scope.unscoped
         .where("st_point(longitude, latitude, 4326) && st_point(issue_groups.avg_longitude, issue_groups.avg_latitude, 4326)")
@@ -71,7 +71,7 @@ class IssuesController < ApplicationController
       scope = scope.unscoped
         .select("i.*, issue_groups.*")
         .joins("LEFT JOIN LATERAL (#{lateral_join_scope.to_sql}) AS i ON true")
-        .from("(#{issues_groups_scope}) issue_groups")
+        .from("(#{issues_groups_scope.to_sql}) issue_groups")
 
       results.stats = {
         aggs_by_geohash: scope.includes(:municipality, :municipality_district)
