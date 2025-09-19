@@ -213,11 +213,11 @@ class IssuesController < ApplicationController
           filter: ->(scope, params) do
             case params[:obdobie]
             when "Posledných 30 dní"
-                scope = scope.where("COALESCE(issues.resolution_started_at, issues.created_at) >= :from", from: 30.days.ago)
+                scope = scope.where(created_at: 30.days.ago..)
             when "Tento rok"
-                scope = scope.where("COALESCE(issues.resolution_started_at, issues.created_at) >= :from", from: Date.current.beginning_of_year)
+                scope = scope.where(created_at: Date.current.beginning_of_year..)
             when "Minulý rok"
-                scope = scope.where("COALESCE(issues.resolution_started_at, issues.created_at) BETWEEN :from AND :to", from: 1.year.ago.beginning_of_year, to: 1.year.ago.end_of_year)
+                scope = scope.where(created_at: 1.year.ago.beginning_of_year..1.year.ago.end_of_year)
             end
 
             scope
@@ -259,13 +259,13 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Sort.new(
           name: :oblubene,
           label: "Najobľúbenejšie",
-          order: ->(scope, _) { scope.order(likes_count: :desc).order(Arel.sql("COALESCE(issues.resolution_started_at, issues.created_at) DESC")) }
+          order: ->(scope, _) { scope.order(likes_count: :desc, created_at: :desc) }
         ),
 
         SearchEngine::Controls::Sort.new(
           name: :komentare,
           label: "Najkomentovanejšie",
-          order: ->(scope, _) { scope.order(comments_count: :desc).order(Arel.sql("COALESCE(issues.resolution_started_at, issues.created_at) DESC")) }
+          order: ->(scope, _) { scope.order(comments_count: :desc, created_at: :desc) }
         ),
 
         SearchEngine::Controls::Sort.new(
