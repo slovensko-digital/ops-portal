@@ -86,6 +86,7 @@ class User < ApplicationRecord
   validates_numericality_of :phone_verification_code_attempts, less_than: 10, on: :phone_verification_code
   validates_confirmation_of :phone_verification_code, on: :phone_verification_code
   validates_presence_of :phone_verification_code_confirmation, on: :phone_verification_code
+  validate :birth_year_within_range, if: :birth_year, on: [ :onboarding, :update ]
 
   def name
     [ firstname, lastname ].compact.join(" ")
@@ -186,6 +187,12 @@ class User < ApplicationRecord
     loop do
       self.email_global_unsubscribe_token = SecureRandom.urlsafe_base64(32)
       break unless User.exists?(email_global_unsubscribe_token: self.email_global_unsubscribe_token)
+    end
+  end
+
+  def birth_year_within_range
+    unless birth_year.between?(Date.current.year - 120, Date.current.year)
+      errors.add(:birth_year, I18n.t("activerecord.errors.models.user.attributes.birth_year.inclusion", min_year: Date.current.year - 120, max_year: Date.current.year))
     end
   end
 end

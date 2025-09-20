@@ -112,6 +112,9 @@
         <div class="form-item-wrapper">
           <%= f.label "birth_year", "Rok narodenia" %>
           <%= f.number_field :birth_year %>
+          <% @user.errors.full_messages_for(:birth_year).each do |message| %>
+            <span class="error-message"><%= message %></span>
+          <% end %>
         </div>
       </div>
 
