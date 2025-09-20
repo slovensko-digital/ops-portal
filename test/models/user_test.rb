@@ -73,6 +73,40 @@ class UserTest < ActiveSupport::TestCase
     assert user.valid?(:phone_verification_code), "Should allow with fewer code attempts"
   end
 
+  test "should validate birth_year on onboarding" do
+    user = users(:one)
+    current_year = Date.today.year
+
+    # too old
+    user.birth_year = current_year - 121
+    assert_not user.valid?(:onboarding), "User should be invalid if older than 120 years"
+
+    # future year
+    user.birth_year = current_year + 1
+    assert_not user.valid?(:onboarding), "User should be invalid with a future birth year"
+
+    # valid range
+    user.birth_year = current_year - 30
+    assert user.valid?(:onboarding), "User should be valid with a realistic birth year"
+  end
+
+  test "should validate birth_year on edit" do
+    user = users(:one)
+    current_year = Date.today.year
+
+    # too old
+    user.birth_year = current_year - 130
+    assert_not user.valid?(:update), "User should be invalid if older than 120 years on update"
+
+    # future year
+    user.birth_year = current_year + 1
+    assert_not user.valid?(:update), "User should be invalid with a future birth year"
+
+    # valid range
+    user.birth_year = current_year - 25
+    assert user.valid?(:update), "User should be valid with a realistic birth year on update"
+  end
+
   test "should anonymize user" do
     user = users(:one)
 
