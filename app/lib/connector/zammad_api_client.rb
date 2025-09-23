@@ -94,7 +94,16 @@ module Connector
       author = @client.user.find(author_id)
 
       issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
-      group = find_or_create_group(parent_ticket.group || DEFAULT_SUBTASK_GROUP)
+      group = find_or_create_group(DEFAULT_SUBTASK_GROUP)
+
+      unless assignee.groups[DEFAULT_SUBTASK_GROUP] == "full"
+        assignee.groups[DEFAULT_SUBTASK_GROUP] = "full"
+        assignee.save
+      end
+      unless author.groups[DEFAULT_SUBTASK_GROUP] == "full"
+        author.groups[DEFAULT_SUBTASK_GROUP] = "full"
+        author.save
+      end
 
       tmp_body = {
         number: issue_number,
