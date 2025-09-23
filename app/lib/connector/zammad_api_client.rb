@@ -11,6 +11,7 @@ module Connector
     OPS_ORIGIN = "ops"
     SUBTASK_ORIGIN = "subtask"
     SUBTASK_ARTICLE_CONTENT_TYPE = "text/plain"
+    DEFAULT_SUBTASK_GROUP = "Podúlohy"
     DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
     DEFAULT_ARTICLE_TYPE = "note"
     DEFAULT_FIRST_ARTICLE_TYPE = "web"
@@ -93,7 +94,7 @@ module Connector
       author = @client.user.find(author_id)
 
       issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
-      group = find_or_create_group(parent_ticket.group || DEFAULT_GROUP)
+      group = find_or_create_group(parent_ticket.group || DEFAULT_SUBTASK_GROUP)
 
       tmp_body = {
         number: issue_number,

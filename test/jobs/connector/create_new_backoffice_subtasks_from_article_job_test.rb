@@ -113,7 +113,7 @@ class Connector::CreateNewBackofficeSubtasksFromArticleJobTest < ActiveJob::Test
   test "handles articles with invalid subtask format gracefully" do
     article_with_invalid_subtasks = OpenStruct.new(
       body: <<~BODY,
-        [[poduloha]]<br>Invalid line without proper format<br><a href="http://vm-home/#user/profile/13" data-mention-user-id="13" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/13">Test User</a> - Title without date<br><a href="http://vm-home/#user/profile/15" data-mention-user-id="15" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/15">Valid User</a> - Valid subtask - 25.9.2025
+        [[podulohy]]<br>Invalid line without proper format<br><a href="http://vm-home/#user/profile/13" data-mention-user-id="13" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/13">Test User</a> - Title without date<br><a href="http://vm-home/#user/profile/15" data-mention-user-id="15" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/15">Valid User</a> - Valid subtask - 25.9.2025
       BODY
       author: OpenStruct.new(id: @author_id),
       created_by_id: @author_id
@@ -135,7 +135,7 @@ class Connector::CreateNewBackofficeSubtasksFromArticleJobTest < ActiveJob::Test
   test "handles articles with malformed dates" do
     article_with_bad_dates = OpenStruct.new(
       body: <<~BODY,
-        [[poduloha]]<br><a href="http://vm-home/#user/profile/6" data-mention-user-id="6" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/6">User1</a> - Task with invalid date - 32.13.2025<br><a href="http://vm-home/#user/profile/12" data-mention-user-id="12" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/12">User2</a> - Task with valid date - 25.9.2025
+        [[podulohy]]<br><a href="http://vm-home/#user/profile/6" data-mention-user-id="6" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/6">User1</a> - Task with invalid date - 32.13.2025<br><a href="http://vm-home/#user/profile/12" data-mention-user-id="12" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/12">User2</a> - Task with valid date - 25.9.2025
       BODY
       author: OpenStruct.new(id: @author_id),
       created_by_id: @author_id
@@ -173,7 +173,7 @@ class Connector::CreateNewBackofficeSubtasksFromArticleJobTest < ActiveJob::Test
 
       všimol som si, že na fotkách tohto podnetu je vidno ďalšie veci, ktoré je potrebné vyriešiť. Vytváram k nim preto podúlohy.
 
-      [[poduloha]]<br><a href="http://vm-home/#user/profile/6" data-mention-user-id="6" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/6">Janko Agent</a> - Nepokosená tráva na Hradskej ulici - 25.9.2025<br><a href="http://vm-home/#user/profile/12" data-mention-user-id="12" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/12">Marienka Agent</a> - Preplnené kontajnery na Hradskej 33 - 30.9.2025<br><a href="http://vm-home/#user/profile/15" data-mention-user-id="15" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/15">Jozef Agent</a> - Poškodená lavička - 1.10.2025<div></div><div></div><div></div><div><br></div>
+      [[podulohy]]<br><a href="http://vm-home/#user/profile/6" data-mention-user-id="6" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/6">Janko Agent</a> - Nepokosená tráva na Hradskej ulici - 25.9.2025<br><a href="http://vm-home/#user/profile/12" data-mention-user-id="12" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/12">Marienka Agent</a> - Preplnené kontajnery na Hradskej 33 - 30.9.2025<br><a href="http://vm-home/#user/profile/15" data-mention-user-id="15" rel="nofollow noreferrer noopener" title="http://vm-home/#user/profile/15">Jozef Agent</a> - Poškodená lavička - 1.10.2025<div></div><div></div><div></div><div><br></div>
 
       Vidím tam aj problém s chodníkom, ale to už sa rieši v inom podnete z OPS, takže k tomu už osobitnú podúlohu nerobím.
     BODY

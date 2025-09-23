@@ -3,7 +3,7 @@ class Connector::ProcessNewBackofficeArticleJob < ApplicationJob
     return if tenant.activities.find_by(backoffice_external_id: article_id)&.triage_external_id
 
     article = zammad_api_client.get_article(ticket_id, article_id)
-    if Connector::SubtaskParser.new(article.body).has_subtasks?
+    if Connector::SubtaskParser.has_subtasks?(article&.body)
       Connector::CreateNewBackofficeSubtasksFromArticleJob.perform_later(tenant, ticket_id, article_id)
     elsif article.internal == false
       Connector::SendNewActivityToTriageFromBackofficeJob.perform_later(tenant, ticket_id, article_id)

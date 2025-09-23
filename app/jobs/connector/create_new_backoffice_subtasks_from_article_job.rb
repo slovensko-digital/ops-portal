@@ -3,8 +3,7 @@ class Connector::CreateNewBackofficeSubtasksFromArticleJob < ApplicationJob
     article = zammad_api_client.get_article(ticket_id, article_id)
     return unless article
 
-    parser = Connector::SubtaskParser.new(article.body)
-    subtasks = parser.parse_subtasks
+    subtasks = Connector::SubtaskParser.parse_subtasks(article.body)
 
     subtasks.each_with_index do |subtask_data, index|
       identifier = "#{article_id}-#{index + 1}"

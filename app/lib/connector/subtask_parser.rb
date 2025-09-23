@@ -4,20 +4,16 @@ module Connector
 
     # HTML Format: <a ... data-mention-user-id="..." ...>Username</a> - Title text [- DD.MM.YYYY]
     HTML_SUBTASK_PATTERN = /<a[^>]+data-mention-user-id="(?<user_id>\d+)"[^>]*>(?<assignee>[^<]+)<\/a>[^-]*-\s*(?<title>.+?)(?:\s*-\s*(?<due_date>\d{1,2}\.\d{1,2}\.\d{4}))?(?:<div>|<br>|$)/i
-    SUBTASK_ARTICLE_TAG = "[[poduloha]]"
+    SUBTASK_ARTICLE_TAG = "[[podulohy]]"
 
-    def initialize(article_body)
-      @article_body = article_body.to_s
+    def self.has_subtasks?(body)
+      body.to_s.include?(SUBTASK_ARTICLE_TAG)
     end
 
-    def has_subtasks?
-      @article_body.include?(SUBTASK_ARTICLE_TAG)
-    end
+    def self.parse_subtasks(body)
+      return [] unless has_subtasks?(body)
 
-    def parse_subtasks
-      return [] unless has_subtasks?
-
-      subtask_section = @article_body.split(SUBTASK_ARTICLE_TAG).last.to_s
+      subtask_section = body.to_s.split(SUBTASK_ARTICLE_TAG).last.to_s
       subtask_section.split(/<br\s*\/?>/).map(&:strip).reject(&:empty?).filter_map do |line|
         parse_line(line)
       end
@@ -25,7 +21,7 @@ module Connector
 
     private
 
-    def parse_line(line)
+    def self.parse_line(line)
       match = line.match(HTML_SUBTASK_PATTERN)
       return unless match
 
