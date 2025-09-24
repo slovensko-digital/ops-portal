@@ -7,10 +7,6 @@ export default class extends Zoombox {
     super.connect();
     this.currentIndex = 0;
     this.startX = 0;
-
-    this.imageTarget.addEventListener("touchstart", this.handleTouchStart.bind(this), { passive: true });
-    this.imageTarget.addEventListener("touchend", this.handleTouchEnd.bind(this), { passive: true });
-
     this.threshold = 50;
   }
 
@@ -80,11 +76,11 @@ export default class extends Zoombox {
     nextButton.style.opacity = this.currentIndex === this.images.length - 1 ? '0.3' : '1';
   }
 
-  handleTouchStart(event) {
+  touchStart(event) {
     this.startX = event.changedTouches[0].screenX;
   }
 
-  handleTouchEnd(event) {
+  touchEnd(event) {
     const endX = event.changedTouches[0].screenX;
     const deltaX = endX - this.startX;
 

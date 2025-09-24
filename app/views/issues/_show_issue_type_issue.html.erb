@@ -196,7 +196,7 @@
             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
           </svg>
         </button>
-        <img data-zoombox-target="image">
+        <img data-zoombox-target="image" data-action="touchstart->zoombox#touchStart:!passive touchend->zoombox#touchEnd:!passive">
         <button class="nav-arrow right-arrow" data-action="click->zoombox#nextImage" aria-label="Ďalšia fotka">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
