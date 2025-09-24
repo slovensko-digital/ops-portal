@@ -917,6 +917,7 @@ section.profile .profile-wrapper .profile-name {
   font-size: em(22,16);
   font-weight: $semibold;
   line-height: em(30,22);
+  word-break: break-word;
 }
 section.profile .profile-wrapper .profile-since {
   color: $black-light;
@@ -1765,6 +1766,7 @@ section.account .account-info-con .item-title {
   font-size: em(16,16);
   font-weight: $medium;
   line-height: em(24,16);
+  word-break: break-word;
 }
 section.account .button {
   margin-top: 0 !important;
