@@ -1,8 +1,3 @@
-\restrict u6GH3g1PGBHaSguupDamr5TseKnUwxkA6FDmdrn7gZfRaTdJKSlObicL5LTl5Bu
-
--- Dumped from database version 17.4 (Debian 17.4-1.pgdg110+2)
--- Dumped by pg_dump version 18rc1 (Ubuntu 18~rc1-1.pgdg25.04+1)
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -2805,6 +2800,13 @@ CREATE UNIQUE INDEX index_good_jobs_on_cron_key_and_cron_at_cond ON public.good_
 
 
 --
+-- Name: index_good_jobs_on_job_class; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_job_class ON public.good_jobs USING btree (job_class);
+
+
+--
 -- Name: index_good_jobs_on_labels; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4070,11 +4072,10 @@ ALTER TABLE ONLY public.legacy_issues_communications
 -- PostgreSQL database dump complete
 --
 
-\unrestrict u6GH3g1PGBHaSguupDamr5TseKnUwxkA6FDmdrn7gZfRaTdJKSlObicL5LTl5Bu
-
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250925161849'),
 ('20250910120000'),
 ('20250909101218'),
 ('20250717093710'),
