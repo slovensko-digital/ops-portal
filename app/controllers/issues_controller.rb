@@ -154,10 +154,10 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :kategoria,
           label: "Kategória",
-          items: -> { Issues::Category.order(:name).distinct.pluck(:name) },
+          items: -> { Issues::Category.non_legacy.order(:name).distinct.pluck(:name) },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
-            ids = Issues::Category.where(name: params[:kategoria]).pluck(:id)
+            ids = Issues::Category.non_legacy.where(name: params[:kategoria]).pluck(:id)
             scope.where(category_id: ids)
           end,
         ),
@@ -168,7 +168,7 @@ class IssuesController < ApplicationController
           items: ->(params) do
             return [] unless params[:kategoria]
 
-            Issues::Subcategory.joins(:category)
+            Issues::Subcategory.non_legacy.joins(:category)
               .where(issues_categories: { name: params[:kategoria] })
               .order(:name)
               .pluck(:name)
@@ -176,7 +176,7 @@ class IssuesController < ApplicationController
           end,
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
-            ids = Issues::Subcategory
+            ids = Issues::Subcategory.non_legacy
               .where(name: params[:podkategoria])
               .pluck(:id)
             scope.where(subcategory_id: ids)
