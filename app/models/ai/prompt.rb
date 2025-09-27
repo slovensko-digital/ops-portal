@@ -25,7 +25,31 @@ module Ai
 
       raise PromptNotFoundException, prompt_name unless prompt
 
-      prompt.raw
+      replace_placeholders(prompt.raw)
+    end
+
+    private
+
+    def self.replace_placeholders(content)
+      content.gsub("{{ CATEGORIES_TABLE }}") { generate_categories_table }
+    end
+
+    def self.generate_categories_table
+      table_rows = []
+
+      Issues::Category.non_legacy.order(:name).each do |category|
+        category.subcategories.non_legacy.order(:name).each do |subcategory|
+          if subcategory.subtypes.non_legacy.any?
+            subcategory.subtypes.non_legacy.order(:name).each do |subtype|
+              table_rows << "| #{category.name} | #{subcategory.name} | #{subtype.name} |"
+            end
+          else
+            table_rows << "| #{category.name} | #{subcategory.name} | - |"
+          end
+        end
+      end
+
+      "| category | subcategory | subtype |\n| -------- | ----------- | ------- |\n" + table_rows.join("\n")
     end
   end
 end
