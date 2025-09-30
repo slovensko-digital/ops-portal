@@ -2,6 +2,7 @@ module Notifications
   class PublishIssueStateChangedJob < ApplicationJob
     def perform(issue, state_id_change: [], notification_mailer: NotificationMailer)
       return unless state_id_change.present?
+      return if state_id_change.first == Issues::State.find_by(key: "archived").id
 
       issue.subscriptions.each do |subscription|
         next unless subscription.subscriber.email_notifiable?
