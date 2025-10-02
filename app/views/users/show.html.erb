@@ -1,1 +1,76 @@
-TODO
+<section class="profile">
+  <h1>Profil užívateľa</h1>
+  <div class="profile-con">
+
+    <!-- Profil -->
+    <div>
+      <div class="profile-wrapper">
+        <!-- Picture and Name -->
+        <div class="profile-info-panel">
+          <figure>
+            <picture>
+              <%= user_avatar(@user, variant: :big) %>
+            </picture>
+          </figure>
+          <div class="profile-name"><%= @user.display_name %></div>
+          <div class="profile-since">Pomáha zlepšiť naše mestá a obce od roku <%= @user.created_at.year %></div>
+        </div>
+
+        <div class="profile-results-con">
+          <div class="profile-results-panel">
+            <div class="title-results">4 pridaných podnetov</div>
+            <div class="results-line-info">Viac ako 83 % používateľov</div>
+            <div class="results-line-wrap">
+              <div class="results-line-back">
+                <div class="results-line"></div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-results-panel">
+            <div class="title-results">1 pridaných komnetárov</div>
+            <div class="results-line-info">Viac ako 5 % používateľov</div>
+            <div class="results-line-wrap">
+              <div class="results-line-back">
+                <div class="results-line" style="width: 5%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-results-panel">
+            <div class="title-results">0 overených podnetov</div>
+            <div class="results-line-info">Viac ako 18 % používateľov</div>
+            <div class="results-line-wrap">
+              <div class="results-line-back">
+                <div class="results-line" style="width: 18%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%= turbo_frame_tag "profile-tabs", autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
+      <div class="profile-suggestion-con">
+        <% if @issues.length > 0 %>
+          <%= turbo_frame_tag "profile-list", target: :_top do %>
+            <div class="podnet-block-con">
+              <%= render @issues %>
+            </div>
+          <% end %>
+          <%= ops_paginate(@issues) %>
+        <% else %>
+          <%= turbo_frame_tag "profile-list" do %>
+            <section class="search-result-blank">
+              <h1>Zatiaľ tu nič nie je.</h1>
+
+              <figure class="empty-box">
+                <%= image_tag "krabica.png", alt: "" %>
+              </figure>
+
+              <div class="notice">Skúste nejaký podnet vytvoriť alebo začat sledovať.</div>
+            </section>
+          <% end %>
+        <% end %>
+    <% end %>
+    </div>
+  </div>
+</section>

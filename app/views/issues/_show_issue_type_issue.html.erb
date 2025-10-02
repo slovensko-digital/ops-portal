@@ -61,12 +61,7 @@
           <div class="label">Podnet podal:</div>
           <%= tag.div do %>
             <div class="subject-con">
-              <figure>
-                <picture>
-                  <%= user_avatar(issue.author, variant: :medium) %>
-                </picture>
-              </figure>
-              <div class="name"><%= issue.author.present? ? issue.author.display_name : "Neznámy autor" %></div>
+              <%= user_subject(issue.author, avatar_variant: :medium) %>
             </div>
           <% end %>
         </div>
