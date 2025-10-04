@@ -1,4 +1,4 @@
-class UserStats::RefreshUserJob < ApplicationJob
+class UserStats::RefreshCountsUserJob < ApplicationJob
   def perform(user)
     user.stats.update!(
       issues_count: user.issues.publicly_visible.count,

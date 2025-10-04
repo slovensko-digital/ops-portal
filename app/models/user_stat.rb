@@ -19,7 +19,7 @@ class UserStat < ApplicationRecord
   attr_accessor :skip_calculation
 
   after_create_commit unless: :skip_calculation do
-    UserStats::RefreshUserJob.perform_later(user)
+    UserStats::RefreshCountsUserJob.perform_later(user)
   end
 
   def stale?

@@ -1,4 +1,4 @@
-class UserStats::RefreshAllJob < ApplicationJob
+class UserStats::RefreshCountsAllJob < ApplicationJob
   queue_as :low_priority
 
   def perform

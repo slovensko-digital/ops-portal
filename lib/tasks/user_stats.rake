@@ -2,7 +2,7 @@ namespace :user_stats do
   desc "Create user stats for all users, and refresh counts"
   task create: :environment do
     puts "Creating user stats all users..."
-    UserStats::RefreshAllJob.perform_now
+    UserStats::RefreshCountsAllJob.perform_now
     puts "User stats created and counts refreshed for all users"
   end
 

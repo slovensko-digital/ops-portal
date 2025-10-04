@@ -52,6 +52,13 @@ Rails.application.configure do
 
   config.active_job.queue_adapter = :good_job
 
+  config.good_job.enable_cron = true
+  config.good_job.cron = {
+    user_stats_daily_refresh: {
+      cron: "0 0 * * *",
+      class: "UserStats::DailyRefreshJob"
+    }
+  }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
