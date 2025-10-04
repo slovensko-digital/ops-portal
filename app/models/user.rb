@@ -62,6 +62,7 @@ class User < ApplicationRecord
   has_many :watched_issues, through: :issue_subscriptions, source: :issue
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
   has_many :issues_updates, class_name: "Issues::Update", foreign_key: :author_id
+  has_one :stats, class_name: "UserStat", dependent: :destroy
   has_one_attached :avatar do |avatar|
     avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
     avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
@@ -163,6 +164,10 @@ class User < ApplicationRecord
     return nil if draft.nil? || draft.submitted?
 
     draft
+  end
+
+  def stats
+    super || create_stats
   end
 
   def anonymize!
