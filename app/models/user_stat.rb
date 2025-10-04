@@ -16,9 +16,7 @@
 class UserStat < ApplicationRecord
   belongs_to :user
 
-  attr_accessor :skip_calculation
-
-  after_create_commit unless: :skip_calculation do
+  after_create_commit do
     UserStats::RefreshCountsUserJob.perform_later(user)
   end
 
