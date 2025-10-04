@@ -3,7 +3,6 @@ class UserStats::RefreshCountsAllJob < ApplicationJob
 
   def perform
     private_state_keys = Issues::State::PRIVATE_KEYS
-    quoted_keys = private_state_keys.map { |key| ActiveRecord::Base.connection.quote(key) }.join(",")
 
     sql = <<-SQL
       INSERT INTO user_stats (user_id, issues_count, comments_count, verified_issues_count, created_at, updated_at)
@@ -23,7 +22,7 @@ class UserStats::RefreshCountsAllJob < ApplicationJob
           users u
         LEFT JOIN
           issues i ON u.id = i.author_id AND i.state_id NOT IN (
-            SELECT id FROM issues_states WHERE key IN (#{quoted_keys})
+            SELECT id FROM issues_states WHERE key IN (?)
           )
         LEFT JOIN
           issues_comments c ON u.id = c.user_author_id
@@ -37,6 +36,6 @@ class UserStats::RefreshCountsAllJob < ApplicationJob
         updated_at = EXCLUDED.updated_at;
     SQL
 
-    ActiveRecord::Base.connection.execute(sql)
+    ActiveRecord::Base.connection.execute(ActiveRecord::Base.sanitize_sql_array([ sql, private_state_keys ]))
   end
 end
