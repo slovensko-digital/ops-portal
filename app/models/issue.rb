@@ -97,6 +97,25 @@ class Issue < ApplicationRecord
   before_save :recalculate_computed_fields
   after_update :notify_subscribers
 
+  after_create_commit -> { author.stats.increment!(:comments_count) }, if: :publicly_visible?
+  after_update_commit do
+    old_id, new_id = saved_change_to_state_id || []
+    next unless old_id && new_id
+
+    old_state = Issues::State.find_by(id: old_id)
+    new_state = Issues::State.find_by(id: new_id)
+
+    was_visible = old_state && !Issues::State::PRIVATE_KEYS.include?(old_state.key)
+    now_visible = new_state && !Issues::State::PRIVATE_KEYS.include?(new_state.key)
+
+    if !was_visible && now_visible
+      author.stats.increment!(:issues_count)
+    elsif was_visible && !now_visible
+      author.stats.decrement!(:issues_count)
+    end
+  end
+  after_destroy_commit -> { author.stats.decrement!(:comments_count) }, if: :publicly_visible?
+
   def imported?
     imported_at.present?
   end
@@ -137,7 +156,7 @@ class Issue < ApplicationRecord
   end
 
   def publicly_visible?
-    !state.key.in? %w[waiting rejected resolved_private]
+    !state.key.in? Issues::State::PRIVATE_KEYS
   end
 
   def editable?
