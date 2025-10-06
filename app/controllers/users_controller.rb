@@ -4,7 +4,16 @@ class UsersController < ApplicationController
       redirect_to profile_path and return
     end
 
-    @user = User.where(anonymous: false).find(params[:id])
-    @issues = @user.issues.publicly_visible.newest.page(params[:page]).per(8)
+    begin
+      @user = User.find(params[:id])
+
+      if @user.anonymous?
+        render :anonymous, status: :forbidden and return
+      end
+
+      @issues = @user.issues.publicly_visible.newest.page(params[:page]).per(8)
+    rescue ActiveRecord::RecordNotFound
+      render :not_found, status: :not_found
+    end
   end
 end
