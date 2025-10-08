@@ -167,7 +167,7 @@ class ZammadApiClient
 
     # TODO custom error
     raise unless ticket.id
-    ticket
+    ticket.id
   end
 
   def create_ticket_from_issue_update!(issue_update)
