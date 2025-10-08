@@ -152,7 +152,7 @@ class Issue < ApplicationRecord
     issue_type.in?(%w[issue question]) && comments_count.nonzero?
   end
 
-  def should_notify_in_triage_about_rejection?
+  def should_create_rejection_note_in_triage?
     return false if issue_type == "praise"
 
     # TODO: revise this logic

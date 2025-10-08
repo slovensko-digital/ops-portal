@@ -27,8 +27,8 @@ class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
       issue_type: ticket[:issue_type],
     )
 
-    if issue.should_notify_in_triage_about_rejection?
-      Triage::NotifyAboutIssueRejectionJob.perform_later(issue)
+    if issue.should_create_rejection_note_in_triage?
+      Triage::CreateRejectionSystemNoteJob.perform_later(issue)
     end
 
     return unless issue.should_create_resolution_process?
