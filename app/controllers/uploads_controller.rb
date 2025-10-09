@@ -1,5 +1,3 @@
-require "image_processing/mini_magick"
-
 class UploadsController < ApplicationController
   ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic image/heif]
 
@@ -7,7 +5,7 @@ class UploadsController < ApplicationController
     new_blobs = params[:new_files].filter_map do |file|
       next unless file.content_type.in?(ALLOWED_CONTENT_TYPES)
 
-      if should_convert_to_jpg?(file)
+      if convert_to_jpg?(file)
         file = convert_to_jpg(file)
         filename = "#{::File.basename(file.original_filename, '.*')}.jpg"
         content_type = "image/jpeg"
@@ -39,7 +37,7 @@ class UploadsController < ApplicationController
     @blobs = params[:blobs]
   end
 
-  def should_convert_to_jpg?(file)
+  def convert_to_jpg?(file)
     file.content_type.match?(%r{image/(heic|heif)}i)
   end
 
