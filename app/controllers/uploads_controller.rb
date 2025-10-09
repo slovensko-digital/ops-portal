@@ -5,19 +5,12 @@ class UploadsController < ApplicationController
     new_blobs = params[:new_files].filter_map do |file|
       next unless file.content_type.in?(ALLOWED_CONTENT_TYPES)
 
-      if convert_to_jpg?(file)
-        file = convert_to_jpg(file)
-        filename = "#{::File.basename(file.original_filename, '.*')}.jpg"
-        content_type = "image/jpeg"
-      else
-        filename = file.original_filename
-        content_type = file.content_type
-      end
+      file = convert_to_supported_format(file)
 
       ActiveStorage::Blob.create_and_upload!(
         io: file,
-        filename: filename,
-        content_type: content_type,
+        filename: file.original_filename,
+        content_type: file.content_type,
       )
     end
     old_blobs = params.fetch(:blobs, []).map { |signed_id| ActiveStorage::Blob.find_signed(signed_id) }
@@ -37,6 +30,12 @@ class UploadsController < ApplicationController
     @blobs = params[:blobs]
   end
 
+  def convert_to_supported_format(file)
+    return file unless convert_to_jpg?(file)
+
+    convert_to_jpg(file)
+  end
+
   def convert_to_jpg?(file)
     file.content_type.match?(%r{image/(heic|heif)}i)
   end
@@ -49,7 +48,7 @@ class UploadsController < ApplicationController
 
     ActionDispatch::Http::UploadedFile.new(
       tempfile: tempfile,
-      filename: file.original_filename,
+      filename: "#{::File.basename(file.original_filename, '.*')}.jpg",
       type: "image/jpeg"
     )
   end
