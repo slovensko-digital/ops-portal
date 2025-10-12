@@ -3,15 +3,7 @@ class UserStats::RefreshCountsAllJob < ApplicationJob
 
   def perform
     sql = <<-SQL
-      INSERT INTO user_stats (user_id, issues_count, comments_count, verified_issues_count, created_at, updated_at)
-      SELECT
-        stats.user_id,
-        stats.total_issues,
-        stats.total_comments,
-        0, -- verified_issues_count
-        CURRENT_TIMESTAMP, -- created_at
-        CURRENT_TIMESTAMP  -- updated_at
-      FROM (
+      WITH stats AS (
         SELECT
           u.id AS user_id,
           COALESCE(COUNT(DISTINCT i.id), 0) AS total_issues,
@@ -26,12 +18,18 @@ class UserStats::RefreshCountsAllJob < ApplicationJob
           issues_comments c ON u.id = c.user_author_id
         GROUP BY
           u.id
-      ) AS stats
-      ON CONFLICT (user_id) DO UPDATE SET
-        issues_count = EXCLUDED.issues_count,
-        comments_count = EXCLUDED.comments_count,
-        verified_issues_count = EXCLUDED.verified_issues_count,
-        updated_at = EXCLUDED.updated_at;
+      )
+      UPDATE
+        users
+      SET
+        stats_issues_count = stats.total_issues,
+        stats_comments_count = stats.total_comments,
+        stats_verified_issues_count = 0,
+        updated_at = CURRENT_TIMESTAMP
+      FROM
+        stats
+      WHERE
+        users.id = stats.user_id;
     SQL
 
     ActiveRecord::Base.connection.execute(ActiveRecord::Base.sanitize_sql_array([ sql, Issues::State::PRIVATE_KEYS ]))

@@ -1776,43 +1776,6 @@ ALTER SEQUENCE public.user_remember_keys_id_seq OWNED BY public.user_remember_ke
 
 
 --
--- Name: user_stats; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.user_stats (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    issues_count integer DEFAULT 0,
-    comments_count integer DEFAULT 0,
-    verified_issues_count integer DEFAULT 0,
-    issues_percentile numeric(5,4) DEFAULT 0.0,
-    comments_percentile numeric(5,4) DEFAULT 0.0,
-    verified_issues_percentile numeric(5,4) DEFAULT 0.0,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: user_stats_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.user_stats_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: user_stats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.user_stats_id_seq OWNED BY public.user_stats.id;
-
-
---
 -- Name: user_verification_keys; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1892,6 +1855,12 @@ CREATE TABLE public.users (
     phone_verification_code_attempts integer DEFAULT 0 NOT NULL,
     phone_verification_attempted_at timestamp(6) without time zone,
     email_global_unsubscribe_token character varying NOT NULL,
+    stats_issues_count integer DEFAULT 0,
+    stats_comments_count integer DEFAULT 0,
+    stats_verified_issues_count integer DEFAULT 0,
+    stats_issues_percentile numeric(5,4) DEFAULT 0.0,
+    stats_comments_percentile numeric(5,4) DEFAULT 0.0,
+    stats_verified_issues_percentile numeric(5,4) DEFAULT 0.0,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -2203,13 +2172,6 @@ ALTER TABLE ONLY public.user_password_reset_keys ALTER COLUMN id SET DEFAULT nex
 --
 
 ALTER TABLE ONLY public.user_remember_keys ALTER COLUMN id SET DEFAULT nextval('public.user_remember_keys_id_seq'::regclass);
-
-
---
--- Name: user_stats id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_stats ALTER COLUMN id SET DEFAULT nextval('public.user_stats_id_seq'::regclass);
 
 
 --
@@ -2608,14 +2570,6 @@ ALTER TABLE ONLY public.user_password_reset_keys
 
 ALTER TABLE ONLY public.user_remember_keys
     ADD CONSTRAINT user_remember_keys_pkey PRIMARY KEY (id);
-
-
---
--- Name: user_stats user_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_stats
-    ADD CONSTRAINT user_stats_pkey PRIMARY KEY (id);
 
 
 --
@@ -3559,13 +3513,6 @@ CREATE INDEX index_user_identities_on_user_id ON public.user_identities USING bt
 
 
 --
--- Name: index_user_stats_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_user_stats_on_user_id ON public.user_stats USING btree (user_id);
-
-
---
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3708,14 +3655,6 @@ ALTER TABLE ONLY public.issues_drafts
 
 ALTER TABLE ONLY public.legacy_issues_communications
     ADD CONSTRAINT fk_rails_35b4962c3d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
-
-
---
--- Name: user_stats fk_rails_3bd36d3110; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_stats
-    ADD CONSTRAINT fk_rails_3bd36d3110 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --

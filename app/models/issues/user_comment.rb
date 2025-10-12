@@ -32,9 +32,6 @@ class Issues::UserComment < Issues::Comment
 
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
 
-  after_create_commit -> { author.stats.increment!(:comments_count) }
-  after_destroy_commit -> { author.stats.decrement!(:comments_count) }
-
   def author
     user_author
   end

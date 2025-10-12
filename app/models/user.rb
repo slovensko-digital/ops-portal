@@ -34,6 +34,12 @@
 #  resident                         :boolean
 #  sex                              :integer
 #  signature                        :string
+#  stats_comments_count             :integer          default(0)
+#  stats_comments_percentile        :decimal(5, 4)    default(0.0)
+#  stats_issues_count               :integer          default(0)
+#  stats_issues_percentile          :decimal(5, 4)    default(0.0)
+#  stats_verified_issues_count      :integer          default(0)
+#  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
 #  status                           :integer          default("unverified"), not null
 #  timestamp                        :datetime
 #  uuid                             :uuid             not null
@@ -61,7 +67,6 @@ class User < ApplicationRecord
   has_many :watched_issues, through: :issue_subscriptions, source: :issue
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
   has_many :issues_updates, class_name: "Issues::Update", foreign_key: :author_id
-  has_one :stats, class_name: "UserStat", dependent: :destroy
   has_one_attached :avatar do |avatar|
     avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
     avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
@@ -162,6 +167,14 @@ class User < ApplicationRecord
 
   def stats
     super || create_stats!
+  end
+
+  def recalculate_computed_fields
+    update!(
+      stats_issues_count: issues.publicly_visible.count,
+      stats_comments_count: issues_comments.count,
+      stats_verified_issues_count: 0
+    )
   end
 
   def anonymize!
