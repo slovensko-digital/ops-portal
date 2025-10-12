@@ -171,10 +171,6 @@ class User < ApplicationRecord
     draft
   end
 
-  def stats
-    super || create_stats!
-  end
-
   def recalculate_computed_fields
     update!(
       stats_issues_count: issues.publicly_visible.count,

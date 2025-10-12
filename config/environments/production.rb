@@ -56,7 +56,7 @@ Rails.application.configure do
   config.good_job.cron = {
     user_stats_daily_refresh: {
       cron: "0 0 * * *",
-      class: "UserStats::DailyRefreshJob"
+      class: "UserStats::CalculatePercentilesJob"
     }
   }
 
