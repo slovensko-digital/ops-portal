@@ -3,6 +3,10 @@ module ApplicationHelper
     datetime.strftime("%d.%m.%Y")
   end
 
+  def fraction_to_percentage(fraction, precision: 0)
+    number_to_percentage(fraction * 100, precision: precision)
+  end
+
   def ops_paginate(scope)
     config = if scope.first_page?
       { window: 1, left: 3, right: 1 }

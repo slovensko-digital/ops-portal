@@ -25,7 +25,7 @@
         <div class="profile-results-con">
           <div class="profile-results-panel">
             <div class="title-results"><%= @user.stats.issues_count %> pridaných podnetov</div>
-            <div class="results-line-info">Viac ako <%= (@user.stats.issues_percentile * 100).floor %> % používateľov</div>
+            <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats.issues_percentile) %> používateľov</div>
             <div class="results-line-wrap">
               <div class="results-line-back">
                 <div class="results-line" style="width: <%= (@user.stats.issues_percentile * 100) %>%;"></div>
@@ -34,7 +34,7 @@
           </div>
           <div class="profile-results-panel">
             <div class="title-results"><%= @user.stats.comments_count %> pridaných komnetárov</div>
-            <div class="results-line-info">Viac ako <%= (@user.stats.comments_percentile * 100).floor %> % používateľov</div>
+            <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats.comments_percentile) %> používateľov</div>
             <div class="results-line-wrap">
               <div class="results-line-back">
                 <div class="results-line" style="width: <%= (@user.stats.comments_percentile * 100) %>%;"></div>
@@ -43,7 +43,7 @@
           </div>
           <div class="profile-results-panel">
             <div class="title-results"><%= @user.stats.verified_issues_count %> overených podnetov</div>
-            <div class="results-line-info">Viac ako <%= (@user.stats.verified_issues_percentile * 100).floor %> % používateľov</div>
+            <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats.verified_issues_percentile) %> používateľov</div>
             <div class="results-line-wrap">
               <div class="results-line-back">
                 <div class="results-line" style="width: <%= (@user.stats.verified_issues_percentile * 100) %>%;"></div>
