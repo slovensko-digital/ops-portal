@@ -17,6 +17,7 @@
 #  anonymous               :boolean
 #  checks                  :jsonb
 #  description             :string
+#  duplicates_shown        :boolean          default(FALSE), not null
 #  issue_type              :string           default("issue"), not null
 #  latitude                :float
 #  latlon_from_exif        :boolean          default(FALSE)

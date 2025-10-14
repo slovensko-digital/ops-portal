@@ -4,6 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  aliases         :string           default([]), not null, is an Array
+#  archived        :boolean          default(FALSE)
 #  description     :string
 #  genitiv         :string
 #  logo            :string
@@ -17,19 +18,25 @@
 class MunicipalityDistrict < ApplicationRecord
   belongs_to :municipality
 
-  def self.find_by_address(city:, municipality:, suburb:)
+  def self.find_by_address(city:, municipality:, suburb:, district:)
     result = MunicipalityDistrict.joins(:municipality)
       .where("municipalities.active = true")
       .where("? = ANY(municipalities.aliases)", city)
       .where("? = ANY(municipality_districts.aliases)", municipality)
       .first
 
-    return result if result
-
-    MunicipalityDistrict.joins(:municipality)
+    result ||= MunicipalityDistrict.joins(:municipality)
       .where("municipalities.active = true")
       .where("? = ANY(municipalities.aliases)", municipality)
       .where("? = ANY(municipality_districts.aliases)", suburb)
       .first
+
+    result ||= MunicipalityDistrict.joins(:municipality)
+      .where("municipalities.active = true")
+      .where("? = ANY(municipalities.aliases)", city)
+      .where("? = ANY(municipality_districts.aliases)", suburb)
+      .first
+
+    result
   end
 end

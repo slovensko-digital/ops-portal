@@ -6,6 +6,7 @@
 #  active                     :boolean
 #  active_on_old_portal       :boolean          default(FALSE), not null
 #  aliases                    :string           default([]), not null, is an Array
+#  archived                   :boolean          default(FALSE)
 #  category                   :integer
 #  email                      :string
 #  handled_by                 :integer
@@ -37,6 +38,8 @@ class Municipality < ApplicationRecord
     municipality_district = MunicipalityDistrict.find_by_address(city: city, municipality: municipality, suburb: suburb)
     return [ municipality_district.municipality, municipality_district ] if municipality_district
 
-    [ active.where("? = ANY(aliases)", municipality).first, nil ]
+    r = active.where("? = ANY(aliases)", municipality).first
+    r ||= active.where("? = ANY(aliases)", suburb).first
+    [ r, nil ]
   end
 end

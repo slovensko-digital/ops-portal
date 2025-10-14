@@ -3,9 +3,12 @@
 # Table name: issues_updates
 #
 #  id                 :bigint           not null, primary key
+#  confirmed          :boolean          default(FALSE)
 #  email              :string
+#  hidden             :boolean          default(FALSE)
 #  imported_at        :datetime
 #  ip                 :inet
+#  issue_resolved     :string
 #  name               :string
 #  published          :boolean
 #  text               :string
@@ -15,6 +18,7 @@
 #  activity_id        :bigint           not null
 #  author_id          :bigint
 #  confirmed_by_id    :bigint
+#  external_id        :string
 #  legacy_id          :integer
 #  triage_external_id :integer
 #
