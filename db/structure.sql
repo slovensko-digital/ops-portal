@@ -686,7 +686,7 @@ CREATE TABLE public.issues (
     fulltext_extra character varying,
     discussion_closed boolean DEFAULT false,
     archived_state_id bigint,
-    resolution_started_at timestamp(6) without time zone
+    resolution_started_at timestamp(6) without time zone,
     last_activity_at timestamp(6) without time zone
 );
 
