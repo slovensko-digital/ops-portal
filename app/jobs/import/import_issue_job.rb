@@ -51,9 +51,9 @@ module Import
         discussion_closed: legacy_record.allow_discussion == 0,
         latitude: legacy_record.map_x,
         legacy_data: {
-          legacy_category_id: legacy_category.legacy_id,
-          legacy_subcategory_id: legacy_subcategory.legacy_id,
-          legacy_subtype_id: legacy_subtype.legacy_id,
+          legacy_category_id: legacy_category&.legacy_id,
+          legacy_subcategory_id: legacy_subcategory&.legacy_id,
+          legacy_subtype_id: legacy_subtype&.legacy_id,
           embed: legacy_record.embed,
           map_zoom: legacy_record.map_zoom,
           accuracy: legacy_record.accuracy,
