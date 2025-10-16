@@ -16,6 +16,7 @@ class ZammadApiClient
   }
   RESPONSIBLE_SUBJECT_ARTICLE_TAG = TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
+  MARKED_AS_RESOLVED_TAG = TriageZammadEnvironment::MARKED_AS_RESOLVED_TAG
   ATTACHMENTS_UPDATE_ARTICLE_BODY = "Aktualizované prílohy"
   ATTACHMENTS_UPDATE_ARTICLE_TYPE = "note"
 
@@ -672,7 +673,7 @@ class ZammadApiClient
       result
     end
 
-    body = article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, "")
+    body = article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, "").gsub(MARKED_AS_RESOLVED_TAG, "").strip
     content_type = article.content_type
     if article.type == "email"
       body = EmailParser.parse_text(body)
