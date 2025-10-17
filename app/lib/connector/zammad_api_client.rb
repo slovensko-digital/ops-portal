@@ -88,7 +88,7 @@ module Connector
       }
     end
 
-    def create_subtask(parent_ticket_id, author_id, number, title, user_id, due_date = nil)
+    def create_subtask(parent_ticket_id, author_id, number, title, user_id, due_date = nil, use_parent_state: false)
       assignee = @client.user.find(user_id)
       raise "Assignee is not in the subtask group" unless assignee.roles.include?("Agent")
 
@@ -99,10 +99,17 @@ module Connector
       issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
       group = find_or_create_group(DEFAULT_SUBTASK_GROUP)
 
+      subtask_state = if use_parent_state
+        parent_ticket.state
+      else
+        DEFAULT_STATE
+      end
+
       tmp_body = {
         number: issue_number,
         group_id: group.id,
         origin: SUBTASK_ORIGIN,
+        state: subtask_state,
         title: title,
         origin_by_id: author.id,
         customer_id: author.id,
@@ -394,10 +401,10 @@ module Connector
       end
     end
 
-    def set_ticket_owner(issue)
+    def set_ticket_owner(issue, owner: issue.backoffice_owner)
       ticket = find_ticket_for_issue!(issue)
 
-      user_id = create_or_find_agent(issue.backoffice_owner)
+      user_id = create_or_find_agent(owner)
       add_user_to_group(user_id, IMPORT_GROUP)
 
       ticket.owner_id = user_id
@@ -513,24 +520,13 @@ module Connector
       ticket.save
     end
 
-    private
+    def add_user_to_group_read_only(user_identifier, group_name)
+      user = get_user(user_identifier)
+      user_groups = user.groups
+      user_groups[group_name] = "read"
+      user.groups = user_groups
 
-    def create_or_find_customer(author)
-      return ANONYMOUS_USER_ID unless author
-
-      user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
-      return user.external_id unless user.new_record?
-
-      zammad_identifier = find_or_create_user!(
-        firstname: author["firstname"],
-        lastname: author["lastname"],
-        login: author["uuid"],
-        roles: [ "OPS User" ],
-      ).id
-
-      user.update(firstname: author["firstname"], lastname: author["lastname"], external_id: zammad_identifier)
-
-      zammad_identifier
+      user.save
     end
 
     def create_or_find_agent(author)
@@ -548,6 +544,26 @@ module Connector
       ).id
 
       user.update(firstname: author.name, external_id: zammad_identifier)
+
+      zammad_identifier
+    end
+
+    private
+
+    def create_or_find_customer(author)
+      return ANONYMOUS_USER_ID unless author
+
+      user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
+      return user.external_id unless user.new_record?
+
+      zammad_identifier = find_or_create_user!(
+        firstname: author["firstname"],
+        lastname: author["lastname"],
+        login: author["uuid"],
+        roles: [ "OPS User" ],
+      ).id
+
+      user.update(firstname: author["firstname"], lastname: author["lastname"], external_id: zammad_identifier)
 
       zammad_identifier
     end
