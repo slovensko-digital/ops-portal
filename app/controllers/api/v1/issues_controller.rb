@@ -22,7 +22,9 @@ class Api::V1::IssuesController < ApiController
 
   def search
     @issue = Issue.find_by(id: params[:portal_identifier])
-    return head :not_found unless @issue && @issue.triage_process?
+    return head :not_found unless @issue
+    return head :not_found if @issue.triage_process?
+
     render json: { id: @issue.resolution_external_id }
   end
 
