@@ -3,6 +3,7 @@
 # Table name: municipality_districts
 #
 #  id              :bigint           not null, primary key
+#  active          :boolean          default(FALSE)
 #  aliases         :string           default([]), not null, is an Array
 #  archived        :boolean          default(FALSE)
 #  description     :string
