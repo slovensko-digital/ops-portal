@@ -100,10 +100,10 @@ module Connector
       group = find_or_create_group(DEFAULT_SUBTASK_GROUP)
 
       subtask_state = if use_parent_state
-                        parent_ticket.state
-                      else
-                        DEFAULT_STATE
-                      end
+        parent_ticket.state
+      else
+        DEFAULT_STATE
+      end
 
       tmp_body = {
         number: issue_number,

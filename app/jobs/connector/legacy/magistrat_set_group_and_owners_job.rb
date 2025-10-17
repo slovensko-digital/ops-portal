@@ -8,7 +8,7 @@ class Connector::Legacy::MagistratSetGroupAndOwnersJob < ApplicationJob
     group = find_or_create_zammad_group(issue, zammad_client)
     zammad_client.add_ticket_to_group(issue, group.name) if group
 
-    backoffice_owner = [ResponsibleSubjects::User.find_by(legacy_id: 714), ResponsibleSubjects::User.find_by(legacy_id: 1168)].sample
+    backoffice_owner = [ ResponsibleSubjects::User.find_by(legacy_id: 714), ResponsibleSubjects::User.find_by(legacy_id: 1168) ].sample
     zammad_client.add_agent_to_group(backoffice_owner, group.name) if group
     zammad_client.set_ticket_owner(issue, owner: backoffice_owner)
 
@@ -30,10 +30,10 @@ class Connector::Legacy::MagistratSetGroupAndOwnersJob < ApplicationJob
     return unless legacy_org_units.any?
 
     selected_organization_unit = if issue.backoffice_owner&.organization_unit_id && legacy_org_units.where(id: issue.backoffice_owner.organization_unit_id).any?
-                                   legacy_org_units.find(issue.backoffice_owner.organization_unit_id)
-                                 else
-                                   legacy_org_units.find_by(legacy_id: issue.legacy_data&.fetch("organizational_unit_id")).presence || legacy_org_units.find_by(legacy_id: issue.legacy_data&.fetch("organization_unit_id2"))
-                                 end
+      legacy_org_units.find(issue.backoffice_owner.organization_unit_id)
+    else
+      legacy_org_units.find_by(legacy_id: issue.legacy_data&.fetch("organizational_unit_id")).presence || legacy_org_units.find_by(legacy_id: issue.legacy_data&.fetch("organization_unit_id2"))
+    end
 
     zammad_client.find_or_create_group(selected_organization_unit.name)
   end
