@@ -1,5 +1,5 @@
 class Api::V1::IssuesController < ApiController
-  before_action :authenticate_client
+  before_action :authenticate_client, except: [ :search ]
   before_action :set_issue, only: [ :show, :update ]
 
   def show
@@ -18,6 +18,14 @@ class Api::V1::IssuesController < ApiController
   def update
     head :not_found unless @zammad_client.update_ticket!(params.require(:id), issue_params)
     head :ok
+  end
+
+  def search
+    @issue = Issue.find_by(id: params[:portal_identifier])
+    return head :not_found unless @issue
+    return head :not_found if @issue.triage_process?
+
+    render json: { id: @issue.resolution_external_id }
   end
 
   private

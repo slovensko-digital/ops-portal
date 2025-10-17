@@ -77,8 +77,8 @@ module Import
             communication.imported_at ||= Time.now
             communication.save!
 
-            import_attachments_job.perform_later(communication: communication)
-            import_votes_job.perform_later(communication: communication)
+            import_attachments_job.set(queue: "import_communication_attachments").perform_later(communication: communication)
+            import_votes_job.set(queue: "import_communication_votes").perform_later(communication: communication)
           end
         end
       end

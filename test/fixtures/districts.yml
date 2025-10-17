@@ -1,11 +1,55 @@
 bb_kraj:
+  id: 1
   name: Banskobystrický kraj
-  created_at: "2025-03-07 10:07:41.639076000 +0100"
-  updated_at: "2025-03-07 10:07:41.639076000 +0100"
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
   legacy_id: 1
 
 ba_kraj:
+  id: 2
   name: Bratislavský kraj
   created_at: "2025-03-07 10:07:41.658575000 +0100"
   updated_at: "2025-03-07 10:07:41.658575000 +0100"
   legacy_id: 2
+
+ke_kraj:
+  id: 3
+  name: Košický kraj
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
+  legacy_id: 3
+
+nt_kraj:
+  id: 4
+  name: Nitriansky kraj
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
+  legacy_id: 4
+
+po_kraj:
+  id: 5
+  name: Prešovský kraj
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
+  legacy_id: 5
+
+tn_kraj:
+  id: 6
+  name: Trenčiansky kraj
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
+  legacy_id: 6
+
+tt_kraj:
+  id: 7
+  name: Trnavský kraj
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
+  legacy_id: 7
+
+za_kraj:
+  id: 8
+  name: Žilinský kraj
+  created_at: "2025-03-07 10:07:41.658575000 +0100"
+  updated_at: "2025-03-07 10:07:41.658575000 +0100"
+  legacy_id: 8
