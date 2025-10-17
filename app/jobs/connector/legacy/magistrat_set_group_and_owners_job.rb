@@ -20,7 +20,7 @@ class Connector::Legacy::MagistratSetGroupAndOwnersJob < ApplicationJob
 
       zammad_client.add_user_to_group_read_only(subtask_owner_zammad_id, group.name) if group
 
-      zammad_client.create_subtask(tenant_issue.backoffice_external_id, backoffice_owner_zammad_id, alert_municipality_user.municipality_user_id, issue.title, subtask_owner_zammad_id)
+      zammad_client.create_subtask(tenant_issue.backoffice_external_id, backoffice_owner_zammad_id, alert_municipality_user.municipality_user_id, issue.title, subtask_owner_zammad_id, use_parent_state: true)
     end
   end
 

@@ -88,7 +88,7 @@ module Connector
       }
     end
 
-    def create_subtask(parent_ticket_id, author_id, number, title, user_id, due_date = nil)
+    def create_subtask(parent_ticket_id, author_id, number, title, user_id, due_date = nil, use_parent_state: false)
       assignee = @client.user.find(user_id)
       raise "Assignee is not in the subtask group" unless assignee.roles.include?("Agent")
 
@@ -99,10 +99,17 @@ module Connector
       issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
       group = find_or_create_group(DEFAULT_SUBTASK_GROUP)
 
+      subtask_state = if use_parent_state
+                        parent_ticket.state
+                      else
+                        DEFAULT_STATE
+                      end
+
       tmp_body = {
         number: issue_number,
         group_id: group.id,
         origin: SUBTASK_ORIGIN,
+        state: subtask_state,
         title: title,
         origin_by_id: author.id,
         customer_id: author.id,
