@@ -38,7 +38,10 @@ class Municipality < ApplicationRecord
 
   def self.find_by_address(city:, municipality:, suburb:)
     municipality_district = MunicipalityDistrict.find_by_address(city: city, municipality: municipality, suburb: suburb)
-    return [ municipality_district.municipality, municipality_district ] if municipality_district
+    if municipality_district
+      return [ nil, municipality_district ] unless municipality_district.active?
+      return [ municipality_district.municipality, municipality_district ]
+    end
 
     r = active.where("? = ANY(aliases)", municipality).first
     r ||= active.where("? = ANY(aliases)", suburb).first

@@ -52,6 +52,16 @@ class MunicipalityTest < ActiveSupport::TestCase
     )
   end
 
+  test "find_by_address returns only municipality district when municipality district in Bratislava is not active" do
+    district = municipality_districts("Ružinov")
+    district.update!(active: false)
+    assert_equal [ nil, district ], Municipality.find_by_address(
+      city: "Bratislava",
+      municipality: nil,
+      suburb: "Ružinov"
+    )
+  end
+
   test "find_by_address returns nil when municipality exists but has no aliases" do
     municipality = municipalities("bratislava")
     municipality.update!(aliases: [])
