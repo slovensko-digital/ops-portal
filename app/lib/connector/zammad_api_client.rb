@@ -96,7 +96,7 @@ module Connector
       raise "Parent ticket not found" unless parent_ticket
 
       author = @client.user.find(author_id)
-      issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
+      issue_number = parent_ticket.number.gsub("OPS-", "SUB-").gsub("M-", "SUB-") + "-#{number}"
       group = find_or_create_group(DEFAULT_SUBTASK_GROUP)
 
       subtask_state = if use_parent_state
