@@ -62,7 +62,7 @@ class Connector::Legacy::ImportManualBackofficeAlertFromLegacyDbToBackofficeJob 
     )
 
     import_activities_job.set(queue: queue_name).perform_later(tenant, legacy_record.id)
-    set_group_job.set(queue: queue_name).perform_later(tenant, legacy_record.id)
+    # set_group_job.set(queue: queue_name).perform_later(tenant, legacy_record.id)
   end
 
   ISSUE_OPS_STATE_TO_BACKOFFICE_STATE = {

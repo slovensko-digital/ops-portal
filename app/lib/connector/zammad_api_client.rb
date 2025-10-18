@@ -96,7 +96,7 @@ module Connector
       raise "Parent ticket not found" unless parent_ticket
 
       author = @client.user.find(author_id)
-      issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
+      issue_number = parent_ticket.number.gsub("OPS-", "SUB-").gsub("M-", "SUB-") + "-#{number}"
       group = find_or_create_group(DEFAULT_SUBTASK_GROUP)
 
       subtask_state = if use_parent_state
@@ -380,18 +380,10 @@ module Connector
 
       @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
 
-      set_ticket_owner_from_legacy_data(new_ticket, legacy_data)
-      set_ticket_subscribers_from_legacy_data(new_ticket, legacy_data)
+      # set_ticket_owner(new_ticket, owner: legacy_data.owner)
+      # set_ticket_subscribers_from_legacy_data(new_ticket, legacy_data)
 
       new_ticket
-    end
-
-    def set_ticket_owner_from_legacy_data(ticket, legacy_data)
-      user_id = create_or_find_agent(legacy_data.owner)
-      add_user_to_group(user_id, IMPORT_GROUP)
-
-      ticket.owner_id = user_id
-      ticket.save
     end
 
     def set_ticket_subscribers_from_legacy_data(ticket, legacy_data)
@@ -401,9 +393,17 @@ module Connector
       end
     end
 
-    def set_ticket_owner(issue, owner: issue.backoffice_owner)
+    def set_ticket_owner_based_on_issue(issue, owner: issue.backoffice_owner)
       ticket = find_ticket_for_issue!(issue)
+      set_ticket_owner(ticket, owner: owner)
+    end
 
+    def set_ticket_owner_based_on_tenant_issue(tenant_issue, owner:)
+      ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
+      set_ticket_owner(ticket, owner: owner)
+    end
+
+    def set_ticket_owner(ticket, owner:)
       user_id = create_or_find_agent(owner)
       add_user_to_group(user_id, IMPORT_GROUP)
 

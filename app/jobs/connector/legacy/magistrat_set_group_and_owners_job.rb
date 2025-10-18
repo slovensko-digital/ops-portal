@@ -10,7 +10,7 @@ class Connector::Legacy::MagistratSetGroupAndOwnersJob < ApplicationJob
 
     backoffice_owner = [ ResponsibleSubjects::User.find_by(legacy_id: 714), ResponsibleSubjects::User.find_by(legacy_id: 1168) ].sample
     zammad_client.add_agent_to_group(backoffice_owner, group.name) if group
-    zammad_client.set_ticket_owner(issue, owner: backoffice_owner)
+    zammad_client.set_ticket_owner_based_on_issue(issue, owner: backoffice_owner)
 
     backoffice_owner_zammad_id = zammad_client.create_or_find_agent(backoffice_owner)
 
