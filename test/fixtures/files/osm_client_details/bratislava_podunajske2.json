@@ -1,0 +1,238 @@
+{
+  "place_id": 174955714,
+  "parent_place_id": 175335465,
+  "osm_type": "N",
+  "osm_id": 2848182322,
+  "category": "place",
+  "type": "house",
+  "admin_level": 15,
+  "localname": "",
+  "names": {},
+  "addresstags": {
+    "city": "Bratislava",
+    "street": "Estónska",
+    "suburb": "Podunajské Biskupice",
+    "country": "SK",
+    "postcode": "82106",
+    "housenumber": "5202/30",
+    "streetnumber": "30",
+    "conscriptionnumber": "5202"
+  },
+  "housenumber": "30;5202 30;5202",
+  "calculated_postcode": "821 06",
+  "country_code": "sk",
+  "indexed_date": "2024-11-06T01:30:16.897735+00:00",
+  "importance": 0.00007727397573810967,
+  "calculated_importance": 0.00007727397573810967,
+  "extratags": {
+    "source:addr": "minvskaddress 2024-01",
+    "ref:minvskaddress": "6087565"
+  },
+  "rank_address": 30,
+  "rank_search": 30,
+  "isarea": false,
+  "centroid": {
+    "type": "Point",
+    "coordinates": [
+      17.201557,
+      48.143397
+    ]
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      17.201557,
+      48.143397
+    ]
+  },
+  "address": [
+    {
+      "localname": "5202/30",
+      "class": "place",
+      "type": "house_number",
+      "rank_address": 28,
+      "distance": 0,
+      "isaddress": true
+    },
+    {
+      "localname": "Estónska",
+      "place_id": 175335465,
+      "osm_id": 29046159,
+      "osm_type": "W",
+      "class": "highway",
+      "type": "residential",
+      "admin_level": 15,
+      "rank_address": 26,
+      "distance": 0.0,
+      "isaddress": true
+    },
+    {
+      "localname": "Paškomon",
+      "place_id": 174352301,
+      "osm_id": 5328766334,
+      "osm_type": "N",
+      "class": "place",
+      "type": "neighbourhood",
+      "admin_level": 15,
+      "rank_address": 24,
+      "distance": 0.004636882578847184,
+      "isaddress": true
+    },
+    {
+      "localname": "Medzi jarkami",
+      "place_id": 173901665,
+      "osm_id": 2638104,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
+      "rank_address": 22,
+      "distance": 0.000000022695737947877317,
+      "isaddress": true
+    },
+    {
+      "localname": "Podunajské Biskupice",
+      "place_id": 174350727,
+      "osm_id": 299414720,
+      "osm_type": "W",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 20,
+      "distance": 0.0000001459372673301533,
+      "isaddress": false
+    },
+    {
+      "localname": "Podunajské Biskupice",
+      "place_id": 174542803,
+      "osm_id": 2208764,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
+      "rank_address": 20,
+      "distance": 0.0000001328762708123204,
+      "isaddress": false
+    },
+    {
+      "localname": "Podunajské Biskupice",
+      "place_id": 174019539,
+      "osm_id": 2185278,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 9,
+      "rank_address": 20,
+      "distance": 0.0000001328762708123204,
+      "isaddress": false
+    },
+    {
+      "localname": "Vrakuňa",
+      "place_id": 174717101,
+      "osm_id": 2208769,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
+      "rank_address": 20,
+      "distance": 0.0009633515961913637,
+      "isaddress": false
+    },
+    {
+      "localname": "Vrakuňa",
+      "place_id": 174186870,
+      "osm_id": 2185281,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 9,
+      "rank_address": 20,
+      "distance": 0.0009633515961913637,
+      "isaddress": false
+    },
+    {
+      "localname": "Bratislava",
+      "place_id": 173703479,
+      "osm_id": 293814124,
+      "osm_type": "W",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 20,
+      "distance": 0.0000006800071170306466,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Bratislava II",
+      "place_id": 174401898,
+      "osm_id": 388239,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 8,
+      "rank_address": 18,
+      "distance": 0.00000021141189291970516,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislava",
+      "place_id": 173466740,
+      "osm_id": 3992676,
+      "osm_type": "R",
+      "class": "place",
+      "type": "city",
+      "admin_level": 15,
+      "rank_address": 16,
+      "distance": 0.0000006800071170306466,
+      "isaddress": false
+    },
+    {
+      "localname": "Bratislava",
+      "place_id": 390032597,
+      "osm_id": 1702499,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 16,
+      "distance": 0.0000008925417561867883,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 408241572,
+      "osm_id": 388265,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 4,
+      "rank_address": 8,
+      "distance": 0.0000018793138132161367,
+      "isaddress": true
+    },
+    {
+      "localname": "821 06",
+      "class": "place",
+      "type": "postcode",
+      "rank_address": 5,
+      "distance": 0.0,
+      "isaddress": true
+    },
+    {
+      "localname": "sk",
+      "class": "place",
+      "type": "country_code",
+      "rank_address": 4,
+      "distance": 0.0,
+      "isaddress": false
+    },
+    {
+      "localname": "Slovensko",
+      "class": "place",
+      "type": "country",
+      "rank_address": 4,
+      "distance": 0.0,
+      "isaddress": true
+    }
+  ]
+}

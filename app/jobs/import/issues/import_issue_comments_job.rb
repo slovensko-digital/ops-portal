@@ -43,8 +43,8 @@ module Import
             comment.activity ||= issue.comment_activities.create!(created_at: comment.created_at)
             comment.save!
 
-            import_photos_job.perform_later(comment: comment)
-            import_votes_job.perform_later(comment: comment)
+            import_photos_job.set(queue: "import_comment_attachments").perform_later(comment: comment)
+            import_votes_job.set(queue: "import_comment_votes").perform_later(comment: comment)
           end
         end
       end

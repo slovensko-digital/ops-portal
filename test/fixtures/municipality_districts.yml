@@ -1,47 +1,1594 @@
 stare_mesto_ba:
+  id: 1
   name: Staré Mesto
-  municipality: bratislava
+  municipality_id: 1
   genitiv: Starého Mesta
   lokal: Starom Meste
   description:
   logo: public/signs/districts/ba-stare-mesto.gif
   created_at: 2025-03-07 10:07:42.946639000 +0100
   updated_at: 2025-03-07 10:07:42.946639000 +0100
-  legacy_id: 1
-  aliases: [stare-mesto, "Staré Mesto", "Bratislava - mestská časť Staré Mesto"]
+  aliases:
+  - stare-mesto
+  - Staré Mesto
+  - Bratislava - mestská časť Staré Mesto
+  archived: false
+  active: true
 
-ruzinov_ba:
+Ružinov:
+  id: 2
   name: Ružinov
-  municipality: bratislava
+  municipality_id: 1
   genitiv: Ružinova
   lokal: Ružinove
   description:
   logo: public/signs/districts/ba-ruzinov.gif
-  created_at: 2025-03-07 10:07:42.965615000 +0100
-  updated_at: 2025-03-07 10:07:42.965615000 +0100
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
   legacy_id: 2
-  aliases: [ruzinov, Ružinov]
+  aliases:
+  - ruzinov
+  - Ružinov
+  archived: false
+  active: true
 
-vrakuna_ba:
+Vrakuňa:
+  id: 3
   name: Vrakuňa
-  municipality: bratislava
+  municipality_id: 1
   genitiv: Vrakune
   lokal: Vrakuni
   description:
   logo: public/signs/districts/ba-vrakuna.gif
-  created_at: 2025-03-07 10:07:42.970865000 +0100
-  updated_at: 2025-03-07 10:07:42.970865000 +0100
-  legacy_id: 3
-  aliases: [vrakuna, Vrakuňa]
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - vrakuna
+  - Vrakuňa
+  archived: false
+  active: true
 
-karlova_ves_ba:
+Podunajské Biskupice:
+  id: 4
+  name: Podunajské Biskupice
+  municipality_id: 1
+  genitiv: Podunajských Biskupíc
+  lokal: Podunajských Biskupiciach
+  description:
+  logo: public/signs/districts/ba-podunajske-biskupice.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - podunajske-biskupice
+  - Podunajské Biskupice
+  archived: false
+  active: true
+
+Nové Mesto:
+  id: 5
+  name: Nové Mesto
+  municipality_id: 1
+  genitiv: Nového Mesta
+  lokal: Novom Meste
+  description:
+  logo: public/signs/districts/ba-nove-mesto.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - nove-mesto
+  - Nové Mesto
+  archived: false
+  active: true
+
+Rača:
+  id: 6
+  name: Rača
+  municipality_id: 1
+  genitiv: Rače
+  lokal: Rači
+  description:
+  logo: public/signs/districts/ba-raca.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - raca
+  - Rača
+  archived: false
+  active: true
+
+Vajnory:
+  id: 7
+  name: Vajnory
+  municipality_id: 1
+  genitiv: Vajnor
+  lokal: Vajnoroch
+  description:
+  logo: public/signs/districts/ba-vajnory.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - vajnory
+  - Vajnory
+  archived: false
+  active: true
+
+Dúbravka:
+  id: 9
+  name: Dúbravka
+  municipality_id: 1
+  genitiv: Dúbravky
+  lokal: Dúbravke
+  description:
+  logo: public/signs/districts/ba-dubravka.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - dubravka
+  - Dúbravka
+  archived: false
+  active: true
+
+Lamač:
+  id: 10
+  name: Lamač
+  municipality_id: 1
+  genitiv: Lamače
+  lokal: Lamači
+  description:
+  logo: public/signs/districts/ba-lamac.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - lamac
+  - Lamač
+  archived: false
+  active: true
+
+Devín:
+  id: 11
+  name: Devín
+  municipality_id: 1
+  genitiv: Devína
+  lokal: Devíne
+  description:
+  logo: public/signs/districts/ba-devin.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - devin
+  - Devín
+  archived: false
+  active: true
+
+Devínska Nová Ves:
+  id: 12
+  name: Devínska Nová Ves
+  municipality_id: 1
+  genitiv: Devínskej Novej Vsi
+  lokal: Devínskej Novej Vsi
+  description:
+  logo: public/signs/districts/ba-devinska-nova-ves.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - devinska-nova-ves
+  - Devínska Nová Ves
+  archived: false
+  active: true
+
+Záhorská Bystrica:
+  id: 13
+  name: Záhorská Bystrica
+  municipality_id: 1
+  genitiv: Záhorskej Bystrice
+  lokal: Záhorskej Bystrici
+  description:
+  logo: public/signs/districts/ba-zahorska-bystrica.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zahorska-bystrica
+  - Záhorská Bystrica
+  archived: false
+  active: true
+
+Petržalka:
+  id: 14
+  name: Petržalka
+  municipality_id: 1
+  genitiv: Petržalky
+  lokal: Petržalke
+  description:
+  logo: public/signs/districts/ba-petrzalka.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - petrzalka
+  - Petržalka
+  archived: false
+  active: true
+
+Jarovce:
+  id: 15
+  name: Jarovce
+  municipality_id: 1
+  genitiv: Jaroviec
+  lokal: Jarovciach
+  description:
+  logo: public/signs/districts/ba-jarovce.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - jarovce
+  - Jarovce
+  archived: false
+  active: true
+
+Rusovce:
+  id: 16
+  name: Rusovce
+  municipality_id: 1
+  genitiv: Rusoviec
+  lokal: Rusovciach
+  description:
+  logo: public/signs/districts/ba-rusovce.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - rusovce
+  - Rusovce
+  archived: false
+  active: true
+
+Čunovo:
+  id: 17
+  name: Čunovo
+  municipality_id: 1
+  genitiv: Čunova
+  lokal: Čunove
+  description:
+  logo: public/signs/districts/ba-cunovo.gif
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - cunovo
+  - Čunovo
+  archived: false
+  active: true
+
+Radvaň:
+  id: 22
+  name: Radvaň
+  municipality_id: 2
+  genitiv: Radvane
+  lokal: Radvani
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - radvan
+  archived: false
+  active: true
+
+Centrum:
+  id: 18
+  name: Centrum
+  municipality_id: 2
+  genitiv: Centra mesta
+  lokal: Centre mesta
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - banska-bystrica-stred
+  archived: false
+  active: true
+
+Fončorda:
+  id: 23
+  name: Fončorda
+  municipality_id: 2
+  genitiv: Fončordy
+  lokal: Fončorde
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - foncorda
+  archived: false
+  active: true
+
+Sásová, Rudlová:
+  id: 24
+  name: Sásová, Rudlová
+  municipality_id: 2
+  genitiv: Sásovej - Rudlovej
+  lokal: Sásovej a Rudlovej
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sasova-rudlova
+  archived: false
+  active: true
+
+Želiezovce - mesto:
+  id: 31
+  name: Želiezovce - mesto
+  municipality_id: 5
+  genitiv: Želiezoviec
+  lokal: Želiezovciach
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zeliezovce-mesto
+  - Želiezovce - mesto
+  archived: false
+  active: true
+
+Mikula:
+  id: 32
+  name: Mikula
+  municipality_id: 5
+  genitiv: Mikuly
+  lokal: Mikule
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - mikula
+  - Mikula
+  archived: false
+  active: true
+
+Svodov:
+  id: 33
+  name: Svodov
+  municipality_id: 5
+  genitiv: Svodova
+  lokal: Svodove
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - svodov
+  - Svodov
+  archived: false
+  active: true
+
+Jarok:
+  id: 34
+  name: Jarok
+  municipality_id: 5
+  genitiv: Jarku
+  lokal: Jarku
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - jarok
+  - Jarok
+  archived: false
+  active: true
+
+Rozina:
+  id: 36
+  name: Rozina
+  municipality_id: 5
+  genitiv: Roziny
+  lokal: Rozine
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - rozina
+  - Rozina
+  archived: false
+  active: true
+
+Veľký Dvor:
+  id: 37
+  name: Veľký Dvor
+  municipality_id: 5
+  genitiv: Veľkého Dvora
+  lokal: Veľkom Dvore
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - velky-dvor
+  - Veľký Dvor
+  archived: false
+  active: true
+
+Bánová:
+  id: 51
+  name: Bánová
+  municipality_id: 7
+  genitiv: Bánovej
+  lokal: Bánovej
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - banova
+  - Bánová
+  archived: false
+  active: true
+
+Bôrik:
+  id: 52
+  name: Bôrik
+  municipality_id: 7
+  genitiv: Bôrika
+  lokal: Bôriku
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - borik
+  - Bôrik
+  archived: false
+  active: true
+
+Bytčica:
+  id: 54
+  name: Bytčica
+  municipality_id: 7
+  genitiv: Bytčice
+  lokal: Bytčici
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - bytcica
+  - Bytčica
+  archived: false
+  active: true
+
+Hájik:
+  id: 55
+  name: Hájik
+  municipality_id: 7
+  genitiv: Hájika
+  lokal: Hájiku
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - hajik
+  - Hájik
+  archived: false
+  active: true
+
+Hliny:
+  id: 56
+  name: Hliny
+  municipality_id: 7
+  genitiv: Hlín
+  lokal: Hlinách
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - hliny
+  - Hliny
+  archived: false
+  active: true
+
+Mojšová Lúčka:
+  id: 57
+  name: Mojšová Lúčka
+  municipality_id: 7
+  genitiv: Mojšovej Lúčky
+  lokal: Mojšovej Lúčke
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - mojsova-lucka
+  - Mojšová Lúčka
+  archived: false
+  active: true
+
+Považský Chlmec:
+  id: 58
+  name: Považský Chlmec
+  municipality_id: 7
+  genitiv: Považského Chlmca
+  lokal: Považskom Chlmci
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - povazsky-chlmec
+  - Považský Chlmec
+  archived: false
+  active: true
+
+Rosinky:
+  id: 59
+  name: Rosinky
+  municipality_id: 7
+  genitiv: Rosiniek
+  lokal: Rosinkách
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - rosinky
+  - Rosinky
+  archived: false
+  active: true
+
+Solinky:
+  id: 60
+  name: Solinky
+  municipality_id: 7
+  genitiv: Soliniek
+  lokal: Solinkách
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - solinky
+  - Solinky
+  archived: false
+  active: true
+
+Strážov:
+  id: 62
+  name: Strážov
+  municipality_id: 7
+  genitiv: Stážova
+  lokal: Strážove
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - strazov
+  - Strážov
+  archived: false
+  active: true
+
+Trnové:
+  id: 63
+  name: Trnové
+  municipality_id: 7
+  genitiv: Trnového
+  lokal: Trnovom
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - trnove
+  - Trnové
+  archived: false
+  active: true
+
+Vlčince:
+  id: 64
+  name: Vlčince
+  municipality_id: 7
+  genitiv: Vlčiniec
+  lokal: Vlčinciach
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - vlcince
+  - Vlčince
+  archived: false
+  active: true
+
+Vranie:
+  id: 65
+  name: Vranie
+  municipality_id: 7
+  genitiv: Vranieho
+  lokal: Vraňom
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - vranie
+  - Vranie
+  archived: false
+  active: true
+
+Závodie:
+  id: 66
+  name: Závodie
+  municipality_id: 7
+  genitiv: Závodia
+  lokal: Závodí
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zavodie
+  - Závodie
+  archived: false
+  active: true
+
+Žilinská Lehota:
+  id: 67
+  name: Žilinská Lehota
+  municipality_id: 7
+  genitiv: Žilinskej Lehoty
+  lokal: Žilinskej Lehote
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zilinska-lehota
+  - Žilinská Lehota
+  archived: false
+  active: true
+
+Zástranie:
+  id: 68
+  name: Zástranie
+  municipality_id: 7
+  genitiv: Zástrania
+  lokal: Zástraní
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zastranie
+  - Zástranie
+  archived: false
+  active: true
+
+Zádubnie:
+  id: 69
+  name: Zádubnie
+  municipality_id: 7
+  genitiv: Zádubnia
+  lokal: Zádubní
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zadubnie
+  - Zádubnie
+  archived: false
+  active: true
+
+Brodno:
+  id: 70
+  name: Brodno
+  municipality_id: 7
+  genitiv: Brodna
+  lokal: Brodne
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - brodno
+  - Brodno
+  archived: false
+  active: true
+
+Sídlisko 2, Kalvária:
+  id: 72
+  name: Sídlisko 2, Kalvária
+  municipality_id: 8
+  genitiv: Sídliska 2, Kalvária
+  lokal: Sídlisku 2, Kalvária
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sidlisko-kalvaria
+  - Sídlisko 2, Kalvária
+  archived: false
+  active: true
+
+Centrum mesta:
+  id: 74
+  name: Centrum mesta
+  municipality_id: 8
+  genitiv: Centra mesta
+  lokal: Centre mesta
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - centrum-mesta
+  - Centrum mesta
+  archived: false
+  active: true
+
+Solivar a Šváby:
+  id: 75
+  name: Solivar a Šváby
+  municipality_id: 8
+  genitiv: Solivar a Šváby
+  lokal: Solivar a Šváby
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - solivar-svaby
+  - Solivar a Šváby
+  archived: false
+  active: true
+
+Sekčov a Šalgovík:
+  id: 76
+  name: Sekčov a Šalgovík
+  municipality_id: 8
+  genitiv: Sekčova a Šalgovíku
+  lokal: Sekčove a Šalgovíku
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sekcov-salgovik
+  - Sekčov a Šalgovík
+  archived: false
+  active: true
+
+Mesto Šaľa:
+  id: 77
+  name: Mesto Šaľa
+  municipality_id: 11
+  genitiv: Mesta Šale
+  lokal: Meste Šaľa
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - mesto-sala
+  - Mesto Šaľa
+  archived: false
+  active: true
+
+Veča:
+  id: 78
+  name: Veča
+  municipality_id: 11
+  genitiv: Veče
+  lokal: Veči
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - veca
+  - Veča
+  archived: false
+  active: true
+
+osada Hetmín:
+  id: 79
+  name: osada Hetmín
+  municipality_id: 11
+  genitiv: osady Hetmín
+  lokal: osade Hetmín
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - osada-hetmin
+  - osada Hetmín
+  archived: false
+  active: true
+
+osada Kilič:
+  id: 80
+  name: osada Kilič
+  municipality_id: 11
+  genitiv: osady Kilič
+  lokal: osade Kilič
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - osada-kilic
+  - osada Kilič
+  archived: false
+  active: true
+
+Hájniky:
+  id: 81
+  name: Hájniky
+  municipality_id: 12
+  genitiv: Hájnikov
+  lokal: Hájnikoch
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - hajniky
+  - Hájniky
+  archived: false
+  active: true
+
+Rybáre - Stred:
+  id: 82
+  name: Rybáre - Stred
+  municipality_id: 12
+  genitiv: MČ Rybáre - Stred
+  lokal: MČ Rybáre - Stred
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - rybare-stred
+  - Rybáre - Stred
+  archived: false
+  active: true
+
+Rybáre pod kúpeľmi:
+  id: 83
+  name: Rybáre pod kúpeľmi
+  municipality_id: 12
+  genitiv: MČ Rybáre pod kúpeľmi
+  lokal: MČ Rybáre pod kúpeľmi
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - rybare-pod-kupelmi
+  - Rybáre pod kúpeľmi
+  archived: false
+  active: true
+
+Kúpeľné územie:
+  id: 84
+  name: Kúpeľné územie
+  municipality_id: 12
+  genitiv: Kúpeľného územia
+  lokal: Kúpeľnom území
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - kupelne-uzemie
+  - Kúpeľné územie
+  archived: false
+  active: true
+
+Trebuľa:
+  id: 85
+  name: Trebuľa
+  municipality_id: 12
+  genitiv: Trebule
+  lokal: Trebuli
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - trebula
+  - Trebuľa
+  archived: false
+  active: true
+
+Sampor:
+  id: 86
+  name: Sampor
+  municipality_id: 12
+  genitiv: Sampora
+  lokal: Sampore
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sampor
+  - Sampor
+  archived: false
+  active: true
+
+Novoveská Huta:
+  id: 95
+  name: Novoveská Huta
+  municipality_id: 16
+  genitiv: Novoveská Huta
+  lokal: Novoveská Huta
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - novoveska-huta
+  - Novoveská Huta
+  archived: false
+  active: true
+
+Karlova Ves:
+  id: 8
   name: Karlova Ves
-  municipality: bratislava
+  municipality_id: 1
   genitiv: Karlovej Vsi
   lokal: Karlovej Vsi
   description:
   logo: public/signs/districts/ba-karlova-ves.gif
-  created_at: 2025-03-07 10:07:42.970865000 +0100
-  updated_at: 2025-03-07 10:07:42.970865000 +0100
-  legacy_id: 4
-  aliases: [karlova-ves, Karlova Ves]
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - karlova-ves
+  - Karlova Ves
+  archived: false
+  active: true
+
+Karolina:
+  id: 35
+  name: Karolina
+  municipality_id: 5
+  genitiv: Karoliny
+  lokal: Karoline
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - karolina
+  - Karolina
+  archived: false
+  active: true
+
+Budatín:
+  id: 53
+  name: Budatín
+  municipality_id: 7
+  genitiv: Budatína
+  lokal: Badatíne
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - budatin
+  - Budatín
+  archived: false
+  active: true
+
+stare_mesto_pe:
+  id: 61
+  name: Staré mesto
+  municipality_id: 7
+  genitiv: Starého mesta
+  lokal: Starom meste
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zilina-stare-mesto
+  - Staré mesto
+  archived: false
+  active: true
+
+Sídlisko 3, Rúrky:
+  id: 71
+  name: Sídlisko 3, Rúrky
+  municipality_id: 8
+  genitiv: Sídliska 3, Rúrky
+  lokal: Sídlisku 3, Rúrky
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sidlisko-rurky
+  - Sídlisko 3, Rúrky
+  archived: false
+  active: true
+
+Sabinovská, Šidlovec a N. Šebastová:
+  id: 73
+  name: Sabinovská, Šidlovec a N. Šebastová
+  municipality_id: 8
+  genitiv: Sabinovská, Šidlovec a N. Šebastová
+  lokal: Sabinovská, Šidlovec a N. Šebastová
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sabinovska-sidlovec-sebastova
+  - Sabinovská, Šidlovec a N. Šebastová
+  archived: false
+  active: true
+
+Ferčekovce:
+  id: 96
+  name: Ferčekovce
+  municipality_id: 16
+  genitiv: Ferčekovce
+  lokal: Ferčekovce
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - fercekovce
+  - Ferčekovce
+  archived: false
+  active: true
+
+Sídlisko Mier:
+  id: 97
+  name: Sídlisko Mier
+  municipality_id: 16
+  genitiv: Sídlisko Mier
+  lokal: Sídlisko Mier
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sidlisko-mier
+  - Sídlisko Mier
+  archived: false
+  active: true
+
+Sídlisko Západ:
+  id: 98
+  name: Sídlisko Západ
+  municipality_id: 16
+  genitiv: Sídlisko Západ
+  lokal: Sídlisko Západ
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sidlisko-zapad
+  - Sídlisko Západ
+  archived: false
+  active: true
+
+Sídlisko Tarča a Kozí vrch:
+  id: 99
+  name: Sídlisko Tarča a Kozí vrch
+  municipality_id: 16
+  genitiv: Sídlisko Tarča a Kozí vrch
+  lokal: Sídlisko Tarča a Kozí vrch
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sidlisko-tarca-a-kozi-vrch
+  - Sídlisko Tarča a Kozí vrch
+  archived: false
+  active: true
+
+Mesto - Sever a Telep:
+  id: 100
+  name: Mesto - Sever a Telep
+  municipality_id: 16
+  genitiv: Mesto - Sever a Telep
+  lokal: Mesto - Sever a Telep
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - mesto-sever-a-telep
+  - Mesto - Sever a Telep
+  archived: false
+  active: true
+
+Mesto Východ a Mesto Juh:
+  id: 101
+  name: Mesto Východ a Mesto Juh
+  municipality_id: 16
+  genitiv: Mesto Východ a Mesto Juh
+  lokal: Mesto Východ a Mesto Juh
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - mesto-vychod-a-mesto-juh
+  - Mesto Východ a Mesto Juh
+  archived: false
+  active: true
+
+Trenčín - Juh:
+  id: 102
+  name: Trenčín - Juh
+  municipality_id: 18
+  genitiv: Trenčína - Juh
+  lokal: Trenčíne - Juh
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - trencin-juh
+  - Trenčín - Juh
+  archived: false
+  active: true
+
+Trenčín - Sever:
+  id: 103
+  name: Trenčín - Sever
+  municipality_id: 18
+  genitiv: Trenčína - Sever
+  lokal: Trenčíne - Sever
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - trencin-sever
+  - Trenčín - Sever
+  archived: false
+  active: true
+
+Trenčín - Stred:
+  id: 104
+  name: Trenčín - Stred
+  municipality_id: 18
+  genitiv: Trenčína - Stred
+  lokal: Trenčíne - Stred
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - trencin-stred
+  - Trenčín - Stred
+  archived: false
+  active: true
+
+Trenčín - Západ:
+  id: 105
+  name: Trenčín - Západ
+  municipality_id: 18
+  genitiv: Trenčína - Západ
+  lokal: Trenčíne - Západ
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - trencin-zapad
+  - Trenčín - Západ
+  archived: false
+  active: true
+
+Barca:
+  id: 106
+  name: Barca
+  municipality_id: 35
+  genitiv: Barce
+  lokal: Barci
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - barca
+  - Barca
+  archived: false
+  active: true
+
+Dargovských hrdinov:
+  id: 107
+  name: Dargovských hrdinov
+  municipality_id: 35
+  genitiv: Dargovských hrdinov
+  lokal: Dargovských hrdinov
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - dargovskych-hrdinov
+  - Dargovských hrdinov
+  archived: false
+  active: true
+
+Džungľa:
+  id: 108
+  name: Džungľa
+  municipality_id: 35
+  genitiv: Džungľa
+  lokal: Džungľa
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - dzungla
+  - Džungľa
+  archived: false
+  active: true
+
+Juh:
+  id: 109
+  name: Juh
+  municipality_id: 35
+  genitiv: Juh
+  lokal: Juh
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - juh
+  - Juh
+  archived: false
+  active: true
+
+Kavečany:
+  id: 110
+  name: Kavečany
+  municipality_id: 35
+  genitiv: Kavečany
+  lokal: Kavečany
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - kavecany
+  - Kavečany
+  archived: false
+  active: true
+
+Košická Nová Ves:
+  id: 111
+  name: Košická Nová Ves
+  municipality_id: 35
+  genitiv: Košická Nová Ves
+  lokal: Košická Nová Ves
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - kosicka-nova-ves
+  - Košická Nová Ves
+  archived: false
+  active: true
+
+Krásna:
+  id: 112
+  name: Krásna
+  municipality_id: 35
+  genitiv: Krásna
+  lokal: Krásna
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - krasna
+  - Krásna
+  archived: false
+  active: true
+
+KVP:
+  id: 113
+  name: KVP
+  municipality_id: 35
+  genitiv: KVP
+  lokal: KVP
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - kvp
+  - KVP
+  archived: false
+  active: true
+
+Lorinčík:
+  id: 114
+  name: Lorinčík
+  municipality_id: 35
+  genitiv: Lorinčík
+  lokal: Lorinčík
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - lorincik
+  - Lorinčík
+  archived: false
+  active: true
+
+Myslava:
+  id: 116
+  name: Myslava
+  municipality_id: 35
+  genitiv: Myslava
+  lokal: Myslava
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - myslava
+  - Myslava
+  archived: false
+  active: true
+
+Nad jazerom:
+  id: 117
+  name: Nad jazerom
+  municipality_id: 35
+  genitiv: Nad jazerom
+  lokal: Nad jazerom
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - nad-jazerom
+  - Nad jazerom
+  archived: false
+  active: true
+
+Pereš:
+  id: 118
+  name: Pereš
+  municipality_id: 35
+  genitiv: Pereš
+  lokal: Pereš
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - peres
+  - Pereš
+  archived: false
+  active: true
+
+Poľov:
+  id: 119
+  name: Poľov
+  municipality_id: 35
+  genitiv: Poľov
+  lokal: Poľov
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - polov
+  - Poľov
+  archived: false
+  active: true
+
+Sever:
+  id: 120
+  name: Sever
+  municipality_id: 35
+  genitiv: Sever
+  lokal: Sever
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sever
+  - Sever
+  archived: false
+  active: true
+
+stare_mesto_ke:
+  id: 122
+  name: Staré mesto
+  municipality_id: 35
+  genitiv: Staré mesto
+  lokal: Staré mesto
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - stare-mesto
+  - Staré mesto
+  archived: false
+  active: true
+
+Šaca:
+  id: 123
+  name: Šaca
+  municipality_id: 35
+  genitiv: Šaca
+  lokal: Šaca
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - saca
+  - Šaca
+  archived: false
+  active: true
+
+Šebastovce:
+  id: 124
+  name: Šebastovce
+  municipality_id: 35
+  genitiv: Šebastovce
+  lokal: Šebastovce
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sebastovce
+  - Šebastovce
+  archived: false
+  active: true
+
+Ťahanovce:
+  id: 125
+  name: Ťahanovce
+  municipality_id: 35
+  genitiv: Ťahanovce
+  lokal: Ťahanovce
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - tahanovce
+  - Ťahanovce
+  archived: false
+  active: true
+
+Vyšné Opátske:
+  id: 126
+  name: Vyšné Opátske
+  municipality_id: 35
+  genitiv: Vyšné Opátske
+  lokal: Vyšné Opátske
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - vysne-opatske
+  - Vyšné Opátske
+  archived: false
+  active: true
+
+Západ:
+  id: 127
+  name: Západ
+  municipality_id: 35
+  genitiv: Západ
+  lokal: Západ
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - zapad
+  - Západ
+  archived: false
+  active: true
+
+Luník IX:
+  id: 115
+  name: Luník IX
+  municipality_id: 35
+  genitiv: Luník IX
+  lokal: Luník IX
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - lunik-ix
+  - Luník IX
+  archived: false
+  active: true
+
+Sídlisko Ťahanovce:
+  id: 121
+  name: Sídlisko Ťahanovce
+  municipality_id: 35
+  genitiv: Sídlisko Ťahanovce
+  lokal: Sídlisko Ťahanovce
+  description:
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - sidlisko-tahanovce
+  - Sídlisko Ťahanovce
+  archived: false
+  active: true
+
+Senica, Šalková, Majer, Uhlisko:
+  id: 20
+  name: Senica, Šalková, Majer, Uhlisko
+  municipality_id: 2
+  genitiv: Senica, Šalková, Majer, Uhlisko
+  lokal: Senici, Šalkovej, Majeri, Uhlisku
+  description: Senica, Šalková, Majer, Uhlisko
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - banska-bystrica-vychod
+  archived: false
+  active: true
+
+Iliaš, Rakytovce, Kremnička, Podháj:
+  id: 21
+  name: Iliaš, Rakytovce, Kremnička, Podháj
+  municipality_id: 2
+  genitiv: Iliaš, Rakytovce, Kremnička, Podháj
+  lokal: Iliaši, Rakytovciach, Kremničke, Podháji
+  description: "Iliaš, Rakytovce, Kremnička, Kráľová, Podháj\r\n"
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - banska-bystrica-zapad
+  archived: false
+  active: true
+
+Podlavice, Skubín, Uľanka, Jakub, Karlovo:
+  id: 19
+  name: Podlavice, Skubín, Uľanka, Jakub, Karlovo
+  municipality_id: 2
+  genitiv: Podlavice, Skubín, Uľanka, Jakub, Karlovo
+  lokal: Podlaviciach, Skubíne, Uľanke, Jakube, Karlove
+  description: Podlavice, Skubín, Uľanka, Jakub, Kostiviarska, Karlovo
+  logo:
+  created_at: 2025-03-07 10:07:42.946639000 +0100
+  updated_at: 2025-03-07 10:07:42.946639000 +0100
+  aliases:
+  - banska-bystrica-sever
+  archived: false
+  active: true

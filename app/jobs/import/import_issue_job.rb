@@ -51,9 +51,9 @@ module Import
         discussion_closed: legacy_record.allow_discussion == 0,
         latitude: legacy_record.map_x,
         legacy_data: {
-          legacy_category_id: legacy_category.legacy_id,
-          legacy_subcategory_id: legacy_subcategory.legacy_id,
-          legacy_subtype_id: legacy_subtype.legacy_id,
+          legacy_category_id: legacy_category&.legacy_id,
+          legacy_subcategory_id: legacy_subcategory&.legacy_id,
+          legacy_subtype_id: legacy_subtype&.legacy_id,
           embed: legacy_record.embed,
           map_zoom: legacy_record.map_zoom,
           accuracy: legacy_record.accuracy,
@@ -113,12 +113,12 @@ module Import
         issue.save!
       end
 
-      import_photos_job.perform_later(issue: issue)
-      import_updates_job.perform_later(issue: issue)
-      import_comments_job.perform_later(issue: issue)
-      import_communications_job.perform_later(issue: issue)
-      # import_subscriptions_job.perform_later(issue: issue) # TODO rather run after the whole import
-      import_likes_job.perform_later(issue: issue)
+      import_photos_job.set(queue: "import_photos").perform_later(issue: issue)
+      import_updates_job.set(queue: "import_updates").perform_later(issue: issue)
+      import_comments_job.set(queue: "import_comments").perform_later(issue: issue)
+      import_communications_job.set(queue: "import_communications").perform_later(issue: issue)
+      # import_subscriptions_job.set(queue: "import_subscriptions").perform_later(issue: issue) # TODO rather run after the whole import
+      import_likes_job.set(queue: "import_likes").perform_later(issue: issue)
     end
   end
 end

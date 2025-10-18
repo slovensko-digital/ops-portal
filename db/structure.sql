@@ -1363,7 +1363,8 @@ CREATE TABLE public.municipality_districts (
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
-    archived boolean DEFAULT false
+    archived boolean DEFAULT false,
+    active boolean DEFAULT false
 );
 
 
@@ -1863,7 +1864,7 @@ CREATE TABLE public.users (
     stats_verified_issues_percentile numeric(5,4) DEFAULT 0.0,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
-]+\.[^,@; 
+]+\.[^,@;
 ]+$'::public.citext))
 );
 
@@ -4088,6 +4089,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251017073059'),
 ('20251004142110'),
 ('20250925161849'),
 ('20250923093835'),

@@ -3,51 +3,20 @@ class Issues::Draft::FetchAddressDetailsJob < ApplicationJob
   queue_with_priority ASAP
 
   def perform(draft)
-    details = fetch_osm_details(draft)
+    address_details = OsmClient.get_address_details(lat: draft.latitude, lon: draft.longitude)
 
-    address = details["address"]
-
-    draft.address_house_number = address.find { _1["type"] == "house_number" }&.dig("localname")
-    draft.address_street = address.find { _1["class"] == "highway" }&.dig("localname")
-    draft.address_suburb = address.find { _1["type"] == "administrative" && _1["admin_level"] == 10 }&.dig("localname")
-    draft.address_municipality = address.find { _1["type"] == "administrative" && _1["admin_level"] == 9 }&.dig("localname")
-    draft.address_district = address.find { _1["type"] == "administrative" && _1["admin_level"] == 8 }&.dig("localname")
-    draft.address_city = address.find { _1["type"] == "administrative" && _1["admin_level"] == 6 }&.dig("localname")
-    draft.address_postcode = address.find { _1["type"] == "postcode" }&.dig("localname")
-    draft.address_region = address.find { _1["type"] == "administrative" && _1["admin_level"] == 4 }&.dig("localname")
-    draft.address_country = address.find { _1["type"] == "country" }&.dig("localname")
-    draft.address_country_code = address.find { _1["type"] == "country_code" }&.dig("localname")
-    draft.address_data = details
-    draft.save!
-  end
-
-  def fetch_osm_details(draft)
-    conn = Faraday.new(
-      url: "https://nominatim.openstreetmap.org",
-      headers: {
-        "content-type": "application/json",
-        "User-Agent": "www.odkazprestarostu.sk",
-        "Accept-Language": "sk"
-      }
-    ) do |f|
-      f.adapter :patron
-      f.response :json
-    end
-
-    response = conn.get("/reverse", { lat: draft.latitude, lon: draft.longitude, format: :json })
-    json = response.body
-
-    osmtype = case json["osm_type"]
-    when "way"
-        "W"
-    when "node"
-        "N"
-    when "relation"
-        "R"
-    else
-        raise NotImplementedError, "Unknown osm_type: #{json["osm_type"]}"
-    end
-    response = conn.get("/details", { format: :json, osmtype: osmtype, osmid: json["osm_id"], addressdetails: 1 })
-    response.body
+    draft.update!(
+      address_house_number: address_details.house_number,
+      address_street: address_details.street,
+      address_suburb: address_details.suburb,
+      address_municipality: address_details.municipality,
+      address_district: address_details.district,
+      address_city: address_details.city,
+      address_postcode: address_details.postcode,
+      address_region: address_details.region,
+      address_country: address_details.country,
+      address_country_code: address_details.country_code,
+      address_data: address_details.data
+    )
   end
 end

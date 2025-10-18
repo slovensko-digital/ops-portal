@@ -10,7 +10,7 @@ module Connector
     DEFAULT_SENDER = "Customer"
     OPS_ORIGIN = "ops"
     SUBTASK_ORIGIN = "subtask"
-    SUBTASK_ARTICLE_CONTENT_TYPE = "text/plain"
+    SUBTASK_ARTICLE_CONTENT_TYPE = "text/html"
     DEFAULT_SUBTASK_GROUP = "Podúlohy"
     DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
     DEFAULT_ARTICLE_TYPE = "note"
@@ -88,30 +88,53 @@ module Connector
       }
     end
 
-    def create_subtask(parent_ticket_id, author_id, number, title, user_id, due_date = nil)
+    def create_subtask(parent_ticket_id, author_id, number, title, user_id, due_date = nil, use_parent_state: false)
       assignee = @client.user.find(user_id)
       raise "Assignee is not in the subtask group" unless assignee.roles.include?("Agent")
 
       parent_ticket = @client.ticket.find(parent_ticket_id)
+      raise "Parent ticket not found" unless parent_ticket
+
       author = @client.user.find(author_id)
-      issue_number = parent_ticket.number.gsub("OPS-", "SUB-") + "-#{number}"
+      issue_number = parent_ticket.number.gsub("OPS-", "SUB-").gsub("M-", "SUB-") + "-#{number}"
       group = find_or_create_group(DEFAULT_SUBTASK_GROUP)
+
+      subtask_state = if use_parent_state
+        parent_ticket.state
+      else
+        DEFAULT_STATE
+      end
 
       tmp_body = {
         number: issue_number,
         group_id: group.id,
         origin: SUBTASK_ORIGIN,
+        state: subtask_state,
         title: title,
         origin_by_id: author.id,
         customer_id: author.id,
         owner_id: assignee.id,
-        ops_portal_url: parent_ticket["portal_url"],
+        ops_portal_url: parent_ticket.ops_portal_url,
+        address_municipality: parent_ticket.address_municipality,
+        address_municipality_district: parent_ticket.address_municipality_district,
+        address_street: parent_ticket.address_street,
+        address_house_number: parent_ticket.address_house_number,
+        address_postcode: parent_ticket.address_postcode,
+        address_lat: parent_ticket.address_lat,
+        address_lon: parent_ticket.address_lon,
         article: {
           origin_by_id: author.id,
           content_type: SUBTASK_ARTICLE_CONTENT_TYPE,
-          body: title,
+          body: "#{title}<br><br><b>Pôvodný podnet:</b><br>#{parent_ticket.title}<br>#{parent_ticket.articles.first.body}",
           type: DEFAULT_FIRST_ARTICLE_TYPE,
-          sender: DEFAULT_SENDER
+          sender: DEFAULT_SENDER,
+          attachments: parent_ticket.articles.map(&:attachments).flatten.map do |attachment|
+            {
+              "filename" => attachment.filename,
+              "mime-type" => attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
+              "data" => Base64.encode64(attachment.download)
+            }
+          end
         }
       }
 
@@ -154,6 +177,40 @@ module Connector
         r = raw_api_request(:post, "checklist_items", params: { checklist_id: checklist_id, text: "Tiket##{subtask_ticket.number}", checked: false })
         raise "Checklist item not created" unless r.second < 300
       end
+    end
+
+    def update_subtasks(parent_ticket_id)
+      parent_ticket = @client.ticket.find(parent_ticket_id)
+      raise "Parent ticket not found" unless parent_ticket
+
+      parent_ticket_json = raw_api_request(:get, "tickets/#{parent_ticket_id}").first
+      raise "Parent ticket not found" unless parent_ticket_json
+
+      checklist_id = parent_ticket_json["checklist_id"]
+      return unless checklist_id
+
+      checklist = raw_api_request(:get, "checklists/#{checklist_id}").first
+      raise "Checklist not found" unless checklist
+
+      checklist["item_ids"].each do |item_id|
+        item = raw_api_request(:get, "checklist_items/#{item_id}").first
+        next unless item["ticket_id"]
+
+        subtask_ticket = @client.ticket.find(item["ticket_id"])
+        next unless subtask_ticket
+
+        subtask_ticket.address_municipality = parent_ticket.address_municipality
+        subtask_ticket.address_municipality_district = parent_ticket.address_municipality_district
+        subtask_ticket.address_street = parent_ticket.address_street
+        subtask_ticket.address_house_number = parent_ticket.address_house_number
+        subtask_ticket.address_postcode = parent_ticket.address_postcode
+        subtask_ticket.address_lat = parent_ticket.address_lat
+        subtask_ticket.address_lon = parent_ticket.address_lon
+        subtask_ticket.save
+      end
+    rescue RuntimeError => e
+      raise e unless e.message.include? "Couldn't find Ticket with"
+      nil
     end
 
     def get_article(ticket_id, article_id)
@@ -323,18 +380,10 @@ module Connector
 
       @tenant.issues.create!(legacy_id: legacy_data.id, backoffice_external_id: new_ticket.id)
 
-      set_ticket_owner_from_legacy_data(new_ticket, legacy_data)
-      set_ticket_subscribers_from_legacy_data(new_ticket, legacy_data)
+      # set_ticket_owner(new_ticket, owner: legacy_data.owner)
+      # set_ticket_subscribers_from_legacy_data(new_ticket, legacy_data)
 
       new_ticket
-    end
-
-    def set_ticket_owner_from_legacy_data(ticket, legacy_data)
-      user_id = create_or_find_agent(legacy_data.owner)
-      add_user_to_group(user_id, IMPORT_GROUP)
-
-      ticket.owner_id = user_id
-      ticket.save
     end
 
     def set_ticket_subscribers_from_legacy_data(ticket, legacy_data)
@@ -344,10 +393,18 @@ module Connector
       end
     end
 
-    def set_ticket_owner(issue)
+    def set_ticket_owner_based_on_issue(issue, owner: issue.backoffice_owner)
       ticket = find_ticket_for_issue!(issue)
+      set_ticket_owner(ticket, owner: owner)
+    end
 
-      user_id = create_or_find_agent(issue.backoffice_owner)
+    def set_ticket_owner_based_on_tenant_issue(tenant_issue, owner:)
+      ticket = @client.ticket.find(tenant_issue.backoffice_external_id)
+      set_ticket_owner(ticket, owner: owner)
+    end
+
+    def set_ticket_owner(ticket, owner:)
+      user_id = create_or_find_agent(owner)
       add_user_to_group(user_id, IMPORT_GROUP)
 
       ticket.owner_id = user_id
@@ -463,24 +520,13 @@ module Connector
       ticket.save
     end
 
-    private
+    def add_user_to_group_read_only(user_identifier, group_name)
+      user = get_user(user_identifier)
+      user_groups = user.groups
+      user_groups[group_name] = "read"
+      user.groups = user_groups
 
-    def create_or_find_customer(author)
-      return ANONYMOUS_USER_ID unless author
-
-      user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
-      return user.external_id unless user.new_record?
-
-      zammad_identifier = find_or_create_user!(
-        firstname: author["firstname"],
-        lastname: author["lastname"],
-        login: author["uuid"],
-        roles: [ "OPS User" ],
-      ).id
-
-      user.update(firstname: author["firstname"], lastname: author["lastname"], external_id: zammad_identifier)
-
-      zammad_identifier
+      user.save
     end
 
     def create_or_find_agent(author)
@@ -498,6 +544,26 @@ module Connector
       ).id
 
       user.update(firstname: author.name, external_id: zammad_identifier)
+
+      zammad_identifier
+    end
+
+    private
+
+    def create_or_find_customer(author)
+      return ANONYMOUS_USER_ID unless author
+
+      user = @tenant.users.find_or_initialize_by(uuid: author["uuid"])
+      return user.external_id unless user.new_record?
+
+      zammad_identifier = find_or_create_user!(
+        firstname: author["firstname"],
+        lastname: author["lastname"],
+        login: author["uuid"],
+        roles: [ "OPS User" ],
+      ).id
+
+      user.update(firstname: author["firstname"], lastname: author["lastname"], external_id: zammad_identifier)
 
       zammad_identifier
     end

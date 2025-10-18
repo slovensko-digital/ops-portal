@@ -152,6 +152,13 @@ class Issue < ApplicationRecord
     issue_type.in?(%w[issue question]) && comments_count.nonzero?
   end
 
+  def should_create_rejection_note_in_triage?
+    return false if issue_type == "praise"
+    return false unless saved_change_to_state_id?
+
+    state.key == "rejected"
+  end
+
   def should_create_resolution_process?
     return false if issue_type == "praise"
     return false if resolution_external_id.present?
