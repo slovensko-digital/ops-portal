@@ -17,7 +17,7 @@ class UserStats::RefreshCountsAllJob < ApplicationJob
           )
         LEFT JOIN
           issues_comments c ON u.id = c.user_author_id
-        LEFT JOIN 
+        LEFT JOIN
           issues_updates iu ON u.id = iu.author_id AND iu.confirmed = TRUE
         GROUP BY
           u.id

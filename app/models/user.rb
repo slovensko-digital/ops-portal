@@ -175,7 +175,7 @@ class User < ApplicationRecord
     update!(
       stats_issues_count: issues.publicly_visible.count,
       stats_comments_count: issues_comments.count,
-      stats_verified_issues_count: 0
+      stats_verified_issues_count: issues_updates.where(confirmed: true).count
     )
   end
 
