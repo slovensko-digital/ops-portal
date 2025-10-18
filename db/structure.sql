@@ -1864,7 +1864,7 @@ CREATE TABLE public.users (
     stats_verified_issues_percentile numeric(5,4) DEFAULT 0.0,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
-]+\.[^,@;
+]+\.[^,@; 
 ]+$'::public.citext))
 );
 
