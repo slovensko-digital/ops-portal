@@ -1357,7 +1357,8 @@ CREATE TABLE public.municipality_districts (
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
-    archived boolean DEFAULT false
+    archived boolean DEFAULT false,
+    active boolean DEFAULT false
 );
 
 
@@ -1849,9 +1850,9 @@ CREATE TABLE public.users (
     phone_verification_code_attempts integer DEFAULT 0 NOT NULL,
     phone_verification_attempted_at timestamp(6) without time zone,
     email_global_unsubscribe_token character varying NOT NULL,
-    CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@
-]+@[^,@;
-]+\.[^,@;
+    CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
+]+@[^,@; 
+]+\.[^,@; 
 ]+$'::public.citext))
 );
 
@@ -4076,6 +4077,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251017073059'),
 ('20250925161849'),
 ('20250910125432'),
 ('20250910120000'),

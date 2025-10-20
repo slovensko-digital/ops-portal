@@ -78,4 +78,82 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     assert_text "Legacy issue"
     assert_text "Graffiti"
   end
+
+  test "issue creation on unsupported municipality" do
+    municipality = municipalities("bratislava")
+    municipality.update!(active: false)
+
+    login_as(@user)
+
+    click_on "Nahlásiť podnet"
+
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+
+    assert_text "Lokalita"
+    click_on "Pokračovať"
+
+    assert_text "Poškodená rozvodná skriňa"
+    assert_text "Popis podnetu"
+
+    click_on "Vlastný nadpis podnetu"
+
+    assert_text "Výber kategórie problému"
+    click_on "Zeleň a životné prostredie"
+
+    assert_text "Výber podkategórie problému"
+    click_on "Strom"
+
+    assert_text "Výber typu problému"
+    click_on "vyvaleny"
+
+    assert_text "Popis podnetu"
+    fill_in "Názov", with: "Graffiti na skrini"
+    fill_in "Popis", with: "Je tu graffiti, treba vycistit"
+    click_on "Pokračovať"
+
+    assert_text "Zhrnutie podnetu"
+    click_on "Odoslať podnet"
+
+    assert_text "Podnet má problém"
+    assert_text "Samospráva nie je zapojená do portálu Odkaz pre starostu"
+  end
+
+  test "issue creation on unsupported municipality district" do
+    municipality_district = municipality_districts("Karlova Ves")
+    municipality_district.update!(active: false)
+
+    login_as(@user)
+
+    click_on "Nahlásiť podnet"
+
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+
+    assert_text "Lokalita"
+    click_on "Pokračovať"
+
+    assert_text "Poškodená rozvodná skriňa"
+    assert_text "Popis podnetu"
+
+    click_on "Vlastný nadpis podnetu"
+
+    assert_text "Výber kategórie problému"
+    click_on "Zeleň a životné prostredie"
+
+    assert_text "Výber podkategórie problému"
+    click_on "Strom"
+
+    assert_text "Výber typu problému"
+    click_on "vyvaleny"
+
+    assert_text "Popis podnetu"
+    fill_in "Názov", with: "Graffiti na skrini"
+    fill_in "Popis", with: "Je tu graffiti, treba vycistit"
+    click_on "Pokračovať"
+
+    assert_text "Zhrnutie podnetu"
+    click_on "Odoslať podnet"
+
+    assert_text "Podnet má problém"
+    assert_text "Mestská časť nie je zapojená do portálu Odkaz pre starostu"
+  end
 end

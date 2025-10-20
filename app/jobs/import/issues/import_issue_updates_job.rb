@@ -23,7 +23,7 @@ module Import
             update.activity ||= issue.update_activities.create!(created_at: update.created_at)
             update.save!
 
-            import_photos_job.perform_later(update: update)
+            import_photos_job.set(queue: "import_update_attachments").perform_later(update: update)
           end
         end
       end
