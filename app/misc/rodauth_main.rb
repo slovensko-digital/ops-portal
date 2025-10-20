@@ -82,6 +82,11 @@ class RodauthMain < Rodauth::Rails::Auth
     # Delete the account record when the user has closed their account.
     # delete_account_on_close? true
 
+    after_close_account do
+      account = User.find(account_id)
+      account.anonymize!
+    end
+
     # Redirect to the app from login and registration pages if already logged in.
     # already_logged_in { redirect login_redirect }
 

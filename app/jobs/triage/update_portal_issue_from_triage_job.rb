@@ -27,6 +27,10 @@ class Triage::UpdatePortalIssueFromTriageJob < ApplicationJob
       issue_type: ticket[:issue_type],
     )
 
+    if issue.should_create_rejection_note_in_triage?
+      Triage::CreateRejectionSystemNoteJob.perform_later(issue)
+    end
+
     return unless issue.should_create_resolution_process?
 
     Triage::CreateIssueResolutionProcessTicketJob.perform_later(issue, triage_group: ticket[:triage_group], triage_owner_id: ticket[:triage_owner_id])

@@ -20,6 +20,7 @@
 #  fulltext_extra                      :string
 #  imported_at                         :datetime
 #  issue_type                          :integer          default("issue")
+#  last_activity_at                    :datetime
 #  last_synced_at                      :datetime
 #  latitude                            :float
 #  legacy_data                         :jsonb
@@ -89,6 +90,12 @@ class Issue < ApplicationRecord
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
   end
 
+  scope :not_archived, -> do
+    where.not(municipality_id: Municipality.archived.pluck(:id))
+      .where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
+  end
+  scope :searchable, -> { publicly_visible.not_archived }
+
   before_save :recalculate_computed_fields
   after_update :notify_subscribers
 
@@ -147,6 +154,13 @@ class Issue < ApplicationRecord
     issue_type.in?(%w[issue question]) && comments_count.nonzero?
   end
 
+  def should_create_rejection_note_in_triage?
+    return false if issue_type == "praise"
+    return false unless saved_change_to_state_id?
+
+    state.key == "rejected"
+  end
+
   def should_create_resolution_process?
     return false if issue_type == "praise"
     return false if resolution_external_id.present?
@@ -167,6 +181,10 @@ class Issue < ApplicationRecord
     where("ST_DWithin(ST_Point(issues.longitude, issues.latitude, 4326)::geography, ST_Point(?, ?, 4326)::geography, ?)", lon, lat, distance)
   end
 
+  def self.within_bbox(bbox)
+    where("ST_Point(longitude, latitude, 4326) && ST_MakeEnvelope(?, ?, ?, ?, 4326)", *bbox.first(4))
+  end
+
   def self.order_by_distance_from_point(lat, lon)
     select_sql = sanitize_sql([ Arel.sql("issues.*, ST_Distance(ST_Point(issues.longitude, issues.latitude)::geography, ST_Point(:lon, :lat, 4326)::geography) as distance"), { lon: lon, lat: lat } ])
     order_sql = sanitize_sql_for_order([ Arel.sql("ST_Point(issues.longitude, issues.latitude, 4326)::geography <-> ST_Point(?, ?, 4326)::geography"), lon, lat ])
@@ -179,6 +197,8 @@ class Issue < ApplicationRecord
       .joins(activity: :issue)
       .where(issues: { id: id })
       .maximum(:created_at)
+
+    self.last_activity_at = activities.maximum(:created_at)
 
     self.comments_count = visible_activity_objects.count
 

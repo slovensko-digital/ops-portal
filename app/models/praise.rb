@@ -20,6 +20,7 @@
 #  fulltext_extra                      :string
 #  imported_at                         :datetime
 #  issue_type                          :integer          default("issue")
+#  last_activity_at                    :datetime
 #  last_synced_at                      :datetime
 #  latitude                            :float
 #  legacy_data                         :jsonb

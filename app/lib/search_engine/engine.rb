@@ -21,17 +21,14 @@ module SearchEngine
       results
     end
 
-    def stats(scope, params)
+    def stats(scope, params, &block)
       scope = apply_filters(scope, params)
 
       results = build_results_with_filters(params)
 
       scope = scope.reorder("") # reset order due to optional fulltext search
-      results.stats = {
-        by_state: scope.group("state").order("count_all DESC").async_count,
-        by_category: scope.group("category").order("count_all DESC").async_count,
-        by_responsible_subject: scope.group("responsible_subject").order("count_all DESC").async_count
-      }
+
+      block.call(scope, results) if block_given?
 
       results
     end

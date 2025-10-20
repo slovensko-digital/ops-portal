@@ -17,9 +17,12 @@ module Import
     )
       municipality = Municipality.find_by(legacy_id: legacy_record.mesto)
       municipality_district = municipality&.municipality_districts.find_by(legacy_id: legacy_record.mestska_cast)
-      subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
-      subcategory = subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
-      category = subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
+
+      legacy_subtype = ::Issues::Subtype.find_by(legacy_id: legacy_record.kategoria)
+      legacy_subcategory = legacy_subtype&.subcategory || ::Issues::Subcategory.find_by(legacy_id: legacy_record.kategoria)
+      legacy_category = legacy_subcategory&.category || ::Issues::Category.find_by(legacy_id: legacy_record.kategoria)
+      category, subcategory, subtype = CategoryMapper.map_legacy_categories_to_new(legacy_category, legacy_subcategory, legacy_subtype)
+
       owner = if legacy_record.riesitel_new.nil? || legacy_record.riesitel_new == 0
         Legacy::User.find_or_create_agent(legacy_record.riesitel)
       else
@@ -48,6 +51,9 @@ module Import
         discussion_closed: legacy_record.allow_discussion == 0,
         latitude: legacy_record.map_x,
         legacy_data: {
+          legacy_category_id: legacy_category.legacy_id,
+          legacy_subcategory_id: legacy_subcategory.legacy_id,
+          legacy_subtype_id: legacy_subtype.legacy_id,
           embed: legacy_record.embed,
           map_zoom: legacy_record.map_zoom,
           accuracy: legacy_record.accuracy,

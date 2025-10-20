@@ -13,19 +13,69 @@ class IssuesController < ApplicationController
   def index
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
-    scope = Issue.publicly_visible.includes(:state)
-
-    # do not allow searching for archived municipalities
-    scope = scope.where.not(municipality_id: Municipality.archived.pluck(:id))
-    scope = scope.where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
+    scope = Issue.searchable.includes(:state, :municipality_district, :municipality)
 
     case @tab
     when "list"
         scope = scope.with_attached_photos
-
         @search_results = search_engine.search(scope, params)
     when "stats"
-        @search_results = search_engine.stats(scope, params)
+        @search_results = search_engine.stats(scope, params) do |scope, results|
+          results.stats = {
+            by_state: scope.group("state").order("count_all DESC").async_count,
+            by_category: scope.group("category").order("count_all DESC").async_count,
+            by_responsible_subject: scope.group("responsible_subject").order("count_all DESC").async_count
+          }
+        end
+    when "map"
+        @search_results = search_engine.search(scope, params)
+    end
+  end
+
+  def geo
+    scope = Issue.searchable.includes(:state)
+
+    @search_results = search_engine.stats(scope, params) do |scope, results|
+      target_zoom = case params[:z].to_i
+      when 1..5
+          2
+      when 6..7
+          3
+      when 8..10
+          4
+      when 11..12
+          5
+      when 13..15
+          6
+      when 16..17
+          7
+      when 18..20
+          18
+      else
+          4
+      end
+
+      issues_groups_scope = scope
+        .select("avg(latitude) avg_latitude, avg(longitude) as avg_longitude,
+                min(latitude) as min_latitude, max(latitude) as max_latitude,
+                min(longitude) as min_longitude, max(longitude) as max_longitude,
+                count(*) as count")
+        .group("st_geohash(st_point(issues.longitude, issues.latitude, 4326), #{target_zoom})")
+        .where("st_point(longitude, latitude, 4326) && st_makeenvelope(?, ?, ?, ?, 4326)", *params[:bbox].split(",").map(&:to_f))
+        .reorder("")
+
+      lateral_join_scope = scope.unscoped
+        .where("st_point(longitude, latitude, 4326) && st_point(issue_groups.avg_longitude, issue_groups.avg_latitude, 4326)")
+        .limit(1)
+
+      scope = scope.unscoped
+        .select("i.*, issue_groups.*")
+        .joins("LEFT JOIN LATERAL (#{lateral_join_scope.to_sql}) AS i ON true")
+        .from("(#{issues_groups_scope.to_sql}) issue_groups")
+
+      results.stats = {
+        aggs_by_geohash: scope.includes(:municipality, :municipality_district)
+      }
     end
   end
 
@@ -104,11 +154,15 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :kategoria,
           label: "Kategória",
-          items: -> { Issues::Category.order(:name).distinct.pluck(:name) },
+          items: -> { Issues::Category.non_legacy.order(:name).distinct.pluck(:name) },
           filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = Issues::Category.where(name: params[:kategoria]).pluck(:id)
-            scope.where(category_id: ids)
+            if params[:kategoria] == "Bez kategórie"
+              scope.where(category_id: nil)
+            else
+              # push down ids as constants so optimizer can use stats
+              ids = Issues::Category.non_legacy.where(name: params[:kategoria]).pluck(:id)
+              scope.where(category_id: ids)
+            end
           end,
         ),
 
@@ -118,7 +172,7 @@ class IssuesController < ApplicationController
           items: ->(params) do
             return [] unless params[:kategoria]
 
-            Issues::Subcategory.joins(:category)
+            Issues::Subcategory.non_legacy.joins(:category)
               .where(issues_categories: { name: params[:kategoria] })
               .order(:name)
               .pluck(:name)
@@ -126,7 +180,7 @@ class IssuesController < ApplicationController
           end,
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
-            ids = Issues::Subcategory
+            ids = Issues::Subcategory.non_legacy
               .where(name: params[:podkategoria])
               .pluck(:id)
             scope.where(subcategory_id: ids)
@@ -167,6 +221,18 @@ class IssuesController < ApplicationController
             lat, lon = params[:pin].split(",", 2).map(&:to_f)
 
             scope.within_distance_from_point(lat, lon, distance)
+          end
+        ),
+
+        SearchEngine::Controls::Hidden.new(
+          param_name: :oblast,
+          filter_label: "Oblasť na mape",
+          filter: ->(scope, params) do
+            return scope unless params[:oblast].present?
+
+            bbox = params[:oblast].split(",", 4).map(&:to_f)
+
+            scope.within_bbox(bbox)
           end
         ),
 
@@ -240,6 +306,27 @@ class IssuesController < ApplicationController
               )
             end
           end,
+        ),
+
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :zobrazit,
+          label: "Zobrazovať",
+          items: -> { logged_in? ? [ "Moje dopyty", "Sledované dopyty" ] : [] },
+          multiple: false,
+          default_label: "Všetko",
+          filter: ->(scope, params) do
+            return scope unless logged_in?
+            return scope unless params[:zobrazit].present?
+
+            case params[:zobrazit]
+            when "Moje dopyty"
+              scope.where(author_id: current_user.id)
+            when "Sledované dopyty"
+              scope.joins(:subscriptions).where(issue_subscriptions: { subscriber_id: current_user.id })
+            else
+              scope
+            end
+          end
         )
       ],
 
@@ -269,6 +356,14 @@ class IssuesController < ApplicationController
         ),
 
         SearchEngine::Controls::Sort.new(
+          name: :komentovane,
+          label: "Naposledy komentované",
+          order: ->(scope, _) do
+            scope.order("last_activity_at DESC NULLS LAST")
+          end
+        ),
+
+        SearchEngine::Controls::Sort.new(
           name: :zodpovedane,
           label: "Naposledy zodpovedané",
           order: ->(scope, _) do
@@ -279,7 +374,7 @@ class IssuesController < ApplicationController
 
         SearchEngine::Controls::Sort.new(
           name: :vzd,
-          label: "Vzdialenosť",
+          label: "Najbližšie",
           visible_if: ->(params) { params[:pin].present? },
           apply_if: ->(params) do
             return false unless params[:sort].nil? || params[:sort] == "vzd"

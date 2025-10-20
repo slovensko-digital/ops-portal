@@ -28,6 +28,7 @@ class Municipality < ApplicationRecord
   belongs_to :district, optional: true
   has_many :municipality_districts
   has_many :streets
+  has_many :issues
 
   scope :active, -> { where(active: true) }
   scope :archived, -> { where(archived: true) }
