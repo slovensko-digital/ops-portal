@@ -131,7 +131,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
     assert_equal 99, issue.reload.triage_external_id
   end
 
-  test "updates existing issue attributes" do
+  test "updates existing issue in resolution process attributes" do
     issue = issues(:one)
     issue_last_synced_at = issue.last_synced_at
 
@@ -142,7 +142,7 @@ class SyncIssueToTriageJobTest < ActiveJob::TestCase
       OpenStruct.new(name: "Dobrovoľníci::Prešov"),
       OpenStruct.new(name: "Dobrovoľníci::Bratislava")
     ]
-    triage_zammad_client_mock.expect :update_ticket_from_issue!, nil, [ issue.triage_external_id, issue ], update_attachments: true
+    triage_zammad_client_mock.expect :update_ticket_from_issue!, nil, [ issue.resolution_external_id, issue ]
 
     ZammadApiClient.stub :new, triage_zammad_client_mock do
       SyncIssueToTriageJob.perform_now(issue, client: triage_zammad_client_mock)

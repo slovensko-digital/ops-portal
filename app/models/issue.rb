@@ -91,8 +91,8 @@ class Issue < ApplicationRecord
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
   end
   scope :not_archived, -> do
-    where.not(municipality_id: Municipality.archived.pluck(:id))
-      .where.not(municipality_district_id: MunicipalityDistrict.archived.pluck(:id))
+    where("municipality_id NOT IN (?) OR municipality_id IS NULL", Municipality.archived.pluck(:id))
+      .where("municipality_district_id NOT IN (?) OR municipality_district_id IS NULL", MunicipalityDistrict.archived.pluck(:id))
   end
   scope :searchable, -> { publicly_visible.not_archived }
 

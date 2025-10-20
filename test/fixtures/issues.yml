@@ -7,11 +7,12 @@ one:
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 1
+  resolution_external_id: 42
   category: one
   subcategory: one
   subtype: one
   state: waiting
-  municipality: bratislava
+  municipality_id: 1
 
 two:
   title: Issue from Bratislava
@@ -24,7 +25,7 @@ two:
   resolution_started_at: 2024-11-06 09:00:00
   category: one
   state: in_progress
-  municipality: bratislava
+  municipality_id: 1
 
 without_triage_external_id:
   title: New issue with title
@@ -34,7 +35,7 @@ without_triage_external_id:
   last_synced_at: 2024-11-05 09:59:23
   category: one
   state: waiting
-  municipality: trencin
+  municipality_id: 18
   responsible_subject: one
 
 legacy1:
@@ -45,7 +46,7 @@ legacy1:
   last_synced_at: 2024-11-05 09:59:23
   category: one
   state: in_progress
-  municipality: bratislava
+  municipality_id: 1
   responsible_subject: one
   legacy_id: 12345
 
@@ -57,7 +58,7 @@ legacy_discussion_closed:
   last_synced_at: 2024-11-05 09:59:23
   category: one
   state: in_progress
-  municipality: bratislava
+  municipality_id: 1
   responsible_subject: one
   legacy_id: 12346
   discussion_closed: true
@@ -66,7 +67,7 @@ praise_published:
   issue_type: praise
   title: Finally cleaned
   description: Very good!
-  municipality: bratislava
+  municipality_id: 1
   state: in_progress
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
@@ -76,7 +77,7 @@ praise_waiting:
   issue_type: praise
   title: Bike lanes are wide and safety
   description: Very good job this time.
-  municipality: bratislava
+  municipality_id: 1
   state: waiting
   created_at: 2024-11-05 09:59:21
   last_synced_at: 2024-11-05 09:59:23
@@ -92,4 +93,4 @@ resolved_private:
   address_street: Main Street 123
   address_city: Bratislava
   address_municipality: Bratislava
-  municipality: bratislava
+  municipality_id: 1

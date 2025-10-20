@@ -3,6 +3,7 @@
 # Table name: municipality_districts
 #
 #  id              :bigint           not null, primary key
+#  active          :boolean          default(FALSE)
 #  aliases         :string           default([]), not null, is an Array
 #  archived        :boolean          default(FALSE)
 #  description     :string
@@ -21,6 +22,7 @@ class MunicipalityDistrict < ApplicationRecord
   has_many :issues
 
   scope :archived, -> { where(archived: true) }
+  scope :active, -> { where(active: true) }
 
   def self.find_by_address(city:, municipality:, suburb:)
     result = MunicipalityDistrict.joins(:municipality)
@@ -29,12 +31,18 @@ class MunicipalityDistrict < ApplicationRecord
       .where("? = ANY(municipality_districts.aliases)", municipality)
       .first
 
-    return result if result
-
-    MunicipalityDistrict.joins(:municipality)
+    result ||= MunicipalityDistrict.joins(:municipality)
       .where("municipalities.active = true")
       .where("? = ANY(municipalities.aliases)", municipality)
       .where("? = ANY(municipality_districts.aliases)", suburb)
       .first
+
+    result ||= MunicipalityDistrict.joins(:municipality)
+      .where("municipalities.active = true")
+      .where("? = ANY(municipalities.aliases)", city)
+      .where("? = ANY(municipality_districts.aliases)", suburb)
+      .first
+
+    result
   end
 end
