@@ -3011,6 +3011,13 @@ CREATE INDEX index_issues_drafts_on_subtype_id ON public.issues_drafts USING btr
 
 
 --
+-- Name: index_issues_municipality_resolution_started_at_hot_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_municipality_resolution_started_at_hot_path ON public.issues USING btree (municipality_id, resolution_started_at) WHERE ((state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (14)::bigint])) AND (resolution_started_at IS NOT NULL));
+
+
+--
 -- Name: index_issues_municipality_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3036,6 +3043,20 @@ CREATE INDEX index_issues_on_author_id ON public.issues USING btree (author_id);
 --
 
 CREATE INDEX index_issues_on_category_id ON public.issues USING btree (category_id);
+
+
+--
+-- Name: index_issues_on_display_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_on_display_date ON public.issues USING btree (COALESCE(resolution_started_at, created_at) DESC);
+
+
+--
+-- Name: index_issues_on_effective_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_on_effective_date ON public.issues USING btree (COALESCE(resolution_started_at, created_at));
 
 
 --
@@ -3127,6 +3148,13 @@ CREATE INDEX index_issues_on_subcategory_id ON public.issues USING btree (subcat
 --
 
 CREATE INDEX index_issues_on_subtype_id ON public.issues USING btree (subtype_id);
+
+
+--
+-- Name: index_issues_resolution_started_at_hot_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_resolution_started_at_hot_path ON public.issues USING btree (resolution_started_at) WHERE ((state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (14)::bigint])) AND (resolution_started_at IS NOT NULL));
 
 
 --
@@ -4083,6 +4111,8 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251020135223'),
+('20251020123548'),
 ('20250925161849'),
 ('20250910125432'),
 ('20250910120000'),

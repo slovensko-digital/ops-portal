@@ -57,9 +57,7 @@
       <div class="description">
         <div class="title"><%= issue.title %></div>
         <div class="address"><%= format_issue_address(issue) %></div>
-        <% if issue.resolution_started_at.present? %>
-          <div class="date"><%= l issue.resolution_started_at.to_date %></div>
-        <% end %>
+        <div class="date"><%= l issue.display_date.to_date %></div>
       </div>
     </div>
   </div>

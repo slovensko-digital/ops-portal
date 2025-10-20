@@ -71,12 +71,10 @@
           <% end %>
         </div>
 
-        <% if issue.resolution_started_at.present? %>
-          <div class="information-wrapper">
-            <div class="label">Dátum:</div>
-            <div class="value"><%= l issue.resolution_started_at.to_date, format: :long %></div>
-          </div>
-        <% end %>
+        <div class="information-wrapper">
+          <div class="label">Dátum:</div>
+          <div class="value"><%= l issue.display_date.to_date, format: :long %></div>
+        </div>
 
         <div class="information-wrapper">
           <div class="label">ID:</div>
