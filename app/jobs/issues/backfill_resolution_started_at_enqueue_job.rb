@@ -4,7 +4,7 @@ class Issues::BackfillResolutionStartedAtEnqueueJob < ApplicationJob
   DEFAULT_BATCH_SIZE = 500
 
   def perform(batch_size: DEFAULT_BATCH_SIZE)
-    scope = Issue.pending_resolution_started_at_backfill.select(:id)
+    scope = Issue.where.not(resolution_external_id: nil).where(resolution_started_at: nil).select(:id)
     return unless scope.exists?
 
     scope.in_batches(of: batch_size) do |relation|

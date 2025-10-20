@@ -88,7 +88,6 @@ class Issue < ApplicationRecord
   scope :currently_viewable_by, ->(user) do
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
   end
-  scope :pending_resolution_started_at_backfill, -> { where.not(resolution_external_id: nil).where(resolution_started_at: nil) }
 
   before_save :recalculate_computed_fields
   after_update :notify_subscribers
