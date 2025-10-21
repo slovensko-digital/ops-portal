@@ -19,6 +19,7 @@
 #  name                       :string
 #  population                 :integer
 #  sub                        :string
+#  whitelisted_streets        :string           default([]), is an Array
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
 #  district_id                :bigint
@@ -36,11 +37,16 @@ class Municipality < ApplicationRecord
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # TODO Pomenovanie ciselnych hodnot iba podla nasho usudku
 
-  def self.find_by_address(city:, municipality:, suburb:)
+  def self.find_by_address(city:, municipality:, suburb:, street: nil)
     municipality_district = MunicipalityDistrict.find_by_address(city: city, municipality: municipality, suburb: suburb)
     if municipality_district
-      return [ nil, municipality_district ] unless municipality_district.active?
-      return [ municipality_district.municipality, municipality_district ]
+      return [ municipality_district.municipality, municipality_district ] if municipality_district.active?
+
+      if street.present? && municipality_district.municipality.whitelisted_streets.include?(street)
+        return [ municipality_district.municipality, municipality_district ]
+      end
+
+      return [ nil, municipality_district ]
     end
 
     r = active.where("? = ANY(aliases)", municipality).first

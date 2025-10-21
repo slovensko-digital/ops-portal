@@ -179,7 +179,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def municipality_supported
-    active_municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb)
+    active_municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb, street: address_street)
     errors.add(:base, :municipality_supported_on_old_portal) if active_municipality && active_municipality.active_on_old_portal?
     errors.add(:base, :municipality_unsupported) if active_municipality.nil? && municipality_district.nil?
     errors.add(:base, :municipality_district_unsupported) if active_municipality.nil? && municipality_district

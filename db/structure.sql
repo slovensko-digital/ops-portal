@@ -1317,7 +1317,8 @@ CREATE TABLE public.municipalities (
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     active_on_old_portal boolean DEFAULT false NOT NULL,
-    archived boolean DEFAULT false
+    archived boolean DEFAULT false,
+    whitelisted_streets character varying[] DEFAULT '{}'::character varying[]
 );
 
 
@@ -4078,6 +4079,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20251021083200'),
+('20251021100545'),
 ('20251017073059'),
 ('20250925161849'),
 ('20250910120000'),

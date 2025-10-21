@@ -83,4 +83,32 @@ class MunicipalityTest < ActiveSupport::TestCase
       suburb: "Irrelevant"
     )
   end
+
+  test "find_by_address returns correct municipality district when whitelisted street is provided" do
+    municipality = municipalities("bratislava")
+    district = municipality_districts("Ružinov")
+    district.update!(active: false)
+    municipality.update!(whitelisted_streets: [ "Cesta mládeže", "Búdková" ])
+
+    assert_equal [ municipality, district ], Municipality.find_by_address(
+      city: "Bratislava",
+      municipality: nil,
+      suburb: "Ružinov",
+      street: "Cesta mládeže"
+    )
+  end
+
+  test "find_by_address returns nil, district when street is not whitelisted" do
+    municipality = municipalities("bratislava")
+    district = municipality_districts("Ružinov")
+    district.update!(active: false)
+    municipality.update!(whitelisted_streets: [ "Búdková" ])
+
+    assert_equal [ nil, district ], Municipality.find_by_address(
+      city: "Bratislava",
+      municipality: nil,
+      suburb: "Ružinov",
+      street: "Cesta mládeže"
+    )
+  end
 end
