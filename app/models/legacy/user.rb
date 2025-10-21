@@ -54,6 +54,7 @@ module Legacy
         u.signature = legacy_record.signature
         u.timestamp = Time.at(legacy_record.timestamp).to_datetime
         u.created_at = u.timestamp
+        u.imported_at = Time.now
         u.verification = legacy_record.verification
         u.verified = legacy_record.verified
         u.city_id = legacy_record.cityid
