@@ -19,6 +19,7 @@
 #  firstname                        :string
 #  gdpr_accepted                    :boolean
 #  gdpr_stats_accepted              :boolean          default(FALSE)
+#  imported_at                      :datetime
 #  lastname                         :string
 #  login                            :string
 #  newsletter_accepted              :boolean          default(FALSE), not null
