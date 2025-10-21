@@ -1850,6 +1850,7 @@ CREATE TABLE public.users (
     phone_verification_code_attempts integer DEFAULT 0 NOT NULL,
     phone_verification_attempted_at timestamp(6) without time zone,
     email_global_unsubscribe_token character varying NOT NULL,
+    imported_at timestamp(6) without time zone,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -4112,6 +4113,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251021083200'),
 ('20251020135223'),
 ('20251020123548'),
 ('20251017073059'),
