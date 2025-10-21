@@ -36,12 +36,16 @@ class Municipality < ApplicationRecord
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # TODO Pomenovanie ciselnych hodnot iba podla nasho usudku
 
+  def whitelisted_street?(name)
+    streets.whitelisted.find_by_name(name).present?
+  end
+
   def self.find_by_address(city:, municipality:, suburb:, street: nil)
     municipality_district = MunicipalityDistrict.find_by_address(city: city, municipality: municipality, suburb: suburb)
     if municipality_district
       return [ municipality_district.municipality, municipality_district ] if municipality_district.active?
 
-      if street.present? && municipality_district.municipality.streets.whitelisted.find_by_name(street)
+      if street.present? && municipality_district.municipality.whitelisted_street?(street)
         return [ municipality_district.municipality, municipality_district ]
       end
 

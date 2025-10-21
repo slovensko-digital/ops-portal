@@ -145,7 +145,10 @@ class Issue < ApplicationRecord
   end
 
   def archived?
-    state.key == "archived" || municipality.archived? || responsible_subject&.active == false
+    state.key == "archived" \
+    || municipality.archived? \
+    || responsible_subject&.active == false \
+    || municipality_district&.archived? && responsible_subject.nil? && !municipality.whitelisted_street?(address_street)
   end
 
   def showing_comments_count?
