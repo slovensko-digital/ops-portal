@@ -145,7 +145,7 @@ class Issue < ApplicationRecord
   end
 
   def archived?
-    state.key == "archived" || municipality.archived? || municipality_district&.archived?
+    state.key == "archived" || municipality.archived? || responsible_subject&.archived?
   end
 
   def showing_comments_count?

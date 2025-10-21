@@ -28,6 +28,10 @@ class ResponsibleSubject < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  def archived?
+    active == false
+  end
+
   def self.search(query)
     where("unaccent(lower(subject_name)) LIKE unaccent(lower(?))", "#{query}%").or(
       where("unaccent(lower(subject_name)) LIKE unaccent(lower(?))", "% #{query}%")
