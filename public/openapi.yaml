@@ -16,8 +16,8 @@ info:
 servers:
   - url: http://localhost:3000
     description: Development server
-  - url: https://ops.slovensko.digital
-    description: Production server
+  - url: https://ops.dev.slovensko.digital
+    description: Staging server
 
 tags:
   - name: Issues
@@ -845,7 +845,7 @@ components:
         JWT token must be encoded using ES256 and device-specific key matching `sub` claim.
         Maximum `exp` claim duration id 15 minutes.
         `jti` claim is required and must be unique for the 15 minutes. 
-        `jti` claim must complain with regular expression: `/\A[0-9a-z\-_]{32,256}\z/i`
+        `jti` claim must comply with regular expression: `/\A[0-9a-z\-_]{32,256}\z/i`
 
         Example of `header` segment:
 
