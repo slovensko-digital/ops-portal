@@ -227,7 +227,6 @@ module Connector
       {
         content_type: article.content_type,
         body: article.body,
-        type: article.type,
         attachments: article.attachments.map do |attachment|
           {
             filename: attachment.filename,

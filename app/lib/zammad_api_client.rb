@@ -376,7 +376,7 @@ class ZammadApiClient
       origin_by_id: author_id,
       content_type: activity["content_type"],
       body: activity["body"],
-      type: activity["type"],
+      type: "note",
       internal: false,
       attachments: activity["attachments"].map do |attachment|
         {

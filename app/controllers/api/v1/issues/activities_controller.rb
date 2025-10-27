@@ -21,7 +21,7 @@ class Api::V1::Issues::ActivitiesController < ApiController
   private
 
   def activity_params
-    params.require(:activity).permit(:content_type, :body, :type, attachments: [ :filename, :content_type, :data64 ])
+    params.require(:activity).permit(:content_type, :body, attachments: [ :filename, :content_type, :data64 ])
   end
 
   def set_issue

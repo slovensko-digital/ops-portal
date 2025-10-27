@@ -713,10 +713,11 @@ components:
             - text/plain
         body:
           type: string
-          description: Activity content/body
-        type:
-          type: string
-          description: Activity type
+          description: |
+            Activity content/body
+
+            Note: If body includes substring `[[ops portal]]` the activity will also be published to the OPS portal.
+            Otherwise it will be visible for OPS Admins only.
         attachments:
           type: array
           description: List of attachments
