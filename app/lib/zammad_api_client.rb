@@ -205,8 +205,10 @@ class ZammadApiClient
             "data" => Base64.encode64(photo.variable? ? photo.variant(:full).processed.download : photo.download),
             "mime-type" => photo.content_type
           }
-        end
-      }
+        end,
+        created_at: issue_update.created_at
+      },
+      created_at: issue_update.created_at
     )
 
     raise unless ticket.id
