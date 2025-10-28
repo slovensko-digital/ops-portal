@@ -1,0 +1,870 @@
+openapi: 3.1.0
+info:
+  title: Odkaz pre starostu API
+  description: |
+    API for managing issues and activities in the Odkaz pre starostu (OPS) system for Responsible Subject's custom integrations.
+
+    ### Webhooks
+    The application sends webhook notifications to external integrations when certain events occur related to the *Responsible Subject* of hte integration.
+    - `issue.created`
+    - `activity.created`
+    - `issue.updated`
+
+    Webhooks are implemented according to the [Standard Webhooks specification](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md) - HTTP POST method and ECDSA (v1a) signatures.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://ops.dev.slovensko.digital
+    description: Staging server
+
+tags:
+  - name: Issues
+    description: Operations related to issues
+  - name: Activities
+    description: Operations related to activities (articles) within issues
+  - name: Responsible Subjects
+    description: Operations related to responsible subjects
+
+paths:
+  /api/v1/issues:
+    get:
+      summary: List issues
+      description: Retrieve a list of issues assigned to the responsible subject of the integration
+      operationId: listIssues
+      tags:
+        - Issues
+      security:
+        - JWT: []
+      parameters:
+        - name: all
+          in: query
+          required: false
+          description: Return all issues (including old ones not available in API)
+          schema:
+            type: boolean
+        - name: ops_state
+          in: query
+          required: false
+          description: Filter issues by OPS state
+          schema:
+            type: string
+            enum:
+              - sent_to_responsible
+              - referred
+              - resolved_private
+              - marked_as_resolved
+              - resolved
+              - unresolved
+              - in_progress
+              - rejected
+              - closed
+              - archived
+              - duplicate
+      responses:
+        '200':
+          description: List of issues retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    triage_identifier:
+                      type: string
+                      description: Issue identifier
+                      example: "123"
+                    ops_issue_identifier:
+                      type: string
+                      description: OPS issue identifier
+                      example: "456"
+                    ops_state:
+                      type: string
+                      description: Current OPS state of the issue
+                      enum:
+                        - sent_to_responsible
+                        - referred
+                        - resolved_private
+                        - marked_as_resolved
+                        - resolved
+                        - unresolved
+                        - in_progress
+                        - rejected
+                        - closed
+                        - archived
+                        - duplicate
+                  required:
+                    - ops_issue_identifier
+                    - ops_state
+        '401':
+          description: Unauthorized - invalid or missing token
+
+  /api/v1/issues/{id}:
+    get:
+      summary: Get issue details
+      description: Retrieve detailed information about a specific issue including activities
+      operationId: getIssue
+      tags:
+        - Issues
+      security:
+        - JWT: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Issue identifier
+          schema:
+            type: string
+        - name: include_customer_activities
+          in: query
+          required: false
+          description: Include customer-facing activities (portal comments)
+          schema:
+            type: boolean
+            default: false
+        - name: exclude_responsible_subject_articles
+          in: query
+          required: false
+          description: Exclude articles from responsible subject portal
+          schema:
+            type: boolean
+            default: false
+        - name: expand
+          in: query
+          required: false
+          description: Expand related entities in the response
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Issue details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+        '404':
+          description: Issue not found
+        '401':
+          description: Unauthorized - invalid or missing token
+
+    put:
+      summary: Update issue
+      description: Update issue properties such as state, investment, or responsible subject
+      operationId: updateIssue
+      tags:
+        - Issues
+      security:
+        - JWT: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Issue identifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                issue:
+                  $ref: '#/components/schemas/IssueUpdate'
+      responses:
+        '200':
+          description: Issue updated successfully
+        '404':
+          description: Issue not found
+        '401':
+          description: Unauthorized - invalid or missing token
+
+  /api/v1/issues/search:
+    get:
+      summary: Search issues by portal identifier
+      description: Find an issue by its portal identifier and return the resolution external ID
+      operationId: searchIssues
+      tags:
+        - Issues
+      parameters:
+        - name: portal_identifier
+          in: query
+          required: true
+          description: Portal identifier to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Issue found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Resolution external ID
+                    example: "12345"
+        '404':
+          description: Issue not found or in triage process
+
+  /api/v1/issues/{issue_id}/activities/{id}:
+    get:
+      summary: Get activity details
+      description: Retrieve detailed information about a specific activity
+      operationId: getActivity
+      tags:
+        - Activities
+      security:
+        - JWT: []
+      parameters:
+        - name: issue_id
+          in: path
+          required: true
+          description: Issue identifier
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: Activity identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Activity details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activity'
+        '404':
+          description: Activity or issue not found
+        '401':
+          description: Unauthorized - invalid or missing token
+
+  /api/v1/issues/{issue_id}/activities:
+    post:
+      summary: Create a new activity
+      description: Create a new activity (article) for an issue
+      operationId: createActivity
+      tags:
+        - Activities
+      security:
+        - JWT: []
+      parameters:
+        - name: issue_id
+          in: path
+          required: true
+          description: Issue identifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - activity
+              properties:
+                activity:
+                  $ref: '#/components/schemas/ActivityCreate'
+      responses:
+        '200':
+          description: Activity created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activity_id:
+                    type: string
+                    description: Created activity identifier
+        '404':
+          description: Issue not found
+        '401':
+          description: Unauthorized - invalid or missing token
+
+  /api/v1/responsible_subjects:
+    get:
+      summary: List responsible subjects
+      description: Retrieve a list of all responsible subjects
+      operationId: listResponsibleSubjects
+      tags:
+        - Responsible Subjects
+      responses:
+        '200':
+          description: List of responsible subjects retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponsibleSubject'
+  
+  /api/v1/responsible_subjects/search:
+    get:
+      summary: Search responsible subjects
+      description: Search for responsible subjects by name. Returns top 5 matching results.
+      operationId: searchResponsibleSubjects
+      tags:
+        - Responsible Subjects
+      parameters:
+        - name: q
+          in: query
+          description: Search query string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponsibleSubject'
+
+webhooks:
+  issueCreated:
+    post:
+      summary: Issue Created Event
+      description: |
+        Webhook notification sent when a new issue is created in the OPS system.
+        OPS will POST this event to your configured webhook endpoint.
+      tags:
+        - Webhooks
+      parameters:
+        - name: webhook-id
+          in: header
+          required: true
+          description: Unique webhook delivery ID (UUID)
+          schema:
+            type: string
+            format: uuid
+        - name: webhook-timestamp
+          in: header
+          required: true
+          description: Unix timestamp of when the webhook was sent
+          schema:
+            type: string
+        - name: webhook-signature
+          in: header
+          required: true
+          description: |
+            ECDSA signature for webhook verification using the v1a scheme.
+            Format: `v1a,<base64_signature>`
+            
+            The signature is computed over: `{webhook-id}.{webhook-timestamp}.{request_body}`
+            
+            Verify using the EC public key provided during integration setup.
+          schema:
+            type: string
+          example: "v1a,MEUCIQDx..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/WebhookEvent'
+                - type: object
+                  properties:
+                    type:
+                      enum: [issue.created]
+            example:
+              type: issue.created
+              timestamp: "2025-10-24T12:00:00Z"
+              data:
+                subject_id: "your-integration-id"
+                issue_id: "12345"
+      responses:
+        '200':
+          description: Webhook received and processed successfully
+        '401':
+          description: Unauthorized - missing required headers
+        '403':
+          description: Forbidden - invalid signature
+        '422':
+          description: Unprocessable entity - invalid event format
+
+  activityCreated:
+    post:
+      summary: Activity Created Event
+      description: |
+        Webhook notification sent when a new activity is created on an issue.
+        OPS will POST this event to your configured webhook endpoint.
+      tags:
+        - Webhooks
+      parameters:
+        - name: webhook-id
+          in: header
+          required: true
+          description: Unique webhook delivery ID (UUID)
+          schema:
+            type: string
+            format: uuid
+        - name: webhook-timestamp
+          in: header
+          required: true
+          description: Unix timestamp of when the webhook was sent
+          schema:
+            type: string
+        - name: webhook-signature
+          in: header
+          required: true
+          description: |
+            ECDSA signature for webhook verification using the v1a scheme.
+            Format: `v1a,<base64_signature>`
+
+            The signature is computed over: `{webhook-id}.{webhook-timestamp}.{request_body}`
+
+            Verify using the EC public key provided during integration setup.
+          schema:
+            type: string
+          example: "v1a,MEUCIQDx..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/WebhookEvent'
+            example:
+              type: activity.created
+              timestamp: "2025-10-24T12:00:00Z"
+              data:
+                subject_id: "your-integration-id"
+                issue_id: "12345"
+                activity_id: "67890"
+                activity_type: "agent_portal_and_backoffice_comment"
+      responses:
+        '200':
+          description: Webhook received and processed successfully
+        '401':
+          description: Unauthorized - missing required headers
+        '403':
+          description: Forbidden - invalid signature
+        '422':
+          description: Unprocessable entity - invalid event format
+
+  issueUpdated:
+    post:
+      summary: Issue Updated Event
+      description: |
+        Webhook notification sent when an issue is updated in the OPS system.
+        OPS will POST this event to your configured webhook endpoint.
+      tags:
+        - Webhooks
+      parameters:
+        - name: webhook-id
+          in: header
+          required: true
+          description: Unique webhook delivery ID (UUID)
+          schema:
+            type: string
+            format: uuid
+        - name: webhook-timestamp
+          in: header
+          required: true
+          description: Unix timestamp of when the webhook was sent
+          schema:
+            type: string
+        - name: webhook-signature
+          in: header
+          required: true
+          description: |
+            ECDSA signature for webhook verification using the v1a scheme.
+            Format: `v1a,<base64_signature>`
+            
+            The signature is computed over: `{webhook-id}.{webhook-timestamp}.{request_body}`
+            
+            Verify using the EC public key provided during integration setup.
+          schema:
+            type: string
+          example: "v1a,MEUCIQDx..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/WebhookEvent'
+                - type: object
+                  properties:
+                    type:
+                      enum: [issue.updated]
+            example:
+              type: issue.updated
+              timestamp: "2025-10-24T12:00:00Z"
+              data:
+                subject_id: "your-integration-id"
+                issue_id: "12345"
+      responses:
+        '200':
+          description: Webhook received and processed successfully
+        '401':
+          description: Unauthorized - missing required headers
+        '403':
+          description: Forbidden - invalid signature
+        '422':
+          description: Unprocessable entity - invalid event format
+
+components:
+  schemas:
+    Issue:
+      type: object
+      properties:
+        triage_identifier:
+          type: string
+          description: Triage system identifier
+          example: "123"
+        ops_issue_identifier:
+          type: string
+          description: OPS issue identifier
+          example: "456"
+        ops_state:
+          type: string
+          description: Current OPS state of the issue
+          enum:
+            - sent_to_responsible
+            - referred
+            - resolved_private
+            - marked_as_resolved
+            - resolved
+            - unresolved
+            - in_progress
+            - rejected
+            - closed
+            - archived
+            - duplicate
+        title:
+          type: string
+          description: Issue title
+        responsible_subject:
+          anyOf:
+            - type: object
+              properties:
+                label:
+                  type: string
+                  description: Name of the responsible subject
+                value:
+                  type: integer
+                  description: ID of the responsible subject
+            - type: "null"
+        responsible_subject_changed_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+          description: Timestamp when responsible subject was last changed
+        author:
+          type: string
+          description: Author name
+          example: "John Doe"
+        issue_type:
+          type: string
+          description: Type of the issue
+          enum:
+            - issue
+            - praise
+            - question
+        category:
+          type: string
+          description: Issue category name
+        subcategory:
+          anyOf:
+            - type: string
+            - type: "null"
+          description: Issue subcategory name
+        subtype:
+          anyOf:
+            - type: string
+            - type: "null"
+          description: Issue subtype name
+        address_municipality:
+          type: string
+          description: Municipality and district separated by '::'
+        address_postcode:
+          type: string
+          description: Postal code
+        address_street:
+          type: string
+          description: Street name
+        address_house_number:
+          type: string
+          description: House number
+        likes_count:
+          type: integer
+          description: Number of likes
+        address_lat:
+          type: number
+          format: double
+          description: Latitude coordinate
+          example: 48.7305939
+        address_lon:
+          type: number
+          format: double
+          description: Longitude coordinate
+          example: 19.4570817
+        portal_url:
+          type: string
+          format: uri
+          description: URL to the issue in the portal
+          example: https://novy.odkazprestarostu.sk/dopyty/12345
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        activities:
+          type: array
+          description: List of activities associated with this issue
+          items:
+            $ref: '#/components/schemas/Activity'
+
+    IssueUpdate:
+      type: object
+      properties:
+        ops_state:
+          type: string
+          description: New OPS state
+          enum:
+            - sent_to_responsible
+            - referred
+            - marked_as_resolved
+            - in_progress
+            - unresolved
+        investment:
+          type: boolean
+          description: If the issue resolution is an investment
+        responsible_subject:
+          type: object
+          description: New responsible subject - note that changing the responsible subject must be combined with ops_state 'sent_to_responsible'
+          properties:
+            label:
+              type: string
+              description: Name of the responsible subject
+            value:
+              type: integer
+              description: ID of the responsible subject
+
+    Activity:
+      type: object
+      properties:
+        triage_identifier:
+          type: string
+          description: Triage system identifier for the activity
+          example: "789"
+        activity_type:
+          type: string
+          description: Type of activity/article
+          enum:
+            - agent_portal_and_backoffice_comment
+            - agent_backoffice_comment
+            - responsible_subject_portal_and_backoffice_comment
+            - unknown_user_portal_comment
+            - user_portal_comment
+            - agent_portal_comment
+        author:
+          type: string
+          description: Author name
+          example: "John Doe"
+        content_type:
+          type: string
+          description: Content type (e.g., text/html, text/plain)
+          enum:
+            - text/html
+            - text/plain
+        body:
+          type: string
+          description: Activity body/content
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+
+    ActivityCreate:
+      type: object
+      required:
+        - content_type
+        - body
+        - type
+      properties:
+        content_type:
+          type: string
+          description: Content type (e.g., text/html, text/plain)
+          enum:
+            - text/html
+            - text/plain
+        body:
+          type: string
+          description: |
+            Activity content/body
+
+            Note: If body includes substring `[[ops portal]]` the activity will also be published to the OPS portal.
+            Otherwise it will be visible for OPS Admins only.
+        attachments:
+          type: array
+          description: List of attachments
+          items:
+            type: object
+            required:
+              - filename
+              - content_type
+              - data64
+            properties:
+              filename:
+                type: string
+                description: File name
+              content_type:
+                type: string
+                description: MIME type of the file
+              data64:
+                type: string
+                format: byte
+                description: Base64 encoded file data
+
+    Attachment:
+      type: object
+      properties:
+        triage_identifier:
+          type: string
+          description: Triage system identifier
+          example: "789"
+        filename:
+          type: string
+          description: File name
+        content_type:
+          type: string
+          description: MIME type
+        data64:
+          type: string
+          format: byte
+          description: Base64 encoded file data
+
+    ResponsibleSubject:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Responsible subject ID
+        name:
+          type: string
+          description: Responsible subject name
+
+    OpsState:
+      type: string
+      description: >
+        OPS issue state:
+          - `sent_to_responsible` - Zaslaný zodpovednému
+          - `referred` - Odstúpený
+          - `resolved_private` - Vyriešený (skrytý)
+          - `marked_as_resolved` - Označený za vyriešený
+          - `resolved` - Vyriešený
+          - `unresolved` - Neriešený
+          - `in_progress` - V riešení
+          - `rejected` - Zamietnutý
+          - `closed` - Uzavretý
+          - `archived` - Archivovaný
+          - `duplicate` - Duplicitný
+      enum:
+        - sent_to_responsible
+        - referred
+        - resolved_private
+        - marked_as_resolved
+        - resolved
+        - unresolved
+        - in_progress
+        - rejected
+        - closed
+        - archived
+        - duplicate
+    
+    WebhookEvent:
+      type: object
+      required:
+        - type
+        - timestamp
+        - data
+      properties:
+        type:
+          type: string
+          enum:
+            - issue.created
+            - activity.created
+            - issue.updated
+          description: Type of webhook event
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of when the event occurred
+        data:
+          type: object
+          required:
+            - subject_id
+          properties:
+            subject_id:
+              type: string
+              description: Your integration identifier
+            issue_id:
+              type: string
+              description: Issue identifier (required for all event types)
+            activity_id:
+              type: string
+              description: Activity identifier (required for activity.created events)
+            activity_type:
+              type: string
+              description: |
+                Type of activity (for activity.created events).
+                Examples: agent_portal_and_backoffice_comment, agent_backoffice_comment, user_portal_comment
+              enum:
+                - agent_portal_and_backoffice_comment
+                - agent_backoffice_comment
+                - responsible_subject_portal_and_backoffice_comment
+                - unknown_user_portal_comment
+                - user_portal_comment
+                - agent_portal_comment
+
+  securitySchemes:
+    JWT:
+      description: |
+        JWT token must be encoded using ES256 and device-specific key matching `sub` claim.
+        Maximum `exp` claim duration id 15 minutes.
+        `jti` claim is required and must be unique for the 15 minutes. 
+        `jti` claim must comply with regular expression: `/\A[0-9a-z\-_]{32,256}\z/i`
+
+        Example of `header` segment:
+
+              {
+                "alg": "ES256",
+              }
+
+        Example `payload` segment:
+
+              {
+                "sub": "123",
+                "exp": 1543437976,
+                "jti": "4dee8618-abbe-4dc3-83ba-e984d1396f9f"
+              }
+
+        Token must be present in either:
+        - header `Authorization: Bearer <api-token>`
+        - query parameter `?token=<api-token>`
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

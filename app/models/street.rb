@@ -8,6 +8,7 @@
 #  name                     :string
 #  place_identifier         :string
 #  tested                   :boolean
+#  whitelisted              :boolean          default(FALSE)
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  legacy_id                :integer
@@ -17,4 +18,6 @@
 class Street < ApplicationRecord
   belongs_to :municipality
   belongs_to :municipality_district, optional: true
+
+  scope :whitelisted, -> { where(whitelisted: true) }
 end

@@ -16,6 +16,9 @@ class ZammadApiClient
   }
   RESPONSIBLE_SUBJECT_ARTICLE_TAG = TriageZammadEnvironment::RESPONSIBLE_SUBJECT_ARTICLE_TAG
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
+  MARKED_AS_RESOLVED_TAGS = [ "[[vyriesene]]", "[[vyriešené]]", "[[vyrieseny]]", "[[vyriešený]]" ]
+  REFERRED_TAGS = [ "[[odstupene]]", "[[odstúpené]]", "[[odstupeny]]", "[[odstúpený]]" ]
+
   ATTACHMENTS_UPDATE_ARTICLE_BODY = "Aktualizované prílohy"
   ATTACHMENTS_UPDATE_ARTICLE_TYPE = "note"
 
@@ -202,8 +205,10 @@ class ZammadApiClient
             "data" => Base64.encode64(photo.variable? ? photo.variant(:full).processed.download : photo.download),
             "mime-type" => photo.content_type
           }
-        end
-      }
+        end,
+        created_at: issue_update.created_at
+      },
+      created_at: issue_update.created_at
     )
 
     raise unless ticket.id
@@ -373,7 +378,7 @@ class ZammadApiClient
       origin_by_id: author_id,
       content_type: activity["content_type"],
       body: activity["body"],
-      type: activity["type"],
+      type: "note",
       internal: false,
       attachments: activity["attachments"].map do |attachment|
         {
@@ -672,7 +677,7 @@ class ZammadApiClient
       result
     end
 
-    body = article.body.gsub(RESPONSIBLE_SUBJECT_ARTICLE_TAG, "").gsub(OPS_PORTAL_ARTICLE_TAG, "")
+    body = strip_tags_from_article_body(article.body)
     content_type = article.content_type
     if article.type == "email"
       body = EmailParser.parse_text(body)
@@ -699,6 +704,11 @@ class ZammadApiClient
         } unless content_type == "text/html"
       end.compact
     }
+  end
+
+  def strip_tags_from_article_body(body)
+    tags = MARKED_AS_RESOLVED_TAGS + REFERRED_TAGS + [ RESPONSIBLE_SUBJECT_ARTICLE_TAG, OPS_PORTAL_ARTICLE_TAG ]
+    body.gsub(Regexp.union(tags), "").strip
   end
 
   def get_article_type(article, process_type, zammad_api_client: @client)

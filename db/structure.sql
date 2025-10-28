@@ -1624,7 +1624,8 @@ CREATE TABLE public.streets (
     tested boolean,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    legacy_id integer
+    legacy_id integer,
+    whitelisted boolean DEFAULT false
 );
 
 
@@ -4113,6 +4114,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251021111854'),
 ('20251021083200'),
 ('20251020135223'),
 ('20251020123548'),

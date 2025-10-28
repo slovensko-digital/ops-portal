@@ -1,0 +1,4 @@
+ba_primacialne_namestie:
+    name: "Primaciálne námestie"
+    municipality_id: 1
+    whitelisted: true

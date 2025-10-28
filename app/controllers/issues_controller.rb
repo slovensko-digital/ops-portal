@@ -254,13 +254,13 @@ class IssuesController < ApplicationController
             return [] unless params[:obec].present?
 
             MunicipalityDistrict.joins(:municipality)
-              .where(municipalities: { name: params[:obec], active: true }, archived: false)
+              .where(municipalities: { name: params[:obec], active: true })
               .order(Arel.sql("municipality_districts.name COLLATE unicode"))
               .pluck(:name)
           end,
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
-            ids = MunicipalityDistrict.where(name: params[:cast], archived: false).pluck(:id)
+            ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
             scope.where(municipality_district_id: ids)
           end
         ),

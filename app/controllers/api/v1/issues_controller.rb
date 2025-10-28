@@ -2,6 +2,15 @@ class Api::V1::IssuesController < ApiController
   before_action :authenticate_client, except: [ :search ]
   before_action :set_issue, only: [ :show, :update ]
 
+  def index
+    responsible_subject = @client.responsible_subject
+    scope = responsible_subject.issues
+    scope = scope.resolution_process unless params[:all] == "true"
+    scope = scope.where(state: Issues::State.where(key: params[:ops_state])) if params[:ops_state].present?
+
+    @issues = scope
+  end
+
   def show
     allowed_article_types = [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment ]
     allowed_article_types += [ :responsible_subject_portal_and_backoffice_comment ] unless params[:exclude_responsible_subject_articles] == "true"

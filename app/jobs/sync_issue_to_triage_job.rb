@@ -26,6 +26,7 @@ class SyncIssueToTriageJob < ApplicationJob
           issue.triage_external_id = ticket_id
         else
           issue.resolution_external_id = ticket_id
+          issue.resolution_started_at ||= Time.now
         end
 
         issue.save!
@@ -49,6 +50,7 @@ class SyncIssueToTriageJob < ApplicationJob
           issue.triage_external_id = ticket.id
         else
           issue.resolution_external_id = ticket.id
+          issue.resolution_started_at ||= ticket.created_at
         end
 
         issue.save!

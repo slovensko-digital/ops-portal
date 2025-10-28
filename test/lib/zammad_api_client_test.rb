@@ -170,4 +170,10 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     zammad_api_client = OpenStruct.new(user: zammad_user_client)
     assert_equal :responsible_subject_portal_and_backoffice_comment, @subject.send(:get_article_type, article, "portal_issue_resolution", zammad_api_client: zammad_api_client)
   end
+
+  test "strip_tags_from_article_body removes all tags" do
+    body = "[[pre zodpovedny subjekt]] \nThis is a test body with tags [[ops portal]], [[vyriesene]], and [[odstúpený]].  "
+    stripped_body = @subject.send(:strip_tags_from_article_body, body)
+    assert_equal "This is a test body with tags , , and .", stripped_body
+  end
 end
