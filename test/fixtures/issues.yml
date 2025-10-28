@@ -22,6 +22,7 @@ two:
   last_synced_at: 2024-11-05 09:59:23
   triage_external_id: 2
   resolution_external_id: 3
+  resolution_started_at: 2024-11-06 09:00:00
   category: one
   state: in_progress
   municipality_id: 1

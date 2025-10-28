@@ -21,6 +21,7 @@ json.address_lat @issue[:address_lat]
 json.address_lon @issue[:address_lon]
 json.portal_url @issue[:portal_url]
 json.created_at @issue[:created_at]
+json.resolution_started_at @issue[:resolution_started_at]
 json.updated_at @issue[:updated_at]
 json.activities @issue[:activities] do |activity|
   json.triage_identifier activity[:triage_identifier]

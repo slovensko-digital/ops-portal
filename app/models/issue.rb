@@ -84,7 +84,8 @@ class Issue < ApplicationRecord
   validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, unless: :imported?
   validates_length_of :description, minimum: 25, maximum: 1800, allow_blank: true, unless: :imported?
 
-  scope :newest, -> { order(created_at: :desc) }
+  scope :newest, -> { order(resolution_started_at: :desc) }
+  scope :newest_by_effective_date, -> { order(Arel.sql("COALESCE(issues.resolution_started_at, issues.created_at) DESC")) }
   scope :publicly_visible, -> { where.not(state_id: Issues::State.not_visible.pluck(:id)) }
   scope :currently_viewable_by, ->(user) do
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
