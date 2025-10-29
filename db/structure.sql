@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -8,13 +9,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
--- *not* creating schema, since initdb creates it
-
 
 --
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
@@ -669,9 +663,9 @@ CREATE TABLE public.issues (
     legacy_id integer,
     municipality_district_id bigint,
     responsible_subject_id bigint,
-    owner_id bigint,
     subcategory_id bigint,
     subtype_id bigint,
+    owner_id bigint,
     address_region character varying,
     address_city character varying,
     address_municipality character varying,
@@ -679,12 +673,12 @@ CREATE TABLE public.issues (
     address_house_number character varying,
     address_postcode character varying,
     issue_type integer DEFAULT 1,
-    resolution_external_id integer,
     address_country character varying,
     address_country_code character varying,
     address_district character varying,
-    imported_at timestamp(6) without time zone,
+    resolution_external_id integer,
     likes_count integer DEFAULT 0 NOT NULL,
+    imported_at timestamp(6) without time zone,
     public boolean DEFAULT false NOT NULL,
     responsible_subject_last_contact_at timestamp(6) without time zone,
     address_suburb character varying,
@@ -1863,6 +1857,7 @@ CREATE TABLE public.users (
     stats_issues_percentile numeric(5,4) DEFAULT 0.0,
     stats_comments_percentile numeric(5,4) DEFAULT 0.0,
     stats_verified_issues_percentile numeric(5,4) DEFAULT 0.0,
+    imported_at timestamp(6) without time zone,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -2993,7 +2988,7 @@ CREATE UNIQUE INDEX index_issues_comments_on_uuid ON public.issues_comments USIN
 -- Name: index_issues_default_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_issues_default_search_hot_path ON public.issues USING btree (created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (12)::bigint]));
+CREATE INDEX index_issues_default_search_hot_path ON public.issues USING btree (created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (14)::bigint]));
 
 
 --
@@ -3035,7 +3030,7 @@ CREATE INDEX index_issues_municipality_resolution_started_at_hot_path ON public.
 -- Name: index_issues_municipality_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_issues_municipality_search_hot_path ON public.issues USING btree (municipality_id, created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (12)::bigint]));
+CREATE INDEX index_issues_municipality_search_hot_path ON public.issues USING btree (municipality_id, created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (14)::bigint]));
 
 
 --
@@ -3655,6 +3650,14 @@ ALTER TABLE ONLY public.legacy_agents
 
 
 --
+-- Name: legacy_issues_communications fk_rails_1cf0f8a10b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_1cf0f8a10b FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
+
+
+--
 -- Name: issue_subscriptions fk_rails_270021a150; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3687,14 +3690,6 @@ ALTER TABLE ONLY public.issues_drafts
 
 
 --
--- Name: legacy_issues_communications fk_rails_35b4962c3d; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_35b4962c3d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
-
-
---
 -- Name: issues fk_rails_44771000d0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3724,6 +3719,14 @@ ALTER TABLE ONLY public.issues_updates
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_4e60020611 FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
+
+
+--
+-- Name: legacy_issues_communications fk_rails_51ea2fa86c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_51ea2fa86c FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
 
 
 --
@@ -3895,6 +3898,14 @@ ALTER TABLE ONLY public.issue_likes
 
 
 --
+-- Name: connector_activities fk_rails_90e9990402; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.connector_activities
+    ADD CONSTRAINT fk_rails_90e9990402 FOREIGN KEY (connector_tenant_id) REFERENCES public.connector_tenants(id);
+
+
+--
 -- Name: legacy_labels fk_rails_91c3a6c92e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3983,14 +3994,6 @@ ALTER TABLE ONLY public.responsible_subjects
 
 
 --
--- Name: legacy_issues_communications fk_rails_b3a0e7e7b7; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_b3a0e7e7b7 FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
-
-
---
 -- Name: user_verification_keys fk_rails_b5d6b8f85b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4055,14 +4058,6 @@ ALTER TABLE ONLY public.issues_activity_votes
 
 
 --
--- Name: connector_activities fk_rails_e5c13ad0c7; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.connector_activities
-    ADD CONSTRAINT fk_rails_e5c13ad0c7 FOREIGN KEY (connector_tenant_id) REFERENCES public.connector_tenants(id);
-
-
---
 -- Name: issues_updates fk_rails_e5ed276bbf; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4095,14 +4090,6 @@ ALTER TABLE ONLY public.issues_activities
 
 
 --
--- Name: legacy_issues_communications fk_rails_f4db0cf30b; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_f4db0cf30b FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
-
-
---
 -- Name: issues_updates fk_rails_f6e3cb8d90; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4119,6 +4106,14 @@ ALTER TABLE ONLY public.cms_categories
 
 
 --
+-- Name: legacy_issues_communications fk_rails_f9284d111d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_f9284d111d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -4132,7 +4127,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20251017073059'),
 ('20251004142110'),
 ('20250925161849'),
-('20250923093835'),
 ('20250910125432'),
 ('20250910120000'),
 ('20250909101218'),
@@ -4146,6 +4140,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250605200853'),
 ('20250605192922'),
 ('20250605190746'),
+('20250522185556'),
+('20250522184502'),
 ('20250522111247'),
 ('20250522105736'),
 ('20250522105410'),
@@ -4341,4 +4337,3 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20241105152854'),
 ('20241105133544'),
 ('20241105085921');
-
