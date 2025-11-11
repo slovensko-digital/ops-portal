@@ -165,6 +165,7 @@
           <% else %>
             <% if current_user.full_access? %>
               <%= render partial: "issues/new_issue_activity_buttons" %>
+              <%= turbo_frame_tag "activity_form_content" %>
             <% else %>
               <%= render partial: "issues/comments_verified_profile_required" %>
             <% end %>

@@ -104,6 +104,7 @@ class ZammadApiClient
         description: ticket.body,
         likes_count: ticket.likes_count,
         portal_url: ticket.portal_url,
+        issue_resolved: ticket.issue_resolved,
         created_at: ticket.created_at,
         updated_at: ticket.updated_at
       }
@@ -185,13 +186,14 @@ class ZammadApiClient
       number: issue_update.ticket_number,
       ops_issue_identifier: issue_update.id,
       process_type: "portal_issue_verification",
-      title: "Aktualizácia podnetu #{issue.title || 'Bez názvu'}",
+      title: "#{issue_update.resolves_issue? ? "Overenie" : "Aktualizácia"} podnetu #{issue_update.issue.title || 'Bez názvu'}",
       body: issue_update.text.presence || "(bez popisu)",
       group: issue_ticket.group,
       customer_id: issue_update.author.external_id,
       origin_by_id: issue_update.author.external_id,
       ops_state: "waiting",
       portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
+      issue_resolved: issue_update.resolves_issue? ? "yes" : "no",
       likes_count: issue_update.activity.likes_count,
       origin: DEFAULT_ORIGIN,
       article: {

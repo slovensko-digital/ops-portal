@@ -1,7 +1,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -686,8 +685,8 @@ CREATE TABLE public.issues (
     fulltext_extra character varying,
     discussion_closed boolean DEFAULT false,
     archived_state_id bigint,
-    resolution_started_at timestamp(6) without time zone,
-    last_activity_at timestamp(6) without time zone
+    last_activity_at timestamp(6) without time zone,
+    resolution_started_at timestamp(6) without time zone
 );
 
 
@@ -1055,7 +1054,9 @@ CREATE TABLE public.issues_updates (
     uuid uuid,
     confirmed boolean DEFAULT false,
     external_id character varying,
-    hidden boolean DEFAULT false
+    hidden boolean DEFAULT false,
+    resolves_issue boolean DEFAULT false NOT NULL,
+    verification_status integer DEFAULT 0 NOT NULL
 );
 
 
@@ -4114,6 +4115,8 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251027105858'),
+('20251025165300'),
 ('20251021111854'),
 ('20251021083200'),
 ('20251020135223'),

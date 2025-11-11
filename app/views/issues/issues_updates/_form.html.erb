@@ -1,4 +1,5 @@
 <%= form_with model: [ issue, update ], multipart: true do |f| %>
+  <%= f.hidden_field :resolves_issue, value: update.resolves_issue %>
   <% if update.errors[:base].any? %>
     <% update.errors[:base].each do |error| %>
       <div class="error-message"><%= error %></div>

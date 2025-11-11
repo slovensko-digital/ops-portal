@@ -157,6 +157,14 @@ class Issue < ApplicationRecord
     state.key == "archived" || municipality.archived? || responsible_subject&.archived?
   end
 
+  def resolved?
+    state.key.in? %w[resolved resolved_private]
+  end
+
+  def duplicate?
+    state.key == "duplicate"
+  end
+
   def showing_comments_count?
     issue_type.in?(%w[issue question]) && comments_count.nonzero?
   end

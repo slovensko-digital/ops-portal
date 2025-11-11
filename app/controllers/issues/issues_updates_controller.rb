@@ -14,6 +14,7 @@ class Issues::IssuesUpdatesController < ApplicationController
 
   def new
     @update = Issues::Update.new
+    @update.resolves_issue = true if params[:verification].present?
   end
 
   def edit
@@ -39,7 +40,10 @@ class Issues::IssuesUpdatesController < ApplicationController
     if @update.save
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to @issue, notice: "Overenie podnetu bolo pridané" }
+        format.html {
+          notice_message = @update.resolves_issue? ? "Podnet bol označený za vyriešený" : "Aktualizácia podnetu bola pridaná"
+          redirect_to @issue, notice: notice_message
+        }
       end
       Issues::SyncEditableActivityToTriageJob.perform_later(@update, sync_job: SyncIssueActivityObjectToTriageJob)
     else
@@ -54,7 +58,7 @@ class Issues::IssuesUpdatesController < ApplicationController
   end
 
   def update_params
-    params.require(:issues_update).permit(:text, attachments: [])
+    params.require(:issues_update).permit(:text, :resolves_issue, attachments: [])
   end
 
   def check_rate_limit

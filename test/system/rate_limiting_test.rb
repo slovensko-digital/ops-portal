@@ -45,7 +45,7 @@ class RateLimitingTest < ApplicationSystemTestCase
     end
 
     visit issue_path(issues(:two))
-    click_link "Overiť podnet"
+    click_link "Aktualizovať podnet"
 
     # Should be redirected to please wait page
     assert_current_path please_wait_profile_path
