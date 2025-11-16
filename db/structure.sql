@@ -820,7 +820,8 @@ CREATE TABLE public.issues_comments (
     imported_at timestamp(6) without time zone,
     legacy_comment_id integer,
     legacy_communication_id integer,
-    uuid uuid
+    uuid uuid,
+    last_edited_at timestamp(6) without time zone
 );
 
 
@@ -1056,7 +1057,8 @@ CREATE TABLE public.issues_updates (
     external_id character varying,
     hidden boolean DEFAULT false,
     resolves_issue boolean DEFAULT false NOT NULL,
-    verification_status integer DEFAULT 0 NOT NULL
+    verification_status integer DEFAULT 0 NOT NULL,
+    last_edited_at timestamp(6) without time zone
 );
 
 
@@ -2983,7 +2985,7 @@ CREATE UNIQUE INDEX index_issues_comments_on_uuid ON public.issues_comments USIN
 -- Name: index_issues_default_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_issues_default_search_hot_path ON public.issues USING btree (created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (14)::bigint]));
+CREATE INDEX index_issues_default_search_hot_path ON public.issues USING btree (created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (12)::bigint]));
 
 
 --
@@ -3025,7 +3027,7 @@ CREATE INDEX index_issues_municipality_resolution_started_at_hot_path ON public.
 -- Name: index_issues_municipality_search_hot_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_issues_municipality_search_hot_path ON public.issues USING btree (municipality_id, created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (14)::bigint]));
+CREATE INDEX index_issues_municipality_search_hot_path ON public.issues USING btree (municipality_id, created_at) WHERE (state_id <> ALL (ARRAY[(3)::bigint, (7)::bigint, (10)::bigint, (12)::bigint]));
 
 
 --
@@ -4115,8 +4117,10 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251114160144'),
 ('20251027105858'),
 ('20251025165300'),
+('20251022171213'),
 ('20251021111854'),
 ('20251021083200'),
 ('20251020135223'),

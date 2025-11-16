@@ -8,6 +8,7 @@
 #  hidden              :boolean          default(FALSE)
 #  imported_at         :datetime
 #  ip                  :inet
+#  last_edited_at      :datetime
 #  name                :string
 #  published           :boolean
 #  resolves_issue      :boolean          default(FALSE), not null
@@ -63,6 +64,10 @@ class Issues::Update < ApplicationRecord
 
   def confirmed?
     self.approved? || self.confirmed || self.confirmed_by.present?
+  end
+
+  def edited?
+    last_edited_at.present?
   end
 
   def editable_by?(user)

@@ -3,6 +3,12 @@ module EditableWithinEditingWindow
 
   included do
     validate :edited_within_editing_window, on: :edit
+
+    before_update -> { self.last_edited_at = Time.current }, if: :content_changed?
+  end
+
+  def content_changed?
+    saved_change_to_text? || attachment_changes["attachments"].present?
   end
 
   def editing_window_end

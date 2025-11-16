@@ -8,6 +8,7 @@
 #  hidden                        :boolean          default(FALSE)
 #  imported_at                   :datetime
 #  ip                            :inet
+#  last_edited_at                :datetime
 #  legacy_data                   :jsonb
 #  text                          :string
 #  type                          :string
@@ -42,6 +43,10 @@ class Issues::UserComment < Issues::Comment
 
   def triage_visible?
     visible?
+  end
+
+  def edited?
+    last_edited_at.present?
   end
 
   def editable_by?(user)
