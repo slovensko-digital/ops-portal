@@ -66,6 +66,10 @@ class Issues::Comment < ApplicationRecord
     false
   end
 
+  def edited?
+    last_edited_at.present?
+  end
+
   private
 
   def notify_subscribers
