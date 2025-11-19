@@ -146,7 +146,7 @@ class ZammadApiClient
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: issue.responsible_subject&.then { |s|
         { "label" => s.subject_name, "value" => s.id }
-      },
+      } || {},
       owner_id: owner_id,
       created_at: issue.created_at,
       likes_count: issue.likes.count,
