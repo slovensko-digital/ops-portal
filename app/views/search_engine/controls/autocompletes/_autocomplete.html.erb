@@ -10,7 +10,8 @@
     <input
       data-autocomplete-target="input"
       placeholder="<%= autocomplete.items.select(&:selected?).map(&:label).join(', ') %>"
-      id="<%= autocomplete.control.label %>" />
+      id="<%= autocomplete.control.label %>"
+      autocomplete="off" />
 
     <ul class="dropdown-list none"
         data-toggle-target="toggleable"
