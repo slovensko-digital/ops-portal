@@ -17,6 +17,7 @@
 #  comments_count                      :integer          default(0), not null
 #  description                         :string           not null
 #  discussion_closed                   :boolean          default(FALSE)
+#  effective_at                        :datetime
 #  fulltext_extra                      :string
 #  imported_at                         :datetime
 #  issue_type                          :integer          default("issue")
@@ -84,8 +85,7 @@ class Issue < ApplicationRecord
   validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, unless: :imported?
   validates_length_of :description, minimum: 25, maximum: 1800, allow_blank: true, unless: :imported?
 
-  scope :newest, -> { order(resolution_started_at: :desc) }
-  scope :newest_by_effective_date, -> { order(Arel.sql("COALESCE(issues.resolution_started_at, issues.created_at) DESC")) }
+  scope :newest, -> { order(effective_at: :desc) }
   scope :publicly_visible, -> { where.not(state_id: Issues::State.not_visible.pluck(:id)) }
   scope :currently_viewable_by, ->(user) do
     joins(:state).where("issues_states.key NOT IN(?) OR issues.author_id = ?", Issues::State::PRIVATE_KEYS, user.id)
@@ -155,6 +155,14 @@ class Issue < ApplicationRecord
 
   def archived?
     state.key == "archived" || municipality.archived? || responsible_subject&.archived?
+  end
+
+  def resolved?
+    state.key.in? %w[resolved resolved_private]
+  end
+
+  def duplicate?
+    state.key == "duplicate"
   end
 
   def showing_comments_count?

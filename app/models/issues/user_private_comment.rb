@@ -8,6 +8,7 @@
 #  hidden                        :boolean          default(FALSE)
 #  imported_at                   :datetime
 #  ip                            :inet
+#  last_edited_at                :datetime
 #  legacy_data                   :jsonb
 #  text                          :string
 #  type                          :string

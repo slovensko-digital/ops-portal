@@ -1,7 +1,13 @@
 <%= turbo_frame_tag comment do %>
   <div class="<%= class_names("comment", government: comment.responsible_subject?, duplicate: comment.duplicate?) %>" id="komentar_<%= comment.id %>">
-    <div class="subject">
-      <%= link_to_user_profile(comment.author) %>
+    <div class="comment-header">
+      <% if comment.edited? %>
+        <div class="edit-comment-notice">Komentár bol upravený</div>
+      <% end %>
+
+      <div class="subject">
+        <%= link_to_user_profile(comment.author) %>
+      </div>
     </div>
     <div class="date"><%= l comment.created_at.to_date %></div>
     <% if comment.text.present? %>

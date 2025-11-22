@@ -40,7 +40,7 @@ Rails.application.routes.draw do
     resource :issue_subscription, as: :subscription, only: [ :create, :destroy ]
     resources :issues_user_comments, path: "komentare", module: :issues
     resources :issues_user_private_comments, path: "komentare", module: :issues, controller: "issues_user_comments"
-    resources :issues_updates, path: "overenia", module: :issues, controller: "issues_updates"
+    resources :issues_updates, path: "aktualizacie", module: :issues, controller: "issues_updates"
     get :geo, on: :collection
   end
 

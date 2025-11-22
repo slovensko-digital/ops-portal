@@ -197,15 +197,6 @@ class IssuesController < ApplicationController
         ),
 
         SearchEngine::Controls::Hidden.new(
-          param_name: :zodpovedny,
-          filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = ResponsibleSubject.where(subject_name: params[:zodpovedny]).pluck(:id)
-            scope.where(responsible_subject_id: ids)
-          end
-        ),
-
-        SearchEngine::Controls::Hidden.new(
           param_name: :ulica,
           filter: ->(scope, params) { scope.where(address_street: params[:ulica]) }
         ),
@@ -262,6 +253,17 @@ class IssuesController < ApplicationController
             # push down ids as constants so optimizer can use stats
             ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
             scope.where(municipality_district_id: ids)
+          end
+        ),
+
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :zodpovedny,
+          label: "Zodpovedný subjekt",
+          items: -> { ResponsibleSubject.active.order(Arel.sql("subject_name COLLATE unicode")).pluck("subject_name").uniq },
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            ids = ResponsibleSubject.active.where(subject_name: params[:zodpovedny]).pluck(:id)
+            scope.where(responsible_subject_id: ids)
           end
         ),
 

@@ -71,13 +71,13 @@
     {
       "warning_type": "Dynamic Render Path",
       "warning_code": 15,
-      "fingerprint": "a9b1bf6309535c1f615fe4eed074cc0f87d5a03127668f8005de5b8f4ca53918",
+      "fingerprint": "5c9249cd090f8e9155c5ce4ec287503e8a80cb2d8122969a9b04bf374ea6bc05",
       "check_name": "Render",
       "message": "Render path contains parameter value",
       "file": "app/views/profiles/show.html.erb",
       "line": 71,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => current_user.issues.newest_by_effective_date.page(params[:page]).per(8), {})",
+      "code": "render(action => current_user.issues.newest.page(params[:page]).per(8), {})",
       "render_path": [
         {
           "type": "controller",
@@ -126,5 +126,5 @@
       "note": ""
     }
   ],
-  "brakeman_version": "7.1.0"
+  "brakeman_version": "7.1.1"
 }

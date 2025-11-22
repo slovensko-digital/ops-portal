@@ -1,8 +1,13 @@
-<%= turbo_frame_tag "new_issue_activity" do %>
-  <div class="add-buttons">
-    <%= link_to "Pridať komentár", new_issue_issues_user_comment_path(@issue), class: "button add-comment-button" %>
-    <% unless @issue.triage_process? %>
-      <%= link_to "Overiť podnet", new_issue_issues_update_path(@issue), class: "button button-transparent" %>
-    <% end %>
-  </div>
-<% end %>
+<div class="add-buttons">
+  <%= link_to "Pridať komentár", new_issue_issues_user_comment_path(@issue),
+              class: "button button-transparent",
+              data: { turbo_frame: "activity_form_content" } %>
+  <% unless @issue.triage_process? %>
+    <%= link_to "Aktualizovať podnet", new_issue_issues_update_path(@issue),
+                class: "button button-transparent",
+                data: { turbo_frame: "activity_form_content" } %>
+    <%= link_to "Označiť za vyriešený", new_issue_issues_update_path(@issue, verification: true),
+                class: "button button-transparent",
+                data: { turbo_frame: "activity_form_content" } %>
+  <% end %>
+</div>

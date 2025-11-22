@@ -111,6 +111,11 @@
 	section.podnet .podnet-discussion .add-comment-form form a.button-add-image svg {
 		width: 20px;
 	}
+	section.podnet .podnet-discussion .comment .comment-header {
+		align-items: center;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+	}
 	
 	// Pochvala
 	section.compliment .compliment-buttons-con .button-share-mobile {

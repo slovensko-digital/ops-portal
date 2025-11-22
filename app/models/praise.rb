@@ -17,6 +17,7 @@
 #  comments_count                      :integer          default(0), not null
 #  description                         :string           not null
 #  discussion_closed                   :boolean          default(FALSE)
+#  effective_at                        :datetime
 #  fulltext_extra                      :string
 #  imported_at                         :datetime
 #  issue_type                          :integer          default("issue")

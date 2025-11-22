@@ -8,6 +8,7 @@
 #  hidden                        :boolean          default(FALSE)
 #  imported_at                   :datetime
 #  ip                            :inet
+#  last_edited_at                :datetime
 #  legacy_data                   :jsonb
 #  text                          :string
 #  type                          :string
@@ -63,6 +64,10 @@ class Issues::Comment < ApplicationRecord
 
   def responsible_subject?
     false
+  end
+
+  def edited?
+    last_edited_at.present?
   end
 
   private
