@@ -1415,6 +1415,11 @@ section.report .report-summary-edit .button-edit {
   gap: 6px 0;
   flex-direction: column;
 }
+.autocomplete-wrapper {
+  display: flex;
+  gap: 6px 0;
+  flex-direction: column;
+}
 label {
   color: $black;
   display: block;
