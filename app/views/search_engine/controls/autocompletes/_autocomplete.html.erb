@@ -6,7 +6,8 @@
        data-action="
         focusin->toggle#show
         focusout->toggle#hide
-        input->autocomplete#filter">
+        input->autocomplete#filter
+        keydown.enter->autocomplete#enter">
     <input
       data-autocomplete-target="input"
       placeholder="<%= autocomplete.items.select(&:selected?).map(&:label).join(', ') %>"
