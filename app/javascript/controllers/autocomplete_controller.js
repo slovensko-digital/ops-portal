@@ -30,12 +30,9 @@ export default class extends Controller {
     enter(event) {
         event.preventDefault()
 
-        const firstVisibleItem = this.itemTargets.find(el => !el.classList.contains("none"))
-        if (!firstVisibleItem) return
-
-        const link = firstVisibleItem.querySelector("a")
-        if (link)
-            link.click()
+        this.itemTargets.find(el => !el.classList.contains("none"))
+            ?.querySelector("a")
+            ?.click()
     }
 
     normalizeString(str) {
