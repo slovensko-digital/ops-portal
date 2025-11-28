@@ -4096,19 +4096,19 @@ ALTER TABLE ONLY public.issues_activities
 
 
 --
--- Name: issues_updates fk_rails_f6e3cb8d90; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.issues_updates
-    ADD CONSTRAINT fk_rails_f6e3cb8d90 FOREIGN KEY (confirmed_by_id) REFERENCES public.users(id);
 
 
 --
 -- Name: cms_categories fk_rails_f8cce9e30c; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: issues_updates fk_rails_f6e3cb8d90; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.cms_categories
     ADD CONSTRAINT fk_rails_f8cce9e30c FOREIGN KEY (parent_category_id) REFERENCES public.cms_categories(id);
+ALTER TABLE ONLY public.issues_updates
+    ADD CONSTRAINT fk_rails_f6e3cb8d90 FOREIGN KEY (confirmed_by_id) REFERENCES public.legacy_agents(id);
 
 
 --
@@ -4126,6 +4126,7 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251128215525'),
 ('20251118171856'),
 ('20251118000000'),
 ('20251114160144'),

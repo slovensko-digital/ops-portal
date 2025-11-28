@@ -17,7 +17,7 @@ module Import
               text: legacy_record.text,
               created_at: convert_timestamp_value(legacy_record.ts),
               author: Legacy::User.find_or_create_user(legacy_record.updated_by),
-              confirmed_by: Legacy::User.find_or_create_user(legacy_record.confirmed_by)
+              confirmed_by: Legacy::User.find_or_create_agent(legacy_record.confirmed_by)
             )
             update.imported_at ||= Time.now
             update.activity ||= issue.update_activities.create!(created_at: update.created_at)
