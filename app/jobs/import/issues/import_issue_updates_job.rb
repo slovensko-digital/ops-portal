@@ -19,6 +19,7 @@ module Import
               author: Legacy::User.find_or_create_user(legacy_record.updated_by),
               confirmed_by: Legacy::User.find_or_create_agent(legacy_record.confirmed_by)
             )
+            update.verification_status = "approved" if legacy_record.confirmed_by.to_i > 0
             update.imported_at ||= Time.now
             update.activity ||= issue.update_activities.create!(created_at: update.created_at)
             update.save!
