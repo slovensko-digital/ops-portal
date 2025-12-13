@@ -749,10 +749,6 @@ class ZammadApiClient
     body.gsub(Regexp.union(tags), "").strip
   end
 
-  def html2plain(body)
-
-  end
-
   def get_article_type(article, process_type, zammad_api_client: @client)
     return if article.internal
     return :system_note if article.sender == "System"
@@ -762,7 +758,6 @@ class ZammadApiClient
       return :user_private_comment if article.sender == "Customer" && article.type == "web"
       return :agent_private_comment if article.sender == "Agent"
       return :user_attachment_update if article.sender == "Customer" && article.type == ATTACHMENTS_UPDATE_ARTICLE_TYPE
-
     when "portal_issue_resolution"
       return :unknown_user_portal_comment if article.sender == "Customer" && article.origin_by_id == nil && article.created_by_id == ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID").to_i
 
