@@ -6,7 +6,7 @@
       <% end %>
 
       <div class="subject">
-        <%= link_to_user_profile(comment.author, display_name: comment.author_display_name) %>
+        <%= link_to_comment_author_profile(comment) %>
       </div>
     </div>
     <div class="date"><%= l comment.created_at.to_date %></div>
