@@ -24,6 +24,8 @@ module UsersHelper
       content_tag(:picture) { user_avatar(comment.author, variant: avatar_variant) }
     end
 
-    safe_join([ avatar, comment.author_display_name ])
+    name = content_tag(:dig, comment.author_display_name, class: "name")
+
+    safe_join([ avatar, name ])
   end
 end
