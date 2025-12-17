@@ -133,3 +133,17 @@ sk:
   issues/drafts:
     new_issue: "Nový podnet"
     new_question: "Nová otázka"
+
+  profile/stats:
+    issues:
+      one: "1 pridaný podnet"
+      few: "%{count} pridané podnety"
+      other: "%{count} pridaných podnetov"
+    comments:
+      one: "1 pridaný komentár"
+      few: "%{count} pridané komentáre"
+      other: "%{count} pridaných komentárov"
+    verified_issues:
+      one: "1 overený podnet"
+      few: "%{count} overené podnety"
+      other: "%{count} overených podnetov"
