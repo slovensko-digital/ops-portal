@@ -132,8 +132,8 @@ GEM
     dartsass-rails (0.5.1)
       railties (>= 6.0.0)
       sass-embedded (~> 1.63)
-    date (3.5.0)
-    debug (1.11.0)
+    date (3.5.1)
+    debug (1.11.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
     discourse_api (2.0.1)
@@ -146,7 +146,7 @@ GEM
     drb (2.2.3)
     ed25519 (1.4.0)
     email_reply_parser (0.5.11)
-    erb (6.0.0)
+    erb (6.0.1)
     erubi (1.13.1)
     et-orbi (1.4.0)
       tzinfo
@@ -214,8 +214,8 @@ GEM
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
-    io-console (0.8.1)
-    irb (1.15.3)
+    io-console (0.8.2)
+    irb (1.16.0)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
@@ -366,7 +366,7 @@ GEM
     pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    psych (5.2.6)
+    psych (5.3.1)
       date
       stringio
     public_suffix (6.0.2)
@@ -424,7 +424,7 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.1)
-    rdoc (6.15.1)
+    rdoc (7.0.1)
       erb
       psych (>= 4.0.0)
       tsort
@@ -536,7 +536,7 @@ GEM
       ostruct
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
-    stringio (3.1.8)
+    stringio (3.2.0)
     thor (1.4.0)
     thruster (0.1.16)
     thruster (0.1.16-aarch64-linux)
