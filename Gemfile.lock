@@ -136,7 +136,7 @@ GEM
     debug (1.11.0)
       irb (~> 1.10)
       reline (>= 0.3.8)
-    discourse_api (2.0.1)
+    discourse_api (2.1.0)
       faraday (~> 2.7)
       faraday-follow_redirects
       faraday-multipart
@@ -223,7 +223,7 @@ GEM
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
     jmespath (1.6.2)
-    json (2.16.0)
+    json (2.18.0)
     jwt (3.1.2)
       base64
     kamal (2.8.2)
@@ -286,7 +286,7 @@ GEM
     multipart-post (2.4.1)
     mysql2 (0.5.7)
       bigdecimal
-    net-http (0.8.0)
+    net-http (0.9.1)
       uri (>= 0.11.1)
     net-imap (0.5.12)
       date
