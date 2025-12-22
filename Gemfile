@@ -18,7 +18,7 @@ gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
 
-gem "rails-i18n", "~> 8.0.0"
+gem "rails-i18n", "~> 8.1.0"
 
 gem "dartsass-rails" # temporarily use sass
 

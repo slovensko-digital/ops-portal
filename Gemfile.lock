@@ -123,8 +123,8 @@ GEM
     childprocess (5.1.0)
       logger (~> 1.5)
     coderay (1.1.3)
-    concurrent-ruby (1.3.5)
-    connection_pool (2.5.4)
+    concurrent-ruby (1.3.6)
+    connection_pool (3.0.2)
     crack (1.0.1)
       bigdecimal
       rexml
@@ -132,7 +132,7 @@ GEM
     dartsass-rails (0.5.1)
       railties (>= 6.0.0)
       sass-embedded (~> 1.63)
-    date (3.5.0)
+    date (3.5.1)
     debug (1.11.0)
       irb (~> 1.10)
       reline (>= 0.3.8)
@@ -146,7 +146,7 @@ GEM
     drb (2.2.3)
     ed25519 (1.4.0)
     email_reply_parser (0.5.11)
-    erb (6.0.0)
+    erb (6.0.1)
     erubi (1.13.1)
     et-orbi (1.4.0)
       tzinfo
@@ -214,8 +214,8 @@ GEM
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
-    io-console (0.8.1)
-    irb (1.15.3)
+    io-console (0.8.2)
+    irb (1.16.0)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
@@ -263,7 +263,7 @@ GEM
       rexml
     lint_roller (1.1.0)
     logger (1.7.0)
-    loofah (2.24.1)
+    loofah (2.25.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     mail (2.9.0)
@@ -279,7 +279,8 @@ GEM
       logger
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (5.26.1)
+    minitest (6.0.0)
+      prism (~> 1.5)
     msgpack (1.8.0)
     multi_xml (0.7.2)
       bigdecimal (~> 3.1)
@@ -366,7 +367,7 @@ GEM
     pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    psych (5.2.6)
+    psych (5.3.1)
       date
       stringio
     public_suffix (6.0.2)
@@ -387,7 +388,7 @@ GEM
       rack (>= 3.0.0)
     rack-test (2.2.0)
       rack (>= 1.3)
-    rackup (2.2.1)
+    rackup (2.3.1)
       rack (>= 3)
     rails (8.0.4)
       actioncable (= 8.0.4)
@@ -410,7 +411,7 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
-    rails-i18n (8.0.2)
+    rails-i18n (8.1.0)
       i18n (>= 0.7, < 2)
       railties (>= 8.0.0, < 9)
     railties (8.0.4)
@@ -424,7 +425,7 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.1)
-    rdoc (6.15.1)
+    rdoc (7.0.1)
       erb
       psych (>= 4.0.0)
       tsort
@@ -536,7 +537,7 @@ GEM
       ostruct
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
-    stringio (3.1.8)
+    stringio (3.2.0)
     thor (1.4.0)
     thruster (0.1.16)
     thruster (0.1.16-aarch64-linux)
@@ -577,7 +578,7 @@ GEM
       nokogiri (~> 1.8)
     zammad_api (1.2.0)
       faraday (~> 2)
-    zeitwerk (2.7.3)
+    zeitwerk (2.7.4)
 
 PLATFORMS
   aarch64-linux
@@ -622,7 +623,7 @@ DEPENDENCIES
   puma (>= 5.0)
   rack-cors
   rails (~> 8.0.0)
-  rails-i18n (~> 8.0.0)
+  rails-i18n (~> 8.1.0)
   rodauth-i18n
   rodauth-omniauth (~> 0.6.0)
   rodauth-rails (~> 2.1)
