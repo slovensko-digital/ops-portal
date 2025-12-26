@@ -37,6 +37,14 @@ module Ops
     config.good_job.cleanup_preserved_jobs_before_seconds_ago = 1.days
     config.good_job.cleanup_discarded_jobs = false
 
+    config.good_job.enable_cron = true
+    config.good_job.cron = {
+      user_stats_daily_refresh: {
+        cron: "0 0 * * *",
+        class: "UserStats::CalculatePercentilesJob"
+      }
+    }
+
     if ENV["AUTO_SYNC_LEGACY_USERS"] == "ON"
       config.good_job.cron = {
         sync_legacy_users: {
