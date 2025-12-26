@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
-  before_action :redirect_if_self, only: :show
-  before_action :set_user, only: :show
-  before_action only: :show do
+  before_action :set_user
+  before_action do
     render :anonymous, status: :forbidden if @user.anonymous?
   end
 
@@ -11,13 +10,7 @@ class UsersController < ApplicationController
     @issues = @user.issues.publicly_visible.newest.page(params[:page]).per(8)
   end
 
-  def redirect_if_self
-    return if current_user.is_a?(AnonymousUser)
-
-    if params[:id].to_i == current_user.id
-      redirect_to profile_path
-    end
-  end
+  private
 
   def set_user
     @user = User.find(params[:id])
