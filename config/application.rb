@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module Ops
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 8.0
+    config.load_defaults 8.1
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -36,6 +36,14 @@ module Ops
     config.good_job.smaller_number_is_higher_priority = true
     config.good_job.cleanup_preserved_jobs_before_seconds_ago = 1.days
     config.good_job.cleanup_discarded_jobs = false
+
+    config.good_job.enable_cron = true
+    config.good_job.cron = {
+      user_stats_daily_refresh: {
+        cron: "0 0 * * *",
+        class: "UserStats::CalculatePercentilesJob"
+      }
+    }
 
     if ENV["AUTO_SYNC_LEGACY_USERS"] == "ON"
       config.good_job.cron = {

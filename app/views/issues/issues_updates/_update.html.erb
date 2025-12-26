@@ -17,12 +17,7 @@
       <% end %>
 
       <div class="subject">
-        <figure>
-          <picture>
-            <%= user_avatar(comment.author) %>
-          </picture>
-        </figure>
-        <div class="name"><%= comment.author_display_name %></div>
+        <%= link_to_comment_author_profile(comment) %>
       </div>
     </div>
     <div class="date"><%= l comment.created_at.to_date %></div>

@@ -22,37 +22,35 @@
           <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
         </div>
 
-        <!--
         <div class="profile-results-con">
           <div class="profile-results-panel">
-            <div class="title-results">4 pridaných podnetov</div>
-            <div class="results-line-info">Viac ako 83 % používateľov</div>
+            <div class="title-results"><%= t("profile/stats.issues", count: @user.stats_issues_count) %></div>
+            <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats_issues_percentile) %> používateľov</div>
             <div class="results-line-wrap">
               <div class="results-line-back">
-                <div class="results-line"></div>
+                <div class="results-line" style="width: <%= (@user.stats_issues_percentile * 100) %>%;"></div>
               </div>
             </div>
           </div>
           <div class="profile-results-panel">
-            <div class="title-results">1 pridaných komnetárov</div>
-            <div class="results-line-info">Viac ako 5 % používateľov</div>
+            <div class="title-results"><%= t("profile/stats.comments", count: @user.stats_comments_count) %></div>
+            <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats_comments_percentile) %> používateľov</div>
             <div class="results-line-wrap">
               <div class="results-line-back">
-                <div class="results-line" style="width: 5%;"></div>
+                <div class="results-line" style="width: <%= (@user.stats_comments_percentile * 100) %>%;"></div>
               </div>
             </div>
           </div>
           <div class="profile-results-panel">
-            <div class="title-results">0 overených podnetov</div>
-            <div class="results-line-info">Viac ako 18 % používateľov</div>
+            <div class="title-results"><%= t("profile/stats.verified_issues", count: @user.stats_verified_issues_count) %></div>
+            <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats_verified_issues_percentile) %> používateľov</div>
             <div class="results-line-wrap">
               <div class="results-line-back">
-                <div class="results-line" style="width: 18%;"></div>
+                <div class="results-line" style="width: <%= (@user.stats_verified_issues_percentile * 100) %>%;"></div>
               </div>
             </div>
           </div>
         </div>
--->
       </div>
     </div>
 

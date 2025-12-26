@@ -453,6 +453,14 @@ class ZammadApiClient
     end
   end
 
+  def update_customer(user)
+    result = find_zammad_user("ops-user-#{user.id}")
+    return false unless result
+
+    result.firstname = user.display_name
+    result.save
+  end
+
   def create_agent!(user)
     begin
       zammad_user = @client.user.create(

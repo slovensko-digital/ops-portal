@@ -884,13 +884,13 @@ section.profile .profile-wrapper {
   @include rounded(15px);
 }
 section.profile .profile-wrapper .profile-info-panel {
-  //border-bottom: 1px solid $black-ten;
+  border-bottom: 1px solid $black-ten;
   align-items: center;
   display: flex;
   flex-direction: column;
   row-gap: 20px;
   justify-content: center;
-  //padding-bottom: 40px;
+  padding-bottom: 40px;
 }
 section.profile .profile-wrapper .profile-info-panel form.button_to {
   width: 100%;

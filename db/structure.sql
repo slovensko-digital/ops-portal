@@ -1046,7 +1046,6 @@ CREATE TABLE public.issues_updates (
     name character varying,
     email character varying,
     text character varying,
-    confirmed_by_id bigint,
     published boolean,
     ip inet,
     created_at timestamp(6) without time zone NOT NULL,
@@ -1060,7 +1059,8 @@ CREATE TABLE public.issues_updates (
     hidden boolean DEFAULT false,
     resolves_issue boolean DEFAULT false NOT NULL,
     verification_status integer DEFAULT 0 NOT NULL,
-    last_edited_at timestamp(6) without time zone
+    last_edited_at timestamp(6) without time zone,
+    confirmed_by_id bigint
 );
 
 
@@ -1856,6 +1856,12 @@ CREATE TABLE public.users (
     phone_verification_code_attempts integer DEFAULT 0 NOT NULL,
     phone_verification_attempted_at timestamp(6) without time zone,
     email_global_unsubscribe_token character varying NOT NULL,
+    stats_issues_count integer DEFAULT 0,
+    stats_comments_count integer DEFAULT 0,
+    stats_verified_issues_count integer DEFAULT 0,
+    stats_issues_percentile numeric(5,4) DEFAULT 0.0,
+    stats_comments_percentile numeric(5,4) DEFAULT 0.0,
+    stats_verified_issues_percentile numeric(5,4) DEFAULT 0.0,
     imported_at timestamp(6) without time zone,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
@@ -4100,7 +4106,7 @@ ALTER TABLE ONLY public.issues_activities
 --
 
 ALTER TABLE ONLY public.issues_updates
-    ADD CONSTRAINT fk_rails_f6e3cb8d90 FOREIGN KEY (confirmed_by_id) REFERENCES public.users(id);
+    ADD CONSTRAINT fk_rails_f6e3cb8d90 FOREIGN KEY (confirmed_by_id) REFERENCES public.legacy_agents(id);
 
 
 --
@@ -4126,6 +4132,10 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251226102461'),
+('20251226102460'),
+('20251226102459'),
+('20251128215525'),
 ('20251118171856'),
 ('20251118000000'),
 ('20251114160144'),
@@ -4137,6 +4147,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20251020135223'),
 ('20251020123548'),
 ('20251017073059'),
+('20251004142110'),
 ('20250925161849'),
 ('20250910125432'),
 ('20250910120000'),

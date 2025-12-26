@@ -547,6 +547,17 @@ module Connector
       zammad_identifier
     end
 
+    def update_customer(user)
+      tenant_user = @tenant.users.find_by(uuid: user["uuid"])
+      return false unless tenant_user
+
+      result = get_user(tenant_user.external_id)
+      return false unless result
+
+      result.firstname = user.display_name
+      result.save
+    end
+
     private
 
     def create_or_find_customer(author)

@@ -146,7 +146,7 @@ class Issue < ApplicationRecord
   end
 
   def publicly_visible?
-    !state.key.in? %w[waiting rejected resolved_private]
+    !state.key.in? Issues::State::PRIVATE_KEYS
   end
 
   def editable?
@@ -222,6 +222,8 @@ class Issue < ApplicationRecord
       address_city, address_municipality, address_street,
       state&.name
     ].compact.join(" ")
+
+    self.author.recalculate_computed_fields
   end
 
   def reset_counters

@@ -27,7 +27,7 @@
 class Issues::Update < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
   belongs_to :author, optional: true, class_name: "User"
-  belongs_to :confirmed_by, optional: true, class_name: "User"
+  belongs_to :confirmed_by, optional: true, class_name: "Legacy::Agent"
   delegate :issue, to: :activity
 
   include Issues::ActivityObjectAttachments
