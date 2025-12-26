@@ -1046,7 +1046,6 @@ CREATE TABLE public.issues_updates (
     name character varying,
     email character varying,
     text character varying,
-    confirmed_by_id bigint,
     published boolean,
     ip inet,
     created_at timestamp(6) without time zone NOT NULL,
@@ -1060,7 +1059,8 @@ CREATE TABLE public.issues_updates (
     hidden boolean DEFAULT false,
     resolves_issue boolean DEFAULT false NOT NULL,
     verification_status integer DEFAULT 0 NOT NULL,
-    last_edited_at timestamp(6) without time zone
+    last_edited_at timestamp(6) without time zone,
+    confirmed_by_id bigint
 );
 
 
@@ -4096,19 +4096,19 @@ ALTER TABLE ONLY public.issues_activities
 
 
 --
+-- Name: issues_updates fk_rails_f6e3cb8d90; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY public.issues_updates
+    ADD CONSTRAINT fk_rails_f6e3cb8d90 FOREIGN KEY (confirmed_by_id) REFERENCES public.legacy_agents(id);
 
 
 --
 -- Name: cms_categories fk_rails_f8cce9e30c; Type: FK CONSTRAINT; Schema: public; Owner: -
--- Name: issues_updates fk_rails_f6e3cb8d90; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.cms_categories
     ADD CONSTRAINT fk_rails_f8cce9e30c FOREIGN KEY (parent_category_id) REFERENCES public.cms_categories(id);
-ALTER TABLE ONLY public.issues_updates
-    ADD CONSTRAINT fk_rails_f6e3cb8d90 FOREIGN KEY (confirmed_by_id) REFERENCES public.legacy_agents(id);
 
 
 --
@@ -4126,6 +4126,9 @@ ALTER TABLE ONLY public.legacy_issues_communications
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251226102461'),
+('20251226102460'),
+('20251226102459'),
 ('20251128215525'),
 ('20251118171856'),
 ('20251118000000'),
