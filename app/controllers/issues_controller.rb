@@ -256,7 +256,7 @@ class IssuesController < ApplicationController
           end
         ),
 
-        SearchEngine::Controls::Dropdown.new(
+        SearchEngine::Controls::Autocomplete.new(
           param_name: :zodpovedny,
           label: "Zodpovedný subjekt",
           items: -> { ResponsibleSubject.active.order(Arel.sql("subject_name COLLATE unicode")).pluck("subject_name").uniq },
