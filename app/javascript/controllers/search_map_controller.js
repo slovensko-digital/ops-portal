@@ -67,7 +67,7 @@ export default class extends Controller {
                     iconAnchor: [10, 10]
                 });
 
-                L.marker([lat, lng], { icon: pinIcon }).addTo(map);
+                L.marker([lat, lng], {icon: pinIcon}).addTo(map);
             }
         }
 
