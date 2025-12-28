@@ -54,7 +54,7 @@
       <div class="podnet-information">
         <div class="information-wrapper">
           <div class="label">Stav riešenia podnetu:</div>
-          <div class="button button-status state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
+          <div class="button button-status state-<%= issue.displayed_state.name.parameterize %>"><%= issue.displayed_state.name %></div>
         </div>
 
         <% if issue.author %>

@@ -128,6 +128,12 @@ class Issue < ApplicationRecord
     ResponsibleSubjects::User.find_by(legacy_id: legacy_data["backoffice_owner_legacy_id"]) if legacy_data["backoffice_owner_legacy_id"]
   end
 
+  def displayed_state
+    return Issues::State.archived.first if archived?
+
+    state
+  end
+
   def liked_by?(user)
     user.issue_likes.where(issue: self).exists?
   end

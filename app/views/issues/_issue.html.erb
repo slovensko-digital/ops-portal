@@ -27,7 +27,7 @@
   <div class="info-con">
     <div class="state-con">
       <% if issue.issue_type.in?(%w[issue question]) || @tab == :my %>
-        <div class="state state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
+        <div class="state state-<%= issue.displayed_state.name.parameterize %>"><%= issue.displayed_state.name %></div>
       <% end %>
       <div class="icon-con">
         <% if issue.likes_count > 0 %>
