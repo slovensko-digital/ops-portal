@@ -1,7 +1,7 @@
 class Gemini
   def self.generate(messages:, system_prompt:, response_schema: nil)
     conn = Faraday.new(
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       params: { key: ENV["GEMINI_API_KEY"] },
       headers: {
         "content-type": "application/json"
