@@ -9,9 +9,22 @@ export default class extends Controller {
         const map = L.map(this.mapTarget, {
             dragging: !L.Browser.mobile,
             maxZoom: 19
-        }).fitBounds([[47.483, 15.781], [50.032, 22.813]]);
+        });
+
+        // Parse hash for saved map position (format: #map=zoom/lat/lng)
+        const mapLocationMatch = window.location.hash.match(/#map=(\d+)\/([^/]+)\/([^/&]+)/);
+
+        if (mapLocationMatch) {
+            const zoom = parseInt(mapLocationMatch[1]);
+            const lat = parseFloat(mapLocationMatch[2]);
+            const lng = parseFloat(mapLocationMatch[3]);
+            map.setView([lat, lng], zoom);
+        } else {
+            map.fitBounds([[47.483, 15.781], [50.032, 22.813]]);
+        }
+
         let geoJsonLayer;
-        let isInitialLoad = true;
+        let isInitialLoad = !mapLocationMatch;
 
         L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap',
@@ -137,7 +150,7 @@ export default class extends Controller {
                                     });
 
                                     layer.on('click', function () {
-                                        window.location.href = feature.properties.url;
+                                        Turbo.visit(feature.properties.url);
                                     });
                                 }
                             } else {
@@ -173,8 +186,21 @@ export default class extends Controller {
                 });
         };
 
+        const updateMapLocationHash = () => {
+            const center = map.getCenter();
+            const zoom = map.getZoom();
+            const newHash = `#map=${zoom}/${center.lat.toFixed(5)}/${center.lng.toFixed(5)}`;
+            const newUrl = window.location.pathname + window.location.search + newHash;
+            history.replaceState(null, '', newHash);
+            Turbo.navigator.history.replace(new URL(newUrl, window.location.origin));
+        };
+
+        map.on('zoomend', updateMapLocationHash);
+        map.on('moveend', updateMapLocationHash);
+
         map.on('zoomend', loadGeoJson);
         map.on('moveend', loadGeoJson);
+
         loadGeoJson();
 
         // Store map reference for use in other methods
