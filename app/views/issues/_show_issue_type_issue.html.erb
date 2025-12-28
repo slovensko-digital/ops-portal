@@ -57,14 +57,14 @@
           <div class="button button-status state-<%= issue.state.name.parameterize %>"><%= issue.state.name %></div>
         </div>
 
-        <div class="information-wrapper">
-          <div class="label">Podnet podal:</div>
-          <%= tag.div do %>
+        <% if issue.author %>
+          <div class="information-wrapper">
+            <div class="label">Podnet podal:</div>
             <div class="subject-con">
               <%= link_to_user_profile(issue.author, avatar_variant: :medium) %>
             </div>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
 
         <div class="information-wrapper">
           <div class="label">Dátum:</div>

@@ -223,7 +223,7 @@ class Issue < ApplicationRecord
       state&.name
     ].compact.join(" ")
 
-    self.author.recalculate_computed_fields
+    self.author.recalculate_computed_fields if self.author
   end
 
   def reset_counters
