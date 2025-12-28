@@ -23,6 +23,12 @@ class Legacy::RedirectsController < ApplicationController
     redirect_to issues_path(obec: municipality.name, tab: "stats")
   end
 
+  def search_map
+    municipality = Municipality.find_by("? = ANY(aliases)", params[:municipality_slug])
+
+    redirect_to issues_path(obec: municipality.name, tab: "map")
+  end
+
   def show_issue
     issue = Issue.find_by!(legacy_id: params[:legacy_id])
 
