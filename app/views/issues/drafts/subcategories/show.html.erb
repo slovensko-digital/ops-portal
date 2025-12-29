@@ -10,6 +10,10 @@
     <span>Späť</span>
   <% end %>
 
+  <% if @draft.municipality_errors? %>
+    <%= render partial: 'issues/drafts/unsupported_municipality' %>
+  <% end %>
+
   <h1>Výber podkategórie problému</h1>
 
   <div class="report-suggestion-description">Vyberte podkategóriu problému, ktorý nahlasujete.</div>

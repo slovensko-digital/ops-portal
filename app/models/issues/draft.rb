@@ -61,6 +61,8 @@ class Issues::Draft < ApplicationRecord
   validate :municipality_supported, on: :checks_step
   validate :checks_passed, on: :checks_step
 
+  before_save :reset_address_details, if: -> { will_save_change_to_latitude? || will_save_change_to_longitude? }
+
   def confirm
     municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb, street: address_street)
 
@@ -154,6 +156,18 @@ class Issues::Draft < ApplicationRecord
     checks.all? { |check| check["action"] == "confirm" }
   end
 
+  def municipality_errors?
+    if address_data.blank?
+      return false
+    end
+
+    municipality_supported
+
+    errors.added?(:base, :municipality_unsupported) ||
+      errors.added?(:base, :municipality_district_unsupported) ||
+      errors.added?(:base, :municipality_supported_on_old_portal)
+  end
+
   private
 
   def photos_allowed_content_type
@@ -183,6 +197,14 @@ class Issues::Draft < ApplicationRecord
     errors.add(:base, :municipality_supported_on_old_portal) if active_municipality && active_municipality.active_on_old_portal?
     errors.add(:base, :municipality_unsupported) if active_municipality.nil? && municipality_district.nil?
     errors.add(:base, :municipality_district_unsupported) if active_municipality.nil? && municipality_district
+  end
+
+  def reset_address_details
+    self.address_data = nil
+    self.address_municipality = nil
+    self.address_district = nil
+    self.address_city = nil
+    self.address_street = nil
   end
 
   def gps_to_float(gps)

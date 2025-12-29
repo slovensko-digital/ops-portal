@@ -1,0 +1,35 @@
+<div class="report-summary-block-con">
+  <% if @draft.errors.added?(:base, :municipality_unsupported) %>
+    <div class="report-warning">
+      <div class="title">Samospráva nie je zapojená do portálu Odkaz pre starostu</div>
+      <div class="description">
+        <p>Tento podnet nemôžeme spracovať, nakoľko samospráva v tejto lokalite nie je zatiaľ zapojená do portálu Odkaz pre starostu.</p>
+      </div>
+      <div class="buttons-row">
+        <%= link_to "Viac info", "/pridajte-sa", class: "button button-transparent" %>
+      </div>
+    </div>
+  <% elsif @draft.errors.added?(:base, :municipality_district_unsupported) %>
+    <div class="report-warning">
+      <div class="title">Mestská časť nie je zapojená do portálu Odkaz pre starostu</div>
+      <div class="description">
+        <p>Tento podnet nemôžeme spracovať, nakoľko mestská časť nie je zatiaľ zapojená do portálu Odkaz pre starostu.</p>
+      </div>
+      <div class="buttons-row">
+        <%= link_to "Viac info", "/pridajte-sa", class: "button button-transparent" %>
+      </div>
+    </div>
+  <% elsif @draft.errors.added?(:base, :municipality_supported_on_old_portal) %>
+    <div class="report-warning">
+      <div class="title">Samospráva ešte nebola premigrovaná</div>
+      <div class="description">
+        <p>Tento podnet môžete zatiaľ zverejniť na pôvodnom portáli Odkazu pre starostu.</p>
+      </div>
+      <div class="buttons-row">
+        <%= link_to "Prejsť na starý portál", "https://www.odkazprestarostu.sk", class: "button button-transparent", target: :_blank %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="report-suggestion-description"></div>

@@ -8,14 +8,20 @@
     <span>Späť</span>
   <% end %>
 
-  <% if @draft.suggestions %>
-    <%= render partial: 'suggestions', object: @draft.suggestions %>
-  <% else %>
-    <%= turbo_frame_tag @draft, src: generate_issues_draft_suggestions_path(@draft), target: :_top do %>
-      <section class="loader-con">
-        <h1>Analyzujú sa fotky</h1>
-        <%= image_tag "loading.gif", style: "width: 10em; margin: 0 auto; display: block;" %>
-      </section>
-    <% end %>
+  <% if @draft.municipality_errors? %>
+    <%= render partial: 'issues/drafts/unsupported_municipality' %>
   <% end %>
+
+  <div id="draft_content">
+    <% if @draft.suggestions %>
+      <%= render partial: 'suggestions', object: @draft.suggestions %>
+    <% else %>
+      <%= turbo_frame_tag @draft, src: generate_issues_draft_suggestions_path(@draft), target: :_top do %>
+        <section class="loader-con">
+          <h1>Analyzujú sa fotky</h1>
+          <%= image_tag "loading.gif", style: "width: 10em; margin: 0 auto; display: block;" %>
+        </section>
+      <% end %>
+    <% end %>
+  </div>
 </section>

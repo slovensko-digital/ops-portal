@@ -8,7 +8,11 @@
     <span>Späť</span>
   <% end %>
 
-  <h1>Popis podnetu</h1>
+	<% if @draft.municipality_errors? %>
+		<%= render partial: 'issues/drafts/unsupported_municipality' %>
+	<% end %>
+
+	<h1>Popis podnetu</h1>
 
   <div class="report-suggestion-description">Jasne, vecne a&nbsp;slušne popíšte problém vo verejnom priestore. <strong>Nahlasujte naraz len jeden problém na jednom mieste.</strong></div>
 
