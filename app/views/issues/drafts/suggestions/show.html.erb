@@ -8,6 +8,10 @@
     <span>Späť</span>
   <% end %>
 
+  <% if @draft.municipality_errors? %>
+    <%= render partial: 'issues/drafts/unsupported_municipality' %>
+  <% end %>
+
   <% if @draft.suggestions %>
     <%= render partial: 'suggestions', object: @draft.suggestions %>
   <% else %>
