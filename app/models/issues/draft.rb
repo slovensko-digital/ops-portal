@@ -31,6 +31,7 @@
 #  updated_at              :datetime         not null
 #  author_id               :bigint           not null
 #  category_id             :bigint
+#  issue_id                :bigint
 #  subcategory_id          :bigint
 #  subtype_id              :bigint
 #
@@ -43,6 +44,7 @@ class Issues::Draft < ApplicationRecord
     photo.variant :small, resize_to_fill: [ 360, 360 ]
   end
 
+  belongs_to :issue, optional: true
   belongs_to :category, class_name: "Issues::Category", optional: true
   belongs_to :subcategory, class_name: "Issues::Subcategory", optional: true
   belongs_to :subtype, class_name: "Issues::Subtype", optional: true
@@ -91,15 +93,14 @@ class Issues::Draft < ApplicationRecord
         municipality_district: municipality_district,
       )
 
-      # TODO delete draft after success
-      self.update_attribute(:submitted, true)
-
       photos.each do |photo|
         issue.photos.attach(photo.blob)
       end
 
       issue.save!
       issue.author.subscribe_to(issue)
+
+      self.update!(submitted: true, issue: issue)
 
       SyncIssueToTriageJob.perform_later(issue)
     end
