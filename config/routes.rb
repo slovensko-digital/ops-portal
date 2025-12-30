@@ -130,10 +130,10 @@ Rails.application.routes.draw do
   # legacy urls redirects
   get "r/login", to:  redirect("/login")
   get "r/vsetky-podnety", to: redirect("/dopyty")
+  get "r/ludia/:legacy_id" => "legacy/redirects#show_user"
   get "r/:municipality_slug" => "legacy/redirects#index"
   get "r/:municipality_slug/vsetky-podnety" => "legacy/redirects#search_list"
-  get "r/:municipality_slug/podnety/ulica" => "legacy/redirects#search_list"
-  get "r/:municipality_slug/podnety/ulica/*" => "legacy/redirects#search_list"
+  get "r/:municipality_slug/podnety/ulica/:legacy_id/*" => "legacy/redirects#search_street"
   get "r/:municipality_slug/statistiky" => "legacy/redirects#search_stats"
   get "r/:municipality_slug/mapa" => "legacy/redirects#search_map"
   get "r/:municipality_slug/vsetky-aktuality", to: redirect("/aktuality")
