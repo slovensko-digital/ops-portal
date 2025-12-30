@@ -2,3 +2,9 @@ ba_primacialne_namestie:
     name: "Primaciálne námestie"
     municipality_id: 1
     whitelisted: true
+
+trencin_viedenska_cesta:
+    name: "Viedenská cesta"
+    legacy_id: 1480
+    municipality_id: 2
+    whitelisted: true

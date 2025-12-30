@@ -71,10 +71,10 @@ class Legacy::RedirectsTest < ApplicationSystemTestCase
     assert_text "Mali ste účet na pôvodnom portáli Odkaz pre starostu"
   end
 
-  test "user gets redirected from legacy street slug to municipality issues path" do
+  test "user gets redirected from legacy street slug to municipality issues path with street" do
     visit "/r/trencin/podnety/ulica/1480/viedenska-cesta-stara-cast"
 
-    assert_current_path issues_path(obec: "Trenčín")
+    assert_current_path issues_path(obec: "Trenčín", ulica: "Viedenská cesta")
   end
 
   test "user gets redirected from legacy street index to municipality issues path" do
