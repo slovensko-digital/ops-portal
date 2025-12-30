@@ -7,6 +7,8 @@ class Legacy::RedirectsController < ApplicationController
   end
 
   def search_list
+    return redirect_to issues_path unless @municipality
+
     municipality_district = @municipality.municipality_districts.where("? = ANY(aliases)", params[:municipality_district_slug]).first
     if municipality_district
       redirect_to issues_path(obec: @municipality.name, cast: municipality_district.name)
@@ -16,6 +18,8 @@ class Legacy::RedirectsController < ApplicationController
   end
 
   def search_street
+    return redirect_to issues_path unless @municipality
+
     street = Street.find_by!(legacy_id: params[:legacy_id])
     redirect_params = { obec: @municipality.name, ulica: street.name }
 
@@ -28,10 +32,14 @@ class Legacy::RedirectsController < ApplicationController
   end
 
   def search_stats
+    return redirect_to issues_path unless @municipality
+
     redirect_to issues_path(obec: @municipality.name, tab: "stats")
   end
 
   def search_map
+    return redirect_to issues_path unless @municipality
+
     redirect_to issues_path(obec: @municipality.name, tab: "map")
   end
 
