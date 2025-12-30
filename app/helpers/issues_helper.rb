@@ -26,13 +26,15 @@ module IssuesHelper
     l(date.to_date, **options)
   end
 
-  def issue_state_badge(issue, custom_class: "")
-    state = if issue.archived?
-              @archived_state ||= Issues::State.archived.first
-    else
-              issue.state
-    end
+  def issue_state_badge(issue, html_options = {})
+    name = issue.archived? ? "Archivovaný" : issue.state.name
 
-    tag.div(state.name, class: "state state-#{state.name.parameterize} #{custom_class}")
+    html_options[:class] = class_names(
+      "state",
+      "state-#{name.parameterize}",
+      html_options[:class]
+    )
+
+    tag.div(name, **html_options)
   end
 end
