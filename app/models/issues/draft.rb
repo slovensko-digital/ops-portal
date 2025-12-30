@@ -60,7 +60,7 @@ class Issues::Draft < ApplicationRecord
   validate :photos_allowed_content_type, on: :photos_step
 
   validate :no_duplicates_nearby, on: :checks_step, unless: :duplicates_shown?
-  validate :municipality_supported, on: :checks_step
+  validate :municipality_supported, on: [ :suggestions_step, :details_step, :checks_step ]
   validate :checks_passed, on: :checks_step
 
   before_save :reset_address_details, if: -> { will_save_change_to_latitude? || will_save_change_to_longitude? }
@@ -158,12 +158,6 @@ class Issues::Draft < ApplicationRecord
   end
 
   def municipality_errors?
-    if address_data.blank?
-      return false
-    end
-
-    municipality_supported
-
     errors.added?(:base, :municipality_unsupported) ||
       errors.added?(:base, :municipality_district_unsupported) ||
       errors.added?(:base, :municipality_supported_on_old_portal)
@@ -194,6 +188,8 @@ class Issues::Draft < ApplicationRecord
   end
 
   def municipality_supported
+    return if address_data.blank?
+
     active_municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb, street: address_street)
     errors.add(:base, :municipality_supported_on_old_portal) if active_municipality && active_municipality.active_on_old_portal?
     errors.add(:base, :municipality_unsupported) if active_municipality.nil? && municipality_district.nil?
