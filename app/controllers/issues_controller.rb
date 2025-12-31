@@ -13,7 +13,7 @@ class IssuesController < ApplicationController
   def index
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
-    scope = Issue.searchable.includes(:state, :municipality_district, :municipality)
+    scope = Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject)
 
     case @tab
     when "list"
