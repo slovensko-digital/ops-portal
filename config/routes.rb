@@ -137,8 +137,8 @@ Rails.application.routes.draw do
   get "r/:municipality_slug/statistiky" => "legacy/redirects#search_stats"
   get "r/:municipality_slug/mapa" => "legacy/redirects#search_map"
   get "r/:municipality_slug/vsetky-aktuality", to: redirect("/aktuality")
-  get "r/:municipality_slug/podnety/:legacy_id/:slug/aktualizovat-podnet" => "legacy/redirects#show_issue"
   get "r/:municipality_slug/podnety/:legacy_id/:slug" => "legacy/redirects#show_issue"
+  get "r/:municipality_slug/podnety/:legacy_id/:slug/*" => "legacy/redirects#show_issue" # fix for bogus crawlers
   get "r/:municipality_slug/podnety/:municipality_district_slug" => "legacy/redirects#search_list"
   get "r/:municipality_slug/pridat-podnet" => "legacy/redirects#create_issue"
 

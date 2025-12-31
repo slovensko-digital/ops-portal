@@ -5,18 +5,12 @@ class Cms::PagesController < ApplicationController
   def index
     slugs = params[:path].split("/")
 
-    root_category = Cms::Category.find_by(id: ENV["CMS_ROOT_CATEGORY_ID"])
-
-    raise(Exception.new("Missing required cms root category")) if root_category.nil?
-
+    root_category = Cms::Category.find(ENV["CMS_ROOT_CATEGORY_ID"])
     result = Cms::Page.find_by_path(root_category, slugs)
 
-    if result.nil?
-      raise_not_found
-    else
-      @category, @page = result
-    end
+    return raise_not_found unless result
 
+    @category, @page = result
     if @page
       render :show
     else
@@ -27,6 +21,6 @@ class Cms::PagesController < ApplicationController
   private
 
   def raise_not_found
-    raise ActionController::RoutingError.new("Not Found in Cms")
+    raise ActionController::RoutingError, "Not Found"
   end
 end
