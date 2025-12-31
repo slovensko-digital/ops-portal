@@ -117,3 +117,5 @@ gem "aws-sdk-pinpointsmsvoicev2"
 gem "rollbar"
 
 gem "email_reply_parser", "~> 0.5.11"
+
+gem "sitemap_generator"
