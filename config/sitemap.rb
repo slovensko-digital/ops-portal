@@ -1,6 +1,5 @@
 SitemapGenerator::Sitemap.default_host = "https://novy.odkazprestarostu.sk/"
 SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/"
-SitemapGenerator::Sitemap.create_index = true
 
 SitemapGenerator::Sitemap.create do
   add root_path, changefreq: "daily", priority: 1.0
@@ -9,7 +8,7 @@ SitemapGenerator::Sitemap.create do
 
   add new_issues_draft_path, changefreq: "monthly", priority: 0.9
 
-  Issue.searchable.find_each do |issue|
+  Issue.searchable.with_attached_photos.find_each do |issue|
     images = []
     if issue.photos.attached?
       issue.photos.each do |photo|
@@ -42,12 +41,5 @@ SitemapGenerator::Sitemap.create do
     add issues_path(obec: municipality.name),
         changefreq: "daily",
         priority: 0.6
-  end
-
-  User.where(anonymous: false, banned: false).find_each do |user|
-    add user_path(user),
-        lastmod: user.updated_at,
-        changefreq: "monthly",
-        priority: 0.5
   end
 end
