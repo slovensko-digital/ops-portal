@@ -16,7 +16,7 @@
       <picture>
         <% if issue.praise? %>
           <%= praise_image_tag(issue) %>
-        <% elsif issue.photos.attached? %>
+        <% elsif issue.photos.attached? && issue.photos[0].representable? %>
           <%= responsive_image_tag issue.photos[0], srcset: [:small, :normal], alt: "Fotografia podnetu" %>
         <% end %>
       </picture>
