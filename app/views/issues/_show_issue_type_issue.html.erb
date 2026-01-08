@@ -8,7 +8,7 @@
           <%= simple_format issue.description %>
         </div>
         <div class="podnet-pictures-con">
-          <%= tag.figure class: "big-picture", data: { action: "click->zoombox#open", zoombox_img_src_param: issue.photos.attached? ? url_for(issue.photos[0].variant(:full)) : nil, zoombox_img_index_param: 0, zoombox_group_param: dom_id(issue) } do %>
+          <%= tag.figure class: "big-picture", data: { action: "click->zoombox#open", zoombox_img_src_param: (issue.photos.attached? && issue.photos[0].representable?) ? url_for(issue.photos[0].variant(:full)) : nil, zoombox_img_index_param: 0, zoombox_group_param: dom_id(issue) } do %>
             <div class="lens-image">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
                 <path d="M38,36.59l-10.02-10.02c2.49-2.82,4.02-6.52,4.02-10.57C32,7.18,24.82,0,16,0S0,7.18,0,16s7.18,16,16,16c4.05,0,7.75-1.53,10.57-4.02l10.02,10.02,1.41-1.41ZM16,30c-7.72,0-14-6.28-14-14S8.28,2,16,2s14,6.28,14,14-6.28,14-14,14Z"/>
@@ -16,11 +16,12 @@
               </svg>
             </div>
             <picture>
-              <%= responsive_image_tag issue.photos[0], srcset: [:normal, :full]  if issue.photos.attached? %>
+              <%= responsive_image_tag issue.photos[0], srcset: [:normal, :full]  if issue.photos.attached? && issue.photos[0].representable? %>
             </picture>
           <% end %>
           <% if issue.photos.count > 1 %>
             <% issue.photos[1..].each.with_index(1) do |photo, index| %>
+              <% next unless photo.representable? %>
               <%= tag.figure class: "small-picture", data: { action: "click->zoombox#open", zoombox_img_src_param: url_for(photo.variant(:full)), zoombox_img_index_param: index, zoombox_group_param: dom_id(issue) } do %>
                 <div class="lens-image">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
