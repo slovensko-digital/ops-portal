@@ -2,3 +2,4 @@ User-agent: *
 Disallow: /dopyty/activities/
 Disallow: /dopyty/*/issue_like
 Disallow: /dopyty/*/issue_subscription
+Sitemap: https://novy.odkazprestarostu.sk/sitemaps/sitemap.xml.gz

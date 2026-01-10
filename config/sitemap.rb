@@ -1,5 +1,17 @@
+require 'aws-sdk-s3'
+
 SitemapGenerator::Sitemap.default_host = "https://novy.odkazprestarostu.sk/"
 SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/"
+
+sitemap_config = Rails.application.config_for(:sitemap)
+SitemapGenerator::Sitemap.adapter = SitemapGenerator::AwsSdkAdapter.new(
+  sitemap_config[:bucket],
+  acl: nil,
+  access_key_id: sitemap_config[:access_key_id],
+  secret_access_key: sitemap_config[:secret_access_key],
+  region: sitemap_config[:region],
+  endpoint: sitemap_config[:endpoint]
+)
 
 SitemapGenerator::Sitemap.create do
   add root_path, changefreq: "daily", priority: 1.0
