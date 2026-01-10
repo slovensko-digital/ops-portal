@@ -46,7 +46,7 @@ SitemapGenerator::Sitemap.create do
       path = "#{page.category.slug}/#{page.slug}"
     end
 
-    add path, lastmod: page.updated_at, priority: 0.7
+    add path, lastmod: page.updated_at, changefreq: "weekly", priority: 0.7
   end
 
   Municipality.active.where(active_on_old_portal: false).find_each do |municipality|
