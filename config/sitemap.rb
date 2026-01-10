@@ -1,4 +1,4 @@
-require 'aws-sdk-s3'
+require "aws-sdk-s3"
 
 SitemapGenerator::Sitemap.default_host = "https://novy.odkazprestarostu.sk/"
 SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/"
