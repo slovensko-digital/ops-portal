@@ -16,7 +16,7 @@
           <% if comment.legacy_data.blank? %>
             <div class="prose">
               <% if comment.responsible_subject? || comment.agent? %>
-                <%= simple_format(comment.text) %>
+                <%= simple_format(comment.text, {}, wrapper_tag: "div") %>
               <% else %>
                 <%= simple_format(h(comment.text)) %>
               <% end %>
