@@ -728,9 +728,6 @@ class ZammadApiClient
     if article.type == "email"
       body = strip_tags_from_article_body(EmailParser.parse_text(body)) if body.presence
       content_type = "text/plain"
-    elsif content_type == "text/html"
-      body = Html2Text.convert(body)
-      content_type = "text/plain"
     end
 
     {
@@ -750,7 +747,7 @@ class ZammadApiClient
           filename: attachment.filename,
           content_type: content_type,
           data64: Base64.strict_encode64(attachment.download)
-        }
+        } unless content_type == "text/html"
       end.compact
     }
   end
