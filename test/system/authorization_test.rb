@@ -73,6 +73,78 @@ class AccountsTest < ApplicationSystemTestCase
     assert_selector "a.login", text: "Prihlásiť"
   end
 
+  test "login via email (magic link)" do
+    user = users(:one)
+
+    visit "/login"
+    click_on "Prihlásiť sa cez email"
+
+    assert_selector "h1", text: "Prihlásenie bez hesla"
+
+    fill_in "Email", with: user.email
+    click_on "Poslať prihlasovací odkaz"
+
+    assert_text "Email s prihlasovacím odkazom bol odoslaný"
+
+    perform_enqueued_jobs
+    email = ActionMailer::Base.deliveries.last
+    assert_equal [ user.email ], email.to
+    assert_match(/Prihlásenie do profilu/, email.subject)
+
+    link = email.body.encoded.match(/href="([^"]+)"/)[1]
+
+    visit link
+
+    assert_selector "h1", text: "Potvrdenie prihlásenia"
+    click_on "Vstúpiť do portálu"
+
+    assert_text "Prihlásenie bolo úspešné"
+    assert_selector "a.login", text: user.firstname
+  end
+
+  test "login via email with invalid link" do
+    visit "/login"
+    click_on "Prihlásiť sa cez email"
+    fill_in "Email", with: users(:one).email
+    click_on "Poslať prihlasovací odkaz"
+
+    visit "/email-auth?key=invalid_key"
+
+    assert_text "Neplatný, expirovaný alebo už použitý prihlasovací odkaz"
+    assert_selector "h1", text: "Prihlásenie"
+  end
+
+  test "municipality user cannot login via password" do
+    user = users(:municipality)
+
+    visit "/login"
+    fill_in "Email", with: user.email
+    fill_in "Heslo", with: "password"
+    click_on "Prihlásiť"
+
+    assert_text "Pre tento účet je povolené iba prihlásenie cez email"
+    assert_selector "a.login", text: "Prihlásiť"
+  end
+
+  test "municipality user can login via email" do
+    user = users(:municipality)
+
+    visit "/login"
+    click_on "Prihlásiť sa cez email"
+    fill_in "Email", with: user.email
+    click_on "Poslať prihlasovací odkaz"
+
+    perform_enqueued_jobs
+    email = ActionMailer::Base.deliveries.last
+    link = email.body.encoded.match(/href="([^"]+)"/)[1]
+
+    visit link
+    click_on "Vstúpiť do portálu"
+
+    assert_text "Prihlásenie bolo úspešné"
+    assert_selector "a.login", text: user.firstname
+  end
+
   private
 
   def verify_account
