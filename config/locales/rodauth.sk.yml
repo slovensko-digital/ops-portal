@@ -22,6 +22,14 @@ sk:
     create_account_link_text: Vytvoriť účet
     create_account_notice_flash: Your account has been created
     create_account_page_title: Vytvoriť účeť
+    email_auth_button: Vstúpiť do portálu
+    email_auth_email_sent_notice_flash: Email s prihlasovacím odkazom bol odoslaný.
+    email_auth_email_subject: Prihlásenie do profilu
+    email_auth_error_flash: Tento odkaz je neplatný alebo bol otvorený v inom prehliadači. Vyžiadajte si nový.
+    email_auth_page_title: Potvrdenie prihlásenia
+    email_auth_request_button: Poslať prihlasovací odkaz
+    email_auth_request_error_flash: Pri žiadosti o prihlasovací odkaz nastala chyba.
+    email_auth_request_page_title: Prihlásenie cez email
     email_subject_prefix: ''
     input_field_label_suffix: ''
     invalid_password_message: Zadali ste nesprávne heslo. Skúste znova.
@@ -38,6 +46,7 @@ sk:
     login_invalid_password_current_message: invalid current password
     login_invalid_password_match_message: passwords do not match
     login_error_flash: Prihlásenie bolo neúspešné.
+    login_error_requires_email_auth: Pre tento účet je povolené prihlásenie iba cez email.
     login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">Other Options</h2>
     login_label: Login
     login_not_valid_email_message: v nevhodnom formáte
@@ -52,6 +61,7 @@ sk:
     need_password_notice_flash: Login recognized, please enter your password
     new_password_label: Nové heslo
     new_password_confirm_label: Nové heslo (znova)
+    no_matching_email_auth_key_error_flash: Neplatný, expirovaný alebo už použitý prihlasovací odkaz.
     no_matching_login_message: Účet s týmto emailom neexistuje.
     no_matching_reset_password_key_error_flash: 'There was an error resetting your password: invalid or expired password reset key'
     no_matching_verify_account_key_error_flash: 'Pri overovaní účtu nastala chyba: Neplatný overovací klúč.'

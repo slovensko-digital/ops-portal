@@ -52,12 +52,15 @@
 #  external_id                      :integer
 #  legacy_id                        :integer
 #  municipality_id                  :bigint
+#  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #
 class User < ApplicationRecord
   include Rodauth::Rails.model
 
   attr_accessor :phone_verification_number
+
+  belongs_to :responsible_subject, optional: true
 
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true

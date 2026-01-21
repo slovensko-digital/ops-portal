@@ -1661,6 +1661,38 @@ ALTER SEQUENCE public.streets_id_seq OWNED BY public.streets.id;
 
 
 --
+-- Name: user_email_auth_keys; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_email_auth_keys (
+    id integer NOT NULL,
+    key character varying NOT NULL,
+    deadline timestamp(6) without time zone NOT NULL,
+    email_last_sent timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: user_email_auth_keys_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_email_auth_keys_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_email_auth_keys_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_email_auth_keys_id_seq OWNED BY public.user_email_auth_keys.id;
+
+
+--
 -- Name: user_identities; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1864,6 +1896,7 @@ CREATE TABLE public.users (
     phone_verification_attempted_at timestamp(6) without time zone,
     email_global_unsubscribe_token character varying NOT NULL,
     imported_at timestamp(6) without time zone,
+    responsible_subject_id bigint,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -2147,6 +2180,13 @@ ALTER TABLE ONLY public.responsible_subjects_users ALTER COLUMN id SET DEFAULT n
 --
 
 ALTER TABLE ONLY public.streets ALTER COLUMN id SET DEFAULT nextval('public.streets_id_seq'::regclass);
+
+
+--
+-- Name: user_email_auth_keys id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_email_auth_keys ALTER COLUMN id SET DEFAULT nextval('public.user_email_auth_keys_id_seq'::regclass);
 
 
 --
@@ -2541,6 +2581,14 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.streets
     ADD CONSTRAINT streets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_email_auth_keys user_email_auth_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_email_auth_keys
+    ADD CONSTRAINT user_email_auth_keys_pkey PRIMARY KEY (id);
 
 
 --
@@ -4133,10 +4181,13 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260121170436'),
+('20260121170411'),
 ('20251229150246'),
 ('20251226102461'),
 ('20251226102460'),
 ('20251226102459'),
+('20251213182025'),
 ('20251128215525'),
 ('20251118171856'),
 ('20251118000000'),

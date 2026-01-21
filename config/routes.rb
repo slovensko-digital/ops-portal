@@ -127,6 +127,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "homepage#show"
 
+  get "email-auth-request", to: "rodauth#email_auth_request", as: :email_auth_request
+
   # legacy urls redirects
   get "r/login", to:  redirect("/login")
   get "r/vsetky-podnety", to: redirect("/dopyty")

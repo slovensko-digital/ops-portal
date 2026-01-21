@@ -1,0 +1,26 @@
+<section class="forms-container report">
+  <h1>Prihlásenie bez hesla</h1>
+
+  <div class="form-other-con">
+    <div class="form-description prose">
+      <p>Zadajte vašu emailovú adresu. Pošleme vám dočasný odkaz, cez ktorý sa prihlásite.</p>
+      <p><strong>Upozornenie:</strong> Odkaz musíte otvoriť v tom istom prehliadači, v ktorom oň žiadate.</p>
+    </div>
+
+    <%= form_with url: rodauth.email_auth_request_path, method: :post, data: { turbo: false }, html: { novalidate: true } do |form| %>
+      <div class="form-items-con">
+        <div class="form-item-wrapper">
+          <%= form.label "login", rodauth.login_label %>
+          <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: "email", required: true, aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
+          <%= content_tag(:span, rodauth.field_error(rodauth.login_param), class: "error-message", id: "login_error_message") if rodauth.field_error(rodauth.login_param) %>
+        </div>
+
+        <%= form.submit rodauth.email_auth_request_button, class: "button" %>
+      </div>
+    <% end %>
+
+    <div style="text-align: center; margin-top: 1rem;">
+      <%= link_to "Späť na prihlásenie heslom", rodauth.login_path, class: "link" %>
+    </div>
+  </div>
+</section>
