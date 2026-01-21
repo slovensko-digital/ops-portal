@@ -3060,6 +3060,13 @@ CREATE INDEX index_issues_drafts_on_category_id ON public.issues_drafts USING bt
 
 
 --
+-- Name: index_issues_drafts_on_issue_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_issues_drafts_on_issue_id ON public.issues_drafts USING btree (issue_id);
+
+
+--
 -- Name: index_issues_drafts_on_subcategory_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3641,6 +3648,13 @@ CREATE INDEX index_users_on_municipality_id ON public.users USING btree (municip
 
 
 --
+-- Name: index_users_on_responsible_subject_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_responsible_subject_id ON public.users USING btree (responsible_subject_id);
+
+
+--
 -- Name: index_users_on_street_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3703,19 +3717,19 @@ ALTER TABLE ONLY public.user_password_reset_keys
 
 
 --
+-- Name: user_email_auth_keys fk_rails_1a2acb61d1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_email_auth_keys
+    ADD CONSTRAINT fk_rails_1a2acb61d1 FOREIGN KEY (id) REFERENCES public.users(id);
+
+
+--
 -- Name: legacy_agents fk_rails_1b2b63ec59; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.legacy_agents
     ADD CONSTRAINT fk_rails_1b2b63ec59 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
-
-
---
--- Name: legacy_issues_communications fk_rails_1cf0f8a10b; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_1cf0f8a10b FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
 
 
 --
@@ -3751,6 +3765,14 @@ ALTER TABLE ONLY public.issues_drafts
 
 
 --
+-- Name: legacy_issues_communications fk_rails_35b4962c3d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_35b4962c3d FOREIGN KEY (responsible_subjects_user_author_id) REFERENCES public.responsible_subjects_users(id);
+
+
+--
 -- Name: issues fk_rails_44771000d0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3775,19 +3797,19 @@ ALTER TABLE ONLY public.issues_updates
 
 
 --
+-- Name: issues_drafts fk_rails_4a07ddfeff; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_drafts
+    ADD CONSTRAINT fk_rails_4a07ddfeff FOREIGN KEY (issue_id) REFERENCES public.issues(id);
+
+
+--
 -- Name: issues fk_rails_4e60020611; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_4e60020611 FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
-
-
---
--- Name: legacy_issues_communications fk_rails_51ea2fa86c; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.legacy_issues_communications
-    ADD CONSTRAINT fk_rails_51ea2fa86c FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
 
 
 --
@@ -3959,14 +3981,6 @@ ALTER TABLE ONLY public.issue_likes
 
 
 --
--- Name: connector_activities fk_rails_90e9990402; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.connector_activities
-    ADD CONSTRAINT fk_rails_90e9990402 FOREIGN KEY (connector_tenant_id) REFERENCES public.connector_tenants(id);
-
-
---
 -- Name: legacy_labels fk_rails_91c3a6c92e; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4055,6 +4069,22 @@ ALTER TABLE ONLY public.responsible_subjects
 
 
 --
+-- Name: users fk_rails_b204e00255; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_rails_b204e00255 FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
+
+
+--
+-- Name: legacy_issues_communications fk_rails_b3a0e7e7b7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.legacy_issues_communications
+    ADD CONSTRAINT fk_rails_b3a0e7e7b7 FOREIGN KEY (agent_author_id) REFERENCES public.legacy_agents(id);
+
+
+--
 -- Name: user_verification_keys fk_rails_b5d6b8f85b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4116,6 +4146,14 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.issues_activity_votes
     ADD CONSTRAINT fk_rails_dd8812846f FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: connector_activities fk_rails_e5c13ad0c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.connector_activities
+    ADD CONSTRAINT fk_rails_e5c13ad0c7 FOREIGN KEY (connector_tenant_id) REFERENCES public.connector_tenants(id);
 
 
 --
@@ -4182,12 +4220,10 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20260121170436'),
-('20260121170411'),
-('20251229150246'),
+('20260121170411'),('20251229150246'),
 ('20251226102461'),
 ('20251226102460'),
 ('20251226102459'),
-('20251213182025'),
 ('20251128215525'),
 ('20251118171856'),
 ('20251118000000'),
@@ -4215,6 +4251,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250605200853'),
 ('20250605192922'),
 ('20250605190746'),
+('20250522185556'),
+('20250522184502'),
 ('20250522111247'),
 ('20250522105736'),
 ('20250522105410'),
