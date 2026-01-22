@@ -92,10 +92,11 @@ class AccountsTest < ApplicationSystemTestCase
     assert_match(/Prihlásenie do profilu/, email.subject)
 
     link = email.body.encoded.match(/href="([^"]+)"/)[1]
+    link = link.sub(%r{http://example.com}, "")
 
     visit link
 
-    assert_selector "h1", text: "Potvrdenie prihlásenia"
+    assert_selector "h1", text: "Dokončiť prihlásenie"
     click_on "Vstúpiť do portálu"
 
     assert_text "Prihlásenie bolo úspešné"
@@ -120,9 +121,9 @@ class AccountsTest < ApplicationSystemTestCase
     visit "/login"
     fill_in "Email", with: user.email
     fill_in "Heslo", with: "password"
-    click_on "Prihlásiť"
+    click_button "Prihlásiť"
 
-    assert_text "Pre tento účet je povolené iba prihlásenie cez email"
+    assert_text "Pre tento účet je povolené prihlásenie iba cez email."
     assert_selector "a.login", text: "Prihlásiť"
   end
 
@@ -131,14 +132,24 @@ class AccountsTest < ApplicationSystemTestCase
 
     visit "/login"
     click_on "Prihlásiť sa cez email"
+
+    assert_selector "h1", text: "Prihlásenie bez hesla"
+
     fill_in "Email", with: user.email
     click_on "Poslať prihlasovací odkaz"
 
+    assert_text "Email s prihlasovacím odkazom bol odoslaný"
+
     perform_enqueued_jobs
     email = ActionMailer::Base.deliveries.last
+    assert_equal [ user.email ], email.to
+    assert_match(/Prihlásenie do profilu/, email.subject)
+
     link = email.body.encoded.match(/href="([^"]+)"/)[1]
+    link = link.sub(%r{http://example.com}, "")
 
     visit link
+    assert_selector "h1", text: "Dokončiť prihlásenie"
     click_on "Vstúpiť do portálu"
 
     assert_text "Prihlásenie bolo úspešné"
