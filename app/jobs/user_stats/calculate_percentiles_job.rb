@@ -9,6 +9,8 @@ class UserStats::CalculatePercentilesJob < ApplicationJob
           PERCENT_RANK() OVER (ORDER BY stats_verified_issues_count) AS new_verified_percentile
         FROM
           users
+        WHERE
+          type = '#{User::Citizen.name}'
       )
       UPDATE
         users
