@@ -1,7 +1,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -9,6 +8,13 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
 
 --
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
@@ -1896,6 +1902,7 @@ CREATE TABLE public.users (
     stats_verified_issues_percentile numeric(5,4) DEFAULT 0.0,
     imported_at timestamp(6) without time zone,
     responsible_subject_id bigint,
+    type character varying,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -3661,6 +3668,13 @@ CREATE INDEX index_users_on_street_id ON public.users USING btree (street_id);
 
 
 --
+-- Name: index_users_on_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_type ON public.users USING btree (type);
+
+
+--
 -- Name: issues_fulltext_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4218,12 +4232,14 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260122093440'),
 ('20260121170436'),
 ('20260121170411'),
 ('20251229150246'),
 ('20251226102461'),
 ('20251226102460'),
 ('20251226102459'),
+('20251213182025'),
 ('20251128215525'),
 ('20251118171856'),
 ('20251118000000'),
@@ -4251,8 +4267,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250605200853'),
 ('20250605192922'),
 ('20250605190746'),
-('20250522185556'),
-('20250522184502'),
 ('20250522111247'),
 ('20250522105736'),
 ('20250522105410'),

@@ -123,7 +123,7 @@ class RodauthMain < Rodauth::Rails::Auth
     before_login_attempt do
       user = User.find_by(email: param(login_param))
 
-      if user && user.responsible_subject.present?
+      if user.is_a?(User::ResponsibleSubject)
         set_field_error(login_param, I18n.t("rodauth.login_error_requires_email_auth"))
         set_error_flash I18n.t("rodauth.login_error_requires_email_auth")
         response.status = 403
@@ -185,6 +185,7 @@ class RodauthMain < Rodauth::Rails::Auth
     before_create_account {
       custom_params = build_custom_params
 
+      account[:type] = "User::Citizen"
       account[:email_global_unsubscribe_token] = generate_unsubscribe_token
 
       if validate_custom_params(custom_params)

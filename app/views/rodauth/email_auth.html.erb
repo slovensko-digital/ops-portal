@@ -12,7 +12,7 @@
       <%= form.hidden_field rodauth.email_auth_key_param, value: params[rodauth.email_auth_key_param] %>
 
       <div class="form-items-con">
-        <%= form.submit rodauth.email_auth_button, class: "button" %>
+        <%= form.submit t("rodauth.email_auth_button"), class: "button" %>
       </div>
     <% end %>
   </div>
