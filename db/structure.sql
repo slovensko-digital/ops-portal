@@ -1896,6 +1896,7 @@ CREATE TABLE public.users (
     email_global_unsubscribe_token character varying NOT NULL,
     imported_at timestamp(6) without time zone,
     responsible_subject_id bigint,
+    type character varying,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -3661,6 +3662,13 @@ CREATE INDEX index_users_on_street_id ON public.users USING btree (street_id);
 
 
 --
+-- Name: index_users_on_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_type ON public.users USING btree (type);
+
+
+--
 -- Name: issues_fulltext_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4210,12 +4218,14 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260122093440'),
 ('20260121170436'),
 ('20260121170411'),
 ('20251229150246'),
 ('20251226102461'),
 ('20251226102460'),
 ('20251226102459'),
+('20251213182025'),
 ('20251128215525'),
 ('20251118171856'),
 ('20251118000000'),
@@ -4242,8 +4252,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20250605200853'),
 ('20250605192922'),
 ('20250605190746'),
-('20250522185556'),
-('20250522184502'),
 ('20250522111247'),
 ('20250522105736'),
 ('20250522105410'),

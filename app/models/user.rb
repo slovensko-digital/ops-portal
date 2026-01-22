@@ -43,6 +43,7 @@
 #  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
 #  status                           :integer          default("unverified"), not null
 #  timestamp                        :datetime
+#  type                             :string
 #  uuid                             :uuid             not null
 #  verification                     :string
 #  verified                         :boolean          default(FALSE)
@@ -59,8 +60,6 @@ class User < ApplicationRecord
   include Rodauth::Rails.model
 
   attr_accessor :phone_verification_number
-
-  belongs_to :responsible_subject, optional: true
 
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true
