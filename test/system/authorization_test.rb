@@ -109,6 +109,8 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "Email", with: users(:one).email
     click_on "Poslať prihlasovací odkaz"
 
+    assert_text "Email s prihlasovacím odkazom bol odoslaný"
+
     visit "/email-auth?key=invalid_key"
 
     assert_text "Neplatný, expirovaný alebo už použitý prihlasovací odkaz"
