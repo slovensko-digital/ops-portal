@@ -23,6 +23,7 @@ en:
     create_account_notice_flash: Your account has been created
     create_account_page_title: Create Account
     email_auth_button: Enter Portal
+    email_auth_email_recently_sent_error_flash: An email has recently been sent to you with a link to login.
     email_auth_email_sent_notice_flash: An email with a login link has been sent.
     email_auth_email_subject: Login to Profile
     email_auth_error_flash: This link is invalid or was opened in a different browser. Please request a new one.
