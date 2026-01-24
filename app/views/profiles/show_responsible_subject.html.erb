@@ -1,0 +1,32 @@
+<% content_for(:title, "Profil samosprávy") %>
+
+<section class="profile">
+  <h1>Profil samosprávy</h1>
+  <div class="profile-con">
+
+    <!-- Profil -->
+    <div>
+      <div class="profile-wrapper">
+        <!-- Picture and Name -->
+        <div class="profile-info-panel">
+          <figure>
+            <picture>
+              <%# Použijeme defaultný avatar alebo existujúci, ale bez možnosti zmeny %>
+              <%= user_avatar(@user, variant: :big) %>
+            </picture>
+          </figure>
+
+          <div class="profile-name"><%= @user.display_name %></div>
+          <div class="profile-since"><%= @user.email %></div>
+
+          <!-- Button -->
+          <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button button-secondary", style: "margin-top: 1rem;", data: { turbo: false } %>
+        </div>
+
+        <div class="profile-results-con">
+          <%= link_to "Zobraziť podnety", relevant_issues_path, class: "button" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

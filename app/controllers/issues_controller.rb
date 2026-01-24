@@ -5,7 +5,13 @@ class IssuesController < ApplicationController
   before_action :check_edit_permissions, only: %i[ edit update ]
 
   def relevant
-    path = current_user&.municipality ? issues_path(obec: current_user.municipality.name) : issues_path
+    path = if current_user.is_a?(User::Citizen) && current_user.municipality
+      issues_path(obec: current_user.municipality.name)
+    elsif current_user.is_a?(User::ResponsibleSubject)
+      issues_path(zodpovedny: current_user.responsible_subject.subject_name)
+    else
+      issues_path
+    end
 
     redirect_to path
   end
@@ -230,7 +236,7 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :obec,
           label: "Obec",
-          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
+          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name")).pluck(:name) },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = Municipality.active.where(name: params[:obec]).pluck(:id)
@@ -246,7 +252,7 @@ class IssuesController < ApplicationController
 
             MunicipalityDistrict.joins(:municipality)
               .where(municipalities: { name: params[:obec], active: true })
-              .order(Arel.sql("municipality_districts.name COLLATE unicode"))
+              .order(Arel.sql("municipality_districts.name"))
               .pluck(:name)
           end,
           filter: ->(scope, params) do
@@ -259,7 +265,7 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Autocomplete.new(
           param_name: :zodpovedny,
           label: "Zodpovedný subjekt",
-          items: -> { ResponsibleSubject.active.order(Arel.sql("subject_name COLLATE unicode")).pluck("subject_name").uniq },
+          items: -> { ResponsibleSubject.active.order(Arel.sql("subject_name")).pluck("subject_name").uniq },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = ResponsibleSubject.active.where(subject_name: params[:zodpovedny]).pluck(:id)
