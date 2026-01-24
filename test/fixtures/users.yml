@@ -31,7 +31,7 @@ non_full_access:
   onboarded: true
   email_global_unsubscribe_token: non_full_access<%= SecureRandom.urlsafe_base64(32) %>
 
-municipality:
+responsible_subject:
   type: User::ResponsibleSubject
   email: nitra@mesto.sk
   firstname: Mesto

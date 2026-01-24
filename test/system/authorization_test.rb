@@ -73,7 +73,7 @@ class AccountsTest < ApplicationSystemTestCase
     assert_selector "a.login", text: "Prihlásiť"
   end
 
-  test "login via email (magic link)" do
+  test "citizen user can login via email (magic link)" do
     user = users(:one)
 
     visit "/login"
@@ -84,7 +84,7 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "Email", with: user.email
     click_on "Poslať prihlasovací odkaz"
 
-    assert_text "Email s prihlasovacím odkazom bol odoslaný"
+    assert_text "Email s prihlasovacím odkazom bol odoslaný."
 
     perform_enqueued_jobs
     email = ActionMailer::Base.deliveries.last
@@ -104,21 +104,26 @@ class AccountsTest < ApplicationSystemTestCase
   end
 
   test "login via email with invalid link" do
+    user = users(:one)
+
     visit "/login"
     click_on "Prihlásiť sa cez email"
-    fill_in "Email", with: users(:one).email
+
+    assert_selector "h1", text: "Prihlásenie bez hesla"
+
+    fill_in "Email", with: user.email
     click_on "Poslať prihlasovací odkaz"
 
-    assert_text "Email s prihlasovacím odkazom bol odoslaný"
+    assert_text "Email s prihlasovacím odkazom bol odoslaný."
 
     visit "/email-auth?key=invalid_key"
 
-    assert_text "Neplatný, expirovaný alebo už použitý prihlasovací odkaz"
+    assert_text "Neplatný, expirovaný alebo už použitý prihlasovací odkaz."
     assert_selector "h1", text: "Prihlásenie"
   end
 
-  test "municipality user cannot login via password" do
-    user = users(:municipality)
+  test "responsible subject user cannot login via password" do
+    user = users(:responsible_subject)
 
     visit "/login"
     fill_in "Email", with: user.email
@@ -129,8 +134,8 @@ class AccountsTest < ApplicationSystemTestCase
     assert_selector "a.login", text: "Prihlásiť"
   end
 
-  test "municipality user can login via email" do
-    user = users(:municipality)
+  test "responsible subject user can login via email (magic link)" do
+    user = users(:responsible_subject)
 
     visit "/login"
     click_on "Prihlásiť sa cez email"
@@ -140,7 +145,7 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "Email", with: user.email
     click_on "Poslať prihlasovací odkaz"
 
-    assert_text "Email s prihlasovacím odkazom bol odoslaný"
+    assert_text "Email s prihlasovacím odkazom bol odoslaný."
 
     perform_enqueued_jobs
     email = ActionMailer::Base.deliveries.last
