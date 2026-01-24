@@ -76,30 +76,12 @@ class AccountsTest < ApplicationSystemTestCase
   test "citizen user can login via email (magic link)" do
     user = users(:one)
 
-    visit "/login"
-    click_on "Prihlásiť sa cez email"
+    visit root_path
 
-    assert_selector "h1", text: "Prihlásenie bez hesla"
+    assert_selector "a.login", text: "Prihlásiť"
 
-    fill_in "Email", with: user.email
-    click_on "Poslať prihlasovací odkaz"
+    login_via_magic_link(user.email)
 
-    assert_text "Email s prihlasovacím odkazom bol odoslaný."
-
-    perform_enqueued_jobs
-    email = ActionMailer::Base.deliveries.last
-    assert_equal [ user.email ], email.to
-    assert_match(/Prihlásenie do profilu/, email.subject)
-
-    link = email.body.encoded.match(/href="([^"]+)"/)[1]
-    link = link.sub(%r{http://example.com}, "")
-
-    visit link
-
-    assert_selector "h1", text: "Dokončiť prihlásenie"
-    click_on "Vstúpiť do portálu"
-
-    assert_text "Prihlásenie bolo úspešné"
     assert_selector "a.login", text: user.firstname
   end
 
@@ -137,29 +119,12 @@ class AccountsTest < ApplicationSystemTestCase
   test "responsible subject user can login via email (magic link)" do
     user = users(:responsible_subject)
 
-    visit "/login"
-    click_on "Prihlásiť sa cez email"
+    visit root_path
 
-    assert_selector "h1", text: "Prihlásenie bez hesla"
+    assert_selector "a.login", text: "Prihlásiť"
 
-    fill_in "Email", with: user.email
-    click_on "Poslať prihlasovací odkaz"
+    login_via_magic_link(user.email)
 
-    assert_text "Email s prihlasovacím odkazom bol odoslaný."
-
-    perform_enqueued_jobs
-    email = ActionMailer::Base.deliveries.last
-    assert_equal [ user.email ], email.to
-    assert_match(/Prihlásenie do profilu/, email.subject)
-
-    link = email.body.encoded.match(/href="([^"]+)"/)[1]
-    link = link.sub(%r{http://example.com}, "")
-
-    visit link
-    assert_selector "h1", text: "Dokončiť prihlásenie"
-    click_on "Vstúpiť do portálu"
-
-    assert_text "Prihlásenie bolo úspešné"
     assert_selector "a.login", text: user.firstname
   end
 

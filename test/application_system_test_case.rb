@@ -21,5 +21,6 @@ end
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium_chrome_no_password_warning
 
+  include ActiveJob::TestHelper
   include AuthHelper
 end
