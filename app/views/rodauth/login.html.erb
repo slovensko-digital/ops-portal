@@ -34,7 +34,7 @@
     <div class="form-or-notice">alebo</div>
 
     <div class="form-items-con">
-      <%= link_to "Prihlásiť sa cez email", rodauth.email_auth_request_path, class: "button" %>
+      <%= button_to "Prihlásiť sa cez email", rodauth.email_auth_request_path, method: :get, data: { turbo: false }, class: "button" %>
 
       <% if ENV['FACEBOOK_APP_ID'].present? || ENV['GOOGLE_CLIENT_ID'].present? %>
           <% if ENV['GOOGLE_CLIENT_ID'].present? %>
