@@ -10,7 +10,7 @@ class UserStats::CalculatePercentilesJob < ApplicationJob
         FROM
           users
         WHERE
-          type = '#{User::Citizen.name}'
+          type = ?
       )
       UPDATE
         users
@@ -24,6 +24,6 @@ class UserStats::CalculatePercentilesJob < ApplicationJob
         users.id = ranked_stats.id;
     SQL
 
-    ActiveRecord::Base.connection.execute(sql)
+    ActiveRecord::Base.connection.execute(ActiveRecord::Base.sanitize_sql_array([ sql, User::Citizen.name ]))
   end
 end
