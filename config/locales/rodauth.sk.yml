@@ -23,6 +23,7 @@ sk:
     create_account_notice_flash: Your account has been created
     create_account_page_title: Vytvoriť účeť
     email_auth_button: Vstúpiť do portálu
+    email_auth_email_recently_sent_error_flash: Prednedávnom sme Vám zaslali email s odkazom na prihlásenie.
     email_auth_email_sent_notice_flash: Email s prihlasovacím odkazom bol odoslaný.
     email_auth_email_subject: Prihlásenie do profilu
     email_auth_error_flash: Tento odkaz je neplatný alebo bol otvorený v inom prehliadači. Vyžiadajte si nový.
