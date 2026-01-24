@@ -236,7 +236,7 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Dropdown.new(
           param_name: :obec,
           label: "Obec",
-          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name")).pluck(:name) },
+          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = Municipality.active.where(name: params[:obec]).pluck(:id)
@@ -252,7 +252,7 @@ class IssuesController < ApplicationController
 
             MunicipalityDistrict.joins(:municipality)
               .where(municipalities: { name: params[:obec], active: true })
-              .order(Arel.sql("municipality_districts.name"))
+              .order(Arel.sql("municipality_districts.name COLLATE unicode"))
               .pluck(:name)
           end,
           filter: ->(scope, params) do
@@ -265,7 +265,7 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::Autocomplete.new(
           param_name: :zodpovedny,
           label: "Zodpovedný subjekt",
-          items: -> { ResponsibleSubject.active.order(Arel.sql("subject_name")).pluck("subject_name").uniq },
+          items: -> { ResponsibleSubject.active.order(Arel.sql("subject_name COLLATE unicode")).pluck("subject_name").uniq },
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             ids = ResponsibleSubject.active.where(subject_name: params[:zodpovedny]).pluck(:id)
