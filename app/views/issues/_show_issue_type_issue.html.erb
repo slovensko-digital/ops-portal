@@ -159,7 +159,9 @@
               <div class="unverified-notice-title">Tento podnet bol archivovaný a&nbsp;preto bola diskusia k&nbsp;nemu uzatvorená.</div>
             </div>
           <% else %>
-            <% if current_user.full_access? %>
+            <% if current_user.is_a?(User::ResponsibleSubject) && issue.responsible_subject != current_user.responsible_subject %>
+              <%= render partial: "issues/comments_responsible_subject_mismatch" %>
+            <% elsif current_user.full_access? %>
               <%= render partial: "issues/new_issue_activity_buttons" %>
               <%= turbo_frame_tag "activity_form_content" %>
             <% else %>
