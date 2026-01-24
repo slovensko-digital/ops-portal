@@ -11,11 +11,9 @@
         <div class="profile-info-panel">
           <figure>
             <picture>
-              <%# Použijeme defaultný avatar alebo existujúci, ale bez možnosti zmeny %>
               <%= user_avatar(@user, variant: :big) %>
             </picture>
           </figure>
-
           <div class="profile-name"><%= @user.display_name %></div>
           <div class="profile-since"><%= @user.email %></div>
 
