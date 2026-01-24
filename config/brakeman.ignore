@@ -60,6 +60,40 @@
     {
       "warning_type": "Dynamic Render Path",
       "warning_code": 15,
+      "fingerprint": "9bece2c0f13a03e1d88a826210b86fd760ad21cfdf1d6d6034aa57f314be7fe2",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/profiles/show.html.erb",
+      "line": 69,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => current_user.watched_issues.currently_viewable_by(current_user).newest.page(params[:page]).per(8), {})",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "ProfilesController",
+          "method": "watched_issues",
+          "line": 29,
+          "file": "app/controllers/profiles_controller.rb",
+          "rendered": {
+            "name": "profiles/show",
+            "file": "app/views/profiles/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "profiles/show"
+      },
+      "user_input": "params[:page]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
       "fingerprint": "a7423b872bfcdb1b38bf9e46a66cb671085d7f6b8b8b9a434243904afe25b684",
       "check_name": "Render",
       "message": "Render path contains parameter value",
@@ -72,7 +106,7 @@
           "type": "controller",
           "class": "IssuesController",
           "method": "index",
-          "line": 19,
+          "line": 25,
           "file": "app/controllers/issues_controller.rb",
           "rendered": {
             "name": "issues/index",
@@ -106,7 +140,7 @@
           "type": "controller",
           "class": "IssuesController",
           "method": "index",
-          "line": 19,
+          "line": 25,
           "file": "app/controllers/issues_controller.rb",
           "rendered": {
             "name": "issues/index",

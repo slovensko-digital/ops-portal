@@ -15,7 +15,7 @@ class ProfilesController < ApplicationController
 
   def show
     if @user.is_a?(User::ResponsibleSubject)
-      render "show_responsible_subject"
+      render :show_responsible_subject
       return
     end
 
