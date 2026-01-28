@@ -61,7 +61,7 @@ class User < ApplicationRecord
 
   attr_accessor :phone_verification_number
 
-  belongs_to :responsible_subject, optional: true
+  belongs_to :responsible_subject, class_name: "::ResponsibleSubject", optional: true
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true
   has_many :issues, foreign_key: :author_id
