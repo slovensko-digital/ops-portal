@@ -2,7 +2,7 @@ class ProfilesController < ApplicationController
   before_action :require_user, except: [ :please_create ]
   before_action :set_user, except: [ :please_create, :please_verify ]
 
-  before_action :ensure_citizen, only: [:edit, :update, :settings, :watched_issues ]
+  before_action :ensure_citizen, only: [ :edit, :update, :settings, :watched_issues ]
 
   def please_create
   end
