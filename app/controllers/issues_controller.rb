@@ -6,11 +6,11 @@ class IssuesController < ApplicationController
 
   def relevant
     path = if current_user.municipality
-        issues_path(obec: current_user.municipality.name)
+      issues_path(obec: current_user.municipality.name)
     elsif current_user.responsible_subject
-        issues_path(zodpovedny: current_user.responsible_subject.subject_name)
+      issues_path(zodpovedny: current_user.responsible_subject.subject_name)
     else
-        issues_path
+      issues_path
     end
 
     redirect_to path
