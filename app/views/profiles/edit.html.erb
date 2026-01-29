@@ -26,7 +26,7 @@
     </div>
   <% end %>
 
-  <%= form_with model: @user, url: profile_avatar_path, method: :patch, data: { controller: 'auto-submit' } do |f| %>
+  <%= form_with model: @user, scope: :user, url: profile_avatar_path, method: :patch, data: { controller: 'auto-submit' } do |f| %>
     <div class="form-other-con">
       <div class="form-picture-con">
         <figure>
@@ -41,7 +41,7 @@
     </div>
   <% end %>
 
-  <%= form_with model: @user, url: profile_path, method: :patch do |f| %>
+  <%= form_with model: @user, scope: :user, url: profile_path, method: :patch do |f| %>
     <%= f.hidden_field :onboarded, value: true %>
     <div class="form-other-con">
       <div class="form-items-con">
