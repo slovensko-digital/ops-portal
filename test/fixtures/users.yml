@@ -43,3 +43,16 @@ responsible_subject:
   responsible_subject: one
   email_global_unsubscribe_token: municipality<%= SecureRandom.urlsafe_base64(32) %>
   phone_verified: true
+
+legacy_citizen:
+  type: User::Citizen
+  email: legacy.citizen@example.org
+  legacy_id: 12345
+  firstname: Legacy
+  lastname: Citizen
+  display_name: Legacy Citizen
+  password_hash: <%= RodauthApp.rodauth.allocate.password_hash("password") %>
+  status: verified
+  onboarded: true
+  email_global_unsubscribe_token: legacy_citizen<%= SecureRandom.urlsafe_base64(32) %>
+  phone_verified: true
