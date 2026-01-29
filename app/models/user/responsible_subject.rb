@@ -57,7 +57,7 @@
 #  street_id                        :bigint
 #
 class User::ResponsibleSubject < User
-  after_create_commit do
+  after_create do
     SyncUserResponsibleSubjectToTriageJob.perform_later(self)
   end
 
