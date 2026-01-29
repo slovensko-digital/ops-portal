@@ -57,4 +57,8 @@
 #  street_id                        :bigint
 #
 class User::Citizen < User
+  after_update if: -> { saved_change_to_firstname? || saved_change_to_lastname? } do
+    SyncUserUpdateToTriageJob.perform_later(self)
+    SyncUserUpdateToBackofficeJob.perform_later(self)
+  end
 end
