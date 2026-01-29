@@ -1,6 +1,6 @@
 class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
   include IssueScoped
-  before_action :require_user, only: [ :create, :edit, :update ]
+  before_action :require_user, only: [ :create ]
   before_action :ensure_responsible_subject
   before_action :check_permissions
 
