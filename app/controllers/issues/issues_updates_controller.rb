@@ -55,7 +55,7 @@ class Issues::IssuesUpdatesController < ApplicationController
   private
 
   def ensure_citizen
-    render status: :unauthorized, body: nil unless current_user.is_a?(User::Citizen)
+    render status: :unauthorized, body: nil if current_user.responsible_subject
   end
 
   def check_permissions
