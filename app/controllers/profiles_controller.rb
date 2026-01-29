@@ -49,7 +49,7 @@ class ProfilesController < ApplicationController
   end
 
   def user_attributes
-    params.require(:user_citizen).permit(:name, :anonymous, :municipality_id, :email_notifiable, :birth_year, :terms_of_service, :newsletter_accepted, :gdpr_stats_accepted, :onboarded)
+    params.require(:user).permit(:name, :anonymous, :municipality_id, :email_notifiable, :birth_year, :terms_of_service, :newsletter_accepted, :gdpr_stats_accepted, :onboarded)
   end
 
   def ensure_citizen
