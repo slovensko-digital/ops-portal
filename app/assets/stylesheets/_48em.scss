@@ -1,4 +1,5 @@
 // 768px
+@use "variables";
 
 @media only screen and (min-width: 48em) {
 	
@@ -6,7 +7,7 @@
 	body {
 		margin-top: 70px;
 	}
-	section { padding: em(60,16) per(40,768); }
+	section { padding: variables.em(60,16) variables.per(40,768); }
 	
 	// Pagination
 	nav.pagination {
@@ -20,7 +21,7 @@
 	
 	// Header
 	header {
-		padding: 0 per(40,768);
+		padding: 0 variables.per(40,768);
 	}
 	header nav {
 	}
@@ -78,8 +79,8 @@
 	}
 
 	article h1 {
-		font-size: em(40,16);
-		line-height: em(50,40);
+		font-size: variables.em(40,16);
+		line-height: variables.em(50,40);
 	}
 	
 	// Profil
@@ -145,13 +146,13 @@
 
 	// Flash messages
 	.flash-message-container {
-		right: per(40,768);
+		right: variables.per(40,768);
 		top: 130px;
 	}
 
 	// Footer
 	footer {
-		padding: em(60,16) per(40,768);
+		padding: variables.em(60,16) variables.per(40,768);
 	}
 	footer .footer-wraper {
 		gap: 40px 10%;

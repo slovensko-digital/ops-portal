@@ -1,59 +1,18 @@
 // Sassy
 // Import other files
-@import "reset.scss";
-@import "variables.scss";
-@import "mixins.scss";
-@import "fonts.scss";
-@import "custom.scss";
-
-// Fonts
-$headline: "CabinetGrotesk-Variable";
-$general: "GeneralSans-Variable";
-$normal: 400;
-$medium: 500;
-$semibold: 600;
-$bold: 700;
-$extrabold: 800;
-
-// Colors
-
-$beige: rgba(242, 234, 231, 1); // #f8f3f1
-$black: rgba(28, 48, 84, 1); // #1C3054
-$black-light: rgba(28, 48, 84, 0.5); // #1C3054
-$black-ten: rgba(28, 48, 84, 0.1); // #1C3054
-$blue: rgba(57, 232, 255, 1); // #39E8FF
-$blue-light: rgba(57, 232, 255, 0.3); // #39E8FF
-$blue-dark: rgba(10, 9, 73, 1); // #0A0949
-$green: rgba(0, 229, 158, 1); // #00E59E
-$green-light: rgba(0, 229, 158, 0.2); // #00E59E
-$green-middle: rgba(102, 239, 197, 1); // #00E59E
-$pink: rgba(255, 210, 230, 1); // #ffd2e6
-$pink-fifty: rgba(255, 210, 230, 0.5); // #ffd2e6
-$red: rgba(255, 71, 97, 1); // #ff4761
-$yellow: rgba(255, 212, 0, 1); // #ffd400
-$yellow-light: rgba(255, 239, 190, 0.5); // #ffefbe
-$yellow-middle: rgba(255, 224, 124, 1); // #ffd400
-$white: rgba(255, 255, 255, 1); // #FFFFFF
-
-$line: rgba(28, 48, 84, 0.1); // #1C3054
-
-// Farby podnetov
-$zaslane: rgba(57, 232, 255, 1);
-$riesene: rgba(57, 232, 255, 1);
-$vyriesene: rgba(0, 229, 158, 1);
-$neriesene: rgba(255, 171, 201, 1);
-$zamietnuty: rgba(0, 0, 0, 0.2);
-$odstupene: rgba(151, 71, 255, 0.7);
-$cakajuce: rgba(255, 203, 37, 1);
-$uzavrete: rgba(220, 188, 189, 1);
-$duplicitny: rgba(220, 188, 189, 1);
+@use "sass:meta";
+@use "reset.scss";
+@use "variables.scss";
+@use "mixins.scss";
+@use "fonts.scss";
+@use "custom.scss";
 
 
 // General
 body {
   //background: rgba(242, 234, 231, 0.3);
-  color: $black;
-  font-family: $general;
+  color: variables.$black;
+  font-family: variables.$general;
   font-size: 100%;
   margin-top: 60px;
   -webkit-font-smoothing: antialiased;
@@ -63,7 +22,7 @@ body {
 section {
   margin: 0 auto;
   max-width: 1600px;
-  padding: em(40,16) per(20,320);
+  padding: variables.em(40,16) variables.per(20,320);
   position: relative;
   overflow: visible;
 }
@@ -72,12 +31,12 @@ img {
   width: 100%;
 }
 h1 {
-  color: $black;
+  color: variables.$black;
   display: inline-block;
-  font-family: $headline;
-  font-size: em(26,16);
-  font-weight: $extrabold;
-  line-height: em(36,26);
+  font-family: variables.$headline;
+  font-size: variables.em(26,16);
+  font-weight: variables.$extrabold;
+  line-height: variables.em(36,26);
   margin-bottom: 40px;
 }
 
@@ -99,29 +58,29 @@ h1 {
 // Buttons
 .button {
   align-items: center;
-  background: $black;
+  background: variables.$black;
   box-sizing: border-box;
-  color: $white;
+  color: variables.$white;
   display: flex;
   gap: 0 10px;
-  fill: $white;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  fill: variables.$white;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
   height: 50px;
   justify-content: center;
   padding: 0 18px;
   //stroke: $white;
   text-align: center;
   width: fit-content;
-  @include rounded(25px);
-  @include transition(all);
+  @include mixins.rounded(25px);
+  @include mixins.transition(all);
 }
 a.button:hover, button.button:hover {
-  background: $blue;
-  color: $black;
-  fill: $black;
+  background: variables.$blue;
+  color: variables.$black;
+  fill: variables.$black;
 }
 a.button, button.button, input.button {
   cursor: pointer;
@@ -134,34 +93,34 @@ a.button, button.button, input.button {
 }
 .button-transparent {
   background: transparent;
-  border: 1px solid $black;
-  color: $black;
-  fill: $black;
+  border: 1px solid variables.$black;
+  color: variables.$black;
+  fill: variables.$black;
   //stroke: $black;
 }
 button.button-transparent:hover,
 a.button-transparent:hover {
-  background: $blue;
-  color: $black;
+  background: variables.$blue;
+  color: variables.$black;
 }
 .button-md {
   height: 36px;
 }
 .button-edit {
-  background: $yellow;
-  color: $black;
+  background: variables.$yellow;
+  color: variables.$black;
 }
 
 .button-edit:hover {
-  background: $blue;
+  background: variables.$blue;
 }
 
 .button-delete {
-  background: $red;
+  background: variables.$red;
 }
 
 .button-delete:hover {
-  background: $blue;
+  background: variables.$blue;
 }
 
 
@@ -173,13 +132,13 @@ a.button-transparent:hover {
   height: 26px;
   position: relative;
   width: 26px;
-  @include rotate(45);
+  @include mixins.rotate(45);
 }
 .button-close-gen:hover span {
-  border-color: $red;
+  border-color: variables.$red;
 }
 .button-close-gen span {
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   display: block;
   position: absolute;
   left: 0;
@@ -189,21 +148,21 @@ a.button-transparent:hover {
 }
 .button-close-gen span:last-child {
   left: 0%;
-  @include rotate(90);
+  @include mixins.rotate(90);
 }
 
-.total { background: $cakajuce; }
-.state-zaslany-zodpovednemu { background: $zaslane; }
-.state-v-rieseni { background: $riesene; }
-.state-oznaceny-za-vyrieseny { background: $vyriesene; }
-.state-vyrieseny { background: $vyriesene; }
-.state-nerieseny { background: $neriesene; }
-.state-zamietnuty { background: $zamietnuty; }
-.state-odstupeny { background: $odstupene; }
-.state-cakajuci { background: $cakajuce; }
-.state-uzavrety { background: $uzavrete; }
-.state-archivovany { background: $uzavrete; }
-.state-duplicitny { background: $zamietnuty; }
+.total { background: variables.$cakajuce; }
+.state-zaslany-zodpovednemu { background: variables.$zaslane; }
+.state-v-rieseni { background: variables.$riesene; }
+.state-oznaceny-za-vyrieseny { background: variables.$vyriesene; }
+.state-vyrieseny { background: variables.$vyriesene; }
+.state-nerieseny { background: variables.$neriesene; }
+.state-zamietnuty { background: variables.$zamietnuty; }
+.state-odstupeny { background: variables.$odstupene; }
+.state-cakajuci { background: variables.$cakajuce; }
+.state-uzavrety { background: variables.$uzavrete; }
+.state-archivovany { background: variables.$uzavrete; }
+.state-duplicitny { background: variables.$zamietnuty; }
 
 .statistics-block-category-komunikacie,
 .statistics-block-category-cesty-a-chodniky { background: #C4F8FF; }
@@ -251,28 +210,28 @@ nav.pagination .pages-con {
 }
 nav.pagination a.button-pagination {
   align-items: center;
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   box-sizing: border-box;
-  color: $black;
+  color: variables.$black;
   display: flex;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
   height: 50px;
   justify-content: center;
   padding: 0 14px;
   min-width: 50px;
-  stroke: $black;
+  stroke: variables.$black;
   stroke-width: 1.5;
-  @include rounded(25px);
+  @include mixins.rounded(25px);
 }
 nav.pagination a.button-pagination:hover,
 nav.pagination a.button-pagination.active {
-  background: $blue;
+  background: variables.$blue;
 }
 nav.pagination .dash {
-  border-top: 1px solid $black;
+  border-top: 1px solid variables.$black;
   height: 1px;
   width: 30px;
 }
@@ -291,10 +250,10 @@ nav.pagination .button-left {
   box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.2);
 }
 header {
-  background: $white;
+  background: variables.$white;
   display: flex;
   justify-content: center;
-  padding: 0 per(20,320);
+  padding: 0 variables.per(20,320);
   position: fixed;
   left: 0;
   right: 0;
@@ -336,7 +295,7 @@ header nav .nav-con-head {
   overflow: hidden;
 }
 .open-nav-body .nav-wrap-head {
-  background: $white;
+  background: variables.$white;
   bottom: 0;
   box-sizing: border-box;
   display: flex !important;
@@ -344,7 +303,7 @@ header nav .nav-con-head {
   row-gap: 20px;
   height: 100%;
   left: 0;
-  padding: per(30,320);
+  padding: variables.per(30,320);
   position: fixed;
   top: 0;
   right: 0;
@@ -358,13 +317,13 @@ header nav .nav-wrap-head a.menu-button-close {
   height: 26px;
   position: relative;
   width: 26px;
-  @include rotate(45);
+  @include mixins.rotate(45);
 }
 header nav .nav-wrap-head a.menu-button-close:hover span {
-  border-color: $red;
+  border-color: variables.$red;
 }
 header nav .nav-wrap-head a.menu-button-close span {
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   display: block;
   position: absolute;
   left: 0;
@@ -374,7 +333,7 @@ header nav .nav-wrap-head a.menu-button-close span {
 }
 header nav .nav-wrap-head a.menu-button-close span:last-child {
   left: 0%;
-  @include rotate(90);
+  @include mixins.rotate(90);
 }
 header nav .nav-wrap-head {
   //display: fixed;
@@ -399,7 +358,7 @@ header nav .nav-wrap-head a.account figure {
   overflow: hidden;
   position: relative;
   width: 80px;
-  @include rounded(50px);
+  @include mixins.rounded(50px);
 }
 header nav .nav-wrap-head a.account figure picture {
   bottom: 0;
@@ -412,10 +371,10 @@ header nav .nav-wrap-head a.account figure picture img {
   object-fit: cover;
 }
 header nav .nav-wrap-head a.account .name {
-  font-family: $general;
-  font-size: em(18,28);
-  font-weight: $semibold;
-  line-height: em(26,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,28);
+  font-weight: variables.$semibold;
+  line-height: variables.em(26,18);
 }
 header nav .mobile-buttons-nav {
   display: flex;
@@ -447,27 +406,27 @@ header nav .nav-wrap-head {
   //gap: 0 20px;
 }
 header nav .nav-wrap-head a {
-  color: $black;
-  font-family: $general;
-  font-size: em(28,16);
-  font-weight: $medium;
-  line-height: em(28,28);
-  @include transition(all);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(28,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(28,28);
+  @include mixins.transition(all);
 }
 header nav .nav-wrap-head a:hover {
-  color: $red;
+  color: variables.$red;
 }
 header nav a.nav-logo {
-  fill: $black;
+  fill: variables.$black;
   width: 66px;
   overflow: visible;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 header nav a.nav-logo .hand {
-  @include transition(all);
+  @include mixins.transition(all);
 }
 header nav a.nav-logo:hover .hand {
-  fill: $red;
+  fill: variables.$red;
 }
 header nav .buttons-con {
   //align-content: center;
@@ -483,56 +442,56 @@ header nav .buttons-con svg {
   display: block;
 }
 header nav a.search {
-  stroke: $black;
-  @include transition(all);
+  stroke: variables.$black;
+  @include mixins.transition(all);
 }
 header nav a.search:hover {
-  stroke: $red;
+  stroke: variables.$red;
 }
 header nav a.login {
-  stroke: $black;
-  @include transition(all);
+  stroke: variables.$black;
+  @include mixins.transition(all);
 }
 header nav a.login:hover {
-  stroke: $red;
+  stroke: variables.$red;
 }
 header nav a.login .logged {
   display: none;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 header nav a.add-button {
   align-items: center;
-  background: $red;
-  color: $white;
+  background: variables.$red;
+  color: variables.$white;
   display: flex;
   flex-wrap: nowrap;
-  font-family: $general;
-  font-size: em(12,16);
-  font-weight: $medium;
-  line-height: em(12,12);
+  font-family: variables.$general;
+  font-size: variables.em(12,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(12,12);
   padding: 13px 14px;
   text-align: center;
-  @include rounded(19px);
-  @include transition(all);
+  @include mixins.rounded(19px);
+  @include mixins.transition(all);
 }
 header nav a.add-button:hover {
-  background: $black;
+  background: variables.$black;
 }
 header nav a.menu-button {
   cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 header nav a.menu-button:hover span {
-  border-color: $red;
+  border-color: variables.$red;
 }
 header nav a.menu-button span {
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   display: block;
   width: 22px;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 
 
@@ -555,38 +514,38 @@ section.main {
   gap: 40px 0;
 }
 section.main .report-suggestion-block {
-  background: $green;
+  background: variables.$green;
   display: grid;
   gap: 30px 0;
-  padding: per(20,280);
-  @include rounded(15px);
+  padding: variables.per(20,280);
+  @include mixins.rounded(15px);
 }
 section.main .report-suggestion-block .report-suggestion-con {
 
 }
 section.main .report-suggestion-block .title {
-  color: $black;
-  font-family: $headline;
-  font-size: em(30,16);
-  font-weight: $extrabold;
-  line-height: em(36,30);
+  color: variables.$black;
+  font-family: variables.$headline;
+  font-size: variables.em(30,16);
+  font-weight: variables.$extrabold;
+  line-height: variables.em(36,30);
 }
 section.main .report-suggestion-block .subtitle {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(26,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(26,18);
   margin-top: 10px;
 }
 section.main .report-suggestion-block a.button-report-suggestion-block {
-  background: $red;
+  background: variables.$red;
   margin-top: 20px;
   width: 100%;
 }
 section.main .report-suggestion-block a.button-report-suggestion-block:hover {
-  background: $black;
-  color: $white;
+  background: variables.$black;
+  color: variables.$white;
 }
 section.main .report-suggestion-block .images-block {
   align-items: center;
@@ -594,53 +553,53 @@ section.main .report-suggestion-block .images-block {
   justify-content: center;
 }
 section.main .report-suggestion-block .images-block figure {
-  width: per(160,240);
+  width: variables.per(160,240);
 }
 section.main .how-to-block {
-  background: $yellow;
+  background: variables.$yellow;
   display: grid;
   gap: 30px 0;
-  padding: per(20,280);
-  @include rounded(15px);
+  padding: variables.per(20,280);
+  @include mixins.rounded(15px);
 }
 section.main .how-to-block .how-to-con {
   display: grid;
   gap: 30px 0;
 }
 section.main .how-to-block .title {
-  color: $black;
-  font-family: $headline;
-  font-size: em(30,16);
-  font-weight: $extrabold;
-  line-height: em(36,30);
+  color: variables.$black;
+  font-family: variables.$headline;
+  font-size: variables.em(30,16);
+  font-weight: variables.$extrabold;
+  line-height: variables.em(36,30);
 }
 section.main .how-to-block .subtitle {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(26,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(26,18);
   margin-top: 10px;
 }
 section.main .how-to-block .how-to-button-con {
   align-items: flex-end;
   display: flex;
-  fill: $black;
+  fill: variables.$black;
   gap: 0 10px;
   justify-content: flex-end;
 }
 section.main .how-to-block .how-to-button-con .button-how-to {
   align-items: center;
-  background: $white;
+  background: variables.$white;
   display: flex;
   height: 50px;
   justify-content: center;
   width: 50px;
-  @include rounded(50%);
-  @include transition(all);
+  @include mixins.rounded(50%);
+  @include mixins.transition(all);
 }
 section.main .how-to-block .how-to-button-con .button-how-to:hover {
-  background: $red;
+  background: variables.$red;
 }
 section.main .how-to-block .how-to-button-con .inactive {
   background: rgba(255,255,255, 0.5);
@@ -661,7 +620,7 @@ section.main .how-to-block .images-block {
   justify-content: center;
 }
 section.main .how-to-block .images-block figure {
-  width: per(150,240);
+  width: variables.per(150,240);
 }
 
 
@@ -707,34 +666,34 @@ a.news-block {
   align-content: flex-start;
   display: grid;
   gap: 16px 0;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 a.news-block .date {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(14,14);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(14,14);
 }
 a.news-block h2 {
-  color: $black;
-  font-family: $headline;
-  font-size: em(22,16);
-  font-weight: $extrabold;
-  line-height: em(32,22);
-  @include transition(all);
+  color: variables.$black;
+  font-family: variables.$headline;
+  font-size: variables.em(22,16);
+  font-weight: variables.$extrabold;
+  line-height: variables.em(32,22);
+  @include mixins.transition(all);
 }
 a.news-block .button-read-more-news {
   align-items: center;
-  background: $blue-light;
+  background: variables.$blue-light;
   display: flex;
   height: 50px;
   justify-content: center;
-  stroke: $black;
+  stroke: variables.$black;
   stroke-width: 2;
   width: 50px;
-  @include rounded(25px);
-  @include transition(all);
+  @include mixins.rounded(25px);
+  @include mixins.transition(all);
 }
 a.news-block .button-read-more-news svg {
   height: 20px;
@@ -753,7 +712,7 @@ a.news-block:hover .news-block-title {
   text-decoration: underline;
 }
 a.news-block:hover .button-read-more-news {
-  background: $pink !important;
+  background: variables.$pink !important;
 }
 
 
@@ -767,68 +726,68 @@ article {
 
 }
 article .date {
-  color: $black-light;
+  color: variables.$black-light;
   display: block;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(14,14);
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(14,14);
   margin-bottom: 40px;
 }
 article h1 {
-  color: $black;
-  font-family: $headline;
-  font-size: em(28,16);
-  font-weight: $extrabold;
-  line-height: em(38,28);
+  color: variables.$black;
+  font-family: variables.$headline;
+  font-size: variables.em(28,16);
+  font-weight: variables.$extrabold;
+  line-height: variables.em(38,28);
 }
 article h2 {
-  color: $black;
-  font-family: $general;
-  font-size: em(22,16);
-  font-weight: $semibold;
-  line-height: em(32,22);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(22,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(32,22);
   margin-bottom: 30px;
 }
 article h3 {
-  color: $black;
-  font-family: $general;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(28,18);
   margin-bottom: 30px;
 }
 article p {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
   margin-bottom: 30px;
 }
 article strong {
-  font-weight: $semibold;
+  font-weight: variables.$semibold;
 }
 article a,
 .prose a {
-  color: $black;
+  color: variables.$black;
   text-decoration: underline;
-  text-decoration-color: $blue;
+  text-decoration-color: variables.$blue;
   text-decoration-thickness: 0.1em;
   text-underline-offset: 0.1em;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 article a:hover,
 .prose a:hover {
-  color: $red;
-  text-decoration-color: $red;
+  color: variables.$red;
+  text-decoration-color: variables.$red;
 }
 article ul {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
   margin: 0 0 30px 15px;
 }
 article ul li {
@@ -838,10 +797,10 @@ article ul li {
 }
 article ul li::before {
 
-  color: $blue;
+  color: variables.$blue;
   content: "—";
-  font-family: $general;
-  font-weight: $medium;
+  font-family: variables.$general;
+  font-weight: variables.$medium;
   margin-right: 17px;
 }
 article img {
@@ -850,11 +809,11 @@ article img {
   height: auto;
 }
 article figure figcaption {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $normal;
-  line-height: em(26,14);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(26,14);
   margin-top: 6px;
 }
 
@@ -872,19 +831,19 @@ section.profile .profile-con .button {
   width: 100%;
 }
 section.profile .profile-con .button button {
-  color: $white;
+  color: variables.$white;
 }
 
 section.profile .profile-wrapper {
-  background: $blue-light;
+  background: variables.$blue-light;
   display: flex;
   flex-direction: column;
   row-gap: 40px;
-  padding: per(20,280);
-  @include rounded(15px);
+  padding: variables.per(20,280);
+  @include mixins.rounded(15px);
 }
 section.profile .profile-wrapper .profile-info-panel {
-  border-bottom: 1px solid $black-ten;
+  border-bottom: 1px solid variables.$black-ten;
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -902,7 +861,7 @@ section.profile .profile-wrapper .profile-info-panel figure {
   overflow: hidden;
   position: relative;
   width: 180px;
-  @include rounded(100px);
+  @include mixins.rounded(100px);
 }
 section.profile .profile-wrapper .profile-info-panel figure picture {
   bottom: 0;
@@ -914,19 +873,19 @@ section.profile .profile-wrapper .profile-info-panel figure picture {
    object-fit: cover;
  }
 section.profile .profile-wrapper .profile-name {
-  color: $black;
-  font-family: $general;
-  font-size: em(22,16);
-  font-weight: $semibold;
-  line-height: em(30,22);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(22,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(30,22);
   word-break: break-word;
 }
 section.profile .profile-wrapper .profile-since {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(24,16);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(24,16);
   text-align: center;
   max-width: 200px;
 }
@@ -945,31 +904,31 @@ section.profile .profile-results-con {
   row-gap: 30px;
 }
 section.profile .profile-results-con .title-results {
-  color: $black;
-  font-family: $general;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(20,20);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(20,20);
   margin-bottom: 20px;
 }
 section.profile .profile-results-con .results-line-info {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
   margin-bottom: 10px;
 }
 section.profile .profile-results-con .results-line-back {
-  background: $black-ten;
+  background: variables.$black-ten;
   padding: 4px;
-  @include rounded(10px);
+  @include mixins.rounded(10px);
 }
 section.profile .profile-results-con .results-line {
-  background: $green;
+  background: variables.$green;
   height: 12px;
   width: 83%;
-  @include rounded(6px);
+  @include mixins.rounded(6px);
 }
 
 // Button
@@ -985,8 +944,8 @@ section.profile .profile-results-con .results-line {
   gap: 10px;
 }
 .profil-nav-con a.button.active {
-  color: $white;
-  background: $black;
+  color: variables.$white;
+  background: variables.$black;
 }
 
 
@@ -1001,20 +960,20 @@ section.report {
   max-width: 400px;
 }
 section.report .button {
-  background: $blue;
-  color: $black;
+  background: variables.$blue;
+  color: variables.$black;
   margin-top: 30px;
   width: 100%;
 }
 section.report .button:hover {
-  background: $green;
+  background: variables.$green;
 }
 section.report .notice {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(22,14);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(22,14);
   margin-top: 20px;
 
 }
@@ -1022,11 +981,11 @@ section.report h1 {
   margin-bottom: 30px;
 }
 section.report .report-suggestion-description {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(26,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(26,18);
   margin-bottom: 30px;
 }
 
@@ -1034,13 +993,13 @@ section.report .report-suggestion-description {
 // Add Pictures
 .report-suggestion-add-pictures-con {
   align-items: center;
-  border: 2px solid $black;
+  border: 2px solid variables.$black;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 10px;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 .report-suggestion-add-pictures-wrapper {
   align-items: center;
@@ -1053,30 +1012,30 @@ section.report .report-suggestion-description {
 }
 .report-suggestion-add-pictures-wrapper .button-add-picture {
   align-items: center;
-  border: 2px solid $black;
+  border: 2px solid variables.$black;
   box-sizing: border-box;
   display: flex;
   height: 60px;
   justify-content: center;
-  stroke: $black;
+  stroke: variables.$black;
   stroke-width: 2;
   width: 60px;
-  @include rounded(30px);
-  @include transition(all);
+  @include mixins.rounded(30px);
+  @include mixins.transition(all);
 }
 .report-suggestion-add-pictures-wrapper .button-add-picture:hover {
-  background: $green;
+  background: variables.$green;
 }
 .report-suggestion-add-pictures-wrapper .button-add-picture svg {
   height: 28px;
   width: 28px;
 }
 .report-suggestion-add-pictures-wrapper .info-title {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
 }
 
 .report-suggestion-pictures-block {
@@ -1091,7 +1050,7 @@ section.report .report-suggestion-description {
   padding-bottom: 100%;
   position: relative;
   width: 100%;
-  @include rounded(10px);
+  @include mixins.rounded(10px);
 }
 .report-suggestion-pictures-block figure picture {
   bottom: 0;
@@ -1104,7 +1063,7 @@ section.report .report-suggestion-description {
   box-sizing: border-box;
   cursor: pointer;
   //bottom: 50%;
-  fill: $white;
+  fill: variables.$white;
   height: 38px;
   left: 14px;
   //margin: 0 -19px -19px 0;
@@ -1113,13 +1072,13 @@ section.report .report-suggestion-description {
   top: 14px;
   width: 38px;
   z-index: 2;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 // Rotate Button
 .report-suggestion-pictures-block figure .rotate-button {
   box-sizing: border-box;
   cursor: pointer;
-  fill: $white;
+  fill: variables.$white;
   height: 38px;
   right: 14px;
   position: absolute;
@@ -1127,7 +1086,7 @@ section.report .report-suggestion-description {
   top: 14px;
   width: 38px;
   z-index: 2;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 .report-suggestion-pictures-block figure .rotate-button:hover {
   opacity: 1;
@@ -1139,12 +1098,12 @@ section.report .report-map-con {
   gap: 20px 0;
 }
 section.report .report-map-con .report-map {
-  border: 2px solid $black;
+  border: 2px solid variables.$black;
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
   width: 100%;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 section.report .report-map-con iframe {
   display: block;
@@ -1167,38 +1126,38 @@ section.report .report-map-con .search-con form {
   width: 100%;
 }
 section.report .report-map-con .search-con input {
-  border: 2px solid $black;
+  border: 2px solid variables.$black;
   box-sizing: border-box;
-  color: $black;
+  color: variables.$black;
   display: flex;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
   height: 50px;
   padding: 0 50px 0 20px;
   width: 100%;
-  @include rounded(25px);
+  @include mixins.rounded(25px);
 }
 
 section.report .report-map-con .search-con input::placeholder {
-  color: $black;
-  font-weight: $normal;
+  color: variables.$black;
+  font-weight: variables.$normal;
   opacity: 0.5;
 }
 section.report .report-map-con .search-con form button {
-  stroke: $black;
+  stroke: variables.$black;
   stroke-width: 2;
   width: 24px;
   position: absolute;
   right: 20px;
   top: 12px;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 section.report .report-map-con .search-con form button:hover {
   cursor: pointer;
-  stroke: $red;
-  @include transition(all);
+  stroke: variables.$red;
+  @include mixins.transition(all);
 }
 
 
@@ -1212,15 +1171,15 @@ section.report .button-report-summary {
   text-align: left;
   width: 100%;
   align-items: center;
-  border: 2px solid $black;
+  border: 2px solid variables.$black;
   box-sizing: border-box;
   display: grid;
   gap: 0 20px;
   grid-template-columns: auto 12px;
   justify-content: space-between;
   padding: 16px;
-  @include rounded(10px);
-  @include transition(all);
+  @include mixins.rounded(10px);
+  @include mixins.transition(all);
 }
 section.report .report-summary-wrapper {
   display: flex;
@@ -1232,21 +1191,21 @@ section.report .button-report-summary .icon-arrow {
 }
 section.report .button-report-summary:hover,
 section.report .button-report-summary.active {
-  background: $blue-light;
+  background: variables.$blue-light;
 }
 section.report .title {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $semibold;
-  line-height: em(26,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(26,18);
 }
 section.report .description {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(20,13);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(20,13);
 }
 section.report .labels-con {
   display: flex;
@@ -1255,38 +1214,38 @@ section.report .labels-con {
 }
 section.report .labels-con .label {
   align-items: center;
-  background: $blue;
-  color: $black;
+  background: variables.$blue;
+  color: variables.$black;
   display: flex;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(14,14);
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(14,14);
   height: 26px;
   justify-content: center;
   padding: 0 12px;
-  @include rounded(13px);
+  @include mixins.rounded(13px);
 }
 section.report .button-back {
   align-items: center;
-  color: $black;
+  color: variables.$black;
   display: flex;
   gap: 0 10px;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
   margin-bottom: 30px;
-  stroke: $black;
-  @include transition(all);
+  stroke: variables.$black;
+  @include mixins.transition(all);
 }
 section.report .button-back svg {
   rotate: 180deg;
   width: 12px;
 }
 section.report .button-back:hover {
-  color: $red;
-  stroke: $red;
+  color: variables.$red;
+  stroke: variables.$red;
 }
 section.report .button-category {
   padding: 12px 16px !important;
@@ -1296,29 +1255,29 @@ section.report .button-category .report-summary-wrapper {
 }
 
 section.report .report-warning {
-  background: $pink;
+  background: variables.$pink;
   display: flex;
   gap: 20px 0;
   flex-direction: column;
   padding: 16px 20px;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 section.report .report-warning .title {
-  color: $black;
-  font-family: $headline;
-  font-size: em(26,16);
-  font-weight: $extrabold;
-  line-height: em(34,26);
+  color: variables.$black;
+  font-family: variables.$headline;
+  font-size: variables.em(26,16);
+  font-weight: variables.$extrabold;
+  line-height: variables.em(34,26);
 }
 section.report .report-warning .description {
-  color: $black;
+  color: variables.$black;
   display: flex;
   gap: 20px 0;
   flex-direction: column;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(26,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(26,18);
 }
 section.report .button-transparent {
   background: transparent !important;
@@ -1326,10 +1285,10 @@ section.report .button-transparent {
 section.report .button-transparent:hover,
 section.report .report-warning .button:hover
 {
-  background: $blue !important;
+  background: variables.$blue !important;
 }
 section.report .report-warning .button {
-  background: $yellow;
+  background: variables.$yellow;
 }
 
 
@@ -1344,7 +1303,7 @@ section.report .report-summary-edit-pictures {
   padding-bottom: 100%;
   position: relative;
   width: 100%;
-  @include rounded(10px);
+  @include mixins.rounded(10px);
 }
 .report-summary-edit-pictures figure picture {
   bottom: 0;
@@ -1358,7 +1317,7 @@ section.report .report-summary-edit-pictures {
   object-fit: cover;
 }
 section.report .sent-picture {
-  padding: per(20,280);
+  padding: variables.per(20,280);
   margin-bottom: 30px;
 }
 
@@ -1368,7 +1327,7 @@ section.report .sent-picture {
   padding-bottom: 100%;
   position: relative;
   width: 100%;
-  @include rounded(50%);
+  @include mixins.rounded(50%);
 }
 .sent-picture figure picture {
   bottom: 0;
@@ -1388,14 +1347,14 @@ section.report .sent-picture {
 
 
 section.report .report-summary-edit {
-  border: 2px solid $black;
+  border: 2px solid variables.$black;
   box-sizing: border-box;
   display: flex;
   gap: 14px 0;
   flex-direction: column;
   padding: 16px;
-  @include rounded(10px);
-  @include transition(all);
+  @include mixins.rounded(10px);
+  @include mixins.transition(all);
 }
 section.report .report-summary-edit .button-edit {
   margin-top: 10px !important;
@@ -1421,67 +1380,67 @@ section.report .report-summary-edit .button-edit {
   flex-direction: column;
 }
 label {
-  color: $black;
+  color: variables.$black;
   display: block;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(24,16);
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(24,16);
 }
 input {
-  background: $white;
-  border: 1px solid $black;
+  background: variables.$white;
+  border: 1px solid variables.$black;
   box-sizing: border-box;
-  color: $black;
+  color: variables.$black;
   display: block;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
   height: 50px;
   padding: 0 14px;
   width: 100%;
-  @include rounded(6px);
+  @include mixins.rounded(6px);
 }
 input::placeholder {
-  color: $black-light;
-  font-weight: $normal;
+  color: variables.$black-light;
+  font-weight: variables.$normal;
 }
 textarea {
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   box-sizing: border-box;
-  color: $black;
+  color: variables.$black;
   display: block;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(26,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(26,18);
   min-height: 180px;
   padding: 10px 14px;
   width: 100%;
-  @include rounded(6px);
+  @include mixins.rounded(6px);
 }
 textarea::placeholder {
-  color: $black-light;
-  font-weight: $normal;
+  color: variables.$black-light;
+  font-weight: variables.$normal;
 }
 input.button {
   border: none;
 }
 .form-description {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(28,18);
 }
 .form-description a {
-  color: $black;
+  color: variables.$black;
   text-decoration: underline;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 .form-description a:hover {
-  color: $red;
+  color: variables.$red;
 }
 section.forms-container .button {
   //border: none !important;
@@ -1493,40 +1452,40 @@ section.forms-container .button {
   gap: 40px 0;
 }
 .form-notice {
-  color: $black-light;
+  color: variables.$black-light;
   display: block;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(24,16);
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(24,16);
   width: 100%;
 }
 .form-notice a {
-  color: $black-light;
+  color: variables.$black-light;
 }
 .form-notice a:hover {
-  color: $red;
+  color: variables.$red;
 }
 .form-or-notice {
-  color: $black-light;
+  color: variables.$black-light;
   display: block;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
   text-align: center;
   width: 100%;
 }
 .form-check-box-con {
   align-items: center;
-  color: $black;
+  color: variables.$black;
   display: grid;
   gap: 0 10px;
   grid-template-columns: 30px auto;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(24,16);
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(24,16);
 }
 .form-check-box-con-start {
   align-items: start !important;
@@ -1536,14 +1495,14 @@ section.forms-container .button {
 }
 .form-check-box {
   align-items: center;
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
   height: 30px;
   justify-content: center;
   width: 30px;
-  @include rounded(4px);
+  @include mixins.rounded(4px);
 }
 .form-check-box svg {
   display: none;
@@ -1559,7 +1518,7 @@ section.forms-container .button {
   display: block;
 }
 section.report .button {
-  font-size: em(18,16) !important;
+  font-size: variables.em(18,16) !important;
   height: 50px;
 }
 .form-radio-button-wrapper {
@@ -1569,33 +1528,33 @@ section.report .button {
 }
 .form-radio-button-con {
   align-items: center;
-  color: $black;
+  color: variables.$black;
   display: grid;
   gap: 0 10px;
   grid-template-columns: 30px auto;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
 }
 .form-radio-button {
   align-items: center;
   box-sizing: border-box;
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   cursor: pointer;
   display: flex;
   height: 30px;
   justify-content: center;
   width: 30px;
-  @include rounded(50%);
+  @include mixins.rounded(50%);
 }
 .form-radio-button-active {
   display: none;
-  background: $black;
+  background: variables.$black;
   box-sizing: border-box;
   height: 20px;
   width: 20px;
-  @include rounded(50%);
+  @include mixins.rounded(50%);
 }
 .form-radio-button:hover .form-radio-button-active {
   display: block;
@@ -1604,56 +1563,56 @@ section.report .button {
   display: block;
 }
 .dropdown-button {
-  background: $white;
-  border: 1px solid $black;
+  background: variables.$white;
+  border: 1px solid variables.$black;
   box-sizing: border-box;
   align-items: center;
   cursor: pointer;
   display: grid;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
   gap: 0 10px;
   grid-template-columns: auto 14px;
   height: 50px;
   justify-content: space-between;
   padding: 0 14px;
-  @include rounded(6px);
+  @include mixins.rounded(6px);
 }
 .dropdown-button svg {
-  fill: $black;
+  fill: variables.$black;
   width: 100%;
 }
 ul.dropdown-list {
-  background: $white;
-  border: 1px solid $black;
+  background: variables.$white;
+  border: 1px solid variables.$black;
   box-sizing: border-box;
   height: 194px;
   overflow-y: scroll;
-  @include rounded(6px);
+  @include mixins.rounded(6px);
 }
 ul.dropdown-list li {
-  color: $black;
+  color: variables.$black;
   cursor: pointer;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
   //padding: 12px 14px;
 }
 ul.dropdown-list li:hover {
-  background: $line;
+  background: variables.$line;
 }
 
 ul.dropdown-list li a {
-  color: $black;
+  color: variables.$black;
   display: block;
   padding: 12px 14px;
 }
 
 ul.dropdown-list li.active {
-  background: $line;
+  background: variables.$line;
 }
 
 ul.dropdown-list li.check-box a {
@@ -1661,7 +1620,7 @@ ul.dropdown-list li.check-box a {
   display: grid;
   gap: 0 4px;
   grid-template-columns: 30px auto;
-  color: $black;
+  color: variables.$black;
 }
 ul.dropdown-list li.check-box .form-check-box {
   height: 24px;
@@ -1674,22 +1633,22 @@ ul.dropdown-list li.check-box:hover svg {
   display: block;
 }
 ul.dropdown-list li.active .form-check-box {
-  background: $blue;
+  background: variables.$blue;
 }
 ul.dropdown-list li.active svg {
   display: block;
 }
 .podnety-filter-con .dropdown-button {
-  font-size: em(16,16) !important;
-  line-height: em(16,16) !important;
+  font-size: variables.em(16,16) !important;
+  line-height: variables.em(16,16) !important;
 }
 .podnety-filter-con input {
-  font-size: em(16,16) !important;
-  line-height: em(16,16) !important;
+  font-size: variables.em(16,16) !important;
+  line-height: variables.em(16,16) !important;
 }
 .podnety-filter-con ul.dropdown-list li {
-  font-size: em(16,16) !important;
-  line-height: em(16,16) !important;
+  font-size: variables.em(16,16) !important;
+  line-height: variables.em(16,16) !important;
 }
 .form-picture-con {
   align-items: center;
@@ -1702,7 +1661,7 @@ ul.dropdown-list li.active svg {
   overflow: hidden;
   position: relative;
   width: 100px;
-  @include rounded(50%);
+  @include mixins.rounded(50%);
 }
 .form-picture-con picture {
   bottom: 0;
@@ -1723,7 +1682,7 @@ ul.dropdown-list li.active svg {
   margin: 0 !important
 }
 .gray-text {
-  color: $black-light;
+  color: variables.$black-light;
 }
 
 // Account
@@ -1741,19 +1700,19 @@ section.account .account-wrapper {
   gap: 30px 0;
 }
 section.account .account-info-con {
-  background: $blue-light;
+  background: variables.$blue-light;
   display: flex;
   flex-direction: column;
   gap: 20px 0;
   padding: 20px;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 section.account .account-info-con .title {
-  color: $black;
-  font-family: $general;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(20,20);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(20,20);
 }
 section.account .account-info-con .account-item-con {
   display: flex;
@@ -1761,28 +1720,28 @@ section.account .account-info-con .account-item-con {
   gap: 5px 0;
 }
 section.account .account-info-con .description {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(24,16);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(24,16);
 }
 section.account .account-info-con .item-title {
-  color: $black;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(24,16);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(24,16);
   word-break: break-word;
 }
 section.account .button {
   margin-top: 0 !important;
 }
 section.account .account-delete {
-  background: $pink !important;
+  background: variables.$pink !important;
 }
 section.account .account-delete .description {
-  color: $black;
+  color: variables.$black;
 }
 section.account .account-item-subject {
   align-items: center;
@@ -1795,7 +1754,7 @@ section.account .account-item-subject figure {
   overflow: hidden;
   position: relative;
   width: 65px;
-  @include rounded(50%);
+  @include mixins.rounded(50%);
 }
 section.account .account-item-subject figure picture {
   bottom: 0;
@@ -1815,11 +1774,11 @@ section.account .account-item-subject figure img {
   display: flex;
   height: 100%;
   justify-content: center;
-  padding: per(60,280) 0;
+  padding: variables.per(60,280) 0;
   width: 100%;
 }
 .loading-con figure {
-  width: per(200,280);
+  width: variables.per(200,280);
 }
 
 
@@ -1858,7 +1817,7 @@ section.podnety nav.suggestions .button-location {
   z-index: 10002;
 }
 .podnety-filter-wrapper {
-  background: $white;
+  background: variables.$white;
   bottom: 0;
   box-sizing: border-box;
   overflow-y: scroll;
@@ -1891,11 +1850,11 @@ section.podnety nav.suggestions .button-location {
   width: 100%;
 }
 .podnety-filter-wrapper .filter-title-con .filter-title {
-  color: $black;
-  font-family: $general;
-  font-size: em(24,16);
-  font-weight: $semibold;
-  line-height: em(24,24);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(24,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(24,24);
 }
 .podnety-filter-wrapper .filter-select-buttons-con {
   display: flex;
@@ -1905,10 +1864,10 @@ section.podnety nav.suggestions .button-location {
 .podnety-filter-wrapper .filter-select-buttons-con .filter-select-button {
   gap: 0 8px;
   height: unset;
-  line-height: em(18,16);
+  line-height: variables.em(18,16);
   padding: 8px 14px;
   text-align: left;
-  @include rounded(30px);
+  @include mixins.rounded(30px);
 }
 
 
@@ -1926,11 +1885,11 @@ section.podnety nav.suggestions .button-location {
 .statistics-con .statistics-block {
   box-sizing: border-box;
   padding: 18px 20px;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 
 .statistics-con .statistics-block .general-title {
-  color: $black;
+  color: variables.$black;
 }
 
 .statistics-con .statistics-block .general-value-con {
@@ -1945,50 +1904,50 @@ section.podnety nav.suggestions .button-location {
   grid-template-columns: auto 24px;
 }
 .statistics-con .statistics-block .general-value-con .general-title {
-  color: $black;
-  font-family: $general;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(26,20);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(26,20);
 }
 .statistics-con .statistics-block .general-value-con .statistics-icon {
-  fill: $black;
-  stroke: $black;
+  fill: variables.$black;
+  stroke: variables.$black;
   width: 24px;
 }
 .statistics-con .statistics-block .general-value-con .general-value {
-  color: $black;
-  font-family: $general;
-  font-size: em(40,16);
-  font-weight: $semibold;
-  line-height: em(40,40);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(40,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(40,40);
 }
 .statistics-con .statistics-block .secondary-value-wrapper {
-  border-top: 1px solid $line;
+  border-top: 1px solid variables.$line;
   display: grid;
   gap: 5px 0;
   margin-top: 25px;
   padding-top: 25px;
 }
 .statistics-con .statistics-block .secondary-value-con {
-  color: $black;
+  color: variables.$black;
   display: flex;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $semibold;
-  line-height: em(24,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(24,18);
   gap: 20px 0;
   justify-content: space-between;
   opacity: 0.8;
 }
 .statistics-con .statistics-block .secondary-value-con .secondary-title {
-  font-weight: $medium;
+  font-weight: variables.$medium;
 }
 
 .button.button-suggestion.button-suggestion-active {
-  background: $black;
-  color: $white;
-  fill: $white;
+  background: variables.$black;
+  color: variables.$white;
+  fill: variables.$white;
 }
 .button.button-suggestion svg {
   width: auto;
@@ -2039,15 +1998,15 @@ button.button-filter:hover {
   grid-template-columns: 1fr;
 }
 a.podnet-block {
-  background: $beige;
+  background: variables.$beige;
   cursor: pointer;
   display: block;
   overflow: hidden;
-  @include rounded(15px);
-  @include transition(background);
+  @include mixins.rounded(15px);
+  @include mixins.transition(background);
 }
 a.podnet-block:hover {
-  background: $blue-light;
+  background: variables.$blue-light;
 }
 
 .podnet-block .photo {
@@ -2055,18 +2014,18 @@ a.podnet-block:hover {
 }
 
 .podnet-block .photo .distance {
-  background: $yellow;
+  background: variables.$yellow;
   box-sizing: border-box;
-  color: $black;
-  font-size: em(12,16);
-  font-weight: $medium;
-  line-height: em(12,12);
+  color: variables.$black;
+  font-size: variables.em(12,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(12,12);
   padding: 10px;
   position: absolute;
   left: 14px;
   top: 14px;
   z-index: 2;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 
 a.podnet-block .photo figure {
@@ -2104,16 +2063,16 @@ a.podnet-block .state-con {
   justify-content: space-between;
 }
 a.podnet-block .state {
-  background: $white;
+  background: variables.$white;
   box-sizing: border-box;
-  color: $black;
+  color: variables.$black;
   display: inline-block;
-  font-family: $general;
-  font-size: em(12,16);
-  font-weight: $medium;
-  line-height: em(12,12);
+  font-family: variables.$general;
+  font-size: variables.em(12,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(12,12);
   padding: 8px 12px;
-  @include rounded(25px);
+  @include mixins.rounded(25px);
 }
 a.podnet-block .inside {
   display: block;
@@ -2128,33 +2087,33 @@ a.podnet-block .inside figure {
   padding: 0;
   position: relative;
   width: 50px;
-  @include rounded(50%);
+  @include mixins.rounded(50%);
   rotate: 10deg;
 }
 
 a.podnet-block .state-zaslany-zodpovednemu {
-  background: $zaslane;
+  background: variables.$zaslane;
 }
 
 a.podnet-block .state-vyrieseny {
-  background: $green;
+  background: variables.$green;
 }
 a.podnet-block .sent {
-  background: $blue;
+  background: variables.$blue;
 }
 a.podnet-block .state-v-rieseni {
-  background: $blue;
+  background: variables.$blue;
 }
 a.podnet-block .state-nerieseny {
-  background: $neriesene;
+  background: variables.$neriesene;
 }
 a.podnet-block .state-uzavrety,
 a.podnet-block .state-neprijaty,
 a.podnet-block .state-archivovany {
-  background: $uzavrete;
+  background: variables.$uzavrete;
 }
 a.podnet-block .state-duplicitny {
-  background: $duplicitny;
+  background: variables.$duplicitny;
 }
 a.podnet-block .icon-con {
   align-items: center;
@@ -2165,31 +2124,31 @@ a.podnet-block .icon-con {
 }
 a.podnet-block .icon-block {
   align-items: center;
-  color: $black;
+  color: variables.$black;
   display: flex;
-  font-size: em(12,16);
-  font-weight: $semibold;
-  line-height: em(12,12);
+  font-size: variables.em(12,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(12,12);
   flex-direction: row;
   gap: 0 6px;
   justify-content: flex-end;
 }
 a.podnet-block .icon-like {
   display: inline-block;
-  fill: $black;
+  fill: variables.$black;
   height: 20px;
   width: 20px;
 }
 a.podnet-block .icon-comment {
   display: inline-block;
-  fill: $black;
+  fill: variables.$black;
   height: 20px;
   width: 20px;
 }
 
 a.podnet-block .description-con {
   align-items: center;
-  color: $black;
+  color: variables.$black;
   display: flex;
   flex-direction: row;
   gap: 0 10px;
@@ -2206,7 +2165,7 @@ a.podnet-block .description-con .avatar-image figure {
   overflow: hidden;
   padding-bottom: 100%;
   width: 100%;
-  @include rounded(50%);
+  @include mixins.rounded(50%);
 }
 a.podnet-block .description-con .avatar-image figure picture {
   bottom: 0;
@@ -2220,35 +2179,35 @@ a.podnet-block .description-con .avatar-image figure picture img {
 }
 a.podnet-block .description-con .description {
   //align-items: center;
-  color: $black;
+  color: variables.$black;
   display: flex;
   flex-direction: column;
   gap: 0;
   justify-content: center;
 }
 a.podnet-block .description-con .description .title {
-  color: $black;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(28,20);
+  color: variables.$black;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(28,20);
   margin-bottom: 10px;
 }
 a.podnet-block .description-con .description .address {
-  color: $black;
-  font-size: em(14,16);
-  font-weight: $semibold;
-  line-height: em(20,14);
+  color: variables.$black;
+  font-size: variables.em(14,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(20,14);
 }
 a.podnet-block .description-con .description .date {
-  color: $black;
-  font-size: em(14,16);
-  font-weight: $normal;
-  line-height: em(20,14);
+  color: variables.$black;
+  font-size: variables.em(14,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(20,14);
 }
 
 // Mapa
 .wrapper-map .container-map {
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 
 // Podnet
@@ -2271,10 +2230,10 @@ section.podnet h1 {
   margin-bottom: 0;
 }
 section.podnet .podnet-description {
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(28,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(28,18);
 }
 section.podnet .podnet-pictures-con {
   display: flex;
@@ -2291,11 +2250,11 @@ section.podnet .podnet-pictures-con figure.big-picture {
   padding-bottom: 100%;
   position: relative;
   width: 100%;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 section.podnet .podnet-pictures-con figure.big-picture .lens-image {
   bottom: 20px;
-  fill: $white;
+  fill: variables.$white;
   position: absolute;
   right: 20px;
   width: 38px;
@@ -2314,12 +2273,12 @@ section.podnet .podnet-pictures-con figure.small-picture,
   overflow: hidden;
   position: relative;
   width: 140px;
-  @include rounded(10px);
+  @include mixins.rounded(10px);
 }
 section.podnet .podnet-pictures-con figure.small-picture .lens-image,
 .uploads figure.small-picture .lens-image {
   bottom: 50%;
-  fill: $white;
+  fill: variables.$white;
   margin: 0 -19px -19px 0;
   position: absolute;
   right: 50%;
@@ -2336,30 +2295,30 @@ section.podnet .share-buttons .button-share, .button-like {
 }
 section.podnet .share-buttons button.button-share:hover,
   button.button-like:hover {
-  fill: $black;
+  fill: variables.$black;
 }
 
 section.podnet .share-buttons .button-active,
 section.podnet .like-dislike-con .button-share.button-active
 {
-  fill: $black;
+  fill: variables.$black;
 }
 
 section.podnet .share-buttons .button-share-desktop {
   display: none;
 }
 section.podnet .share-buttons .button-share-active {
-  fill: $black;
+  fill: variables.$black;
 }
 
 // Podnet Information
 section.podnet .podnet-information {
-  background: $blue-light;
+  background: variables.$blue-light;
   display: flex;
   flex-direction: column;
   row-gap: 30px;
-  padding: per(20,280);
-  @include rounded(15px);
+  padding: variables.per(20,280);
+  @include mixins.rounded(15px);
 }
 section.podnet .podnet-information .information-wrapper {
   display: flex;
@@ -2367,11 +2326,11 @@ section.podnet .podnet-information .information-wrapper {
   row-gap: 14px;
 }
 section.podnet .podnet-information .subject-con .name {
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $semibold;
-  line-height: em(26,18);
-  color: $black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(26,18);
+  color: variables.$black;
 }
 section.podnet .podnet-information .subject-con {
   align-items: center;
@@ -2385,7 +2344,7 @@ section.podnet .podnet-information .subject-con figure {
   overflow: hidden;
   position: relative;
   width: 80px;
-  @include rounded(50px);
+  @include mixins.rounded(50px);
 }
 section.podnet .podnet-information .subject-con figure picture {
   bottom: 0;
@@ -2402,27 +2361,27 @@ section.podnet .podnet-information .subject-con figure img {
 section.podnet .podnet-information .map {
   overflow: hidden;
   position: relative;
-  @include rounded(10px);
+  @include mixins.rounded(10px);
 }
 section.podnet .podnet-information .map [data-map-target="map"] {
   height: 40vh;
 }
 section.podnet .podnet-information .label {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
 }
 section.podnet .podnet-information .value {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(18,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(18,18);
 }
 section.podnet .podnet-information .value-old {
-  color: $black-light;
+  color: variables.$black-light;
 }
 section.podnet .podnet-information .value-old[title] {
   cursor: help;
@@ -2430,10 +2389,10 @@ section.podnet .podnet-information .value-old[title] {
 
 section.podnet .podnet-information .button-status {
   width: 100%;
-  color: $black;
+  color: variables.$black;
 }
 section.podnet .podnet-information a {
-  color: $black;
+  color: variables.$black;
 }
 section.podnet .podnet-information .value-con {
   display: flex;
@@ -2442,20 +2401,20 @@ section.podnet .podnet-information .value-con {
 }
 section.podnet .podnet-information a.value,
 section.podnet .podnet-information span.value,{
-  border: 1px solid $black;
-  color: $black;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  border: 1px solid variables.$black;
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
   padding: 6px 11px;
-  @include rounded(25px);
+  @include mixins.rounded(25px);
 }
 section.podnet .podnet-information .clipboard-button {
   vertical-align: middle;
   line-height: 1em;
   margin-left: 5px;
-  color: $black;
+  color: variables.$black;
   display: initial;
   visibility: hidden;
 }
@@ -2472,7 +2431,7 @@ section.podnet .podnet-discussion .add-comment-form figure {
 figure .close-button {
   box-sizing: border-box;
   cursor: pointer;
-  fill: $white;
+  fill: variables.$white;
   height: 38px;
   left: 14px;
   position: absolute;
@@ -2480,7 +2439,7 @@ figure .close-button {
   top: 14px;
   width: 38px;
   z-index: 2;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 figure .close-button:hover,
 figure .rotate-button:hover {
@@ -2490,7 +2449,7 @@ figure .rotate-button:hover {
 .pictures-wrapper figure .rotate-button {
   box-sizing: border-box;
   cursor: pointer;
-  fill: $white;
+  fill: variables.$white;
   height: 38px;
   right: 14px;
   position: absolute;
@@ -2498,7 +2457,7 @@ figure .rotate-button:hover {
   top: 14px;
   width: 38px;
   z-index: 2;
-  @include transition(all);
+  @include mixins.transition(all);
 }
 .pictures-wrapper figure .rotate-button:hover {
   opacity: 1;
@@ -2515,49 +2474,49 @@ section.podnet .podnet-discussion .comment {
   word-break: break-word;
 }
 section.podnet .podnet-discussion .duplicate {
-  background: $green-light;
+  background: variables.$green-light;
 }
 section.podnet .podnet-discussion .government {
-  background: $blue-light;
+  background: variables.$blue-light;
 }
 section.podnet .podnet-discussion .confirm-comment {
-  background: $green-light;
+  background: variables.$green-light;
 }
 section.podnet .podnet-discussion .confirm-comment .confirm-status {
-  background: $green;
+  background: variables.$green;
   align-items: center;
   box-sizing: border-box;
-  color: $black;
+  color: variables.$black;
   display: flex;
-  fill: $black;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(14,14);
+  fill: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(14,14);
   gap: 0 10px;
   height: 36px;
   justify-content: center;
   padding: 0px;
   width: 116px;
-  @include rounded(25px);
-  @include transition(all);
+  @include mixins.rounded(25px);
+  @include mixins.transition(all);
 }
 section.podnet .podnet-discussion .confirm-comment .confirm-status svg {
   width: 18px;
 }
 section.podnet .podnet-discussion .comment,
 section.podnet .podnet-discussion .edit-comment-form {
-  border-bottom: 1px solid $black;
+  border-bottom: 1px solid variables.$black;
 }
 section.podnet .podnet-discussion .comment-con > *:first-child .comment {
-  border-top: 1px solid $black;
+  border-top: 1px solid variables.$black;
 }
 section.podnet .podnet-discussion .subject .name {
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $semibold;
-  line-height: em(26,18);
-  color: $black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(26,18);
+  color: variables.$black;
 }
 section.podnet .podnet-discussion .subject {
   align-items: center;
@@ -2572,7 +2531,7 @@ section.podnet .podnet-discussion .subject figure {
   overflow: hidden;
   position: relative;
   width: 65px;
-  @include rounded(50px);
+  @include mixins.rounded(50px);
 }
 section.podnet .podnet-discussion .subject figure picture {
   bottom: 0;
@@ -2592,15 +2551,15 @@ section.podnet .podnet-discussion .comment .comment-header {
   gap: 30px;
 }
 section.podnet .podnet-discussion .comment .comment-header .edit-comment-notice {
-  color: $black-light;
+  color: variables.$black-light;
 }
 
 section.podnet .podnet-discussion .date {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(18,18);
-  font-weight: $normal;
-  line-height: em(18,18);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(18,18);
+  font-weight: variables.$normal;
+  line-height: variables.em(18,18);
 }
 
 
@@ -2623,7 +2582,7 @@ section.podnet .podnet-discussion figure.small-picture {
   overflow: hidden;
   position: relative;
   width: 140px;
-  @include rounded(10px);
+  @include mixins.rounded(10px);
 }
 section.podnet .podnet-discussion figure.small-picture.smaller-picture {
   width: 80px;
@@ -2632,7 +2591,7 @@ section.podnet .podnet-discussion figure.small-picture.smaller-picture {
 
 section.podnet .podnet-discussion figure.small-picture .lens-image {
   bottom: 50%;
-  fill: $white;
+  fill: variables.$white;
   margin: 0 -19px -19px 0;
   position: absolute;
   right: 50%;
@@ -2641,16 +2600,16 @@ section.podnet .podnet-discussion figure.small-picture .lens-image {
 }
 
 section.podnet .podnet-discussion .comment-content {
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(28,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
 }
 section.podnet .podnet-discussion .add-comment-form-con {
 
 }
 section.podnet .podnet-discussion .add-comment-form {
-  background: $white;
+  background: variables.$white;
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
   bottom: 0;
@@ -2662,37 +2621,37 @@ section.podnet .podnet-discussion .add-comment-form {
   width: 100%;
 }
 section.podnet .podnet-discussion .add-comment-form .title {
-  font-family: $general;
-  font-size: em(22,16);
-  font-weight: $semibold;
-  line-height: em(22,22);
+  font-family: variables.$general;
+  font-size: variables.em(22,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(22,22);
 }
 section.podnet .podnet-discussion .add-comment-form .description {
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(28,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
 }
 section.podnet .podnet-discussion .add-comment-form form {
   display: grid;
   gap: 20px 0;
 }
 section.podnet .podnet-discussion .add-comment-form form textarea {
-  border: 1px solid $black;
+  border: 1px solid variables.$black;
   box-sizing: border-box;
   display: block;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(28,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
   min-height: 200px;
   outline: none;
   padding: 16px 20px;
   width: 100%;
-  @include rounded(10px);
+  @include mixins.rounded(10px);
 }
 section.podnet .podnet-discussion .add-comment-form form textarea::placeholder {
-  color: $black-light;
+  color: variables.$black-light;
 }
 section.podnet .podnet-discussion .add-comment-form .pictures-wrapper,
 .uploads.pictures-wrapper {
@@ -2749,24 +2708,24 @@ section.podnet .like-dislike-con .like {
 }
 section.podnet .like-dislike-con .button-share {
   align-items: center;
-  border: 1px solid $blue-dark;
+  border: 1px solid variables.$blue-dark;
   box-sizing: border-box;
   display: flex;
   fill: transparent;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(14,14);
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(14,14);
   gap: 0 10px;
   height: 36px;
   padding: 0 14px;
-  stroke: $blue-dark;
+  stroke: variables.$blue-dark;
   width: auto;
-  @include rounded(25px);
-  @include transition(all);
+  @include mixins.rounded(25px);
+  @include mixins.transition(all);
 }
 section.podnet .like-dislike-con button.button-share:hover {
-  fill: $black;
+  fill: variables.$black;
 }
 section.podnet .like-dislike-con button.button-share.button-active:hover {
   fill: transparent;
@@ -2776,7 +2735,7 @@ section.podnet .like-dislike-con .button-like svg {
   width: 14px;
 }
 section.podnet .like-dislike-con .button-share-active {
-  fill: $black;
+  fill: variables.$black;
 }
 
 section.podnet .like-dislike-con .button-dislike svg {
@@ -2800,7 +2759,7 @@ section.podnet .podnet-discussion .like-dislike-con figure {
   overflow: hidden;
   position: relative;
   width: 36px;
-  @include rounded(50px);
+  @include mixins.rounded(50px);
 }
 section.podnet .podnet-discussion .like-dislike-con figure picture {
   bottom: 0;
@@ -2819,31 +2778,31 @@ section.podnet .confirm-button-con {
 }
 section.podnet a.button-confirm {
   align-items: center;
-  border: 1px solid $black-light;
+  border: 1px solid variables.$black-light;
   box-sizing: border-box;
-  color: $black-light;
+  color: variables.$black-light;
   cursor: pointer;
   display: flex;
-  fill: $black-light;
-  font-family: $general;
-  font-size: em(14,16);
-  font-weight: $medium;
-  line-height: em(14,14);
+  fill: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(14,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(14,14);
   gap: 0 10px;
   height: 36px;
   padding: 0 0px 0 10px;
   width: 174px;
-  @include rounded(25px);
-  @include transition(all);
+  @include mixins.rounded(25px);
+  @include mixins.transition(all);
 }
 section.podnet a.button-confirm svg {
   width: 18px;
 }
 section.podnet a.button-confirm:hover {
-  background: $pink;
-  border-color: $black;
-  color: $black;
-  fill: $black;
+  background: variables.$pink;
+  border-color: variables.$black;
+  color: variables.$black;
+  fill: variables.$black;
 }
 
 section.podnet .add-buttons {
@@ -2879,14 +2838,14 @@ section.compliment .compliment-con {
   gap: 40px 0;
 }
 section.compliment .compliment-title {
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(28,18);
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(28,18);
 }
 section.compliment figure {
   overflow: hidden;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 section.compliment .compliment-buttons-con {
   display: flex;
@@ -2898,13 +2857,13 @@ section.compliment .compliment-buttons-con .button-share-desktop {
 }
 section.compliment .info-block {
   align-items: flex-start;
-  background: $blue-light;
+  background: variables.$blue-light;
   display: flex;
   flex-direction: column;
   gap: 30px 0;
   overflow: hidden;
-  padding: per(20,280);
-  @include rounded(15px);
+  padding: variables.per(20,280);
+  @include mixins.rounded(15px);
 }
 section.compliment .info-block .info-block-item {
   align-items: flex-start;
@@ -2913,23 +2872,23 @@ section.compliment .info-block .info-block-item {
   gap: 8px 0;
 }
 section.compliment .info-block .info-block-description {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
 }
 section.compliment .info-block .info-block-value {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(28,18);
 }
 
 // SMS overenie
 section.verification {
-  padding-bottom: per(80,280);
+  padding-bottom: variables.per(80,280);
   padding-top: 40px;
   max-width: 400px;
 }
@@ -2957,7 +2916,7 @@ section.verification {
 
 // Overenie totožnosti
 section.identity {
-  padding-bottom: per(80,280);
+  padding-bottom: variables.per(80,280);
   padding-top: 40px;
   max-width: 400px;
 }
@@ -2979,37 +2938,37 @@ section.search-result-blank {
   text-align: center;
 }
 section.search-result-blank figure.empty-box {
-  margin: 0 per(40,280);
+  margin: 0 variables.per(40,280);
 }
 section.search-result-blank .notice {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $medium;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(28,18);
   margin-top: 40px;
 }
 section.search-result-blank .search-term {
-  font-weight: $semibold;
+  font-weight: variables.$semibold;
 }
 
 
 // Oznam ak nie je užívateľ prihlásený
 .no-login-notice-con {
-  background: $pink-fifty;
+  background: variables.$pink-fifty;
   display: flex;
   flex-direction: column;
   gap: 30px 0;
-  padding: per(20,280);
-  @include rounded(15px);
+  padding: variables.per(20,280);
+  @include mixins.rounded(15px);
   text-wrap: pretty;
 }
 .no-login-notice-con .no-login-notice {
-  color: $black;
-  font-family: $general;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(30,20);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(30,20);
 }
 .no-login-notice-con .no-login-notice-buttons-con {
   align-items: end;
@@ -3018,22 +2977,22 @@ section.search-result-blank .search-term {
   grid-template-columns: 1fr;
 }
 .no-login-notice-con .registration-notice {
-  color: $black-light;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(16,16);
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(16,16);
   margin-bottom: 20px;
   text-align: center;
 }
 .no-login-notice-con a.button {
-  background: $yellow;
-  color: $black;
+  background: variables.$yellow;
+  color: variables.$black;
   width: 100%;
 }
 .no-login-notice-con a.button:hover {
-  background: $blue;
-  color: $black;
+  background: variables.$blue;
+  color: variables.$black;
 }
 .no-login-notice-con a.button-transparent {
   background: transparent;
@@ -3044,34 +3003,34 @@ section.search-result-blank .search-term {
 
 // Oznam ak nie je užívateľ overený
 .unverified-notice-con {
-  background: $pink-fifty;
+  background: variables.$pink-fifty;
   display: flex;
   flex-direction: column;
   gap: 20px 0;
-  padding: per(20,280);
-  @include rounded(15px);
+  padding: variables.per(20,280);
+  @include mixins.rounded(15px);
 }
 .unverified-notice-con .unverified-notice-title {
-  color: $black;
-  font-family: $general;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(30,20);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(30,20);
 }
 .unverified-notice-con .unverified-notice-description {
-  color: $black;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(26,16);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(26,16);
 }
 .unverified-notice-con a.button {
-  background: $yellow;
-  color: $black;
+  background: variables.$yellow;
+  color: variables.$black;
 }
 .unverified-notice-con a.button:hover {
-  background: $blue;
-  color: $black;
+  background: variables.$blue;
+  color: variables.$black;
 }
 
 
@@ -3080,10 +3039,10 @@ section.search-result-blank .search-term {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  margin-left: per(20,320);
+  margin-left: variables.per(20,320);
   position: fixed;
   gap: 10px 0;
-  right: per(20,320);
+  right: variables.per(20,320);
   top: 100px;
   z-index: 10002;
   opacity: 1;
@@ -3092,15 +3051,15 @@ section.search-result-blank .search-term {
 .flash-messages {
   box-shadow: 0px 0px 5px 1px rgba(28, 48, 84, 0.3);
   display: flex;
-  color: $black;
-  font-family: $general;
-  font-size: em(16,16);
-  font-weight: $medium;
-  line-height: em(24,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  line-height: variables.em(24,18);
   gap: 0 20px;
   max-width: 360px;
   padding: 20px;
-  @include rounded(15px);
+  @include mixins.rounded(15px);
 }
 .flash-messages figure {
   margin-top: 2px;
@@ -3112,21 +3071,21 @@ section.search-result-blank .search-term {
 }
 // Green
 .flash-messages.green {
-  background: $green-middle;
+  background: variables.$green-middle;
 }
 .flash-messages.green figure::before {
   content: url("fm-smile.svg");
 }
 // Red
 .flash-messages.red {
-  background: $pink;
+  background: variables.$pink;
 }
 .flash-messages.red figure::before {
   content: url("fm-frow.svg");
 }
 // Red
 .flash-messages.yellow {
-  background: $yellow-middle;
+  background: variables.$yellow-middle;
 }
 .flash-messages.yellow figure::before {
   content: url("fm-smile.svg");
@@ -3151,12 +3110,12 @@ section.loader-con h1 {
 
 // Be First Notice
 .be-first-comment-notice {
-  border-top: 1px solid $black;
-  color: $black;
-  font-family: $general;
-  font-size: em(20,16);
-  font-weight: $semibold;
-  line-height: em(30,20);
+  border-top: 1px solid variables.$black;
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(30,20);
   padding-top: 30px;
 }
 
@@ -3164,9 +3123,9 @@ section.loader-con h1 {
 
 // 404 error page
 section.error-page-con {
-  padding: per(50,320) per(30,320);
+  padding: variables.per(50,320) variables.per(30,320);
   max-width: unset;
-  background: $blue;
+  background: variables.$blue;
   text-align: center;
 }
 section.error-page-con .error-page {
@@ -3182,24 +3141,24 @@ section.error-page-con figure {
   width: 100%;
 }
 section.error-page-con h1.error-page-title {
-  font-size: em(36,16);
-  line-height: em(36,36);
+  font-size: variables.em(36,16);
+  line-height: variables.em(36,36);
   margin: 0;
   padding: 0;
   width: 100%;
 }
 section.error-page-con .error-page-notice {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $semibold;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(28,18);
 }
 section.error-page-con a.button {
   margin: 0 auto;
 }
 section.error-page-con a.button:hover {
-  background: $white;
+  background: variables.$white;
 }
 
 
@@ -3222,7 +3181,7 @@ body.error-server-body {
   flex-direction: column;
   gap: 20px 0;
   max-width: 450px;
-  padding: per(30,320) 40px;
+  padding: variables.per(30,320) 40px;
   justify-content: center;
   text-align: center;
 }
@@ -3236,18 +3195,18 @@ body.error-server-body {
   width: 100%;
 }
 .error-server h1.error-server-title {
-  font-size: em(36,16);
-  line-height: em(36,36);
+  font-size: variables.em(36,16);
+  line-height: variables.em(36,36);
   margin: 0;
   padding: 0;
   width: 100%;
 }
 .error-server .error-server-notice {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $semibold;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$semibold;
+  line-height: variables.em(28,18);
 }
 
 .wrapper-map .container-map {
@@ -3256,28 +3215,28 @@ body.error-server-body {
 
 // Mapa Popup
 .map-popup {
-  background: $white;
-  box-shadow: 0px 0px 5px 1px $black-ten;
+  background: variables.$white;
+  box-shadow: 0px 0px 5px 1px variables.$black-ten;
   display: flex;
   flex-direction: column;
   gap: 4px 0;
   max-width: 200px;
   padding: 10px 12px;
-  @include rounded(6px);
+  @include mixins.rounded(6px);
 }
 .map-popup .title {
-  color: $black;
-  font-family: $general;
-  font-size: em(14,16) * 1.2;
-  font-weight: $semibold;
-  line-height: em(20,14);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(14,16) * 1.2;
+  font-weight: variables.$semibold;
+  line-height: variables.em(20,14);
 }
 .map-popup .location, .map-popup .date {
-  color: $black;
-  font-family: $general;
-  font-size: em(12,16) * 1.2;
-  font-weight: $medium;
-  line-height: em(18,12);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(12,16) * 1.2;
+  font-weight: variables.$medium;
+  line-height: variables.em(18,12);
 }
 
 .leaflet-popup-content-wrapper {
@@ -3332,22 +3291,22 @@ section.contact {
   max-width: 550px;
 }
 section.contact p {
-  color: $black;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(28,18);
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
   //margin-bottom: 30px;
 }
 section.contact strong {
-  font-weight: $semibold;
+  font-weight: variables.$semibold;
 }
 
 
 footer {
-  background: $blue-dark;
-  color: $white;
-  padding: em(30,18) per(20,320);
+  background: variables.$blue-dark;
+  color: variables.$white;
+  padding: variables.em(30,18) variables.per(20,320);
 }
 footer .footer-wraper {
   align-items: flex-end;
@@ -3358,11 +3317,11 @@ footer .footer-wraper {
   max-width: 1600px;
 }
 footer a {
-  color: $blue;
-  @include transition(color);
+  color: variables.$blue;
+  @include mixins.transition(color);
 }
 footer a:hover {
-  color: $white;
+  color: variables.$white;
 }
 footer .footer-nav-top {
   display: flex;
@@ -3372,74 +3331,74 @@ footer .footer-nav-top {
 }
 footer a.button {
   background: transparent;
-  border: 1px solid $white;
-  color: $white;
+  border: 1px solid variables.$white;
+  color: variables.$white;
   padding: 15px 20px;
 }
 footer a.button:hover {
-  background: $white;
-  color: $blue-dark;
+  background: variables.$white;
+  color: variables.$blue-dark;
 }
 footer a.donate {
-  background: $white;
+  background: variables.$white;
   border: none;
-  color: $blue-dark;
+  color: variables.$blue-dark;
   padding: 16px 20px;
 }
 footer a.donate:hover {
-  background: $blue;
+  background: variables.$blue;
 }
 footer .social-networks {
   align-items: flex-end;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  gap: 0 em(20,16);
+  gap: 0 variables.em(20,16);
 }
 footer .social-networks a.sc-icon {
   display: inline-block;
-  fill: $blue;
+  fill: variables.$blue;
   width: 40px;
-  @include transition(fill);
+  @include mixins.transition(fill);
 }
 footer .social-networks a.sc-icon:hover {
-  fill: $white;
+  fill: variables.$white;
 }
 footer .copy {
-  color: $blue;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(28,18);
+  color: variables.$blue;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
 }
 footer .footer-nav-bottom {
-  color: $blue;
-  font-family: $general;
-  font-size: em(18,16);
-  font-weight: $normal;
-  line-height: em(18,18);
+  color: variables.$blue;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(18,18);
 }
 
 // 368px
-@import "_23em.scss";
+@include meta.load-css("23em");
 
 // 480px
-@import "_30em.scss";
+@include meta.load-css("_30em.scss");
 
 // 640px
-@import "_40em.scss";
+@include meta.load-css("_40em.scss");
 
 // 768px
-@import "_48em.scss";
+@include meta.load-css("_48em.scss");
 
 // 1024px
-@import "_64em.scss";
+@include meta.load-css("_64em.scss");
 
 // 1280px
-@import "_80em.scss";
+@include meta.load-css("_80em.scss");
 
 // 1440px
-@import "_90em.scss";
+@include meta.load-css("_90em.scss");
 
 // 1600px
-@import "_100em.scss";
+@include meta.load-css("_100em.scss");
