@@ -30,5 +30,7 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_no_text "Sledované podnety"
     assert_no_text "Moje podnety"
     assert_no_link "Upraviť profil"
+
+    assert_no_selector ".profile-results-panel"
   end
 end

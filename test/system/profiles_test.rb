@@ -42,45 +42,13 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_equal true, user.gdpr_stats_accepted
   end
 
-  test "responsible subject user can update profile name and birth year" do
+  test "responsible subject user can't update profile" do
     user = users(:responsible_subject)
     login_via_magic_link(user.email)
 
     visit edit_profile_path
-    assert_selector "h1", text: "Osobné údaje"
 
-    fill_in "Meno*", with: "Updated RS Name"
-    fill_in "Rok narodenia", with: "2010"
-
-    # Set public profile (choosing 'false' means not anonymous)
-    choose "user_anonymous_false"
-
-    # Select municipality
-    select "Bratislava", from: "municipality_id"
-
-    # Disable email notifications
-    choose "user_email_notifiable_false"
-
-    # Uncheck newsletter
-    uncheck "user_newsletter_accepted"
-
-    # Check GDPR stats
-    check "user_gdpr_stats_accepted"
-
-    within('form[action="/profil"]') do
-      click_button "Uložiť"
-    end
-
-    assert_text "Zmeny profilu boli uložené."
-
-    user.reload
-    assert_equal "Updated RS Name", user.name
-    assert_equal 2010, user.birth_year
-    assert_equal false, user.anonymous
-    assert_equal Municipality.find_by(name: "Bratislava").id, user.municipality_id
-    assert_equal false, user.email_notifiable
-    assert_equal false, user.newsletter_accepted
-    assert_equal true, user.gdpr_stats_accepted
+    assert_text "Túto akciu nemôžete vykonať s vaším typom účtu."
   end
 
   test "citizen user requires login to access profile edit" do
