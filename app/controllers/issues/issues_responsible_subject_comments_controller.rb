@@ -1,7 +1,7 @@
 class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
   include IssueScoped
   before_action :require_user, only: [ :create, :edit, :update ]
-  before_action :responsible_subject
+  before_action :ensure_responsible_subject
   before_action :check_permissions
 
   def show
@@ -16,20 +16,6 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
     @comment = Issues::ResponsibleSubjectComment.new
   end
 
-  def edit
-    @comment = Issues::ResponsibleSubjectComment.where(responsible_subject_author: current_user.responsible_subject).find(params[:id])
-  end
-
-  def update
-    @comment = Issues::ResponsibleSubjectComment.where(responsible_subject_author: current_user.responsible_subject).find(params[:id])
-    @comment.assign_attributes(comment_params)
-    if @comment.save(context: :edit)
-      render @comment
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
   def create
     @comment = Issues::ResponsibleSubjectComment.new(comment_params)
     @comment.build_activity(issue: @issue, type: Issues::CommentActivity)
@@ -40,7 +26,7 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
         format.turbo_stream
         format.html { redirect_to @issue, notice: "Komentár bol pridaný" }
       end
-      Issues::SyncEditableActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
+      Issues::SyncActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
     else
       render :new, status: :unprocessable_entity
     end
@@ -52,7 +38,7 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
     params.require(:issues_responsible_subject_comment).permit(:text, attachments: [])
   end
 
-  def responsible_subject
+  def ensure_responsible_subject
     render status: :unauthorized, body: nil unless current_user.is_a?(User::ResponsibleSubject) && current_user.responsible_subject == @issue.responsible_subject
   end
 

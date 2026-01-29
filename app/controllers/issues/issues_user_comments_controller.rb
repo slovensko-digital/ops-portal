@@ -1,7 +1,7 @@
 class Issues::IssuesUserCommentsController < ApplicationController
   include IssueScoped
   before_action :require_user, only: [ :create, :edit, :update ]
-  before_action :citizen
+  before_action :ensure_citizen
   before_action :check_permissions
 
   def show
@@ -56,7 +56,7 @@ class Issues::IssuesUserCommentsController < ApplicationController
     end
   end
 
-  def citizen
+  def ensure_citizen
     render status: :unauthorized, body: nil unless current_user.is_a?(User::Citizen)
   end
 
