@@ -48,7 +48,7 @@ class ProfilesTest < ApplicationSystemTestCase
 
     visit edit_profile_path
 
-    assert_text "Túto akciu nemôžete vykonať s vaším typom účtu."
+    assert_text "Túto akciu nemôžete vykonať."
   end
 
   test "citizen user requires login to access profile edit" do
