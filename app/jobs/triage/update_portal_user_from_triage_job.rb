@@ -3,6 +3,22 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
     triage_user = triage_zammad_client.find_user(user_id)
     return unless triage_user
 
+    if triage_user.roles.include?("Zodpovedný Subjekt") and !User.exists?(external_id: triage_user.id.to_i)
+      rs = ResponsibleSubject.find_by!(external_id: triage_user.id.to_i)
+
+      User::ResponsibleSubject.create!(
+        firstname: triage_user.firstname,
+        lastname: triage_user.lastname,
+        email: triage_user.email,
+        external_id: triage_user.id.to_i,
+        responsible_subject: rs,
+        status: :verified,
+        onboarded: true,
+        password: SecureRandom.hex(32),
+        phone_verified: true
+      )
+    end
+
     return unless triage_user.origin == "portal"
 
     user = User.find_by!(external_id: triage_user.id.to_i)
