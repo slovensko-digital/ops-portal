@@ -100,6 +100,8 @@ sk:
               less_than: "ste už prekročili"
             birth_year:
               inclusion: "musí byť medzi %{min_year} a %{max_year}"
+            avatar:
+              invalid_content_type: "môže byť iba obrázok."
     attributes:
       issue:
         title: Názov
@@ -120,6 +122,7 @@ sk:
         phone_verification_attempts: "Povolený počet pokusov na overenie"
         phone_verification_code_attempts: "Povolený počet pokusov na overenie"
         birth_year: "Rok narodenia"
+        avatar: "Profilová fotka"
       praise:
         title: Názov
         description: "Text pochvaly"

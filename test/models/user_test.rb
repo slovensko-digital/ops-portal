@@ -130,4 +130,25 @@ class UserTest < ActiveSupport::TestCase
     assert_match(/^#{expected_prefix}[0-9a-f]{16}$/, user.login, "Login should be anonymized with id + hex sequence")
     assert_equal "#{user.login}@close.gdpr", user.email, "Email should match anonymized login format"
   end
+
+  test "should validate avatar content type" do
+    user = users(:one)
+
+    # Valid image types should be accepted
+    valid_types = %w[image/jpeg image/png image/gif image/heic image/heif]
+    valid_types.each do |content_type|
+      user.avatar.attach(io: StringIO.new("fake image"), filename: "avatar.jpg", content_type: content_type)
+      assert user.valid?, "User should be valid with avatar content type #{content_type}"
+      user.avatar.purge
+    end
+
+    # Invalid types like video should be rejected
+    invalid_types = %w[video/mp4 video/quicktime application/pdf]
+    invalid_types.each do |content_type|
+      user.avatar.attach(io: StringIO.new("fake video"), filename: "video.mp4", content_type: content_type)
+      assert_not user.valid?, "User should be invalid with avatar content type #{content_type}"
+      assert_includes user.errors[:avatar], "môže byť iba obrázok."
+      user.avatar.purge
+    end
+  end
 end
