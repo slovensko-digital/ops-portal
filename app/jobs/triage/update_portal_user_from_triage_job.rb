@@ -3,7 +3,7 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
     triage_user = triage_zammad_client.find_user(user_id)
     return unless triage_user
 
-    if triage_user.roles.include?("Zodpovedný Subjekt") and !User.exists?(external_id: triage_user.id.to_i)
+    if triage_user.roles.include?("Zodpovedný Subjekt") && !User.exists?(external_id: triage_user.id.to_i)
       rs = ResponsibleSubject.find_by!(external_id: triage_user.id.to_i)
 
       User::ResponsibleSubject.create!(
