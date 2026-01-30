@@ -1,7 +1,7 @@
 module Profiles::AvatarsHelper
   def user_avatar(user, variant: :normal)
     image = "ops-avatar-blue.png"
-    if user.is_a?(User) && user.avatar.attached?
+    if user.is_a?(User) && user.avatar.attached? && user.avatar.variable?
       image = user.avatar.variant(variant)
     end
 
