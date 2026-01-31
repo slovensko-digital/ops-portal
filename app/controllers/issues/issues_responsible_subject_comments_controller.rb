@@ -14,6 +14,7 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
 
   def new
     @comment = Issues::ResponsibleSubjectComment.new
+    @resolves = params[:resolves]
   end
 
   def create
@@ -22,6 +23,11 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
     @comment.responsible_subject_author = current_user.responsible_subject
 
     if @comment.save
+      if params[:resolves]
+        @issue.update!(state: Issues::State.find_by!(key: "resolved"))
+        SyncIssueToTriageJob.perform_later(@issue)
+      end
+
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to @issue, notice: "Komentár bol pridaný" }
