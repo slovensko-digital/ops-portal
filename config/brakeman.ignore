@@ -1,40 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Dynamic Render Path",
-      "warning_code": 15,
-      "fingerprint": "5c9249cd090f8e9155c5ce4ec287503e8a80cb2d8122969a9b04bf374ea6bc05",
-      "check_name": "Render",
-      "message": "Render path contains parameter value",
-      "file": "app/views/profiles/show.html.erb",
-      "line": 69,
-      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => current_user.issues.newest.page(params[:page]).per(8), {})",
-      "render_path": [
-        {
-          "type": "controller",
-          "class": "ProfilesController",
-          "method": "show",
-          "line": 17,
-          "file": "app/controllers/profiles_controller.rb",
-          "rendered": {
-            "name": "profiles/show",
-            "file": "app/views/profiles/show.html.erb"
-          }
-        }
-      ],
-      "location": {
-        "type": "template",
-        "template": "profiles/show"
-      },
-      "user_input": "params[:page]",
-      "confidence": "Weak",
-      "cwe_id": [
-        22
-      ],
-      "note": ""
-    },
-    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "73bd92709f02ddbd8826ec99c4c2acf9dc235503aa5a82cea6330f20e427f317",
@@ -54,74 +20,6 @@
       "confidence": "Medium",
       "cwe_id": [
         89
-      ],
-      "note": ""
-    },
-    {
-      "warning_type": "Dynamic Render Path",
-      "warning_code": 15,
-      "fingerprint": "a7423b872bfcdb1b38bf9e46a66cb671085d7f6b8b8b9a434243904afe25b684",
-      "check_name": "Render",
-      "message": "Render path contains parameter value",
-      "file": "app/views/issues/index.html.erb",
-      "line": 27,
-      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => (search_engine.search(Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject).with_attached_photos, params) or search_engine.stats(Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject).with_attached_photos, params) do\n results.stats = { :by_state => scope.group(\"state\").order(\"count_all DESC\").async_count, :by_category => scope.group(\"category\").order(\"count_all DESC\").async_count, :by_responsible_subject => scope.group(\"responsible_subject\").order(\"count_all DESC\").async_count }\n end).visible_filters, {})",
-      "render_path": [
-        {
-          "type": "controller",
-          "class": "IssuesController",
-          "method": "index",
-          "line": 25,
-          "file": "app/controllers/issues_controller.rb",
-          "rendered": {
-            "name": "issues/index",
-            "file": "app/views/issues/index.html.erb"
-          }
-        }
-      ],
-      "location": {
-        "type": "template",
-        "template": "issues/index"
-      },
-      "user_input": "params",
-      "confidence": "Weak",
-      "cwe_id": [
-        22
-      ],
-      "note": ""
-    },
-    {
-      "warning_type": "Dynamic Render Path",
-      "warning_code": 15,
-      "fingerprint": "a91b97998f40ec5d9a1b869d4efd11be15f96ebc73f3f2e8888006d85df25ce0",
-      "check_name": "Render",
-      "message": "Render path contains parameter value",
-      "file": "app/views/issues/index.html.erb",
-      "line": 21,
-      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => (search_engine.search(Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject).with_attached_photos, params) or search_engine.stats(Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject).with_attached_photos, params) do\n results.stats = { :by_state => scope.group(\"state\").order(\"count_all DESC\").async_count, :by_category => scope.group(\"category\").order(\"count_all DESC\").async_count, :by_responsible_subject => scope.group(\"responsible_subject\").order(\"count_all DESC\").async_count }\n end).applied_filters, {})",
-      "render_path": [
-        {
-          "type": "controller",
-          "class": "IssuesController",
-          "method": "index",
-          "line": 25,
-          "file": "app/controllers/issues_controller.rb",
-          "rendered": {
-            "name": "issues/index",
-            "file": "app/views/issues/index.html.erb"
-          }
-        }
-      ],
-      "location": {
-        "type": "template",
-        "template": "issues/index"
-      },
-      "user_input": "params",
-      "confidence": "Weak",
-      "cwe_id": [
-        22
       ],
       "note": ""
     },
@@ -170,5 +68,5 @@
       "note": ""
     }
   ],
-  "brakeman_version": "7.1.2"
+  "brakeman_version": "8.0.1"
 }
