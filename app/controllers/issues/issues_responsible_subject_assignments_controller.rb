@@ -54,7 +54,7 @@ class Issues::IssuesResponsibleSubjectAssignmentsController < ApplicationControl
   end
 
   def ensure_responsible_subject
-    render status: :unauthorized, body: nil unless current_user.is_a?(User::ResponsibleSubject) && current_user.responsible_subject == @issue.responsible_subject
+    render status: :unauthorized, body: nil unless current_user&.responsible_subject == @issue.responsible_subject
   end
 
   def check_permissions

@@ -23,7 +23,7 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
     @comment.responsible_subject_author = current_user.responsible_subject
 
     if @comment.save
-      if params[:resolves]
+      if params[:resolves] == "true"
         @issue.update!(state: Issues::State.find_by!(key: "resolved"))
         SyncIssueToTriageJob.perform_later(@issue)
       end
@@ -45,7 +45,7 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
   end
 
   def ensure_responsible_subject
-    render status: :unauthorized, body: nil unless current_user.is_a?(User::ResponsibleSubject) && current_user.responsible_subject == @issue.responsible_subject
+    render status: :unauthorized, body: nil unless current_user&.responsible_subject == @issue.responsible_subject
   end
 
   def check_permissions
