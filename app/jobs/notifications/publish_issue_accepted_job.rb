@@ -1,7 +1,7 @@
 module Notifications
   class PublishIssueAcceptedJob < ApplicationJob
     def perform(issue, notification_mailer: NotificationMailer)
-      issue.subscriptions.each do |subscription|
+      issue.subscriptions.active.each do |subscription|
         user = subscription.subscriber
         next unless user.email_notifiable? && user == issue.author
 
