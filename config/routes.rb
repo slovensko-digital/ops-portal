@@ -142,9 +142,7 @@ Rails.application.routes.draw do
   get "r/:municipality_slug/pridat-podnet" => "legacy/redirects#create_issue"
 
   # Widget routes - support both /widget and /legacy/widget
-  get "/widget" => "legacy/widgets#index"
   get "/legacy/widget" => "legacy/widgets#index"
-  get "/widget/configure", to: redirect { |_, request| "/legacy/widget?#{request.query_string}" }
 
   # Redirect root with widget param to legacy widget endpoint
   get "/", to: redirect { |_, request| "/legacy/widget?#{request.query_string}" }, constraints: lambda { |req| req.params[:widget].present? }
