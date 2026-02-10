@@ -10,7 +10,8 @@ SitemapGenerator::Sitemap.adapter = SitemapGenerator::AwsSdkAdapter.new(
   access_key_id: sitemap_config[:access_key_id],
   secret_access_key: sitemap_config[:secret_access_key],
   region: sitemap_config[:region],
-  endpoint: sitemap_config[:endpoint]
+  endpoint: sitemap_config[:endpoint],
+  path_style: sitemap_config[:path_style]
 )
 
 SitemapGenerator::Sitemap.create do
@@ -20,27 +21,16 @@ SitemapGenerator::Sitemap.create do
 
   add new_issues_draft_path, changefreq: "monthly", priority: 0.9
 
-  Issue.searchable.with_attached_photos.find_each do |issue|
-    images = []
-    if issue.photos.attached?
-      issue.photos.each do |photo|
-        images << {
-          loc: Rails.application.routes.url_helpers.rails_blob_url(photo, host: SitemapGenerator::Sitemap.default_host),
-          title: issue.title
-        }
-      end
-    end
-
+  Issue.searchable.find_each do |issue|
     add issue_path(issue),
         lastmod: issue.updated_at,
         changefreq: "weekly",
-        priority: 0.8,
-        images: images
+        priority: 0.8
   end
 
   root_category_id = ENV["CMS_ROOT_CATEGORY_ID"].to_i
   Cms::Page.published.includes(:category).find_each do |page|
-    if page.category_id == root_category_id
+    if page.category_id == root_category_id || page.category.nil?
       path = page.slug
     else
       path = "#{page.category.slug}/#{page.slug}"
