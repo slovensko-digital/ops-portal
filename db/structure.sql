@@ -623,7 +623,8 @@ CREATE TABLE public.issue_subscriptions (
     subscriber_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    email_unsubscribe_token character varying NOT NULL
+    email_unsubscribe_token character varying NOT NULL,
+    active boolean DEFAULT true NOT NULL
 );
 
 
@@ -4232,6 +4233,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260210092444'),
 ('20260122093440'),
 ('20260121170436'),
 ('20260121170411'),

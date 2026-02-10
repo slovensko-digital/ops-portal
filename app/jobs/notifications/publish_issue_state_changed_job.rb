@@ -4,7 +4,7 @@ module Notifications
       return unless state_id_change.present?
       return if state_id_change.first == Issues::State.find_by(key: "archived").id
 
-      issue.subscriptions.each do |subscription|
+      issue.subscriptions.active.each do |subscription|
         next unless subscription.subscriber.email_notifiable?
 
         case Issues::State.find(state_id_change.last).key

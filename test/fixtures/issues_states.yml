@@ -12,8 +12,16 @@ in_progress:
   key: in_progress
   color: "#5598C4"
 
+resolved:
+  name: Vyriešený
+  key: resolved
+  color: "#4BA50A"
+
 resolved_private:
   name: Vyriešený (skrytý)
   key: resolved_private
   color: "#45A735"
 
+archived:
+  name: Archivovaný
+  key: archived
