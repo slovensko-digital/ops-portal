@@ -29,7 +29,6 @@ env:
     AWS_S3_REGION: eu-central-1
     AWS_REGION: eu-central-1
     EMAILS_IMPORT: "ON"
-    AUTO_SYNC_LEGACY_USERS: "ON"
     TRIAGE_ZAMMAD_TECH_USER_ID: 5
 
 proxy:
