@@ -3,7 +3,7 @@ module Import
     include ImportMethods
 
     def perform
-      last_legacy_user_id = ::User.where.not(legacy_id: nil).last.legacy_id
+      last_legacy_user_id = ::User.where.not(legacy_id: nil).order(legacy_id: :desc).limit(1).pluck(:legacy_id).first
 
       Legacy::OldUser.where("id > ?", last_legacy_user_id).where(rights: "U").find_each do |legacy_record|
         user = Legacy::User.create_user_from_legacy_record(legacy_record)
