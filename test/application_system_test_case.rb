@@ -24,6 +24,11 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
   include AuthHelper
 
+  teardown do
+    Capybara.reset_sessions!
+    ActiveRecord::Base.connection.execute("DELETE FROM user_remember_keys")
+  end
+
   def click_on(locator, **options)
     element = find(:link_or_button, locator, **options)
     scroll_to(element)
