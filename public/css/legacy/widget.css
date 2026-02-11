@@ -1,0 +1,87 @@
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {margin: 0;	padding: 0;	border: 0;	outline: 0;	font-weight: inherit;	font-style: inherit;	font-size: 100%;	font-family: inherit;	vertical-align: baseline;}
+body {line-height: 1.5em;color: black;background: transparent!important;}
+ol, ul {list-style: none;}
+table {border-collapse: separate;border-spacing: 0;}
+caption, th, td {text-align: left;font-weight: normal;}
+:focus {outline: 0;}
+body {font-family: 'Trebuchet MS', sans-serif; cursor:default;font-size:11px;overflow:hidden;}
+h1 {font-size:1.3em;margin:5px 0;font-weight:bold;}
+h2 a {color:#000; line-height:8px; font-weight:800; font-size:12px;}
+a {color:#444!important;font-weight:bold;cursor:pointer;text-decoration:none;}
+a:hover {text-decoration:underline}
+p {margin:5px 0;}
+hr {height:1;border:0;border-top:1px solid #c3c3c3;}
+.alignleft {float:left}
+.alignright {float:right}
+.error {color:#f00;}
+#wrapper {width:100%;background: white;}
+#inner {border:1px solid #c3c3c3;padding-bottom:0px;}
+#header {padding:10px 10px;height:27px;position:relative;border-bottom:1px solid #c3c3c3;background:url(../../../img/legacy/widget_logo_blue.jpg) #8DCADC no-repeat;}
+#header ul {right:10px;	position:absolute;	bottom:-1px; }
+#header ul li {float:left;padding:3px 10px;border:1px solid #aaa;background:#eee;cursor:pointer;text-decoration:underline;}
+#header ul li.last { border-left:0 }
+#header ul li.active { border-bottom:1px solid #fff; background:#fff }
+#widget_statistiky {display:none;color:#444;}
+#widget_statistiky h1 {position:relative;color:#555;font-size:14px!important;margin-bottom:0;font-weight:normal;padding-left:40px;line-height:18px;}
+#widget_statistiky p {padding-left:40px;margin:0;}
+#widget_statistiky h1 img {position:absolute;top:0px;left:0;}
+#widget_statistiky h1 b {font-size:16px;}
+.podnet {color:#666;padding:0px;position:relative;padding-left:64px;overflow:hidden; height:64px!important;margin:2px 0;}
+.podnet p {margin:0;}
+.podnet .image_wrapper {border:1px solid #ddd;position:absolute; top:0px; left:0px; width:54px !important; overflow:hidden; height:54px!important }
+
+body.wide .podnet .image_wrapper {width:84px !important; height:74px!important }
+body.wide .podnet {padding-left:94px; height:84px!important}
+
+.podnet .image_wrapper:hover {border:1px solid #999;cursor:pointer;}
+.podnet .status {display:block;clear:both}
+.podnet img {width:150%;height:auto;}
+.tab { padding:10px; }
+.description {display:none;}
+
+/* themes */
+body.grey #header {background:url(../../../img/legacy/widget_logo_grey.jpg) #C3C3C3 no-repeat;}
+body.grey a {color:#B53235!important;}
+
+
+/* stavebna policia */
+
+body.stavebnapolicia .alignright,
+body.stavebnapolicia .alignleft {display:none;}
+body.stavebnapolicia a.more {
+  background:#3AB54A;
+  display:block;
+  width:240px;
+  text-align:center;
+  margin:0 auto;
+  padding:8px 10px;
+  font-size:16px;
+  color:#fff!important;
+  border-radius:4px;
+}
+body.stavebnapolicia #header {display:none;}
+body.stavebnapolicia .podnet {height:auto!important;}
+body.stavebnapolicia .full {height:auto!important;}
+body.stavebnapolicia .podnet {
+  font-size:1.15em;
+  padding-left:214px;
+  height:auto!important;
+}
+body.stavebnapolicia .podnet h2 a {font-size:16px}
+body.stavebnapolicia .podnet p {margin:0 0 10px 0;}
+
+body.stavebnapolicia .podnet .image_wrapper {
+  width:200px!important;
+  top:10px;
+  left:10px;
+  height:auto!important;
+}
+body.stavebnapolicia .podnet .image_wrapper img {width:100%;}
+body.stavebnapolicia #inner {border:0;}
+body.stavebnapolicia .description {display:none;}
+body.stavebnapolicia .podnet {
+  border:1px solid #eee;
+  margin-bottom:10px;
+  background:#f6f6f6;
+  padding:10px 20px 10px 224px;
+}
