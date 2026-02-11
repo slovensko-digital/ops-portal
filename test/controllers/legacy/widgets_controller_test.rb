@@ -8,7 +8,7 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should display widget at /widget endpoint" do
-    get "/widget"
+    get "/legacy/widget"
 
     assert_response :success
     assert_select "#wrapper"
@@ -17,21 +17,21 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should display widget with legacy widget parameter format" do
-    get "/widget?widget=trencin"
+    get "/legacy/widget?widget=trencin"
 
     assert_response :success
     assert_select "#wrapper"
   end
 
   test "should parse municipality and district from widget parameter" do
-    get "/widget?widget=trencin/zilina-centrum"
+    get "/legacy/widget?widget=trencin/zilina-centrum"
 
     assert_response :success
     assert_select "#wrapper"
   end
 
   test "should display wide widget when width > 250" do
-    get "/widget?width=300"
+    get "/legacy/widget?width=300"
 
     assert_response :success
     assert_select "body.wide"
@@ -40,21 +40,21 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should apply grey theme" do
-    get "/widget?theme=grey"
+    get "/legacy/widget?theme=grey"
 
     assert_response :success
     assert_select "body.grey"
   end
 
   test "should apply stavebna_policia theme" do
-    get "/widget?theme=stavebna_policia"
+    get "/legacy/widget?theme=stavebna_policia"
 
     assert_response :success
     assert_select "body.stavebnapolicia"
   end
 
   test "should apply custom background color" do
-    get "/widget?bg=FF0000"
+    get "/legacy/widget?bg=FF0000"
 
     assert_response :success
     assert_select "style", text: /FF0000/
@@ -63,13 +63,13 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
   test "should filter by status" do
     state = issues_states(:in_progress)
 
-    get "/widget?status=#{state.id}"
+    get "/legacy/widget?status=#{state.id}"
 
     assert_response :success
   end
 
   test "should limit results" do
-    get "/widget?limit=5"
+    get "/legacy/widget?limit=5"
 
     assert_response :success
   end
@@ -90,7 +90,7 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
       created_at: 1.day.ago
     )
 
-    get "/widget?widget=trencin&width=300"
+    get "/legacy/widget?widget=trencin&width=300"
 
     assert_response :success
     assert_select ".podnet"
@@ -111,7 +111,7 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
       created_at: 1.day.ago
     )
 
-    get "/widget?widget=trencin"
+    get "/legacy/widget?widget=trencin"
 
     assert_response :success
     # Should not show the private issue title
@@ -137,7 +137,7 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
       )
     end
 
-    get "/widget?widget=trencin&width=300"
+    get "/legacy/widget?widget=trencin&width=300"
 
     assert_response :success
     assert_select "#widget_statistiky"
@@ -146,7 +146,7 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should handle invalid municipality gracefully" do
-    get "/widget?widget=nonexistent-city"
+    get "/legacy/widget?widget=nonexistent-city"
 
     assert_response :success
     # Should still render the widget even without municipality
@@ -171,7 +171,7 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
       )
     end
 
-    get "/widget?widget=trencin&limit=20"
+    get "/legacy/widget?widget=trencin&limit=20"
 
     assert_response :success
     # Should limit to 16 items
@@ -180,14 +180,14 @@ class Legacy::WidgetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should allow iframe embedding with X-Frame-Options set to ALLOWALL" do
-    get "/widget"
+    get "/legacy/widget"
 
     assert_response :success
     assert_equal "ALLOWALL", response.headers["X-Frame-Options"]
   end
 
   test "should set Content-Security-Policy for iframe embedding" do
-    get "/widget"
+    get "/legacy/widget"
 
     assert_response :success
     assert_match /frame-ancestors/, response.headers["Content-Security-Policy"]
