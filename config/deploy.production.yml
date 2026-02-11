@@ -47,6 +47,8 @@ accessories:
       hosts:
         - www.odkazprestarostu.sk
         - odkazprestarostu.sk
+        - api.odkazprestarostu.sk
+        - samospravy.odkazprestarostu.sk
       ssl: true
       app_port: 80
       forward_headers: true
