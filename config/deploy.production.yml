@@ -38,5 +38,20 @@ proxy:
 volumes:
   - "ops_portal_storage:/rails/storage"
 
+accessories:
+  nginx:
+    image: nginx:alpine
+    hosts:
+      - 195.201.202.110
+    proxy:
+      hosts:
+        - www.odkazprestarostu.sk
+        - odkazprestarostu.sk
+      ssl: true
+      app_port: 80
+      forward_headers: true
+    files:
+      - config/nginx_redirects.conf:/etc/nginx/conf.d/default.conf:ro
+
 ssh:
   user: kamal
