@@ -19,8 +19,6 @@ SitemapGenerator::Sitemap.create do
 
   add "/aktuality", changefreq: "weekly", priority: 0.8
 
-  add new_issues_draft_path, changefreq: "monthly", priority: 0.9
-
   Issue.searchable.find_each do |issue|
     add issue_path(issue),
         lastmod: issue.updated_at,
