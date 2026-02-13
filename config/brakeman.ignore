@@ -22,51 +22,7 @@
         89
       ],
       "note": ""
-    },
-    {
-      "warning_type": "Dynamic Render Path",
-      "warning_code": 15,
-      "fingerprint": "e772ee46481cdf12482911a72d002cd7b0e4e9e6c84db5778b9d1dd9716d7a9e",
-      "check_name": "Render",
-      "message": "Render path contains parameter value",
-      "file": "app/views/profiles/_citizen_profile.html.erb",
-      "line": 66,
-      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => current_user.issues.newest.page(params[:page]).per(8), {})",
-      "render_path": [
-        {
-          "type": "controller",
-          "class": "ProfilesController",
-          "method": "show",
-          "line": 19,
-          "file": "app/controllers/profiles_controller.rb",
-          "rendered": {
-            "name": "profiles/show",
-            "file": "app/views/profiles/show.html.erb"
-          }
-        },
-        {
-          "type": "template",
-          "name": "profiles/show",
-          "line": 7,
-          "file": "app/views/profiles/show.html.erb",
-          "rendered": {
-            "name": "profiles/_citizen_profile",
-            "file": "app/views/profiles/_citizen_profile.html.erb"
-          }
-        }
-      ],
-      "location": {
-        "type": "template",
-        "template": "profiles/_citizen_profile"
-      },
-      "user_input": "params[:page]",
-      "confidence": "Weak",
-      "cwe_id": [
-        22
-      ],
-      "note": ""
     }
   ],
-  "brakeman_version": "8.0.1"
+  "brakeman_version": "8.0.2"
 }

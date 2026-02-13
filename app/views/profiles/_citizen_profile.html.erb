@@ -1,6 +1,5 @@
 <h1>Môj profil</h1>
 <div class="profile-con">
-
   <!-- Profil -->
   <div>
     <div class="profile-wrapper">
@@ -13,12 +12,10 @@
         </figure>
         <div class="profile-name"><%= @user.display_name %></div>
         <div class="profile-since">Pomáha zlepšiť naše mestá a obce od roku <%= @user.created_at.year %></div>
-
         <!-- Button -->
         <%= link_to "Upraviť profil", settings_profile_path, class: "button button-transparent" %>
         <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
       </div>
-
       <div class="profile-results-con">
         <div class="profile-results-panel">
           <div class="title-results"><%= t("profile/stats.issues", count: @user.stats_issues_count) %></div>
@@ -50,7 +47,6 @@
       </div>
     </div>
   </div>
-
   <%= turbo_frame_tag "profile-tabs", autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
     <div class="profile-suggestion-con">
       <div class="profil-nav-con">
@@ -59,7 +55,6 @@
           <li><%= link_to "Sledované podnety", watched_issues_profile_path, class: class_names("button button-transparent", active: @tab == :watched) %></li>
         </ul>
       </div>
-
       <% if @issues.length > 0 %>
         <%= turbo_frame_tag "profile-list", target: :_top do %>
           <div class="podnet-block-con">
@@ -71,15 +66,13 @@
         <%= turbo_frame_tag "profile-list" do %>
           <section class="search-result-blank">
             <h1>Zatiaľ tu nič nie je.</h1>
-
             <figure class="empty-box">
               <%= image_tag "krabica.png", alt: "" %>
             </figure>
-
-            <div class="notice">Skúste nejaký podnet vytvoriť alebo začat sledovať.</div>
+            <div class="notice">Skúste nejaký podnet vytvoriť alebo začať sledovať.</div>
           </section>
         <% end %>
       <% end %>
-  <% end %>
+    <% end %>
   </div>
 </div>

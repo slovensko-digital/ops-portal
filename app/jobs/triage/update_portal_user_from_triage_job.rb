@@ -3,17 +3,20 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
     triage_user = triage_zammad_client.find_user(user_id)
     return unless triage_user
 
-    rs = if triage_user.organization.present?
-           ResponsibleSubject.find_by(subject_name: triage_user.organization)
-    elsif triage_user.roles.include?("Zodpovedný Subjekt")
-           ResponsibleSubject.find_by(external_id: triage_user.id.to_i)
-    end
+    rs = ResponsibleSubject.find_by(subject_name: triage_user.organization) if triage_user.organization.present?
 
     user = User.find_by(external_id: triage_user.id.to_i)
 
     if rs
       if user
+        user = if user.is_a?(User::Citizen)
+          user.becomes(User::ResponsibleSubject)
+        else
+          user
+        end
+
         user.update!(
+          type: "User::ResponsibleSubject",
           firstname: triage_user.firstname,
           lastname: triage_user.lastname,
           email: triage_user.email,
@@ -33,8 +36,12 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
         )
       end
     elsif user.responsible_subject
-      user.anonymize!
-      user.update!(active: false, external_id: nil)
+      user = user.becomes(User::Citizen)
+
+      user.update!(
+        type: "User::Citizen",
+        responsible_subject_id: nil
+      )
     end
 
     return unless triage_user.origin == "portal"
