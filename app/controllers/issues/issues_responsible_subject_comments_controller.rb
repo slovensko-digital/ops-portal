@@ -25,13 +25,17 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
     if @comment.save
       if params[:resolves] == "true"
         @issue.update!(state: Issues::State.find_by!(key: "resolved"))
-        SyncIssueToTriageJob.perform_later(@issue)
+        SyncIssueToTriageJob.perform_later(@issue, sync_activities: false)
+      elsif @issue.state == Issues::State.find_by!(key: "sent_to_responsible")
+        @issue.update!(state: Issues::State.find_by!(key: "in_progress"))
+        SyncIssueToTriageJob.perform_later(@issue, sync_activities: false)
       end
 
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to @issue, notice: "Komentár bol pridaný" }
       end
+
       Issues::SyncActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
     else
       render :new, status: :unprocessable_entity

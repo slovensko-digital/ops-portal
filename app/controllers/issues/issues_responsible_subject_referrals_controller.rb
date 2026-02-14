@@ -1,4 +1,4 @@
-class Issues::IssuesResponsibleSubjectAssignmentsController < ApplicationController
+class Issues::IssuesResponsibleSubjectReferralsController < ApplicationController
   include IssueScoped
   before_action :require_user
   before_action :ensure_responsible_subject
@@ -48,8 +48,8 @@ class Issues::IssuesResponsibleSubjectAssignmentsController < ApplicationControl
           format.html { redirect_to @issue, notice: "Zodpovedný subjekt bol úspešne zmenený." }
         end
 
-        SyncIssueToTriageJob.perform_later(@issue)
-        Issues::SyncEditableActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
+        SyncIssueToTriageJob.perform_later(@issue, sync_activities: false)
+        Issues::SyncActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
       else
         render :new, status: :unprocessable_entity
       end
@@ -59,7 +59,7 @@ class Issues::IssuesResponsibleSubjectAssignmentsController < ApplicationControl
   private
 
   def referral_params
-    params.require(:referral).permit(:new_responsible_subject_id, :assignment_type, comment: [ :text ])
+    params.require(:issues_responsible_subject_referral).permit(:new_responsible_subject_id, :assignment_type, comment: [ :text, attachments: [] ])
   end
 
   def ensure_responsible_subject

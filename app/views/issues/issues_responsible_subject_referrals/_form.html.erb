@@ -1,4 +1,4 @@
-<%= form_with scope: :referral, url: issue_issues_responsible_subject_assignments_path(issue), method: :post, model: [ issue, comment ] do |f| %>
+<%= form_with scope: :issues_responsible_subject_referral, url: issue_issues_responsible_subject_referrals_path(issue), method: :post, model: [ issue, comment ] do |f| %>
   <% if comment.errors[:base].any? %>
     <% comment.errors[:base].each do |error| %>
       <div class="error-message"><%= error %></div>

@@ -19,7 +19,7 @@
                 data: { turbo_frame: "activity_form_content" } %>
 
     <% unless @issue.resolved? %>
-      <%= link_to "Odstúpiť podnet", new_issue_issues_responsible_subject_assignment_path(@issue),
+      <%= link_to "Odstúpiť podnet", new_issue_issues_responsible_subject_referral_path(@issue),
                   class: "button button-transparent",
                   data: { turbo_frame: "activity_form_content" } %>
 
