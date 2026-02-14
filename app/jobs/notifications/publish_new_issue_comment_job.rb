@@ -4,7 +4,7 @@ module Notifications
       issue = comment.issue
       return if issue.issue_type == "praise"
 
-      issue.subscriptions.each do |subscription|
+      issue.subscriptions.active.each do |subscription|
         user = subscription.subscriber
         next unless user.email_notifiable?
         next if comment.author == user

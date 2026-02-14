@@ -27,6 +27,20 @@ two:
   state: in_progress
   municipality_id: 1
 
+praise:
+  title: MyString
+  description: MyString
+  author: one
+  created_at: 2024-11-05 09:59:21
+  last_synced_at: 2024-11-05 09:59:23
+  triage_external_id: 1234
+  resolution_external_id: 4321
+  category: one
+  subcategory: one
+  subtype: one
+  state: waiting
+  municipality_id: 1
+
 without_triage_external_id:
   title: New issue with title
   description: New issue description with longer text

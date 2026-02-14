@@ -34,6 +34,10 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     )
   end
 
+  teardown do
+    WebMock.reset!
+  end
+
   test "full issue creation with checks" do
     login_as(@user)
 

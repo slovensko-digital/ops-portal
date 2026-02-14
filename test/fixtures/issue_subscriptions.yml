@@ -5,6 +5,33 @@ one:
   subscriber: one
   email_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
 
+one_two:
+  issue: one
+  subscriber: two
+  email_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
+
+one_legacy_citizen:
+  issue: one
+  subscriber: legacy_citizen
+  active: false
+  email_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
+
+praise:
+  issue: praise_waiting
+  subscriber: one
+  email_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
+
+praise_two:
+  issue: praise_waiting
+  subscriber: two
+  email_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
+
+praise_legacy_citizen:
+  issue: praise_waiting
+  subscriber: legacy_citizen
+  active: false
+  email_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
+
 two:
   issue: two
   subscriber: two

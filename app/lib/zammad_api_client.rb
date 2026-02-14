@@ -49,6 +49,8 @@ class ZammadApiClient
       return
     end
 
+    return unless ticket.origin == "portal"
+
     case ticket.process_type
     when "portal_issue_triage", "portal_issue_resolution"
       result = build_issue_ticket_response(ticket)

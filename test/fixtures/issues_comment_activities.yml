@@ -2,6 +2,10 @@
 _fixture:
   model_class: Issues::CommentActivity
 
+issue_one_activity_comment1:
+  type: Issues::CommentActivity
+  issue: one
+
 issue_two_activity_comment1:
   type: Issues::CommentActivity
   issue: two

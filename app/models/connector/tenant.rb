@@ -23,4 +23,6 @@ class Connector::Tenant < ApplicationRecord
   encrypts :backoffice_api_token
   encrypts :backoffice_webhook_secret
   encrypts :ops_api_token_private_key
+
+  enum :status, { active: 0, inactive: 1 }
 end

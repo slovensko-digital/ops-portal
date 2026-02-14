@@ -3,6 +3,7 @@
 # Table name: issue_subscriptions
 #
 #  id                      :bigint           not null, primary key
+#  active                  :boolean          default(TRUE), not null
 #  email_unsubscribe_token :string           not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
@@ -15,6 +16,8 @@ class IssueSubscription < ApplicationRecord
 
   before_create :set_email_unsubscribe_token
   validates :email_unsubscribe_token, uniqueness: true, allow_nil: false
+
+  scope :active, -> { where(active: true) }
 
   private
 
