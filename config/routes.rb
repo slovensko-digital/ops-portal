@@ -42,7 +42,7 @@ Rails.application.routes.draw do
     resources :issues_user_comments, path: "komentare", module: :issues
     resources :issues_user_private_comments, path: "komentare", module: :issues, controller: "issues_user_comments"
     resources :issues_responsible_subject_comments, path: "odpovede", module: :issues
-    resources :issues_responsible_subject_assignments, path: "odstupenie", module: :issues
+    resources :issues_responsible_subject_referrals, path: "odstupenie", module: :issues
 
     resources :issues_updates, path: "aktualizacie", module: :issues, controller: "issues_updates"
     get :geo, on: :collection
