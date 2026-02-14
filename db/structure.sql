@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -8,13 +9,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
--- *not* creating schema, since initdb creates it
-
 
 --
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
@@ -388,7 +382,8 @@ CREATE TABLE public.connector_tenants (
     backoffice_api_token character varying,
     backoffice_webhook_secret character varying,
     receive_customer_activities boolean DEFAULT false NOT NULL,
-    migrate_legacy_labels boolean DEFAULT true
+    migrate_legacy_labels boolean DEFAULT true,
+    status integer DEFAULT 0 NOT NULL
 );
 
 
@@ -623,7 +618,8 @@ CREATE TABLE public.issue_subscriptions (
     subscriber_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    email_unsubscribe_token character varying NOT NULL
+    email_unsubscribe_token character varying NOT NULL,
+    active boolean DEFAULT true NOT NULL
 );
 
 
@@ -4232,6 +4228,8 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260210135328'),
+('20260210092444'),
 ('20260122093440'),
 ('20260121170436'),
 ('20260121170411'),

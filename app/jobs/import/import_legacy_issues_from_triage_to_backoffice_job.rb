@@ -6,7 +6,7 @@ module Import
 
     def perform(responsible_subject, import_issue_from_triage_job: ::Connector::CreateNewBackofficeIssueFromTriageJob, import_manual_issues_job: ::Connector::Legacy::ImportManualBackofficeAlertsFromLegacyDbToBackofficeJob)
       client = ::Client.find_by(responsible_subject: responsible_subject)
-      tenant = ::Connector::Tenant.find_by(ops_api_subject_identifier: client.id)
+      tenant = ::Connector::Tenant.active.find_by(ops_api_subject_identifier: client.id)
 
       zammad_api_client = ::Connector::BackofficeZammadEnvironment.client(tenant)
       zammad_api_client.check_import_mode!(force: true)

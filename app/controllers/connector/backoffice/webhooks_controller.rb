@@ -27,7 +27,7 @@ class Connector::Backoffice::WebhooksController < ActionController::API
   end
 
   def set_tenant
-    @tenant = Connector::Tenant.find(data.require(:tenant_id))
+    @tenant = Connector::Tenant.active.find(data.require(:tenant_id))
     render status: :unauthorized, json: nil and return unless @tenant
   end
 

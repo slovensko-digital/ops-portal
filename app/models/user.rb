@@ -59,6 +59,8 @@
 class User < ApplicationRecord
   include Rodauth::Rails.model
 
+  ALLOWED_AVATAR_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic image/heif].freeze
+
   attr_accessor :phone_verification_number
 
   belongs_to :responsible_subject, class_name: "::ResponsibleSubject", optional: true
@@ -97,6 +99,7 @@ class User < ApplicationRecord
   validates_confirmation_of :phone_verification_code, on: :phone_verification_code
   validates_presence_of :phone_verification_code_confirmation, on: :phone_verification_code
   validate :birth_year_within_range, if: :birth_year, on: [ :onboarding, :update ]
+  validate :avatar_content_type_allowed, if: -> { avatar.attached? && avatar.new_record? }
 
   def name
     [ firstname, lastname ].compact.join(" ")
@@ -170,7 +173,7 @@ class User < ApplicationRecord
   end
 
   def recalculate_computed_fields
-    update!(
+    update_columns(
       stats_issues_count: issues.publicly_visible.count,
       stats_comments_count: issues_comments.count,
       stats_verified_issues_count: issues_updates.where(verification_status: :approved).count
@@ -211,6 +214,12 @@ class User < ApplicationRecord
   def birth_year_within_range
     unless birth_year.between?(Date.current.year - 120, Date.current.year)
       errors.add(:birth_year, I18n.t("activerecord.errors.models.user.attributes.birth_year.inclusion", min_year: Date.current.year - 120, max_year: Date.current.year))
+    end
+  end
+
+  def avatar_content_type_allowed
+    unless avatar.content_type.in?(ALLOWED_AVATAR_CONTENT_TYPES)
+      errors.add(:avatar, :invalid_content_type)
     end
   end
 end
