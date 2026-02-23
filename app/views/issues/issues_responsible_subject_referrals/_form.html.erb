@@ -1,5 +1,5 @@
 <%
-  current_type = params.dig(:issues_responsible_subject_referral, :assignment_type) || "change_subject"
+  current_type = params.dig(:issues_responsible_subject_referral, :referral_type) || "change_subject"
 %>
 
 <%= form_with scope: :issues_responsible_subject_referral, url: issue_issues_responsible_subject_referrals_path(issue), method: :post, model: [ issue, comment ] do |f| %>
@@ -72,7 +72,7 @@
           </li>
         </template>
 
-        <% comment.errors.full_messages_for(:new_responsible_subject_id).each do |error| %>
+        <% comment.errors[:new_responsible_subject_id].each do |error| %>
           <div class="error-message"><%= error %></div>
         <% end %>
       </div>

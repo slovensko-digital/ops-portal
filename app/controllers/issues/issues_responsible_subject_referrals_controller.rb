@@ -21,7 +21,7 @@ class Issues::IssuesResponsibleSubjectReferralsController < ApplicationControlle
     @comment.build_activity(issue: @issue, type: Issues::CommentActivity)
     @comment.responsible_subject_author = current_user.responsible_subject
 
-    assignment_type = referral_params[:assignment_type]
+    assignment_type = referral_params[:referral_type]
     new_subject_id = referral_params[:new_responsible_subject_id]
 
     if assignment_type == "change_subject"
@@ -32,7 +32,7 @@ class Issues::IssuesResponsibleSubjectReferralsController < ApplicationControlle
     end
 
     unless %w[change_subject refer].include?(assignment_type)
-      @comment.errors.add(:assignment_type, "Neplatný typ akcie.")
+      @comment.errors.add(:referral_type, "Neplatný typ akcie.")
       render :new, status: :unprocessable_entity and return
     end
 
