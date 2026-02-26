@@ -58,4 +58,8 @@
 #
 class User::ResponsibleSubject < User
   validates :responsible_subject, presence: true
+
+  def responsible_subject_for_issue?(issue)
+    responsible_subject == issue.responsible_subject
+  end
 end

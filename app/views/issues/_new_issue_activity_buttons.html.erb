@@ -13,7 +13,7 @@
                   data: { turbo_frame: "activity_form_content" } %>
     <% end %>
 
-  <% elsif current_user.is_a?(User::ResponsibleSubject) && @issue.responsible_subject == current_user.responsible_subject %>
+  <% elsif current_user.responsible_subject && current_user.responsible_subject_for_issue?(@issue) %>
     <%= link_to "Pridať komentár", new_issue_issues_responsible_subject_comment_path(@issue),
                 class: "button button-transparent",
                 data: { turbo_frame: "activity_form_content" } %>
