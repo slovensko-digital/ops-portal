@@ -39,8 +39,10 @@ class Issues::IssuesResponsibleSubjectReferralsController < ApplicationControlle
     Issue.transaction do
       if @comment.save
         if assignment_type == "change_subject"
+          new_subject = ResponsibleSubject.find_by(id: new_subject_id)
+
           @issue.update!(
-            responsible_subject_id: new_subject_id,
+            responsible_subject: new_subject,
           )
         elsif assignment_type == "refer"
           @issue.update!(

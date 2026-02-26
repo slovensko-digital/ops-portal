@@ -15,6 +15,7 @@
 
         <div class="form-radio-button-con">
           <%= f.radio_button :referral_type, "change_subject",
+                             checked: current_type == "change_subject",
                              id: "referral_type_change",
                              data: { action: "change->toggle#show" } %>
 
@@ -27,6 +28,7 @@
 
         <div class="form-radio-button-con">
           <%= f.radio_button :referral_type, "refer",
+                             checked: current_type == "refer",
                              id: "referral_type_refer",
                              data: { action: "change->toggle#hide" } %>
 
