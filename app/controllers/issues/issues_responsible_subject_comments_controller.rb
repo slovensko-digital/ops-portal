@@ -48,10 +48,6 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
     params.require(:issues_responsible_subject_comment).permit(:text, attachments: [])
   end
 
-  def ensure_responsible_subject
-    render status: :unauthorized, body: nil unless current_user&.responsible_subject == @issue.responsible_subject
-  end
-
   def check_permissions
     render status: :unauthorized, body: nil if !current_user.can_view?(@issue) || @issue.discussion_closed? || @issue.archived?
   end

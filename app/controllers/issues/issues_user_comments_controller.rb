@@ -56,10 +56,6 @@ class Issues::IssuesUserCommentsController < ApplicationController
     end
   end
 
-  def ensure_citizen
-    render status: :unauthorized, body: nil if current_user.responsible_subject
-  end
-
   def check_permissions
     render status: :unauthorized, body: nil if !current_user.can_view?(@issue) || @issue.discussion_closed? || @issue.archived?
   end
