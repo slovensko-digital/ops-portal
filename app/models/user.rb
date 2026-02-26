@@ -165,6 +165,10 @@ class User < ApplicationRecord
     issues_updates.where(created_at: 1.day.ago...).count >= 5
   end
 
+  def responsible_subject_for_issue?(issue)
+    false
+  end
+
   def current_draft
     draft = issues_drafts.where(created_at: 2.hours.ago..).order(created_at: :desc).first # find recent draft
     return nil if draft.nil? || draft.submitted?

@@ -61,7 +61,7 @@ class Issues::IssuesResponsibleSubjectReferralsController < ApplicationControlle
         end
 
         SyncIssueToTriageJob.perform_later(@issue, sync_activities: false)
-        Issues::SyncActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
+        Issues::SyncEditableActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
       else
         render :new, status: :unprocessable_entity
       end

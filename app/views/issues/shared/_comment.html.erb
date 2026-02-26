@@ -57,7 +57,11 @@
       <!--    </a>-->
       <% if comment.editable_by?(current_user) %>
         <div class="like-dislike-con">
-          <%= link_to "Upraviť", edit_issue_issues_user_comment_path(comment.activity.issue, comment), class: "button button-md button-edit" %>
+          <%= link_to "Upraviť",
+                      comment.responsible_subject? ?
+                        edit_issue_issues_responsible_subject_comment_path(comment.activity.issue, comment) :
+                        edit_issue_issues_user_comment_path(comment.activity.issue, comment),
+                      class: "button button-md button-edit" %>
         </div>
       <% end %>
     </div>

@@ -1,6 +1,6 @@
 class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
   include IssueScoped
-  before_action :require_user, only: [ :create ]
+  before_action :require_user, only: [ :create, :edit, :update ]
   before_action :ensure_responsible_subject
   before_action :check_permissions
 
@@ -15,6 +15,28 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
   def new
     @comment = Issues::ResponsibleSubjectComment.new
     @resolves = params[:resolves]
+  end
+
+  def edit
+    @comment = Issues::ResponsibleSubjectComment.find_by!(
+      id: params[:id],
+      responsible_subject_author: current_user.responsible_subject
+    )
+  end
+
+  def update
+    @comment = Issues::ResponsibleSubjectComment.find_by!(
+      id: params[:id],
+      responsible_subject_author: current_user.responsible_subject
+    )
+
+    @comment.assign_attributes(comment_params)
+
+    if @comment.save(context: :edit)
+      render @comment
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def create
@@ -36,7 +58,7 @@ class Issues::IssuesResponsibleSubjectCommentsController < ApplicationController
         format.html { redirect_to @issue, notice: "Komentár bol pridaný" }
       end
 
-      Issues::SyncActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
+      Issues::SyncEditableActivityToTriageJob.perform_later(@comment, sync_job: SyncIssueActivityObjectToTriageJob)
     else
       render :new, status: :unprocessable_entity
     end
