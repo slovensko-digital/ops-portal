@@ -1,4 +1,4 @@
-class Issues::IssuesReferralsController < ApplicationController
+class Issues::IssuesResponsibleSubjectChangesController < ApplicationController
   include IssueScoped
   before_action :require_user
   before_action :ensure_responsible_subject
@@ -13,24 +13,24 @@ class Issues::IssuesReferralsController < ApplicationController
   end
 
   def new
-    @referral = Issues::Referral.new
+    @change = Issues::ResponsibleSubjectChange.new
   end
 
   def create
-    @referral = Issues::Referral.new(referral_params)
-    @referral.user_author = current_user
-    @referral.responsible_subject_author = current_user.responsible_subject
+    @change = Issues::ResponsibleSubjectChange.new(change_params)
+    @change.user_author = current_user
+    @change.responsible_subject_author = current_user.responsible_subject
 
-    @referral.build_activity(issue: @issue, type: Issues::ReferralActivity)
+    @change.build_activity(issue: @issue, type: Issues::ResponsibleSubjectChangeActivity)
 
     Issue.transaction do
-      if @referral.save
-        if @referral.change_subject?
+      if @change.save
+        if @change.change_subject?
           @issue.update!(
-            responsible_subject: @referral.responsible_subject,
+            responsible_subject: @change.responsible_subject,
             state: Issues::State.find_by!(key: "sent_to_responsible")
           )
-        elsif @referral.refer?
+        elsif @change.refer?
           @issue.update!(
             state: Issues::State.find_by!(key: "referred")
           )
@@ -40,7 +40,7 @@ class Issues::IssuesReferralsController < ApplicationController
           format.turbo_stream
           format.html {
             redirect_to @issue,
-                        notice: if @referral.change_subject?
+                        notice: if @change.change_subject?
                                   "Zodpovedný subjekt bol úspešne zmenený."
                                 else
                                   "Podnet bol úspešne odstúpený."
@@ -49,7 +49,7 @@ class Issues::IssuesReferralsController < ApplicationController
         end
 
         SyncIssueToTriageJob.perform_later(@issue, sync_activities: false)
-        SyncIssueActivityObjectToTriageJob.perform_later(issue: @issue, activity_object: @referral)
+        SyncIssueActivityObjectToTriageJob.perform_later(issue: @issue, activity_object: @change)
       else
         render :new, status: :unprocessable_entity
       end
@@ -58,8 +58,8 @@ class Issues::IssuesReferralsController < ApplicationController
 
   private
 
-  def referral_params
-    params.require(:issues_referral).permit(:text, :responsible_subject_id, :referral_type)
+  def change_params
+    params.require(:issues_responsible_subject_change).permit(:text, :responsible_subject_id, :change_type)
   end
 
   def check_permissions

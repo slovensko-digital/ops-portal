@@ -89,7 +89,7 @@ sk:
             description:
               too_short: je príliš krátky (minimálne %{count} znakov)
               too_long: je príliš dlhý (maximálne %{count} znakov)
-        issues/referral:
+        issues/responsible_subject_change:
           attributes:
             responsible_subject:
               same_as_current: "nesmie byť totožný s aktuálnym subjektom"
@@ -135,7 +135,7 @@ sk:
         text: "Text komentára"
       issues/update:
         attachments: "Fotografia pri overovaní podnetu"
-      issues/referral:
+      issues/responsible_subject_change:
         responsible_subject: "Zodpovedný subjekt"
         text: "Text komentára"
 

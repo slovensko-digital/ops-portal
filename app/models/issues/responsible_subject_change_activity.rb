@@ -10,6 +10,6 @@
 #  updated_at     :datetime         not null
 #  issue_id       :bigint           not null
 #
-class Issues::ReferralActivity < Issues::Activity
-  has_one :activity_object, class_name: "Issues::Referral", foreign_key: :activity_id, dependent: :destroy
+class Issues::ResponsibleSubjectChangeActivity < Issues::Activity
+  has_one :activity_object, class_name: "Issues::ResponsibleSubjectChange", foreign_key: :activity_id, dependent: :destroy
 end

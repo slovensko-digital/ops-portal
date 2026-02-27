@@ -1,10 +1,10 @@
 # == Schema Information
 #
-# Table name: issues_referrals
+# Table name: issues_responsible_subject_changes
 #
 #  id                            :bigint           not null, primary key
+#  change_type                   :integer          not null
 #  hidden                        :boolean          default(FALSE), not null
-#  referral_type                 :integer          not null
 #  text                          :string
 #  uuid                          :uuid             not null
 #  created_at                    :datetime         not null
@@ -15,7 +15,7 @@
 #  triage_external_id            :integer
 #  user_author_id                :bigint
 #
-class Issues::Referral < ApplicationRecord
+class Issues::ResponsibleSubjectChange < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
   belongs_to :user_author, optional: true, class_name: "User"
   belongs_to :responsible_subject_author, optional: true, class_name: "::ResponsibleSubject"
@@ -26,10 +26,9 @@ class Issues::Referral < ApplicationRecord
 
   validates :text, presence: true
   validates :responsible_subject, presence: true, if: :change_subject?
-
   validate :responsible_subject_must_be_different, if: :change_subject?
 
-  enum :referral_type, { change_subject: 0, refer: 1 }, default: :change_subject
+  enum :change_type, { change_subject: 0, refer: 1 }, default: :change_subject
 
   before_create -> { self.uuid = SecureRandom.uuid }
 
