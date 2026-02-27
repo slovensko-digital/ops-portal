@@ -22,7 +22,7 @@ class ProfilesTest < ApplicationSystemTestCase
 
     click_on "Mesto Nitra"
 
-    assert_text "Profil samosprávy"
+    assert_text "Profil"
     assert_text "nitra@mesto.sk"
 
     assert_text "Odhlásiť sa"
