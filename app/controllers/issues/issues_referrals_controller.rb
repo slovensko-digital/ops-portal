@@ -23,11 +23,6 @@ class Issues::IssuesReferralsController < ApplicationController
 
     @referral.build_activity(issue: @issue, type: Issues::ReferralActivity)
 
-    if @referral.change_subject? && @referral.responsible_subject_id == @issue.responsible_subject_id
-      @referral.errors.add(:responsible_subject_id, "Musíte vybrať iný zodpovedný subjekt.")
-      render :new, status: :unprocessable_entity and return
-    end
-
     Issue.transaction do
       if @referral.save
         if @referral.change_subject?

@@ -27,6 +27,8 @@ class Issues::Referral < ApplicationRecord
   validates :text, presence: true
   validates :responsible_subject, presence: true, if: :change_subject?
 
+  validate :responsible_subject_must_be_different, if: :change_subject?
+
   enum :referral_type, { change_subject: 0, refer: 1 }, default: :change_subject
 
   before_create -> { self.uuid = SecureRandom.uuid }
@@ -58,6 +60,12 @@ class Issues::Referral < ApplicationRecord
   end
 
   private
+
+  def responsible_subject_must_be_different
+    if responsible_subject.present? && issue.present? && responsible_subject == issue.responsible_subject
+      errors.add(:responsible_subject, :same_as_current)
+    end
+  end
 
   def notify_subscribers
     Notifications::PublishNewIssueCommentJob.perform_later(self)
