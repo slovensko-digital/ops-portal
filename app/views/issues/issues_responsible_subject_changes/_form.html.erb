@@ -1,6 +1,6 @@
-<%= form_with model: [ issue, referral ] do |f| %>
-  <% if referral.errors[:base].any? %>
-    <% referral.errors[:base].each do |error| %>
+<%= form_with model: [ issue, change ] do |f| %>
+  <% if change.errors[:base].any? %>
+    <% change.errors[:base].each do |error| %>
       <div class="error-message"><%= error %></div>
     <% end %>
   <% end %>
@@ -11,13 +11,13 @@
       <div class="form-radio-button-wrapper" style="flex-direction: column; align-items: flex-start; gap: 10px;">
 
         <div class="form-radio-button-con" style="align-items: start;">
-          <%= f.radio_button :referral_type, "change_subject",
+          <%= f.radio_button :change_type, "change_subject",
                              id: "type_change",
                              data: { action: "click->toggle#show" }
           %>
 
           <div style="padding-left: 10px; display: flex; flex-direction: column;">
-            <%= f.label :referral_type, "Preposlať inému zodpovednému subjektu",
+            <%= f.label :change_type, "Preposlať inému zodpovednému subjektu",
                         value: "change_subject",
                         for: "type_change",
                         style: "padding-left: 0; margin-bottom: 5px; cursor: pointer;" %>
@@ -29,13 +29,13 @@
         </div>
 
         <div class="form-radio-button-con" style="align-items: start;">
-          <%= f.radio_button :referral_type, "refer",
+          <%= f.radio_button :change_type, "refer",
                              id: "type_refer",
                              data: { action: "click->toggle#hide" }
           %>
 
           <div style="padding-left: 10px; display: flex; flex-direction: column;">
-            <%= f.label :referral_type, "Odstúpiť podnet",
+            <%= f.label :change_type, "Odstúpiť podnet",
                         value: "refer",
                         for: "type_refer",
                         style: "padding-left: 0; margin-bottom: 5px; cursor: pointer;" %>
@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <div data-toggle-target="toggleable" data-toggle-class="none" class="<%= 'none' if referral.refer? %>">
+    <div data-toggle-target="toggleable" data-toggle-class="none" class="<%= 'none' if change.refer? %>">
       <div class="form-item-wrapper"
            id="new-subject-wrapper"
            data-controller="remote-autocomplete"
@@ -63,7 +63,7 @@
                data-remote-autocomplete-target="input"
                data-action="input->remote-autocomplete#search"
                autocomplete="off"
-               class="form-input <%= 'error' if referral.errors[:responsible_subject].any? %>">
+               class="form-input <%= 'error' if change.errors[:responsible_subject].any? %>">
 
         <%= f.hidden_field :responsible_subject_id, data: { remote_autocomplete_target: "hidden" } %>
 
@@ -81,7 +81,7 @@
           </li>
         </template>
 
-        <% referral.errors.full_messages_for(:responsible_subject).each do |error| %>
+        <% change.errors.full_messages_for(:responsible_subject).each do |error| %>
           <div class="error-message"><%= error %></div>
         <% end %>
       </div>
@@ -93,9 +93,9 @@
       <%= f.text_area :text,
                       placeholder: "Napíšte dôvod...",
                       data: { autofocus_target: "input" },
-                      class: "#{referral.errors[:text].any? ? 'error' : ''}" %>
+                      class: "#{change.errors[:text].any? ? 'error' : ''}" %>
 
-      <% referral.errors.full_messages_for(:text).each do |error| %>
+      <% change.errors.full_messages_for(:text).each do |error| %>
         <div class="error-message"><%= error %></div>
       <% end %>
     </div>
