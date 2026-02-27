@@ -51,4 +51,10 @@ class ProfilesController < ApplicationController
   def user_attributes
     params.require(:user).permit(:name, :anonymous, :municipality_id, :email_notifiable, :birth_year, :terms_of_service, :newsletter_accepted, :gdpr_stats_accepted, :onboarded)
   end
+
+  def ensure_citizen
+    if @user.responsible_subject
+      redirect_to profile_path, alert: "Túto akciu nemôžete vykonať."
+    end
+  end
 end
