@@ -25,8 +25,7 @@ class Issues::ResponsibleSubjectChange < ApplicationRecord
   include Issues::ActivityObjectAttachments
 
   validates :text, presence: true
-  validates :responsible_subject, presence: true, if: :reassignment?
-  validate :responsible_subject_must_be_different, if: :reassignment?
+  validates :responsible_subject, presence: true, comparison: { other_than: ->(rs) { rs.issue&.responsible_subject } }, if: :reassignment?
 
   enum :change_type, { reassignment: 0, refer: 1 }, default: :reassignment
 
@@ -59,12 +58,6 @@ class Issues::ResponsibleSubjectChange < ApplicationRecord
   end
 
   private
-
-  def responsible_subject_must_be_different
-    if responsible_subject.present? && issue.present? && responsible_subject == issue.responsible_subject
-      errors.add(:responsible_subject, :same_as_current)
-    end
-  end
 
   def notify_subscribers
     Notifications::PublishNewIssueCommentJob.perform_later(self)

@@ -92,7 +92,7 @@ sk:
         issues/responsible_subject_change:
           attributes:
             responsible_subject:
-              same_as_current: "nesmie byť totožný s aktuálnym subjektom"
+              other_than: "nesmie byť totožný s aktuálnym subjektom"
         user:
           confirmation: "je nesprávny"
           attributes:
