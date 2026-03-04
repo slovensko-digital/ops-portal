@@ -9,11 +9,7 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
 
     if rs
       if user
-        user = if user.is_a?(User::Citizen)
-          user.becomes(User::ResponsibleSubject)
-        else
-          user
-        end
+        user = user.becomes(User::ResponsibleSubject) if user.is_a?(User::Citizen)
 
         user.update!(
           type: "User::ResponsibleSubject",
