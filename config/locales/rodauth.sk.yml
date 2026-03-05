@@ -25,7 +25,7 @@ sk:
     email_auth_button: Prihlásiť
     email_auth_email_recently_sent_error_flash: Prednedávnom sme Vám zaslali email s odkazom na prihlásenie.
     email_auth_email_sent_notice_flash: Email s prihlasovacím odkazom bol odoslaný.
-    email_auth_email_subject: Prihlásenie do profilu
+    email_auth_email_subject: Prihlasovací odkaz
     email_auth_error_flash: Tento odkaz je neplatný alebo bol otvorený v inom prehliadači. Vyžiadajte si nový.
     email_auth_page_title: Potvrdenie prihlásenia
     email_auth_request_button: Poslať prihlasovací odkaz

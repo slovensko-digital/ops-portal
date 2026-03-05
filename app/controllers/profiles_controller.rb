@@ -1,6 +1,9 @@
 class ProfilesController < ApplicationController
   before_action :require_user, except: [ :please_create ]
   before_action :set_user, except: [ :please_create, :please_verify ]
+  before_action :set_manual_page, only: :show, if: -> { current_user.responsible_subject }
+
+  before_action :ensure_citizen, only: [ :edit, :update, :settings, :watched_issues ]
 
   def please_create
   end
@@ -48,5 +51,20 @@ class ProfilesController < ApplicationController
 
   def user_attributes
     params.require(:user).permit(:name, :anonymous, :municipality_id, :email_notifiable, :birth_year, :terms_of_service, :newsletter_accepted, :gdpr_stats_accepted, :onboarded)
+  end
+
+  def ensure_citizen
+    if @user.responsible_subject
+      redirect_to profile_path, alert: "Túto akciu nemôžete vykonať."
+    end
+  end
+
+  def set_manual_page
+    return unless ENV["CMS_ROOT_CATEGORY_ID"].present?
+
+    root_category = Cms::Category.find_by(id: ENV["CMS_ROOT_CATEGORY_ID"])
+    return unless root_category
+
+    @manual_page = root_category.find_page_with_slug("manual")
   end
 end

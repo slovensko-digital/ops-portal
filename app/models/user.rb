@@ -89,11 +89,6 @@ class User < ApplicationRecord
     self.display_name = self.anonymous? ? "Anonym ##{self.id}" : [ self.firstname, self.lastname ].compact.join(" ")
   end
 
-  after_update if: -> { saved_change_to_firstname? || saved_change_to_lastname? } do
-    SyncUserUpdateToTriageJob.perform_later(self)
-    SyncUserUpdateToBackofficeJob.perform_later(self)
-  end
-
   validates :external_id, uniqueness: true, allow_nil: true
   validates_presence_of :name, unless: -> { legacy_id }
   validates_acceptance_of :terms_of_service, on: :onboarding
