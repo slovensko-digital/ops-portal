@@ -25,7 +25,8 @@ class Issues::ResponsibleSubjectChange < ApplicationRecord
   include Issues::ActivityObjectAttachments
 
   validates :text, presence: true
-  validates :responsible_subject, presence: true, comparison: { other_than: ->(rs) { rs.issue&.responsible_subject } }, if: :reassignment?
+  validates :responsible_subject, presence: true, if: :reassignment?
+  validates :responsible_subject, comparison: { other_than: ->(rs) { rs.issue&.responsible_subject } }, if: -> { reassignment? && responsible_subject.present? }
 
   enum :change_type, { reassignment: 0, refer: 1 }, default: :reassignment
 

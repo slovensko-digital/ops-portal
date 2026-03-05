@@ -2,5 +2,17 @@
   <%= render @change %>
 <% end %>
 <%= turbo_stream.update "activity_form_content" do %>
+  <% if @issue.discussion_closed? %>
+    <div class="unverified-notice-con">
+      <div class="unverified-notice-title">Diskusia k tomuto podnetu bola uzatvorená.</div>
+    </div>
+  <% elsif @issue.archived? %>
+    <div class="unverified-notice-con">
+      <div class="unverified-notice-title">Tento podnet bol archivovaný a&nbsp;preto bola diskusia k&nbsp;nemu uzatvorená.</div>
+    </div>
+  <% elsif current_user.responsible_subject && !current_user.responsible_subject_for_issue?(@issue) %>
+    <%= render partial: "issues/comments_responsible_subject_mismatch" %>
+  <% end %>
 <% end %>
+<%= turbo_stream.remove_all ".add-buttons" %>
 <%= turbo_stream.remove_all ".be-first-comment-notice" %>

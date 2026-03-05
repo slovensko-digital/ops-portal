@@ -41,7 +41,7 @@
                         style: "padding-left: 0; margin-bottom: 5px; cursor: pointer;" %>
 
             <div class="form-notice">
-              Podnet budete riešiť s iným zodpovedným subjektom a budete informovať cez portál o ďalšom postupe.
+              Podnet budete riešiť s iným zodpovedným subjektom a budete informovať cez portál o&nbsp;ďalšom postupe.
             </div>
           </div>
         </div>
@@ -56,15 +56,17 @@
            data-remote-autocomplete-url-value="/api/v1/responsible_subjects/search"
            data-remote-autocomplete-none-class="none"
            data-action="click@window->remote-autocomplete#hide">
-
-        <label>Nový zodpovedný subjekt*</label>
-        <input type="text"
-               placeholder="Vyhľadajte subjekt (napr. BVS, OLO)..."
-               data-remote-autocomplete-target="input"
-               data-action="input->remote-autocomplete#search"
-               autocomplete="off"
-               class="form-input <%= 'error' if change.errors[:responsible_subject].any? %>">
-
+        <label>Nový zodpovedný subjekt</label>
+        <%= text_field_tag nil,
+                           change.responsible_subject&.subject_name,
+                           placeholder: "Vyhľadajte subjekt (napr. BVS, OLO)...",
+                           autocomplete: "off",
+                           class: "form-input #{'error' if change.errors[:responsible_subject].any?}",
+                           data: {
+                             remote_autocomplete_target: "input",
+                             action: "input->remote-autocomplete#search"
+            }
+        %>
         <%= f.hidden_field :responsible_subject_id, data: { remote_autocomplete_target: "hidden" } %>
 
         <ul class="dropdown-list none"
@@ -92,7 +94,6 @@
 
       <%= f.text_area :text,
                       placeholder: "Napíšte dôvod...",
-                      data: { autofocus_target: "input" },
                       class: "#{change.errors[:text].any? ? 'error' : ''}" %>
 
       <% change.errors.full_messages_for(:text).each do |error| %>
