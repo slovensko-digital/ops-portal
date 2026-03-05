@@ -1,5 +1,5 @@
 <section class="forms-container report">
-  <% if session.delete(:force_rs_login) %>
+  <% if flash[:force_rs_login] %>
     <h1>Prihlásenie pre samosprávy</h1>
   <% else %>
     <h1>Prihlásenie bez hesla</h1>
