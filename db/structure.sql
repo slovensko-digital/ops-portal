@@ -1,7 +1,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -9,6 +8,13 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
 
 --
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
@@ -924,6 +930,45 @@ CREATE SEQUENCE public.issues_id_seq
 --
 
 ALTER SEQUENCE public.issues_id_seq OWNED BY public.issues.id;
+
+
+--
+-- Name: issues_responsible_subject_changes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.issues_responsible_subject_changes (
+    id bigint NOT NULL,
+    activity_id bigint NOT NULL,
+    user_author_id bigint,
+    responsible_subject_author_id bigint,
+    responsible_subject_id bigint,
+    text character varying,
+    hidden boolean DEFAULT false NOT NULL,
+    change_type integer NOT NULL,
+    uuid uuid NOT NULL,
+    triage_external_id integer,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: issues_responsible_subject_changes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.issues_responsible_subject_changes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: issues_responsible_subject_changes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.issues_responsible_subject_changes_id_seq OWNED BY public.issues_responsible_subject_changes.id;
 
 
 --
@@ -2059,6 +2104,13 @@ ALTER TABLE ONLY public.issues_drafts ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Name: issues_responsible_subject_changes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_responsible_subject_changes ALTER COLUMN id SET DEFAULT nextval('public.issues_responsible_subject_changes_id_seq'::regclass);
+
+
+--
 -- Name: issues_states id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2434,6 +2486,14 @@ ALTER TABLE ONLY public.issues
 
 
 --
+-- Name: issues_responsible_subject_changes issues_responsible_subject_changes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_responsible_subject_changes
+    ADD CONSTRAINT issues_responsible_subject_changes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: issues_states issues_states_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2642,10 +2702,24 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: idx_on_responsible_subject_author_id_fe1507ef42; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_on_responsible_subject_author_id_fe1507ef42 ON public.issues_responsible_subject_changes USING btree (responsible_subject_author_id);
+
+
+--
 -- Name: idx_on_responsible_subject_id_7ec5499a35; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX idx_on_responsible_subject_id_7ec5499a35 ON public.responsible_subjects_categories USING btree (responsible_subject_id);
+
+
+--
+-- Name: idx_on_responsible_subject_id_eb9255125f; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_on_responsible_subject_id_eb9255125f ON public.issues_responsible_subject_changes USING btree (responsible_subject_id);
 
 
 --
@@ -3237,6 +3311,20 @@ CREATE INDEX index_issues_resolution_started_at_hot_path ON public.issues USING 
 
 
 --
+-- Name: index_issues_responsible_subject_changes_on_activity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_responsible_subject_changes_on_activity_id ON public.issues_responsible_subject_changes USING btree (activity_id);
+
+
+--
+-- Name: index_issues_responsible_subject_changes_on_user_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_responsible_subject_changes_on_user_author_id ON public.issues_responsible_subject_changes USING btree (user_author_id);
+
+
+--
 -- Name: index_issues_states_on_key; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3782,6 +3870,14 @@ ALTER TABLE ONLY public.legacy_issues_communications
 
 
 --
+-- Name: issues_responsible_subject_changes fk_rails_3919e03351; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_responsible_subject_changes
+    ADD CONSTRAINT fk_rails_3919e03351 FOREIGN KEY (responsible_subject_id) REFERENCES public.responsible_subjects(id);
+
+
+--
 -- Name: issues fk_rails_44771000d0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3835,6 +3931,14 @@ ALTER TABLE ONLY public.issues_subtypes
 
 ALTER TABLE ONLY public.streets
     ADD CONSTRAINT fk_rails_5410bc504c FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
+
+
+--
+-- Name: issues_responsible_subject_changes fk_rails_5457923ea3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_responsible_subject_changes
+    ADD CONSTRAINT fk_rails_5457923ea3 FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
 
 
 --
@@ -3939,6 +4043,14 @@ ALTER TABLE ONLY public.issues_drafts
 
 ALTER TABLE ONLY public.user_login_change_keys
     ADD CONSTRAINT fk_rails_75ab774cc7 FOREIGN KEY (id) REFERENCES public.users(id);
+
+
+--
+-- Name: issues_responsible_subject_changes fk_rails_761d55b5c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_responsible_subject_changes
+    ADD CONSTRAINT fk_rails_761d55b5c7 FOREIGN KEY (responsible_subject_author_id) REFERENCES public.responsible_subjects(id);
 
 
 --
@@ -4102,6 +4214,14 @@ ALTER TABLE ONLY public.user_verification_keys
 
 
 --
+-- Name: issues_responsible_subject_changes fk_rails_bee7c2ed82; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_responsible_subject_changes
+    ADD CONSTRAINT fk_rails_bee7c2ed82 FOREIGN KEY (user_author_id) REFERENCES public.users(id);
+
+
+--
 -- Name: clients fk_rails_bff5d2adc7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4228,6 +4348,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260227123031'),
 ('20260210135328'),
 ('20260210092444'),
 ('20260122093440'),

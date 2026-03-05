@@ -1,6 +1,7 @@
 class Issues::IssuesUserCommentsController < ApplicationController
   include IssueScoped
   before_action :require_user, only: [ :create, :edit, :update ]
+  before_action :ensure_citizen
   before_action :check_permissions
 
   def show

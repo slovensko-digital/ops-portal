@@ -12,6 +12,7 @@
 #  ops_api_token_private_key   :string
 #  ops_webhook_public_key      :string
 #  receive_customer_activities :boolean          default(FALSE), not null
+#  status                      :integer          default("active"), not null
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
 #

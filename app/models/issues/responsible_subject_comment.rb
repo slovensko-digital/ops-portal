@@ -27,6 +27,9 @@
 class Issues::ResponsibleSubjectComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :user_author_id, absence: true
+  validates :text, presence: true, if: -> { attachments.empty? }, unless: -> { legacy_id }
+
+  include EditableWithinEditingWindow
 
   after_create_commit :notify_subscribers, unless: -> { legacy_id }
 
@@ -67,6 +70,13 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   end
 
   def responsible_subject?
+    true
+  end
+
+  def editable_by?(user)
+    return false unless responsible_subject_author == user.responsible_subject
+    return false unless within_editing_window?
+
     true
   end
 end

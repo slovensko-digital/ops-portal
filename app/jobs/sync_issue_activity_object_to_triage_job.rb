@@ -14,9 +14,15 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
     external_id = issue.triage_process? ? issue.triage_external_id : issue.resolution_external_id
 
     begin
-      article_id = client.create_article!(external_id, activity_object, sender: sender_type(activity_object))
+      article_id = if activity_object.author.is_a?(User::Citizen)
+        client.create_article!(external_id, activity_object, sender: sender_type(activity_object))
+      elsif activity_object.author.is_a?(ResponsibleSubject)
+        client.create_rs_portal_article!(external_id, activity_object)
+      else
+        raise "Unsupported author type: #{activity_object.author.class.name}"
+      end
 
-      raise unless article_id
+      raise "No article ID returned" unless article_id
 
       activity_object.update!(
         triage_external_id: article_id
@@ -55,8 +61,13 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
   def find_or_create_triage_portal_user!(user, client, user_group: nil)
     return user if user.external_id
 
-    if user.is_a?(User)
+    if user.is_a?(User::Citizen)
       user.update!(external_id: client.create_customer!(user))
+    elsif user.is_a?(User::ResponsibleSubject)
+      external_id = client.create_responsible_subject!(user.responsible_subject)
+
+      user.update!(external_id: external_id)
+      user.responsible_subject.update!(external_id: external_id)
     elsif user.is_a?(Legacy::Agent)
       user.update!(external_id: client.create_agent!(user))
       client.add_user_to_group(user.external_id, user_group)
