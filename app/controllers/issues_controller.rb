@@ -5,10 +5,10 @@ class IssuesController < ApplicationController
   before_action :check_edit_permissions, only: %i[ edit update ]
 
   def relevant
-    path = if current_user.municipality
-      issues_path(obec: current_user.municipality.name)
-    elsif current_user.responsible_subject
+    path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
+    elsif current_user.municipality
+      issues_path(obec: current_user.municipality.name)
     else
       issues_path
     end

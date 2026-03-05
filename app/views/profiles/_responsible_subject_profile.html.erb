@@ -1,6 +1,5 @@
-<h1>Profil</h1>
+<h1>Náš profil</h1>
 <div class="profile-con">
-
   <!-- Profil -->
   <div>
     <div class="profile-wrapper">
@@ -13,13 +12,69 @@
         </figure>
         <div class="profile-name"><%= @user.display_name %></div>
         <div class="profile-since"><%= @user.email %></div>
-
         <!-- Button -->
         <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
       </div>
-
+    </div>
+  </div>
+  <div class="profile-tabs">
+    <div class="profile-list">
       <div class="profile-results-con">
-        <%= link_to "Zobraziť podnety", relevant_issues_path, class: "button" %>
+        <div class="podnet-block-con">
+          <%= link_to issues_path(zodpovedny: current_user.responsible_subject.subject_name), class: "podnet-block" do %>
+            <div class="photo">
+              <figure>
+                <picture>
+                  <%= image_tag "pochvala-znacka.png", alt: "Naše podnety" %>
+                </picture>
+              </figure>
+            </div>
+            <div class="info-con">
+              <div class="description-con">
+                <div class="description">
+                  <div class="title">Naše podnety</div>
+                  <div class="date">Všetky podnety, ktoré sú nám priradené.</div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <%= link_to issues_path(zodpovedny: current_user.responsible_subject.subject_name, tab: :stats), class: "podnet-block" do %>
+            <div class="photo">
+              <figure>
+                <picture>
+                  <%= image_tag "statistiky-znacka.png", alt: "" %>
+                </picture>
+              </figure>
+            </div>
+            <div class="info-con">
+              <div class="description-con">
+                <div class="description">
+                  <div class="title">Štatistiky</div>
+                  <div class="date">Štatistiky pre naše podnety.</div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <% if @manual_page %>
+            <%= link_to cms_page_path(@manual_page.slug), class: "podnet-block" do %>
+              <div class="photo">
+                <figure>
+                  <picture>
+                    <%= image_tag "otazka-znacka.png", alt: "" %>
+                  </picture>
+                </figure>
+              </div>
+              <div class="info-con">
+                <div class="description-con">
+                  <div class="description">
+                    <div class="title">Manuál pre používatelov</div>
+                    <div class="date">Príručka pre používateľov portálu Odkaz&nbsp;pre&nbsp;starostu.</div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
