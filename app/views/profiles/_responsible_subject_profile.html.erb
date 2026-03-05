@@ -10,7 +10,7 @@
             <%= user_avatar(@user, variant: :big) %>
           </picture>
         </figure>
-        <div class="profile-name"><%= @user.display_name %></div>
+        <div class="profile-name"><%= @user.responsible_subject.subject_name %><br>(<%= @user.display_name %>)</div>
         <div class="profile-since"><%= @user.email %></div>
         <!-- Button -->
         <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
