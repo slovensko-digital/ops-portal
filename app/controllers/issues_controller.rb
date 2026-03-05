@@ -116,7 +116,7 @@ class IssuesController < ApplicationController
   end
 
   def force_rs_login
-    return unless params.key?(:force_rs_login) && params[:force_rs_login] != "false"
+    return unless params.key?(:force_rs_login)
 
     if current_user.responsible_subject
       redirect_to request.path
