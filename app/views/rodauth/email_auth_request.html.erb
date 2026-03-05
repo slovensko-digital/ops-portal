@@ -1,9 +1,5 @@
 <section class="forms-container report">
-  <% if flash[:force_rs_login] %>
-    <h1>Prihlásenie pre samosprávy</h1>
-  <% else %>
-    <h1>Prihlásenie bez hesla</h1>
-  <% end %>
+  <h1><%= session[:force_rs_login] ? "Prihlásenie pre samosprávy" : "Prihlásenie bez hesla" %></h1>
 
   <div class="form-other-con">
     <div class="form-description prose">

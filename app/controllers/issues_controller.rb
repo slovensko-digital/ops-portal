@@ -1,6 +1,7 @@
 class IssuesController < ApplicationController
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
+  before_action :force_rs_login, only: :show
   before_action :check_show_permissions, only: :show
   before_action :check_edit_permissions, only: %i[ edit update ]
 
@@ -87,18 +88,6 @@ class IssuesController < ApplicationController
 
   # GET /issues/1 or /issues/1.json
   def show
-    if params.key?(:force_rs_login)
-      if !current_user.responsible_subject
-        session[:login_redirect] = request.path
-        flash[:force_rs_login] = true
-
-        redirect_to rodauth.email_auth_request_path
-        return
-      else
-        redirect_to request.path
-      end
-    end
-
     @activity_objects = @issue.visible_activity_objects
   end
 
@@ -124,6 +113,18 @@ class IssuesController < ApplicationController
 
   def issue_params
     params.expect(issue: [ :title, :description, photos: [] ])
+  end
+
+  def force_rs_login
+    return unless params.key?(:force_rs_login) && params[:force_rs_login] != "false"
+
+    if current_user.responsible_subject
+      redirect_to request.path
+    else
+      session[:login_redirect] = request.path
+      session[:force_rs_login] = true
+      redirect_to rodauth.email_auth_request_path
+    end
   end
 
   def check_show_permissions
