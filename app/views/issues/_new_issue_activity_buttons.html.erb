@@ -1,4 +1,4 @@
-<div class="add-buttons" id="activity">
+<div class="add-buttons">
   <% if current_user.is_a?(User::Citizen) %>
     <%= link_to "Pridať komentár", new_issue_issues_user_comment_path(@issue),
                 class: "button button-transparent",

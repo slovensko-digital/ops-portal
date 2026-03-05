@@ -27,23 +27,6 @@ class RodauthMain < Rodauth::Rails::Auth
                       ENV.fetch("GOOGLE_CLIENT_SECRET"),
                       name: "google" # Using a string instead of symbol
 
-    before_email_auth_request do
-      session[:login_origin] = param_or_nil("origin")
-    end
-
-    before_login do
-      @login_origin = session[:login_origin]
-    end
-
-    login_redirect do
-      origin = @login_origin
-      if origin&.start_with?("/") && !origin.start_with?("//")
-        origin
-      else
-        "/"
-      end
-    end
-
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
 
