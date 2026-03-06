@@ -6,6 +6,7 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
     rs = ResponsibleSubject.find_by(subject_name: triage_user.organization) if triage_user.organization.present?
 
     user = User.find_by(external_id: triage_user.id.to_i)
+    user ||= User.find_by(email: triage_user.email)
 
     if rs
       if user
