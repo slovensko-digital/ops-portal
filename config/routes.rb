@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  resources :clients
-
   namespace :connector do
     post "webhook" => "webhooks#webhook"
     namespace :backoffice do
