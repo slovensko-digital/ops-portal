@@ -1,18 +1,17 @@
 require "test_helper"
 
-# NOTE: These tests require CMS env vars to be set (used by fixtures in test/fixtures/cms/categories.yml).
-# Run with: set -a && source .env && set +a && bin/rails test test/controllers/issues/drafts/anonymous_access_test.rb
-
 class Issues::Drafts::AnonymousAccessTest < ActionDispatch::IntegrationTest
   test "anonymous user is redirected to profile creation from all draft step routes" do
+    draft_id = 123
+
     {
-      "checks"  => "/dopyty/novy-dopyt/123/checks",
-      "geo"     => "/dopyty/novy-dopyt/123/geo",
-      "suggestions" => "/dopyty/novy-dopyt/123/suggestions",
-      "summary" => "/dopyty/novy-dopyt/123/summary",
-      "details" => "/dopyty/novy-dopyt/123/details"
-    }.each do |step, path|
-      get path
+      "checks"      => issues_draft_checks_url(draft_id),
+      "geo"         => issues_draft_geo_url(draft_id),
+      "suggestions" => issues_draft_suggestions_url(draft_id),
+      "summary"     => issues_draft_summary_url(draft_id),
+      "details"     => issues_draft_details_url(draft_id)
+    }.each do |step, url|
+      get url
       assert_redirected_to please_create_profile_path, "Expected #{step} to redirect anonymous user"
     end
   end
