@@ -1,4 +1,6 @@
 class Triage::FireWebhookJob < ApplicationJob
+  retry_on StandardError, wait: :polynomially_longer, attempts: 10
+
   def perform(client, webhook_id, payload, provider: Faraday)
     private_key = OpenSSL::PKey::EC.new client.webhook_private_key
     attempt_timestamp = Time.now.to_i
