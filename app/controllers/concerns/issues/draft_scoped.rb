@@ -2,7 +2,6 @@ module Issues::DraftScoped
   extend ActiveSupport::Concern
 
   included do
-    before_action :require_user
     before_action :set_draft
   end
 
