@@ -425,6 +425,9 @@ class ZammadApiClient
   def create_system_note!(ticket_id, body, content_type: "text/plain", type: "note", internal: true, sender: "System")
     ticket = @client.ticket.find(ticket_id)
 
+    last_matching = ticket.articles.select { |a| a.internal == internal && a.sender == sender && a.body == body }.last
+    return last_matching.id if last_matching && last_matching.id == ticket.articles.last.id
+
     article = ticket.article(
       content_type: content_type,
       body: body,
@@ -551,6 +554,10 @@ class ZammadApiClient
       link_object_source: "Ticket",
       link_object_source_number: child_ticket_number
     })
+  rescue RuntimeError => e
+    # 422 means the link already exists (enforced by Zammad's LinkUniquenessValidator and a DB unique index).
+    # raw_api_request raises "Request failed with status 422" in this case, so the check is safe.
+    raise e unless e.message.include?("422")
   end
 
   def get_ticket_resolution_parent_links(ticket_id)
