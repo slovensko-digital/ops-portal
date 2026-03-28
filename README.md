@@ -7,7 +7,6 @@ Install this before running `bundle`:
 - `brew install libexif`
 - `brew install vips`
 
-In case `mysql` gem failed to install anyway, try: `gem install mysql2 -v '0.5.6' -- --with-opt-dir=$(brew --prefix openssl) --with-ldflags=-L/opt/homebrew/opt/zstd/lib`
 
 ## Connect new Backoffice instance
 
