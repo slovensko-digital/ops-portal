@@ -119,4 +119,3 @@ gem "rollbar"
 gem "email_reply_parser"
 
 gem "sitemap_generator"
-gem "cgi"
