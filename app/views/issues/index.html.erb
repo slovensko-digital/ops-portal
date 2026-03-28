@@ -3,9 +3,9 @@
 <section class="podnety">
   <h1>Nahlásené dopyty</h1>
 
-  <div class="podnety-general-con" >
-    <div class="podnety-filter-con">
-      <div class="podnety-filter-wrapper">
+  <div class="podnety-general-con" data-controller="toggle">
+    <div class="podnety-filter-con" data-toggle-target="toggleable" data-action="click->toggle#hide">
+      <div class="podnety-filter-wrapper" data-controller="propagation" data-action="click->propagation#stop">
         <div class="podnety-filter-secondary-wrapper">
 
           <div class="filter-title-con">
