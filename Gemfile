@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gem "dotenv", groups: [ :development, :test ]
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.1.2"
+gem "rails", "~> 8.1.3"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
@@ -57,7 +57,7 @@ gem "jwt"
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-  gem "pry", "~> 0.16.0"
+  gem "pry"
   gem "minitest"
   gem "minitest-mock"
 
@@ -93,7 +93,7 @@ gem "rack-cors"
 # Auth
 gem "rodauth-rails", "~> 2.1"
 gem "rodauth-i18n"
-gem "rodauth-omniauth", "~> 0.6.0"
+gem "rodauth-omniauth", "~> 0.6"
 gem "omniauth-facebook", "~> 10.0"
 gem "omniauth-google-oauth2", "~> 1.2"
 
@@ -117,4 +117,4 @@ gem "aws-sdk-pinpointsmsvoicev2"
 
 gem "rollbar"
 
-gem "email_reply_parser", "~> 0.5.11"
+gem "email_reply_parser"
