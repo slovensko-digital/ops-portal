@@ -42,7 +42,7 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   end
 
   def backoffice_author
-    Legacy::User.find_or_create_responsible_subjects_user(legacy_data&.fetch("user_id"))
+    ::ResponsibleSubjects::User.find_by(legacy_id: legacy_data&.fetch("user_id"))
   end
 
   def triage_activity_body
