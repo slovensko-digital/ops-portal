@@ -667,7 +667,7 @@ CREATE TABLE public.issues (
     author_id bigint,
     category_id bigint,
     state_id bigint,
-    municipality_id bigint,
+    municipality_id bigint NOT NULL,
     legacy_id integer,
     municipality_district_id bigint,
     responsible_subject_id bigint,
@@ -4348,6 +4348,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260328185530'),
 ('20260227123031'),
 ('20260210135328'),
 ('20260210092444'),

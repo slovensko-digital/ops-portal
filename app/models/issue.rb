@@ -38,7 +38,7 @@
 #  category_id                         :bigint
 #  legacy_id                           :integer
 #  municipality_district_id            :bigint
-#  municipality_id                     :bigint
+#  municipality_id                     :bigint           not null
 #  owner_id                            :bigint
 #  resolution_external_id              :integer
 #  responsible_subject_id              :bigint
@@ -57,7 +57,7 @@ class Issue < ApplicationRecord
   belongs_to :category, class_name: "Issues::Category", optional: true
   belongs_to :subcategory, class_name: "Issues::Subcategory", optional: true
   belongs_to :subtype, class_name: "Issues::Subtype", optional: true
-  belongs_to :municipality, optional: true
+  belongs_to :municipality
   belongs_to :municipality_district, optional: true
   belongs_to :responsible_subject, optional: true
   belongs_to :state, class_name: "Issues::State", optional: true
