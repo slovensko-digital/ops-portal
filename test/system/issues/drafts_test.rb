@@ -119,7 +119,7 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     click_on "Odoslať podnet"
 
     assert_text "Podnet má problém"
-    assert_text "Samospráva nie je zatiaľ dostupná na Odkaz pre starostu"
+    assert_text "Samospráva nie je zatiaľ zapojená do portálu Odkaz pre starostu"
   end
 
   test "issue creation on unsupported municipality district" do
