@@ -1,6 +1,13 @@
 SitemapGenerator::Sitemap.default_host = "https://novy.odkazprestarostu.sk/"
 SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/"
 
+# Ping search engines when sitemap is generated
+# Google deprecated their ping endpoint - use Search Console instead
+# Bing still supports pinging
+SitemapGenerator::Sitemap.search_engines = {
+  bing: "http://www.bing.com/webmasterportal/ping.aspx?siteMap=%s"
+}
+
 SitemapGenerator::Sitemap.create do
   add root_path, changefreq: "daily", priority: 1.0
 
