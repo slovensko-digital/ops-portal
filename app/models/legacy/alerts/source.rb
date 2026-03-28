@@ -13,5 +13,4 @@ class Legacy::Alerts::Source < ApplicationRecord
   self.table_name = "legacy_alerts_sources"
 
   belongs_to :responsible_subject
-
 end
