@@ -9,7 +9,7 @@ class Gemini
     ) do |f|
       f.adapter :patron
       f.response :json
-      f.options.timeout = 10
+      f.options.timeout = 30
     end
 
     res = conn.post do |req|

@@ -22,11 +22,6 @@ default: &default
   password: <%= ENV['DB_PASSWORD'] %>
   pool: <%= 3 + ENV.fetch("RAILS_MAX_THREADS", 5).to_i + ENV.fetch("GOOD_JOB_MAX_THREADS", 5).to_i %>
 
-legacy_db:
-  adapter: 'mysql2'
-  url: <%= ENV['LEGACY_DB_URL'] %>
-  database_tasks: false
-
 development:
   <<: *default
   database: ops_development

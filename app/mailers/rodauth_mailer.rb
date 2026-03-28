@@ -23,6 +23,14 @@ class RodauthMailer < ApplicationMailer
     mail to: @new_email, subject: "Odkaz pre starostu | #{t('rodauth.verify_login_change_email_subject')}"
   end
 
+  def email_auth(name, account_id, key)
+    @rodauth = rodauth(name, account_id) { @email_auth_key_value = key }
+    @account = @rodauth.rails_account
+    @email_auth_link = @rodauth.email_auth_email_link
+
+    mail subject: "Odkaz pre starostu | #{t('rodauth.email_auth_email_subject')}"
+  end
+
   private
 
   # Default URL options are inherited from Action Mailer, but you can override them

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Widget</title>
+    <link rel="stylesheet" href="/css/legacy/widget.css" media="all" />
+    <% if @background %>
+      <style>
+        .tab { background-color: \#<%= @background %>; }
+      </style>
+    <% end %>
+  </head>
+  <body class="<%= @theme %><%= @width > 250 ? ' wide' : '' %>">
+    <div id="wrapper">
+      <div id="inner">
+        <div id="header">
+          <% if @width > 250 %>
+            <ul>
+              <li rel="1" class="active">Najnovšie</li>
+              <li rel="2" class="last">Štatistiky</li>
+            </ul>
+          <% end %>
+        </div>
+        <div id="tabs">
+          <div id="widget_podnety" class="tab">
+            <% if @feed.present? %>
+              <% @feed.each do |issue| %>
+                <div class="podnet">
+                  <div class="image_wrapper">
+                    <a href="<%= issue_url(issue) %>" target="_blank">
+                      <% photo = issue.photos.first %>
+                      <%= image_tag (photo.present? ? url_for(photo.variant(:small)) : '/img/placeholder.jpg') %>
+                    </a>
+                  </div>
+                  <h2>
+                    <a href="<%= issue_url(issue) %>" target="_blank"><%= issue.title %></a>
+                  </h2>
+                  <p>
+                    <%= issue.municipality_district&.name ? "#{issue.municipality_district.name}, " : "" %>
+                    <%= l(issue.created_at, format: :short) %>
+                    <% if issue.responsible_subject&.subject_name %>
+                      <br />
+                      Kompetencia: <%= issue.responsible_subject.subject_name %><br />
+                    <% end %>
+                    <span class="status" style="color:<%= issue.state&.color %>"><%= issue.state&.name %></span>
+                  </p>
+                  <p class="description"><%= issue.description&.truncate(100) %></p>
+                </div>
+              <% end %>
+            <% end %>
+            <hr />
+            <table width="100%" style="overflow:hidden;margin:0px">
+              <tr>
+                <td align="left">
+                  <% if @municipality_district %>
+                    <a href="<%= issues_path(obec: @municipality.name, cast: @municipality_district.name) %>" target="_blank"><%= "Zobraziť viac" %></a>
+                  <% elsif @municipality %>
+                    <a href="<%= issues_path(obec: @municipality.name) %>" target="_blank"><%= "Zobraziť viac" %></a>
+                  <% else %>
+                    <a href="<%= issues_path %>" target="_blank"><%= "Zobraziť viac" %></a>
+                  <% end %>
+                </td>
+                <% if @width > 250 %>
+                  <td style="width:33%;text-align:center;">
+                  </td>
+                <% end %>
+                <td style="text-align:right">
+                  <% if @municipality %>
+                    <a href="<%= new_issues_draft_path %>" target="_blank">Pridať podnet</a>
+                  <% else %>
+                    <a href="<%= new_issues_draft_path %>" target="_blank">Pridať podnet</a>
+                  <% end %>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <% if @width > 250 && @statistics %>
+            <div id="widget_statistiky" class="tab">
+              <h1><%= image_tag "/img/legacy/s3.jpg", alt: "" %>
+                <% if @municipality_district %>
+                  <a target="_blank" href="<%= issues_path(obec: @municipality.name, cast: @municipality_district.name, stav: 'Odoslané') %>">
+                    <b><%= @statistics[:total][:open] %></b> otvorených podnetov
+                  </a>
+                <% elsif @municipality %>
+                  <a target="_blank" href="<%= issues_path(obec: @municipality.name, stav: 'Odoslané') %>">
+                    <b><%= @statistics[:total][:open] %></b> otvorených podnetov
+                  </a>
+                <% else %>
+                  <b><%= @statistics[:total][:open] %></b> otvorených podnetov
+                <% end %>
+              </h1>
+              <p>
+                <b>Posledný mesiac</b>
+                <%= @statistics[:last_month][:open] || '-' %> <br />
+                <b>Trend:</b>
+                <% rozdiel = @statistics[:last_month][:open] - @statistics[:previous_month][:open] %>
+                <% if rozdiel > 0 %>
+                  stúpajúci (+<%= rozdiel %>)
+                <% elsif rozdiel < 0 %>
+                  klesajúci (<%= rozdiel %>)
+                <% else %>
+                  bez zmeny
+                <% end %>
+              </p>
+              <hr />
+              <h1><%= image_tag "/img/legacy/s1.jpg", alt: "" %>
+                <% if @municipality_district %>
+                  <%= link_to issues_path(obec: @municipality.name, cast: @municipality_district.name, stav: 'Vyriešený'), target: "_blank" do %>
+                    <b><%= @statistics[:total][:solved] %></b> vyriešených podnetov
+                  <% end %>
+                <% elsif @municipality %>
+                  <%= link_to issues_path(obec: @municipality.name, stav: 'Vyriešený'), target: "_blank" do %>
+                    <b><%= @statistics[:total][:solved] %></b> vyriešených podnetov
+                  <% end %>
+                <% else %>
+                  <b><%= @statistics[:total][:solved] %></b> vyriešených podnetov
+                <% end %>
+              </h1>
+              <p>
+                <b>Posledný mesiac</b>
+                <%= @statistics[:last_month][:solved] || '-' %> <br />
+                <b>Trend:</b>
+                <% rozdiel = @statistics[:last_month][:solved] - @statistics[:previous_month][:solved] %>
+                <% if rozdiel > 0 %>
+                  stúpajúci (+<%= rozdiel %>)
+                <% elsif rozdiel < 0 %>
+                  klesajúci (<%= rozdiel %>)
+                <% else %>
+                  bez zmeny
+                <% end %>
+              </p>
+              <hr />
+              <h1><%= image_tag "/img/legacy/s2.jpg", alt: "" %>
+                <% if @municipality_district %>
+                  <%= link_to issues_path(obec: @municipality.name, cast: @municipality_district.name, stav: 'Nevyriešené'), target: "_blank" do %>
+                    <b><%= @statistics[:total][:unsolved] %></b> nevyriešených podnetov
+                  <% end %>
+                <% elsif @municipality %>
+                  <%= link_to issues_path(obec: @municipality.name, stav: 'Nevyriešené'), target: "_blank" do %>
+                    <b><%= @statistics[:total][:unsolved] %></b> nevyriešených podnetov
+                  <% end %>
+                <% else %>
+                  <b><%= @statistics[:total][:unsolved] %></b> nevyriešených podnetov
+                <% end %>
+              </h1>
+              <p>
+                <b>Posledný mesiac</b>
+                <%= @statistics[:last_month][:unsolved] || '-' %> <br />
+                <b>Trend:</b>
+                <% rozdiel = @statistics[:last_month][:unsolved] - @statistics[:previous_month][:unsolved] %>
+                <% if rozdiel > 0 %>
+                  stúpajúci (+<%= rozdiel %>)
+                <% elsif rozdiel < 0 %>
+                  klesajúci (<%= rozdiel %>)
+                <% else %>
+                  bez zmeny
+                <% end %>
+              </p>
+              <hr />
+              <% if @municipality_district %>
+                <%= link_to "Viac »", issues_path(obec: @municipality.name, cast: @municipality_district.name, tab: 'stats'), class: "alignright", style: "margin-top:-3px;", target: "_blank" %>
+              <% elsif @municipality %>
+                <%= link_to "Viac »", issues_path(obec: @municipality.name, tab: 'stats'), class: "alignright", style: "margin-top:-3px;", target: "_blank" %>
+              <% end %>
+              <br style="clear:both" />
+            </div>
+          <% end %>
+          <% if @width > 250 %>
+            <%= javascript_include_tag "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" %>
+            <script type="text/javascript" charset="utf-8">
+              $(function(){
+                $('#header ul li').click(function(){
+                  $('.tab').hide();
+                  $('#tabs :nth-child(' + ($(this).attr('rel')) + ')').show();
+                  $('#header ul li').removeClass('active');
+                  $(this).addClass('active');
+                  $('#widget_statistiky').css('height', ($('#widget_podnety').height()) );
+                })
+              })
+            </script>
+          <% end %>
+        </div>
+      </div>
+      <% if @theme == 'stavebnapolicia' %>
+        <a target="_top" href="https://www.odkazprestarostu.sk/bratislava/vsetky-podnety?&kategoria=24" class="more">Zobraziť viac podnetov→</a>
+      <% end %>
+    </div>
+  </body>
+</html>

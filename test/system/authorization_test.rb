@@ -73,6 +73,61 @@ class AccountsTest < ApplicationSystemTestCase
     assert_selector "a.login", text: "Prihlásiť"
   end
 
+  test "citizen user can login via email (magic link)" do
+    user = users(:one)
+
+    visit root_path
+
+    assert_selector "a.login", text: "Prihlásiť"
+
+    login_via_magic_link(user.email)
+
+    assert_selector "a.login", text: user.firstname
+  end
+
+  test "login via email with invalid link" do
+    user = users(:one)
+
+    visit "/login"
+    click_on "Prihlásiť sa cez email"
+
+    assert_selector "h1", text: "Prihlásenie bez hesla"
+
+    fill_in "Email", with: user.email
+    click_on "Poslať prihlasovací odkaz"
+
+    assert_text "Email s prihlasovacím odkazom bol odoslaný."
+
+    visit "/email-auth?key=invalid_key"
+
+    assert_text "Neplatný prihlasovací odkaz."
+    assert_selector "h1", text: "Prihlásenie"
+  end
+
+  test "responsible subject user cannot login via password" do
+    user = users(:responsible_subject)
+
+    visit "/login"
+    fill_in "Email", with: user.email
+    fill_in "Heslo", with: "password"
+    click_button "Prihlásiť"
+
+    assert_text "Pre tento účet je povolené prihlásenie iba cez email."
+    assert_selector "a.login", text: "Prihlásiť"
+  end
+
+  test "responsible subject user can login via email (magic link)" do
+    user = users(:responsible_subject)
+
+    visit root_path
+
+    assert_selector "a.login", text: "Prihlásiť"
+
+    login_via_magic_link(user.email)
+
+    assert_selector "a.login", text: user.firstname
+  end
+
   private
 
   def verify_account

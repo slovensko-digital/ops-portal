@@ -1,4 +1,5 @@
 one:
+  type: User::Citizen
   email: firstname.lastname@example.org
   external_id: 1
   firstname: Jozef
@@ -9,8 +10,10 @@ one:
   onboarded: true
   email_global_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
   phone_verified: true
+  municipality_id: 2 # banska bystrica
   
 two:
+  type: User::Citizen
   email: brian@queen.com
   firstname: Brian
   lastname: Queen
@@ -19,6 +22,7 @@ two:
   email_global_unsubscribe_token: two<%= SecureRandom.urlsafe_base64(32) %>
 
 non_full_access:
+  type: User::Citizen
   email: jozef@test.com
   firstname: Jozef
   lastname: Neverifikovany
@@ -27,3 +31,29 @@ non_full_access:
   status: verified
   onboarded: true
   email_global_unsubscribe_token: non_full_access<%= SecureRandom.urlsafe_base64(32) %>
+
+responsible_subject:
+  type: User::ResponsibleSubject
+  email: nitra@mesto.sk
+  firstname: Mesto
+  lastname: Nitra
+  display_name: Mesto Nitra
+  password_hash: <%= RodauthApp.rodauth.allocate.password_hash("password") %>
+  status: verified
+  onboarded: true
+  responsible_subject: one
+  email_global_unsubscribe_token: municipality<%= SecureRandom.urlsafe_base64(32) %>
+  phone_verified: true
+
+legacy_citizen:
+  type: User::Citizen
+  email: legacy.citizen@example.org
+  legacy_id: 12345
+  firstname: Legacy
+  lastname: Citizen
+  display_name: Legacy Citizen
+  password_hash: <%= RodauthApp.rodauth.allocate.password_hash("password") %>
+  status: verified
+  onboarded: true
+  email_global_unsubscribe_token: legacy_citizen<%= SecureRandom.urlsafe_base64(32) %>
+  phone_verified: true

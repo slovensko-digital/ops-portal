@@ -56,7 +56,7 @@ class Legacy::RedirectsController < ApplicationController
   def show_user
     user = User.find_by!(legacy_id: params[:legacy_id])
 
-    redirect_to user
+    redirect_to user_path(user)
   end
 
   private

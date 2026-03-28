@@ -49,6 +49,8 @@ class ZammadApiClient
       return
     end
 
+    return unless ticket.origin == "portal"
+
     case ticket.process_type
     when "portal_issue_triage", "portal_issue_resolution"
       result = build_issue_ticket_response(ticket)
@@ -260,6 +262,7 @@ class ZammadApiClient
     ticket.address_lon = issue.longitude
     ticket.ops_state = issue.state.key
     ticket.likes_count = issue.likes_count
+    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } }
 
     ticket.save
 
@@ -347,8 +350,8 @@ class ZammadApiClient
     result
   end
 
-  def create_article!(issue_id, activity_object, sender:)
-    ticket = @client.ticket.find(issue_id)
+  def create_article!(ticket_id, activity_object, sender:)
+    ticket = @client.ticket.find(ticket_id)
 
     article = ticket.article(
       uuid: activity_object.uuid,
@@ -367,13 +370,37 @@ class ZammadApiClient
       sender: sender
     )
 
-    # TODO custom error
-    raise unless article.id
+    raise "No article ID returned" unless article.id
     article.id
   end
 
-  def create_article_from_api!(author_id, issue_id, activity)
-    ticket = @client.ticket.find(issue_id)
+  def create_rs_portal_article!(ticket_id, activity_object)
+    ticket = @client.ticket.find(ticket_id)
+
+    article = ticket.article(
+      uuid: activity_object.uuid,
+      origin_by_id: activity_object.author&.external_id,
+      content_type: "text/plain",
+      body: activity_object.triage_activity_body.presence || "(bez popisu)",
+      type: "email",
+      to: "portal.responsible.subjects@odkazprestarostu.sk",
+      attachments: activity_object.attachments.map do |attachment|
+        {
+          "filename" => attachment.filename,
+          "mime-type" => attachment.content_type,
+          "data" => Base64.encode64(attachment.variable? ? attachment.variant(:full).processed.download : attachment.download)
+        }
+      end,
+      created_at: activity_object.created_at,
+      sender: "Customer"
+    )
+
+    raise "No article ID returned" unless article.id
+    article.id
+  end
+
+  def create_article_from_api!(author_id, ticket_id, activity)
+    ticket = @client.ticket.find(ticket_id)
 
     article = ticket.article(
       origin_by_id: author_id,
@@ -391,8 +418,7 @@ class ZammadApiClient
       created_at: activity["created_at"],
     )
 
-    # TODO custom error
-    raise unless article.id
+    raise "No article ID returned" unless article.id
     article.id
   end
 

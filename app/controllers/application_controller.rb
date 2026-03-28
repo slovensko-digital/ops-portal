@@ -67,4 +67,12 @@ class ApplicationController < ActionController::Base
       redirect_to root_path
     end
   end
+
+  def ensure_citizen
+    render status: :unauthorized, body: nil if current_user.responsible_subject
+  end
+
+  def ensure_responsible_subject
+    render status: :unauthorized, body: nil unless current_user&.responsible_subject == @issue.responsible_subject
+  end
 end

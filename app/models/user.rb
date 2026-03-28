@@ -43,6 +43,7 @@
 #  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
 #  status                           :integer          default("unverified"), not null
 #  timestamp                        :datetime
+#  type                             :string
 #  uuid                             :uuid             not null
 #  verification                     :string
 #  verified                         :boolean          default(FALSE)
@@ -52,13 +53,17 @@
 #  external_id                      :integer
 #  legacy_id                        :integer
 #  municipality_id                  :bigint
+#  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #
 class User < ApplicationRecord
   include Rodauth::Rails.model
 
+  ALLOWED_AVATAR_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic image/heif].freeze
+
   attr_accessor :phone_verification_number
 
+  belongs_to :responsible_subject, class_name: "::ResponsibleSubject", optional: true
   belongs_to :municipality, optional: true
   belongs_to :street, optional: true
   has_many :issues, foreign_key: :author_id
@@ -84,11 +89,6 @@ class User < ApplicationRecord
     self.display_name = self.anonymous? ? "Anonym ##{self.id}" : [ self.firstname, self.lastname ].compact.join(" ")
   end
 
-  after_update if: -> { saved_change_to_firstname? || saved_change_to_lastname? } do
-    SyncUserUpdateToTriageJob.perform_later(self)
-    SyncUserUpdateToBackofficeJob.perform_later(self)
-  end
-
   validates :external_id, uniqueness: true, allow_nil: true
   validates_presence_of :name, unless: -> { legacy_id }
   validates_acceptance_of :terms_of_service, on: :onboarding
@@ -99,6 +99,7 @@ class User < ApplicationRecord
   validates_confirmation_of :phone_verification_code, on: :phone_verification_code
   validates_presence_of :phone_verification_code_confirmation, on: :phone_verification_code
   validate :birth_year_within_range, if: :birth_year, on: [ :onboarding, :update ]
+  validate :avatar_content_type_allowed, if: -> { avatar.attached? && avatar.new_record? }
 
   def name
     [ firstname, lastname ].compact.join(" ")
@@ -164,6 +165,10 @@ class User < ApplicationRecord
     issues_updates.where(created_at: 1.day.ago...).count >= 5
   end
 
+  def responsible_subject_for_issue?(issue)
+    false
+  end
+
   def current_draft
     draft = issues_drafts.where(created_at: 2.hours.ago..).order(created_at: :desc).first # find recent draft
     return nil if draft.nil? || draft.submitted?
@@ -172,7 +177,7 @@ class User < ApplicationRecord
   end
 
   def recalculate_computed_fields
-    update!(
+    update_columns(
       stats_issues_count: issues.publicly_visible.count,
       stats_comments_count: issues_comments.count,
       stats_verified_issues_count: issues_updates.where(verification_status: :approved).count
@@ -213,6 +218,12 @@ class User < ApplicationRecord
   def birth_year_within_range
     unless birth_year.between?(Date.current.year - 120, Date.current.year)
       errors.add(:birth_year, I18n.t("activerecord.errors.models.user.attributes.birth_year.inclusion", min_year: Date.current.year - 120, max_year: Date.current.year))
+    end
+  end
+
+  def avatar_content_type_allowed
+    unless avatar.content_type.in?(ALLOWED_AVATAR_CONTENT_TYPES)
+      errors.add(:avatar, :invalid_content_type)
     end
   end
 end

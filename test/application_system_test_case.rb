@@ -21,5 +21,32 @@ end
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium_chrome_no_password_warning
 
+  include ActiveJob::TestHelper
   include AuthHelper
+
+  teardown do
+    Capybara.reset_sessions!
+    ActiveRecord::Base.connection.execute("DELETE FROM user_remember_keys")
+  end
+
+  def click_on(locator, **options)
+    element = find(:link_or_button, locator, **options)
+    scroll_to(element)
+
+    begin
+      element.click
+    rescue Selenium::WebDriver::Error::ElementClickInterceptedError
+      page.execute_script("arguments[0].click();", element.native)
+    end
+  end
+
+  alias_method :click_link_or_button, :click_on
+
+  private
+
+  def scroll_to(element)
+    script = "arguments[0].scrollIntoView({block: 'center', behavior: 'instant'});"
+    page.execute_script(script, element.native)
+    sleep 0.2 # Small delay to ensure scroll completes and page settles
+  end
 end

@@ -22,12 +22,22 @@ en:
     create_account_link_text: Create a New Account
     create_account_notice_flash: Your account has been created
     create_account_page_title: Create Account
+    email_auth_button: Login
+    email_auth_email_recently_sent_error_flash: An email has recently been sent to you with a link to login.
+    email_auth_email_sent_notice_flash: An email with a login link has been sent.
+    email_auth_email_subject: Login to Profile
+    email_auth_error_flash: This link is invalid or was opened in a different browser. Please request a new one.
+    email_auth_page_title: Confirm Login
+    email_auth_request_button: Send Login Link
+    email_auth_request_error_flash: There was an error requesting the login link
+    email_auth_request_page_title: Login via Email
     email_subject_prefix: ''
     input_field_label_suffix: ''
     invalid_password_message: invalid password
     login_button: Login
     login_confirm_label: Confirm %{login_label}
     login_error_flash: There was an error logging in
+    login_error_requires_email_auth: Email login is required for this account.
     login_form_footer_links_heading: <h2 class="rodauth-login-form-footer-links-heading">Other Options</h2>
     login_label: Login
     login_not_valid_email_message: not a valid email address
@@ -40,6 +50,7 @@ en:
     multi_phase_login_page_title: Login
     need_password_notice_flash: Login recognized, please enter your password
     new_password_label: New Password
+    no_matching_email_auth_key_error_flash: Invalid, expired, or already used login link.
     no_matching_login_message: no matching login
     no_matching_reset_password_key_error_flash: 'There was an error resetting your password: invalid or expired password reset key'
     no_matching_verify_account_key_error_flash: 'There was an error verifying your account: invalid verify account key'

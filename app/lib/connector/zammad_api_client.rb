@@ -54,7 +54,7 @@ module Connector
           ticket.ops_subtype = value
         when "address_municipality"
           ticket.address_municipality = value&.split("::").first
-          ticket.address_municipality_district = value&.split("::").last || ""
+          ticket.address_municipality_district = value&.split("::").second || ""
         when "address_street"
           ticket.address_street = value
         when "address_house_number"

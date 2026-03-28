@@ -4,7 +4,7 @@ module UsersHelper
       if user.anonymous?
         content_tag(:picture) { user_avatar(user, variant: avatar_variant) }
       else
-        link_to user, data: { turbo_frame: "_top" } do
+        link_to user_path(user), data: { turbo_frame: "_top" } do
           content_tag(:picture) { user_avatar(user, variant: avatar_variant) }
         end
       end
@@ -15,7 +15,7 @@ module UsersHelper
     name = if user.anonymous?
              content_tag(:div, display_name, class: "name")
     else
-             link_to user, data: { turbo_frame: "_top" } do
+             link_to user_path(user), data: { turbo_frame: "_top" } do
                content_tag(:div, display_name, class: "name")
              end
     end

@@ -1,13 +1,31 @@
 <div class="add-buttons">
-  <%= link_to "Pridať komentár", new_issue_issues_user_comment_path(@issue),
-              class: "button button-transparent",
-              data: { turbo_frame: "activity_form_content" } %>
-  <% unless @issue.triage_process? %>
-    <%= link_to "Aktualizovať podnet", new_issue_issues_update_path(@issue),
+  <% if current_user.is_a?(User::Citizen) %>
+    <%= link_to "Pridať komentár", new_issue_issues_user_comment_path(@issue),
                 class: "button button-transparent",
                 data: { turbo_frame: "activity_form_content" } %>
-    <%= link_to "Označiť za vyriešený", new_issue_issues_update_path(@issue, verification: true),
+
+    <% unless @issue.triage_process? %>
+      <%= link_to "Aktualizovať podnet", new_issue_issues_update_path(@issue),
+                  class: "button button-transparent",
+                  data: { turbo_frame: "activity_form_content" } %>
+      <%= link_to "Označiť za vyriešený", new_issue_issues_update_path(@issue, verification: true),
+                  class: "button button-transparent",
+                  data: { turbo_frame: "activity_form_content" } %>
+    <% end %>
+
+  <% elsif current_user.responsible_subject && current_user.responsible_subject_for_issue?(@issue) %>
+    <%= link_to "Pridať komentár", new_issue_issues_responsible_subject_comment_path(@issue),
                 class: "button button-transparent",
                 data: { turbo_frame: "activity_form_content" } %>
+
+    <% unless @issue.resolved? %>
+      <%= link_to "Odstúpiť podnet", new_issue_issues_responsible_subject_change_path(@issue),
+                  class: "button button-transparent",
+                  data: { turbo_frame: "activity_form_content" } %>
+
+      <%= link_to "Označiť za vyriešený", new_issue_issues_responsible_subject_comment_path(@issue, resolves: true),
+                  class: "button button-transparent",
+                  data: { turbo_frame: "activity_form_content" } %>
+    <% end %>
   <% end %>
 </div>

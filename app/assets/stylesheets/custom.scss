@@ -244,10 +244,14 @@ select.dropdown-button:open {
     cursor: pointer;
 }
 
-.forms-container form {
-    margin-bottom: 40px;
+section.report .form-items-login {
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
 }
-
+section.report .form-items-login .button {
+  margin: 0;
+}
 
 // faux tailwind
 

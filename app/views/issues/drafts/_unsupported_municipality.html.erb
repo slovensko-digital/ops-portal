@@ -1,9 +1,9 @@
 <div class="report-summary-block-con">
   <% if @draft.errors.added?(:base, :municipality_unsupported) %>
     <div class="report-warning">
-      <div class="title">Samospráva nie je zapojená do portálu Odkaz pre starostu</div>
+      <div class="title">Samospráva nie je zatiaľ zapojená do portálu Odkaz pre starostu</div>
       <div class="description">
-        <p>Tento podnet nemôžeme spracovať, nakoľko samospráva v tejto lokalite nie je zatiaľ zapojená do portálu Odkaz pre starostu.</p>
+        <p>Pracujeme na spustení tejto samosprávy. Podnet budete môcť poslať už čoskoro.</p>
       </div>
       <div class="buttons-row">
         <%= link_to "Viac info", "/pridajte-sa", class: "button button-transparent" %>
@@ -11,9 +11,9 @@
     </div>
   <% elsif @draft.errors.added?(:base, :municipality_district_unsupported) %>
     <div class="report-warning">
-      <div class="title">Mestská časť nie je zapojená do portálu Odkaz pre starostu</div>
+      <div class="title">Mestská časť nie je zatiaľ zapojená do portálu Odkaz pre starostu</div>
       <div class="description">
-        <p>Tento podnet nemôžeme spracovať, nakoľko mestská časť nie je zatiaľ zapojená do portálu Odkaz pre starostu.</p>
+        <p>Pracujeme na spustení tejto mestskej časti. Podnet budete môcť poslať už čoskoro.</p>
       </div>
       <div class="buttons-row">
         <%= link_to "Viac info", "/pridajte-sa", class: "button button-transparent" %>

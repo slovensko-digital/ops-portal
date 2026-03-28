@@ -1,0 +1,108 @@
+<%= form_with model: [ issue, change ] do |f| %>
+  <% if change.errors[:base].any? %>
+    <% change.errors[:base].each do |error| %>
+      <div class="error-message"><%= error %></div>
+    <% end %>
+  <% end %>
+
+  <div class="form-other-con" data-controller="toggle">
+
+    <div class="form-items-con" style="margin-bottom: 1.5rem;">
+      <div class="form-radio-button-wrapper" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+
+        <div class="form-radio-button-con" style="align-items: start;">
+          <%= f.radio_button :change_type, "reassignment",
+                             id: "type_reassignment",
+                             data: { action: "click->toggle#show" }
+          %>
+
+          <div style="padding-left: 10px; display: flex; flex-direction: column;">
+            <%= f.label :change_type, "Preposlať inému zodpovednému subjektu",
+                        value: "reassignment",
+                        for: "type_reassignment",
+                        style: "padding-left: 0; margin-bottom: 5px; cursor: pointer;" %>
+
+            <div class="form-notice">
+              Uveďte do komentára, akej samospráve alebo subjektu je potrebné podnet preposlať.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-radio-button-con" style="align-items: start;">
+          <%= f.radio_button :change_type, "refer",
+                             id: "type_refer",
+                             data: { action: "click->toggle#hide" }
+          %>
+
+          <div style="padding-left: 10px; display: flex; flex-direction: column;">
+            <%= f.label :change_type, "Odstúpiť podnet",
+                        value: "refer",
+                        for: "type_refer",
+                        style: "padding-left: 0; margin-bottom: 5px; cursor: pointer;" %>
+
+            <div class="form-notice">
+              Podnet budete riešiť s iným zodpovedným subjektom a budete informovať cez portál o&nbsp;ďalšom postupe.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div data-toggle-target="toggleable" data-toggle-class="none" class="<%= 'none' if change.refer? %>">
+      <div class="form-item-wrapper"
+           id="new-subject-wrapper"
+           data-controller="remote-autocomplete"
+           data-remote-autocomplete-url-value="/api/v1/responsible_subjects/search"
+           data-remote-autocomplete-none-class="none"
+           data-action="click@window->remote-autocomplete#hide">
+        <label>Nový zodpovedný subjekt</label>
+        <%= text_field_tag nil,
+                           change.responsible_subject&.subject_name,
+                           placeholder: "Vyhľadajte subjekt (napr. BVS, OLO)...",
+                           autocomplete: "off",
+                           class: "form-input #{'error' if change.errors[:responsible_subject].any?}",
+                           data: {
+                             remote_autocomplete_target: "input",
+                             action: "input->remote-autocomplete#search"
+            }
+        %>
+        <%= f.hidden_field :responsible_subject_id, data: { remote_autocomplete_target: "hidden" } %>
+
+        <ul class="dropdown-list none"
+            data-remote-autocomplete-target="results">
+        </ul>
+
+        <template data-remote-autocomplete-target="template">
+          <li class="autocomplete-item">
+            <a href="#"
+               data-action="click->remote-autocomplete#select"
+               data-remote-autocomplete-id-param=""
+               data-remote-autocomplete-name-param="">
+            </a>
+          </li>
+        </template>
+
+        <% change.errors.full_messages_for(:responsible_subject).each do |error| %>
+          <div class="error-message"><%= error %></div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="form-item-wrapper">
+      <label>Komentár</label>
+
+      <%= f.text_area :text,
+                      placeholder: "Napíšte dôvod...",
+                      class: "#{change.errors[:text].any? ? 'error' : ''}" %>
+
+      <% change.errors.full_messages_for(:text).each do |error| %>
+        <div class="error-message"><%= error %></div>
+      <% end %>
+    </div>
+
+    <div class="buttons-wrapper">
+      <%= f.submit "Potvrdiť", class: "button submit" %>
+    </div>
+  </div>
+<% end %>

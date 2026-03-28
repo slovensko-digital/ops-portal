@@ -89,6 +89,10 @@ sk:
             description:
               too_short: je príliš krátky (minimálne %{count} znakov)
               too_long: je príliš dlhý (maximálne %{count} znakov)
+        issues/responsible_subject_change:
+          attributes:
+            responsible_subject:
+              other_than: "nesmie byť totožný s aktuálnym subjektom"
         user:
           confirmation: "je nesprávny"
           attributes:
@@ -100,6 +104,8 @@ sk:
               less_than: "ste už prekročili"
             birth_year:
               inclusion: "musí byť medzi %{min_year} a %{max_year}"
+            avatar:
+              invalid_content_type: "môže byť iba obrázok."
     attributes:
       issue:
         title: Názov
@@ -120,6 +126,7 @@ sk:
         phone_verification_attempts: "Povolený počet pokusov na overenie"
         phone_verification_code_attempts: "Povolený počet pokusov na overenie"
         birth_year: "Rok narodenia"
+        avatar: "Profilová fotka"
       praise:
         title: Názov
         description: "Text pochvaly"
@@ -128,6 +135,9 @@ sk:
         text: "Text komentára"
       issues/update:
         attachments: "Fotografia pri overovaní podnetu"
+      issues/responsible_subject_change:
+        responsible_subject: "Zodpovedný subjekt"
+        text: "Text komentára"
 
 
   issues/drafts:

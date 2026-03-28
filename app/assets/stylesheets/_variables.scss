@@ -7,3 +7,45 @@
 @function per($pixels, $viewport) {
   @return calc($pixels / $viewport)*100%;
 }
+
+// Fonts
+$headline: "CabinetGrotesk-Variable";
+$general: "GeneralSans-Variable";
+$normal: 400;
+$medium: 500;
+$semibold: 600;
+$bold: 700;
+$extrabold: 800;
+
+// Colors
+
+$beige: rgba(242, 234, 231, 1); // #f8f3f1
+$black: rgba(28, 48, 84, 1); // #1C3054
+$black-light: rgba(28, 48, 84, 0.5); // #1C3054
+$black-ten: rgba(28, 48, 84, 0.1); // #1C3054
+$blue: rgba(57, 232, 255, 1); // #39E8FF
+$blue-light: rgba(57, 232, 255, 0.3); // #39E8FF
+$blue-dark: rgba(10, 9, 73, 1); // #0A0949
+$green: rgba(0, 229, 158, 1); // #00E59E
+$green-light: rgba(0, 229, 158, 0.2); // #00E59E
+$green-middle: rgba(102, 239, 197, 1); // #00E59E
+$pink: rgba(255, 210, 230, 1); // #ffd2e6
+$pink-fifty: rgba(255, 210, 230, 0.5); // #ffd2e6
+$red: rgba(255, 71, 97, 1); // #ff4761
+$yellow: rgba(255, 212, 0, 1); // #ffd400
+$yellow-light: rgba(255, 239, 190, 0.5); // #ffefbe
+$yellow-middle: rgba(255, 224, 124, 1); // #ffd400
+$white: rgba(255, 255, 255, 1); // #FFFFFF
+
+$line: rgba(28, 48, 84, 0.1); // #1C3054
+
+// Farby podnetov
+$zaslane: rgba(57, 232, 255, 1);
+$riesene: rgba(57, 232, 255, 1);
+$vyriesene: rgba(0, 229, 158, 1);
+$neriesene: rgba(255, 171, 201, 1);
+$zamietnuty: rgba(0, 0, 0, 0.2);
+$odstupene: rgba(151, 71, 255, 0.7);
+$cakajuce: rgba(255, 203, 37, 1);
+$uzavrete: rgba(220, 188, 189, 1);
+$duplicitny: rgba(220, 188, 189, 1);

@@ -9,19 +9,19 @@ module Connector
 
     def get_issue(issue_id, include_customer_activities: false, exclude_responsible_subject_articles: false, expand: true)
       response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}"), { token: jwt_token, include_customer_activities: include_customer_activities, exclude_responsible_subject_articles: exclude_responsible_subject_articles, expand: expand })
-      return unless response.status == 200
+      return "Unexpected response status: #{response.status}" unless response.status == 200
 
       JSON.parse response.body
     end
 
     def update_issue(issue_id, issue_data)
       response = @provider.put(URI.join(@url, "api/v1/issues/#{issue_id}"), { issue: issue_data, token: jwt_token })
-      raise unless response.status == 200
+      raise "Unexpected response status: #{response.status}" unless response.status == 200
     end
 
     def get_activity(issue_id, activity_id)
       response = @provider.get(URI.join(@url, "api/v1/issues/#{issue_id}/activities/#{activity_id}"), { token: jwt_token })
-      return unless response.status == 200
+      return "Unexpected response status: #{response.status}" unless response.status == 200
 
       JSON.parse response.body
     end
@@ -33,7 +33,7 @@ module Connector
         { "Content-Type" => "application/json", "Authorization" => "Bearer #{jwt_token}" }
       )
 
-      raise unless response.status == 200
+      raise "Unexpected response status: #{response.status}" unless response.status == 200
 
       JSON.parse(response.body)["activity_id"]
     end

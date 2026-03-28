@@ -13,7 +13,6 @@ class Connector::WebhooksController < ActionController::API
       Connector::CreateNewBackofficeActivityFromTriageJob.perform_later(@tenant, data.require(:issue_id), data.require(:activity_id))
     when "issue.updated"
       Connector::UpdateBackofficeIssueFromTriageJob.perform_later(@tenant, data.require(:issue_id))
-      Connector::UpdateSubtaskFromParentTicketJob.perform_later(@tenant, issue_id: data.require(:issue_id))
     else
       render text: "Unrecognized webhook event: #{event_type}", status: :unprocessable_entity
     end
@@ -30,7 +29,7 @@ class Connector::WebhooksController < ActionController::API
   end
 
   def set_tenant
-    @tenant = Connector::Tenant.find_by(ops_api_subject_identifier: data.require(:subject_id))
+    @tenant = Connector::Tenant.active.find_by(ops_api_subject_identifier: data.require(:subject_id))
   end
 
   def authenticate

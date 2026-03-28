@@ -7,6 +7,7 @@ class Connector::UpdateBackofficeIssueFromTriageJob < ApplicationJob
 
     begin
       zammad_client.update_issue!(issue_id, issue_data)
+      Connector::UpdateSubtaskFromParentTicketJob.perform_later(tenant, issue_id: issue_id)
     rescue => e
       # it is OK that rejected issue is not found in BackOffice
       return if e.message.include?("Issue not found") && issue_data["ops_state"] == "rejected"

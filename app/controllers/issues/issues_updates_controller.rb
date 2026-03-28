@@ -1,6 +1,7 @@
 class Issues::IssuesUpdatesController < ApplicationController
   include IssueScoped
   before_action :require_user, only: [ :create, :edit, :update ]
+  before_action :ensure_citizen
   before_action :check_permissions
   before_action :check_rate_limit, only: [ :new, :create ]
 

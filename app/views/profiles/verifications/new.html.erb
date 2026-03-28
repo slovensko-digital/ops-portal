@@ -3,7 +3,7 @@
 <section class="identity">
   <h1>Overenie totožnosti</h1>
 
-  <%= form_with model: @user, url: profile_verification_path, class: "form-other-con" do |f| %>
+  <%= form_with model: @user, scope: :user, url: profile_verification_path, class: "form-other-con" do |f| %>
     <div class="form-description prose">
       <p>Aby ste mohli využívať všetky funkcie portálu Odkaz pre starostu, je potrebné overiť váš účet pomocou
       bezpečnostného kódu, ktorý bude zaslaný na váš telefón.</p>

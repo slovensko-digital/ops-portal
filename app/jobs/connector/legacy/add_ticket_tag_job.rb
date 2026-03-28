@@ -8,7 +8,7 @@ class Connector::Legacy::AddTicketTagJob < ApplicationJob
 
     return unless issue.legacy_data&.fetch("label_id")
 
-    label = Legacy::Label.find_or_create_by_legacy_id(issue.legacy_data["label_id"])
+    label = Legacy::Label.find_by(legacy_id: issue.legacy_data["label_id"])
 
     zammad_client.add_ticket_tag(issue, label.name)
   end
