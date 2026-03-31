@@ -84,8 +84,8 @@ class Issue < ApplicationRecord
   validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" || issue.archived? }
   validates_presence_of :title, :description, unless: :imported?
   validates_presence_of :photos, unless: -> { :imported? || issue_type == "praise" }
-  validates_length_of :title, minimum: 10, maximum: 80, allow_blank: true, unless: :imported?
-  validates_length_of :description, minimum: 25, maximum: 1800, allow_blank: true, unless: :imported?
+  validates_length_of :title, minimum: 10, maximum: 200, allow_blank: true, unless: :imported?
+  validates_length_of :description, minimum: 25, maximum: 3500, allow_blank: true, unless: :imported?
 
   scope :newest, -> { order(effective_at: :desc) }
   scope :publicly_visible, -> { where.not(state_id: Issues::State.not_visible.pluck(:id)) }
@@ -124,6 +124,10 @@ class Issue < ApplicationRecord
 
   def triage_process?
     resolution_external_id.nil?
+  end
+
+  def resolution_process?
+    resolution_external_id.present?
   end
 
   def backoffice_owner
@@ -180,7 +184,7 @@ class Issue < ApplicationRecord
 
   def should_create_resolution_process?
     return false if issue_type == "praise"
-    return false if resolution_external_id.present?
+    return false if resolution_process?
 
     # TODO: revise this logic
     return true if state.name == "Zaslaný zodpovednému" && responsible_subject.present?
