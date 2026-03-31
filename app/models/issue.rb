@@ -126,6 +126,10 @@ class Issue < ApplicationRecord
     resolution_external_id.nil?
   end
 
+  def resolution_process?
+    resolution_external_id.present?
+  end
+
   def backoffice_owner
     ResponsibleSubjects::User.find_by(legacy_id: legacy_data["backoffice_owner_legacy_id"]) if legacy_data["backoffice_owner_legacy_id"]
   end
@@ -180,7 +184,7 @@ class Issue < ApplicationRecord
 
   def should_create_resolution_process?
     return false if issue_type == "praise"
-    return false if resolution_external_id.present?
+    return false if resolution_process?
 
     # TODO: revise this logic
     return true if state.name == "Zaslaný zodpovednému" && responsible_subject.present?
