@@ -34,6 +34,10 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     )
   end
 
+  teardown do
+    WebMock.reset!
+  end
+
   test "full issue creation with checks" do
     login_as(@user)
 
@@ -115,7 +119,7 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     click_on "Odoslať podnet"
 
     assert_text "Podnet má problém"
-    assert_text "Samospráva nie je zapojená do portálu Odkaz pre starostu"
+    assert_text "Samospráva nie je zatiaľ zapojená do portálu Odkaz pre starostu"
   end
 
   test "issue creation on unsupported municipality district" do
@@ -154,6 +158,6 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     click_on "Odoslať podnet"
 
     assert_text "Podnet má problém"
-    assert_text "Mestská časť nie je zapojená do portálu Odkaz pre starostu"
+    assert_text "Mestská časť nie je zatiaľ zapojená do portálu Odkaz pre starostu"
   end
 end

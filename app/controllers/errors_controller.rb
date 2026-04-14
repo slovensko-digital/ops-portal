@@ -1,4 +1,6 @@
 class ErrorsController < ApplicationController
+  skip_forgery_protection
+
   def render_500
     render layout: false, status: 500
   end

@@ -3,12 +3,11 @@ source "https://rubygems.org"
 gem "dotenv", groups: [ :development, :test ]
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.1.1"
+gem "rails", "~> 8.1.3"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
-gem "mysql2"
+gem "pg"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
@@ -57,8 +56,9 @@ gem "jwt"
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-  gem "pry", "~> 0.16.0"
-  gem "minitest", "< 6.0.0" # temporary fix due to https://github.com/minitest/minitest/issues/1045
+  gem "pry"
+  gem "minitest"
+  gem "minitest-mock"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
@@ -92,7 +92,7 @@ gem "rack-cors"
 # Auth
 gem "rodauth-rails", "~> 2.1"
 gem "rodauth-i18n"
-gem "rodauth-omniauth", "~> 0.6.0"
+gem "rodauth-omniauth", "~> 0.6"
 gem "omniauth-facebook", "~> 10.0"
 gem "omniauth-google-oauth2", "~> 1.2"
 
@@ -116,4 +116,6 @@ gem "aws-sdk-pinpointsmsvoicev2"
 
 gem "rollbar"
 
-gem "email_reply_parser", "~> 0.5.11"
+gem "email_reply_parser"
+
+gem "sitemap_generator"

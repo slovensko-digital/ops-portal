@@ -29,7 +29,7 @@ module AuthHelper
 
     perform_enqueued_jobs
     email = ActionMailer::Base.deliveries.last
-    assert_match(/Prihlásenie do profilu/, email.subject)
+    assert_match(/Prihlasovací odkaz/, email.subject)
 
     link = email.body.encoded.match(/href="([^"]+)"/)[1]
     link = link.sub(%r{http://example.com}, "")

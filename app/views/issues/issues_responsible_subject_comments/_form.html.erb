@@ -1,0 +1,25 @@
+<%= form_with model: [ issue, comment ], multipart: true do |f| %>
+  <%= hidden_field_tag :resolves, @resolves %>
+  <% if comment.errors[:base].any? %>
+    <% comment.errors[:base].each do |error| %>
+      <div class="error-message"><%= error %></div>
+    <% end %>
+  <% else %>
+    <%= f.text_area :text, placeholder: "Sem napíšte vašu odpoveď", data: { autofocus_target: "input" }, class: "#{comment.errors[:text].any? ? 'error' : ''}" %>
+    <% comment.errors.full_messages_for(:text).each do |error| %>
+      <div class="error-message"><%= error %></div>
+    <% end %>
+
+    <%= render partial: "uploads/form", locals: { prefix: dom_id(comment), blobs: comment.attachments.blobs, wrapper_class: "pictures-wrapper" } %>
+
+    <div class="buttons-wrapper">
+      <%= f.button class: "button button-transparent", data: { action: 'delegate#click', delegate_selector_param: ".new-files" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
+          <polygon points="16 9.25 8.75 9.25 8.75 2 7.25 2 7.25 9.25 0 9.25 0 10.75 7.25 10.75 7.25 18 8.75 18 8.75 10.75 16 10.75 16 9.25" fill="#1c3054"/>
+        </svg>
+        <span>Pridať fotografiu</span>
+      <% end %>
+      <%= f.submit @resolves ? "Označiť" : "Odoslať", class: "button submit" %>
+    </div>
+  <% end %>
+<% end %>

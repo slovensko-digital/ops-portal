@@ -31,6 +31,10 @@ class AnonymousUser
     nil
   end
 
+  def responsible_subject
+    nil
+  end
+
   def current_draft
     nil
   end

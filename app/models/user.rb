@@ -89,11 +89,6 @@ class User < ApplicationRecord
     self.display_name = self.anonymous? ? "Anonym ##{self.id}" : [ self.firstname, self.lastname ].compact.join(" ")
   end
 
-  after_update if: -> { saved_change_to_firstname? || saved_change_to_lastname? } do
-    SyncUserUpdateToTriageJob.perform_later(self)
-    SyncUserUpdateToBackofficeJob.perform_later(self)
-  end
-
   validates :external_id, uniqueness: true, allow_nil: true
   validates_presence_of :name, unless: -> { legacy_id }
   validates_acceptance_of :terms_of_service, on: :onboarding
@@ -168,6 +163,10 @@ class User < ApplicationRecord
 
   def create_issue_update_limit_exceeded?
     issues_updates.where(created_at: 1.day.ago...).count >= 5
+  end
+
+  def responsible_subject_for_issue?(issue)
+    false
   end
 
   def current_draft

@@ -27,6 +27,8 @@ class RodauthMain < Rodauth::Rails::Auth
                       ENV.fetch("GOOGLE_CLIENT_SECRET"),
                       name: "google" # Using a string instead of symbol
 
+    use_multi_phase_login? false
+
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
 
@@ -75,7 +77,7 @@ class RodauthMain < Rodauth::Rails::Auth
     login_minimum_length 5
 
     # Redirect back to originally requested location after authentication.
-    # login_return_to_requested_location? true
+    login_return_to_requested_location? true
     # two_factor_auth_return_to_requested_location? true # if using MFA
 
     # Autologin the user after they have reset their password.

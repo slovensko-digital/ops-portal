@@ -879,6 +879,7 @@ section.profile .profile-wrapper .profile-name {
   font-weight: variables.$semibold;
   line-height: variables.em(30,22);
   word-break: break-word;
+  text-align: center;
 }
 section.profile .profile-wrapper .profile-since {
   color: variables.$black-light;

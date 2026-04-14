@@ -4,6 +4,7 @@ require "rails/test_help"
 require "minitest/autorun"
 require "webmock/minitest"
 
+Minitest.load_plugins
 WebMock.disable_net_connect!(allow_localhost: true)
 
 module ActiveSupport

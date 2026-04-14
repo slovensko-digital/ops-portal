@@ -1,0 +1,6 @@
+<%= turbo_stream.append "activities" do %>
+  <%= render @comment %>
+<% end %>
+<%= turbo_stream.update "activity_form_content" do %>
+<% end %>
+<%= turbo_stream.remove_all ".be-first-comment-notice" %>

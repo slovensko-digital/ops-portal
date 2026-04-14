@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  resources :clients
-
   namespace :connector do
     post "webhook" => "webhooks#webhook"
     namespace :backoffice do
@@ -38,8 +36,12 @@ Rails.application.routes.draw do
     get :relevant, on: :collection, path: :r
     resource :issue_like, as: :like, only: [ :create, :destroy ]
     resource :issue_subscription, as: :subscription, only: [ :create, :destroy ]
+
     resources :issues_user_comments, path: "komentare", module: :issues
     resources :issues_user_private_comments, path: "komentare", module: :issues, controller: "issues_user_comments"
+    resources :issues_responsible_subject_comments, path: "odpovede", module: :issues
+    resources :issues_responsible_subject_changes, path: "odstupenie", module: :issues
+
     resources :issues_updates, path: "aktualizacie", module: :issues, controller: "issues_updates"
     get :geo, on: :collection
   end
@@ -124,9 +126,6 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest, defaults: { format: :json }
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  root "homepage#show"
-
   get "email-auth-request", to: "rodauth#email_auth_request", as: :email_auth_request
 
   # legacy urls redirects
@@ -143,6 +142,15 @@ Rails.application.routes.draw do
   get "r/:municipality_slug/podnety/:legacy_id/:slug/*" => "legacy/redirects#show_issue" # fix for bogus crawlers
   get "r/:municipality_slug/podnety/:municipality_district_slug" => "legacy/redirects#search_list"
   get "r/:municipality_slug/pridat-podnet" => "legacy/redirects#create_issue"
+
+  # Widget routes - support both /widget and /legacy/widget
+  get "/legacy/widget" => "legacy/widgets#index"
+
+  # Redirect root with widget param to legacy widget endpoint
+  get "/", to: redirect { |_, request| "/legacy/widget?#{request.query_string}" }, constraints: lambda { |req| req.params[:widget].present? }
+
+  # Defines the root path route ("/")
+  root "homepage#show"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 

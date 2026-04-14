@@ -1,5 +1,5 @@
 <section class="forms-container report">
-  <h1>Prihlásenie bez hesla</h1>
+  <h1><%= session[:force_rs_login] ? "Prihlásenie pre samosprávy" : "Prihlásenie bez hesla" %></h1>
 
   <div class="form-other-con">
     <div class="form-description prose">

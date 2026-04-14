@@ -14,13 +14,13 @@ class Connector::Legacy::MagistratSetGroupAndOwnersJob < ApplicationJob
 
     backoffice_owner_zammad_id = zammad_client.create_or_find_agent(backoffice_owner)
 
-    Legacy::Alerts::MunicipalityUser.where(alert_id: issue.id).find_each do |alert_municipality_user|
-      subtask_owner = ResponsibleSubjects::User.find_by(legacy_id: alert_municipality_user.municipality_user_id)
+    issue.legacy_data&.fetch("other_backoffice_owners_legacy_ids")&.each do |user_legacy_id|
+      subtask_owner = ResponsibleSubjects::User.find_by(legacy_id: user_legacy_id)
       subtask_owner_zammad_id = zammad_client.create_or_find_agent(subtask_owner)
 
       zammad_client.add_user_to_group_read_only(subtask_owner_zammad_id, group.name) if group
 
-      zammad_client.create_subtask(tenant_issue.backoffice_external_id, backoffice_owner_zammad_id, alert_municipality_user.municipality_user_id, issue.title, subtask_owner_zammad_id, use_parent_state: true)
+      zammad_client.create_subtask(tenant_issue.backoffice_external_id, backoffice_owner_zammad_id, user_legacy_id, issue.title, subtask_owner_zammad_id, use_parent_state: true)
     end
   end
 

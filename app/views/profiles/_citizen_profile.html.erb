@@ -1,0 +1,78 @@
+<h1>Môj profil</h1>
+<div class="profile-con">
+  <!-- Profil -->
+  <div>
+    <div class="profile-wrapper">
+      <!-- Picture and Name -->
+      <div class="profile-info-panel">
+        <figure>
+          <picture>
+            <%= user_avatar(@user, variant: :big) %>
+          </picture>
+        </figure>
+        <div class="profile-name"><%= @user.display_name %></div>
+        <div class="profile-since">Pomáha zlepšiť naše mestá a obce od roku <%= @user.created_at.year %></div>
+        <!-- Button -->
+        <%= link_to "Upraviť profil", settings_profile_path, class: "button button-transparent" %>
+        <%= button_to "Odhlásiť sa", rodauth.logout_path, class: "button", data: { turbo: false } %>
+      </div>
+      <div class="profile-results-con">
+        <div class="profile-results-panel">
+          <div class="title-results"><%= t("profile/stats.issues", count: @user.stats_issues_count) %></div>
+          <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats_issues_percentile) %> používateľov</div>
+          <div class="results-line-wrap">
+            <div class="results-line-back">
+              <div class="results-line" style="width: <%= (@user.stats_issues_percentile * 100) %>%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-results-panel">
+          <div class="title-results"><%= t("profile/stats.comments", count: @user.stats_comments_count) %></div>
+          <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats_comments_percentile) %> používateľov</div>
+          <div class="results-line-wrap">
+            <div class="results-line-back">
+              <div class="results-line" style="width: <%= (@user.stats_comments_percentile * 100) %>%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-results-panel">
+          <div class="title-results"><%= t("profile/stats.verified_issues", count: @user.stats_verified_issues_count) %></div>
+          <div class="results-line-info">Viac ako <%= fraction_to_percentage(@user.stats_verified_issues_percentile) %> používateľov</div>
+          <div class="results-line-wrap">
+            <div class="results-line-back">
+              <div class="results-line" style="width: <%= (@user.stats_verified_issues_percentile * 100) %>%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= turbo_frame_tag "profile-tabs", autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
+    <div class="profile-suggestion-con">
+      <div class="profil-nav-con">
+        <ul>
+          <li><%= link_to "Moje podnety", profile_path, class: class_names("button button-transparent", active: @tab == :my) %></li>
+          <li><%= link_to "Sledované podnety", watched_issues_profile_path, class: class_names("button button-transparent", active: @tab == :watched) %></li>
+        </ul>
+      </div>
+      <% if @issues.length > 0 %>
+        <%= turbo_frame_tag "profile-list", target: :_top do %>
+          <div class="podnet-block-con">
+            <%= render @issues %>
+          </div>
+        <% end %>
+        <%= ops_paginate(@issues) %>
+      <% else %>
+        <%= turbo_frame_tag "profile-list" do %>
+          <section class="search-result-blank">
+            <h1>Zatiaľ tu nič nie je.</h1>
+            <figure class="empty-box">
+              <%= image_tag "krabica.png", alt: "" %>
+            </figure>
+            <div class="notice">Skúste nejaký podnet vytvoriť alebo začať sledovať.</div>
+          </section>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

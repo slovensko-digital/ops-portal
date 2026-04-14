@@ -57,5 +57,9 @@
 #  street_id                        :bigint
 #
 class User::ResponsibleSubject < User
-  validates :responsible_subject_id, presence: true
+  validates :responsible_subject, presence: true
+
+  def responsible_subject_for_issue?(issue)
+    responsible_subject == issue.responsible_subject
+  end
 end
