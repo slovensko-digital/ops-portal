@@ -231,6 +231,7 @@ class ZammadApiClient
         ticket.ops_state = value
       when "responsible_subject"
         next if value[:label] == ticket.responsible_subject[:label] && value[:value].to_s == ticket.responsible_subject[:value].to_s
+        ticket.previous_responsible_subject = ticket.responsible_subject
         ticket.responsible_subject = value
       when "investment"
         ticket.investment = value
@@ -238,6 +239,14 @@ class ZammadApiClient
     end
 
     ticket.save
+  end
+
+  def sync_previous_responsible_subject!(ticket_id, previous_responsible_subject)
+    ticket = @client.ticket.find(ticket_id)
+    unless previous_responsible_subject[:label] == ticket.responsible_subject[:label] && previous_responsible_subject[:value].to_s == ticket.responsible_subject[:value].to_s
+      ticket.previous_responsible_subject = previous_responsible_subject
+      ticket.save
+    end
   end
 
   def close_ticket!(ticket_id)
@@ -645,6 +654,7 @@ class ZammadApiClient
     ops_state = Issues::State.find_by!(key: ticket.ops_state)
 
     responsible_subject = ResponsibleSubject.find_by(id: ticket.responsible_subject&.[](:value))
+    previous_responsible_subject = ResponsibleSubject.find_by(id: ticket.previous_responsible_subject[:value]) if ticket.previous_responsible_subject.present?
 
     {
       triage_identifier: ticket.id,
@@ -659,6 +669,7 @@ class ZammadApiClient
       author: ticket.anonymous ? nil : User.find_by(external_id: ticket.customer_id || ticket.created_by_id),
       author_response: build_author_response(:user_portal_comment, ticket.customer_id || ticket.created_by_id),
       responsible_subject: responsible_subject,
+      previous_responsible_subject: previous_responsible_subject,
       issue_type: ticket.issue_type,
       category: category,
       subcategory: subcategory,
