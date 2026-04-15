@@ -726,7 +726,7 @@ class ZammadApiClient
     body = strip_tags_from_article_body(article.body)
     content_type = article.content_type
     if article.type == "email"
-      body = strip_tags_from_article_body(EmailParser.parse_text(body))
+      body = strip_tags_from_article_body(EmailParser.parse_text(body)) if body.presence
       content_type = "text/plain"
     end
 
