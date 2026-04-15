@@ -49,6 +49,6 @@ class Api::V1::IssuesController < ApiController
     @ticket = @zammad_client.get_ticket(params.require :id)
 
     return head :not_found unless @ticket
-    head :not_found unless @client.responsible_subject.in?([@ticket[:responsible_subject], @ticket[:previous_responsible_subject]])
+    head :not_found unless @client.responsible_subject.in?([ @ticket[:responsible_subject], @ticket[:previous_responsible_subject] ])
   end
 end
