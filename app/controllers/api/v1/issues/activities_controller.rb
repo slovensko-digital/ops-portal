@@ -30,7 +30,7 @@ class Api::V1::Issues::ActivitiesController < ApiController
     @ticket = @zammad_client.get_ticket(params.require :issue_id)
 
     return head :not_found unless @ticket
-    head :not_found unless @client.responsible_subject.in?(@ticket[:responsible_subject], @ticket[:previous_responsible_subject])
+    head :not_found unless @client.responsible_subject.in?([@ticket[:responsible_subject], @ticket[:previous_responsible_subject]])
   end
 
   def set_activity
