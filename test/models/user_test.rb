@@ -1,6 +1,28 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
+  test "assigns citizen type by default" do
+    email = "new-user-#{SecureRandom.hex(4)}@example.org"
+
+    user = User.create!(email: email, firstname: "Novy")
+
+    assert_equal "User::Citizen", user.type
+    assert_instance_of User::Citizen, User.find(user.id)
+  end
+
+  test "keeps responsible subject type" do
+    email = "new-rs-#{SecureRandom.hex(4)}@example.org"
+
+    user = User::ResponsibleSubject.create!(
+      email: email,
+      firstname: "Mesto",
+      responsible_subject: responsible_subjects(:one)
+    )
+
+    assert_equal "User::ResponsibleSubject", user.type
+    assert_instance_of User::ResponsibleSubject, User.find(user.id)
+  end
+
   test "should validate terms_of_service acceptance on onboarding" do
     user = users(:one)
     user.terms_of_service = false
