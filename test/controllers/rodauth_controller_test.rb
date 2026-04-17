@@ -12,7 +12,7 @@ class RodauthControllerTest < ActionDispatch::IntegrationTest
           email: email,
           password: "Very_secret_123",
           "password-confirm": "Very_secret_123",
-          name: "new-user-#{SecureRandom.hex(4)}",
+          name: "new-user-#{SecureRandom.hex(4)}"
         }
       end
     end
@@ -25,4 +25,3 @@ class RodauthControllerTest < ActionDispatch::IntegrationTest
     assert user.email_global_unsubscribe_token.present?
   end
 end
-
