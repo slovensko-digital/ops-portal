@@ -171,6 +171,73 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal :responsible_subject_portal_and_backoffice_comment, @subject.send(:get_article_type, article, "portal_issue_resolution", zammad_api_client: zammad_api_client)
   end
 
+  test "create_system_note! returns existing article id when matching note is the most recent article" do
+    note_body = "Test system note"
+    article = OpenStruct.new(id: 5, internal: true, sender: "System", body: note_body)
+    ticket = OpenStruct.new(articles: [ article ])
+    ticket_client = Minitest::Mock.new
+    ticket_client.expect :find, ticket, [ 1 ]
+    @subject.instance_variable_set(:@client, OpenStruct.new(ticket: ticket_client))
+
+    assert_equal 5, @subject.create_system_note!(1, note_body)
+    ticket_client.verify
+  end
+
+  test "create_system_note! creates new note when matching note exists but is not the most recent article" do
+    note_body = "Test system note"
+    old_article = OpenStruct.new(id: 3, internal: true, sender: "System", body: note_body)
+    newer_article = OpenStruct.new(id: 7, internal: false, sender: "Customer", body: "Reopen comment")
+    new_article = OpenStruct.new(id: 9)
+
+    ticket = Object.new
+    ticket.define_singleton_method(:articles) { [ old_article, newer_article ] }
+    ticket.define_singleton_method(:article) { |**_| new_article }
+
+    ticket_client = Minitest::Mock.new
+    ticket_client.expect :find, ticket, [ 1 ]
+    @subject.instance_variable_set(:@client, OpenStruct.new(ticket: ticket_client))
+
+    assert_equal 9, @subject.create_system_note!(1, note_body)
+  end
+
+  test "create_system_note! creates new note when no matching note exists" do
+    note_body = "Test system note"
+    other_article = OpenStruct.new(id: 3, internal: false, sender: "Customer", body: "Something else")
+    new_article = OpenStruct.new(id: 9)
+
+    ticket = Object.new
+    ticket.define_singleton_method(:articles) { [ other_article ] }
+    ticket.define_singleton_method(:article) { |**_| new_article }
+
+    ticket_client = Minitest::Mock.new
+    ticket_client.expect :find, ticket, [ 1 ]
+    @subject.instance_variable_set(:@client, OpenStruct.new(ticket: ticket_client))
+
+    assert_equal 9, @subject.create_system_note!(1, note_body)
+  end
+
+  test "link_tickets! silently ignores 422 duplicate link error" do
+    child_ticket = OpenStruct.new(number: "R-0001")
+    ticket_client = Minitest::Mock.new
+    ticket_client.expect :find, child_ticket, [ 2 ]
+    @subject.instance_variable_set(:@client, OpenStruct.new(ticket: ticket_client))
+
+    @subject.stub :raw_api_request, ->(*) { raise RuntimeError, "Request failed with status 422" } do
+      assert_nothing_raised { @subject.link_tickets!(parent_ticket_id: 1, child_ticket_id: 2) }
+    end
+  end
+
+  test "link_tickets! re-raises non-422 errors" do
+    child_ticket = OpenStruct.new(number: "R-0001")
+    ticket_client = Minitest::Mock.new
+    ticket_client.expect :find, child_ticket, [ 2 ]
+    @subject.instance_variable_set(:@client, OpenStruct.new(ticket: ticket_client))
+
+    @subject.stub :raw_api_request, ->(*) { raise RuntimeError, "Request failed with status 500" } do
+      assert_raises(RuntimeError) { @subject.link_tickets!(parent_ticket_id: 1, child_ticket_id: 2) }
+    end
+  end
+
   test "strip_tags_from_article_body removes all tags" do
     body = "[[pre zodpovedny subjekt]] \nThis is a test body with tags [[ops portal]], [[vyriesene]], and [[odstúpený]].  "
     stripped_body = @subject.send(:strip_tags_from_article_body, body)
