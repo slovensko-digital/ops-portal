@@ -124,7 +124,7 @@ class Issues::Draft < ApplicationRecord
     end
 
     gps = d[:gps]
-    if gps && gps[:gps_latitude] && gps[:gps_longitude]
+    if gps && valid_gps?(gps[:gps_latitude]) && valid_gps?(gps[:gps_longitude])
       self.latitude = gps_to_float(gps[:gps_latitude])
       self.longitude = gps_to_float(gps[:gps_longitude])
       self.latlon_from_exif = true
@@ -207,5 +207,9 @@ class Issues::Draft < ApplicationRecord
   def gps_to_float(gps)
     d, m, s = gps
     d.to_f + m / 60 + s / 3600
+  end
+
+  def valid_gps?(gps)
+    gps.is_a?(Array) && gps.length == 3 && gps.all? { |v| !v.to_f.nan? }
   end
 end
