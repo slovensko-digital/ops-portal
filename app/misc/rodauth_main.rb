@@ -199,6 +199,7 @@ class RodauthMain < Rodauth::Rails::Auth
     }
 
     before_omniauth_create_account {
+      account[:type] = "User::Citizen"
       account[:firstname] = omniauth_info["first_name"]
       account[:lastname] = omniauth_info["last_name"]
       account[:email_global_unsubscribe_token] = generate_unsubscribe_token
