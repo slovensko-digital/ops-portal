@@ -43,7 +43,7 @@
 #  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
 #  status                           :integer          default("unverified"), not null
 #  timestamp                        :datetime
-#  type                             :string
+#  type                             :string           not null
 #  uuid                             :uuid             not null
 #  verification                     :string
 #  verified                         :boolean          default(FALSE)
