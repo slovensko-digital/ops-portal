@@ -21,11 +21,7 @@ class Issues::StateChange < ApplicationRecord
   before_create -> { self.uuid = SecureRandom.uuid }
 
   def author_display_name
-    "Systém"
-  end
-
-  def triage_activity_body
-    "Zmena stavu z #{previous_state&.name || 'neznámeho stavu'} na #{new_state.name}"
+    "Odkaz pre starostu"
   end
 
   def triage_visible?

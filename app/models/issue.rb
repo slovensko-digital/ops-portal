@@ -268,8 +268,7 @@ class Issue < ApplicationRecord
     Issues::StateChange.create!(
       activity: activity,
       previous_state: previous_state,
-      new_state: new_state,
-      triage_external_id: 0 # Set to non-nil to prevent sync to triage
+      new_state: new_state
     )
   end
 end

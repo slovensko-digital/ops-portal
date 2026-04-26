@@ -1,6 +1,6 @@
 <% change = state_change %>
 <%= turbo_frame_tag change do %>
-  <div class="<%= class_names("comment", government: true) %>" id="state_change_<%= change.id %>">
+  <div class="<%= class_names("comment", government: false) %>" id="state_change_<%= change.id %>">
     <div class="comment-header">
       <div class="subject">
         <%= link_to_comment_author_profile(change) %>

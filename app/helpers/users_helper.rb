@@ -24,12 +24,12 @@ module UsersHelper
   end
 
   def link_to_comment_author_profile(comment, avatar_variant: :normal)
-    if comment.author.is_a?(User)
+    if comment.try(:author).is_a?(User)
       return link_to_user_profile(comment.author, avatar_variant: avatar_variant)
     end
 
     avatar = content_tag(:figure) do
-      content_tag(:picture) { user_avatar(comment.author, variant: avatar_variant) }
+      content_tag(:picture) { user_avatar(comment.try(:author), variant: avatar_variant) }
     end
 
     name = content_tag(:dig, comment.author_display_name, class: "name")
