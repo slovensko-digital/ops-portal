@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -14,6 +15,13 @@ SET row_security = off;
 --
 
 -- *not* creating schema, since initdb creates it
+
+
+--
+-- Name: unicode; Type: COLLATION; Schema: public; Owner: -
+--
+
+CREATE COLLATION public.unicode (provider = icu, locale = 'und');
 
 
 --
@@ -1980,9 +1988,9 @@ CREATE TABLE public.users (
     imported_at timestamp(6) without time zone,
     responsible_subject_id bigint,
     type character varying,
-    CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@
-]+@[^,@;
-]+\.[^,@;
+    CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
+]+@[^,@; 
+]+\.[^,@; 
 ]+$'::public.citext))
 );
 
@@ -4445,6 +4453,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20260424105720'),
+('20260417220948'),
 ('20260328185530'),
 ('20260227123031'),
 ('20260210135328'),

@@ -2,15 +2,15 @@
 #
 # Table name: issues_state_changes
 #
-#  id                  :bigint           not null, primary key
-#  hidden              :boolean          default(FALSE), not null
-#  triage_external_id  :integer
-#  uuid                :uuid             not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  activity_id         :bigint           not null
-#  new_state_id        :bigint           not null
-#  previous_state_id   :bigint
+#  id                 :bigint           not null, primary key
+#  hidden             :boolean          default(FALSE), not null
+#  uuid               :uuid             not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  activity_id        :bigint           not null
+#  new_state_id       :bigint           not null
+#  previous_state_id  :bigint
+#  triage_external_id :integer
 #
 class Issues::StateChange < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
