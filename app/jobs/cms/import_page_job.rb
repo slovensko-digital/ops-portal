@@ -28,7 +28,7 @@ class Cms::ImportPageJob < ApplicationJob
       page.assign_attributes(
         title: topic_raw["title"],
         slug: topic_raw["slug"],
-        tags: topic_raw["tags"],
+        tags: topic_raw["tags"].map { |tag| tag["name"] },
         text: post_raw["cooked"],
         raw: post_raw["raw"],
         category: category,
