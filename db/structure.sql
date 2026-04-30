@@ -972,6 +972,42 @@ ALTER SEQUENCE public.issues_responsible_subject_changes_id_seq OWNED BY public.
 
 
 --
+-- Name: issues_state_changes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.issues_state_changes (
+    id bigint NOT NULL,
+    activity_id bigint NOT NULL,
+    previous_state_id bigint,
+    new_state_id bigint NOT NULL,
+    hidden boolean DEFAULT false NOT NULL,
+    uuid uuid NOT NULL,
+    triage_external_id integer,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: issues_state_changes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.issues_state_changes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: issues_state_changes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.issues_state_changes_id_seq OWNED BY public.issues_state_changes.id;
+
+
+--
 -- Name: issues_states; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1944,9 +1980,9 @@ CREATE TABLE public.users (
     imported_at timestamp(6) without time zone,
     responsible_subject_id bigint,
     type character varying,
-    CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@
-]+@[^,@;
-]+\.[^,@;
+    CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
+]+@[^,@; 
+]+\.[^,@; 
 ]+$'::public.citext))
 );
 
@@ -2108,6 +2144,13 @@ ALTER TABLE ONLY public.issues_drafts ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.issues_responsible_subject_changes ALTER COLUMN id SET DEFAULT nextval('public.issues_responsible_subject_changes_id_seq'::regclass);
+
+
+--
+-- Name: issues_state_changes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_state_changes ALTER COLUMN id SET DEFAULT nextval('public.issues_state_changes_id_seq'::regclass);
 
 
 --
@@ -2491,6 +2534,14 @@ ALTER TABLE ONLY public.issues
 
 ALTER TABLE ONLY public.issues_responsible_subject_changes
     ADD CONSTRAINT issues_responsible_subject_changes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: issues_state_changes issues_state_changes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_state_changes
+    ADD CONSTRAINT issues_state_changes_pkey PRIMARY KEY (id);
 
 
 --
@@ -3325,6 +3376,27 @@ CREATE INDEX index_issues_responsible_subject_changes_on_user_author_id ON publi
 
 
 --
+-- Name: index_issues_state_changes_on_activity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_state_changes_on_activity_id ON public.issues_state_changes USING btree (activity_id);
+
+
+--
+-- Name: index_issues_state_changes_on_new_state_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_state_changes_on_new_state_id ON public.issues_state_changes USING btree (new_state_id);
+
+
+--
+-- Name: index_issues_state_changes_on_previous_state_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_state_changes_on_previous_state_id ON public.issues_state_changes USING btree (previous_state_id);
+
+
+--
 -- Name: index_issues_states_on_key; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3790,6 +3862,14 @@ ALTER TABLE ONLY public.legacy_alerts_sources
 
 
 --
+-- Name: issues_state_changes fk_rails_1155aba1ab; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_state_changes
+    ADD CONSTRAINT fk_rails_1155aba1ab FOREIGN KEY (new_state_id) REFERENCES public.issues_states(id);
+
+
+--
 -- Name: responsible_subjects_users fk_rails_1226fa901f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3827,6 +3907,14 @@ ALTER TABLE ONLY public.user_email_auth_keys
 
 ALTER TABLE ONLY public.legacy_agents
     ADD CONSTRAINT fk_rails_1b2b63ec59 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
+
+
+--
+-- Name: issues_state_changes fk_rails_25a70e45e7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_state_changes
+    ADD CONSTRAINT fk_rails_25a70e45e7 FOREIGN KEY (previous_state_id) REFERENCES public.issues_states(id);
 
 
 --
@@ -4083,6 +4171,14 @@ ALTER TABLE ONLY public.issues_activity_votes
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_847dcee27e FOREIGN KEY (category_id) REFERENCES public.issues_categories(id);
+
+
+--
+-- Name: issues_state_changes fk_rails_8d1914765d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_state_changes
+    ADD CONSTRAINT fk_rails_8d1914765d FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
 
 
 --
@@ -4349,6 +4445,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20260424105720'),
+('20260417220948'),
 ('20260328185530'),
 ('20260227123031'),
 ('20260210135328'),

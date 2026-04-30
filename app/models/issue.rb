@@ -107,6 +107,7 @@ class Issue < ApplicationRecord
 
   before_save :recalculate_computed_fields
   after_update :notify_subscribers
+  after_update :track_state_change
 
   def imported?
     imported_at.present?
@@ -252,5 +253,22 @@ class Issue < ApplicationRecord
     elsif saved_change_to_state_id?
       Notifications::PublishIssueStateChangedJob.perform_later(self, state_id_change: saved_change_to_state_id)
     end
+  end
+
+  def track_state_change
+    return unless saved_change_to_state_id?
+
+    previous_state_id, new_state_id = saved_change_to_state_id
+    previous_state = Issues::State.find_by(id: previous_state_id)
+    new_state = Issues::State.find_by(id: new_state_id)
+
+    return unless new_state
+
+    activity = Issues::StateChangeActivity.create!(issue: self)
+    Issues::StateChange.create!(
+      activity: activity,
+      previous_state: previous_state,
+      new_state: new_state
+    )
   end
 end
