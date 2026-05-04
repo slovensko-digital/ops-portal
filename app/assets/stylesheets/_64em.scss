@@ -286,9 +286,10 @@
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 	
-	
-	
-	
+	.news-grid-bottom {
+		grid-template-columns: repeat(4, 1fr);
+	}
+
 	// Podnety
 	section.podnety .podnety-general-con {
 		display: grid;
@@ -414,10 +415,3 @@
 	}
 
 }
-
-
-
-
-
-
-

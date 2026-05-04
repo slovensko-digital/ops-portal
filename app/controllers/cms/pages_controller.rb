@@ -14,7 +14,19 @@ class Cms::PagesController < ApplicationController
     if @page
       render :show
     else
-      @pages = @category.pages.published.order(created_at: :desc).page(params[:page]).per(12)
+      @top_pages = @category.pages.published.order("RANDOM()").limit(2)
+
+      @hero_pages = @category.pages.published
+                             .where.not(id: @top_pages.select(:id))
+                             .order(created_at: :desc)
+                             .limit(3)
+
+      @pages = @category.pages.published
+                        .where.not(id: @top_pages.select(:id))
+                        .where.not(id: @hero_pages.select(:id))
+                        .order(created_at: :desc)
+                        .page(params[:page])
+                        .per(8)
     end
   end
 
