@@ -1,0 +1,19 @@
+<% change = state_change %>
+<%= turbo_frame_tag change do %>
+  <div class="<%= class_names("comment", government: false) %>" id="state_change_<%= change.id %>">
+    <div class="comment-header">
+      <div class="subject">
+        <%= link_to_comment_author_profile(change) %>
+      </div>
+    </div>
+    <div class="date"><%= l change.created_at.to_date %></div>
+    <div class="comment-content">
+      <p>
+        Stav podnetu bol zmenený z
+        <strong><%= change.previous_state&.name || "neznámeho stavu" %></strong>
+        na
+        <strong><%= change.new_state.name %></strong>
+      </p>
+    </div>
+  </div>
+<% end %>
