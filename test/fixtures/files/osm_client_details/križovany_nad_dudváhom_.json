@@ -1,6 +1,6 @@
 {
-  "place_id": 174617263,
-  "parent_place_id": 174938291,
+  "place_id": 187990062,
+  "parent_place_id": 187975690,
   "osm_type": "W",
   "osm_id": 1218851213,
   "category": "highway",
@@ -13,7 +13,7 @@
   "addresstags": {},
   "calculated_postcode": "919 23",
   "country_code": "sk",
-  "indexed_date": "2024-11-05T11:53:09.699005+00:00",
+  "indexed_date": "2026-04-29T18:09:25.471873+00:00",
   "importance": 0.05338558556496525,
   "calculated_importance": 0.05338558556496525,
   "extratags": {},
@@ -23,21 +23,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.647912683819264,
-      48.31661706251176
+      17.6479127,
+      48.3166171
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.647912683819264,
-      48.31661706251176
+      17.6479127,
+      48.3166171
     ]
   },
   "address": [
     {
       "localname": "Zemianska stráň",
-      "place_id": 174617263,
+      "place_id": 187990062,
       "osm_id": 1218851213,
       "osm_type": "W",
       "class": "highway",
@@ -49,62 +49,62 @@
     },
     {
       "localname": "Križovany nad Dudváhom",
-      "place_id": 174938291,
-      "osm_id": 2204019,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00000006512847002649986,
-      "isaddress": false
-    },
-    {
-      "localname": "Križovany nad Dudváhom",
-      "place_id": 174368649,
+      "place_id": 187975690,
       "osm_id": 2203940,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 16,
-      "distance": 0.00000006512847002649986,
-      "isaddress": true
+      "distance": 6.512847002649986E-8,
+      "isaddress": false
     },
     {
-      "localname": "okres Trnava",
-      "place_id": 174391532,
-      "osm_id": 388202,
+      "localname": "Križovany nad Dudváhom",
+      "place_id": 187975730,
+      "osm_id": 2204019,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000008567834151971908,
+      "rank_address": 16,
+      "distance": 6.512847002649986E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Trnava",
+      "place_id": 187909920,
+      "osm_id": 388202,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000017735014860670403,
       "isaddress": true
     },
     {
       "localname": "Trnavský kraj",
-      "place_id": 175833397,
+      "place_id": 188079278,
       "osm_id": 388266,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000000020012419502717047,
+      "distance": 2.0012136817407174E-8,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 174734360,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000003352835125965791,
+      "distance": 0.000003352834952584757,
       "isaddress": true
     },
     {

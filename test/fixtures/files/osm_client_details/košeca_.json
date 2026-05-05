@@ -1,6 +1,6 @@
 {
-  "place_id": 172023252,
-  "parent_place_id": 172058392,
+  "place_id": 185350772,
+  "parent_place_id": 184388776,
   "osm_type": "W",
   "osm_id": 58513926,
   "category": "building",
@@ -18,14 +18,13 @@
     "streetnumber": "22",
     "conscriptionnumber": "861"
   },
-  "housenumber": "861 22;861;22",
+  "housenumber": "22;861 22;861",
   "calculated_postcode": "018 64",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:13:01.334705+00:00",
+  "indexed_date": "2026-04-17T08:49:05.989016+00:00",
   "importance": 0.00004997711146710945,
   "calculated_importance": 0.00004997711146710945,
   "extratags": {
-    "source:addr": "minvskaddress 2023-11",
     "ref:minvskaddress": "23192961"
   },
   "rank_address": 30,
@@ -34,15 +33,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.277447078923046,
-      49.01402185
+      18.2774471,
+      49.0140219
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.277447078923046,
-      49.01402185
+      18.2774471,
+      49.0140219
     ]
   },
   "address": [
@@ -56,7 +55,7 @@
     },
     {
       "localname": "Mojtinárska",
-      "place_id": 172058392,
+      "place_id": 184388776,
       "osm_id": 53104298,
       "osm_type": "W",
       "class": "highway",
@@ -68,74 +67,74 @@
     },
     {
       "localname": "Nozdrovice",
-      "place_id": 172094037,
+      "place_id": 185029602,
       "osm_id": 4651074,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 11,
       "rank_address": 20,
-      "distance": 0.00000001759845976215697,
+      "distance": 1.759845976215697E-8,
       "isaddress": true
     },
     {
       "localname": "Košeca",
-      "place_id": 172057218,
-      "osm_id": 1791605,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00000018676939130651707,
-      "isaddress": false
-    },
-    {
-      "localname": "Košeca",
-      "place_id": 172080754,
+      "place_id": 185058364,
       "osm_id": 2219827,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.00000018676939130651707,
+      "rank_address": 18,
+      "distance": 1.8676939130651707E-7,
       "isaddress": true
     },
     {
-      "localname": "okres Ilava",
-      "place_id": 172078118,
-      "osm_id": 388253,
+      "localname": "Košeca",
+      "place_id": 185079175,
+      "osm_id": 1791605,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000004899521114761969,
+      "rank_address": 16,
+      "distance": 1.8676939130651707E-7,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Ilava",
+      "place_id": 185145911,
+      "osm_id": 388253,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 6.714227455381793E-7,
       "isaddress": true
     },
     {
       "localname": "Trenčiansky kraj",
-      "place_id": 175100938,
+      "place_id": 186372547,
       "osm_id": 388267,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000012113424811484855,
+      "distance": 0.0000012113426583675537,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000006107143086999695,
+      "distance": 0.000006107143220166723,
       "isaddress": true
     },
     {

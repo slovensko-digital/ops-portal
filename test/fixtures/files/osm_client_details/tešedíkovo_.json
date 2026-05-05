@@ -1,6 +1,6 @@
 {
-  "place_id": 174831755,
-  "parent_place_id": 175031529,
+  "place_id": 175093163,
+  "parent_place_id": 175476648,
   "osm_type": "W",
   "osm_id": 303281984,
   "category": "building",
@@ -12,17 +12,18 @@
     "city": "Tešedíkovo",
     "place": "Tešedíkovo",
     "country": "SK",
+    "postcode": "92582",
     "housenumber": "766",
     "conscriptionnumber": "766"
   },
   "housenumber": "766",
   "calculated_postcode": "925 82",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:14:54.492344+00:00",
+  "indexed_date": "2026-04-18T20:55:13.382814+00:00",
   "importance": 0.00005004119935907557,
   "calculated_importance": 0.00005004119935907557,
   "extratags": {
-    "source:conscriptionnumber": "kapor2"
+    "ref:minvskaddress": "9406188"
   },
   "rank_address": 30,
   "rank_search": 30,
@@ -30,15 +31,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.852221887355,
-      48.102255400000004
+      17.8522219,
+      48.1022554
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.852221887355,
-      48.102255400000004
+      17.8522219,
+      48.1022554
     ]
   },
   "address": [
@@ -52,50 +53,62 @@
     },
     {
       "localname": "Tešedíkovo",
-      "place_id": 175031529,
+      "place_id": 174999649,
       "osm_id": 2210546,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
+      "rank_address": 18,
+      "distance": 0.0012752788714623427,
+      "isaddress": true
+    },
+    {
+      "localname": "Tešedíkovo",
+      "place_id": 175476648,
+      "osm_id": 2210559,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 8,
       "rank_address": 16,
       "distance": 0.0,
       "isaddress": true
     },
     {
       "localname": "okres Šaľa",
-      "place_id": 175005811,
+      "place_id": 175148067,
       "osm_id": 388222,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000004706206916078275,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 4.7062040605992335E-7,
       "isaddress": true
     },
     {
       "localname": "Nitriansky kraj",
-      "place_id": 174908163,
+      "place_id": 174663472,
       "osm_id": 388268,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000005074591325705103,
+      "distance": 0.000005074590984660741,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 174734360,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000004281355788691509,
+      "distance": 0.000004281355757886234,
       "isaddress": true
     },
     {

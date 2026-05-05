@@ -1,6 +1,6 @@
 {
-  "place_id": 172388715,
-  "parent_place_id": 173668300,
+  "place_id": 185613644,
+  "parent_place_id": 185561752,
   "osm_type": "W",
   "osm_id": 1185204603,
   "category": "highway",
@@ -13,7 +13,7 @@
   "addresstags": {},
   "calculated_postcode": "921 01",
   "country_code": "sk",
-  "indexed_date": "2025-02-16T18:41:59.629930+00:00",
+  "indexed_date": "2026-04-29T18:42:21.669053+00:00",
   "importance": 0.053393366140230374,
   "calculated_importance": 0.053393366140230374,
   "extratags": {
@@ -29,21 +29,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.813902600429905,
-      48.59642163270064
+      17.8139026,
+      48.5964216
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.813902600429905,
-      48.59642163270064
+      17.8139026,
+      48.5964216
     ]
   },
   "address": [
     {
       "localname": "Obchodná",
-      "place_id": 172388715,
+      "place_id": 185613644,
       "osm_id": 1185204603,
       "osm_type": "W",
       "class": "highway",
@@ -54,44 +54,8 @@
       "isaddress": true
     },
     {
-      "localname": "Floreát",
-      "place_id": 172641659,
-      "osm_id": 763044685,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.018909207228667124,
-      "isaddress": false
-    },
-    {
-      "localname": "Malý Floreát",
-      "place_id": 172628333,
-      "osm_id": 763044658,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.014735660749691242,
-      "isaddress": false
-    },
-    {
-      "localname": "Juh",
-      "place_id": 173618557,
-      "osm_id": 763044665,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.011708196232125993,
-      "isaddress": false
-    },
-    {
       "localname": "Adam Trajan",
-      "place_id": 173658726,
+      "place_id": 185557232,
       "osm_id": 763044571,
       "osm_type": "N",
       "class": "place",
@@ -103,7 +67,7 @@
     },
     {
       "localname": "Tesla",
-      "place_id": 172381556,
+      "place_id": 187158437,
       "osm_id": 763044640,
       "osm_type": "N",
       "class": "place",
@@ -115,7 +79,7 @@
     },
     {
       "localname": "Prednádražie",
-      "place_id": 173668300,
+      "place_id": 185561752,
       "osm_id": 3758736342,
       "osm_type": "N",
       "class": "place",
@@ -127,62 +91,62 @@
     },
     {
       "localname": "Piešťany",
-      "place_id": 172931957,
+      "place_id": 185667932,
       "osm_id": 2204202,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000010107525809386347,
+      "distance": 1.0107525809386347E-7,
       "isaddress": true
     },
     {
       "localname": "Piešťany",
-      "place_id": 173693649,
+      "place_id": 185547630,
       "osm_id": 2204226,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000010107525809386347,
+      "distance": 1.0107525809386347E-7,
       "isaddress": true
     },
     {
       "localname": "okres Piešťany",
-      "place_id": 173698108,
+      "place_id": 185709432,
       "osm_id": 388190,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000010107525809386347,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 8.885827757958217E-7,
       "isaddress": true
     },
     {
       "localname": "Trnavský kraj",
-      "place_id": 175238560,
+      "place_id": 186768990,
       "osm_id": 388266,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000031857678217753855,
+      "distance": 0.0000031857680631058625,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 187249438,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000001200407943618849,
+      "distance": 0.0000012004077641898897,
       "isaddress": true
     },
     {

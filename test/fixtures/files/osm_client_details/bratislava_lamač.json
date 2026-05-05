@@ -67,6 +67,18 @@
       "isaddress": true
     },
     {
+      "localname": "Zečák",
+      "place_id": 174233187,
+      "osm_id": 11445334226,
+      "osm_type": "N",
+      "class": "place",
+      "type": "quarter",
+      "admin_level": 15,
+      "rank_address": 24,
+      "distance": 0.005702112263016171,
+      "isaddress": false
+    },
+    {
       "localname": "Podháj",
       "place_id": 411712738,
       "osm_id": 4430152917,
@@ -88,18 +100,6 @@
       "admin_level": 15,
       "rank_address": 24,
       "distance": 0.0037224538586799745,
-      "isaddress": false
-    },
-    {
-      "localname": "Zečák",
-      "place_id": 174233187,
-      "osm_id": 11445334226,
-      "osm_type": "N",
-      "class": "place",
-      "type": "quarter",
-      "admin_level": 15,
-      "rank_address": 24,
-      "distance": 0.005702112263016171,
       "isaddress": true
     },
     {
@@ -111,7 +111,7 @@
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 22,
-      "distance": 0.000000015756294234384796,
+      "distance": 1.5756294234384796E-8,
       "isaddress": true
     },
     {
@@ -123,19 +123,7 @@
       "type": "administrative",
       "admin_level": 9,
       "rank_address": 20,
-      "distance": 0.000000015756294234384796,
-      "isaddress": false
-    },
-    {
-      "localname": "Lamač",
-      "place_id": 411712666,
-      "osm_id": 530544354,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.0015756294234384796,
+      "distance": 1.5756294234384796E-8,
       "isaddress": false
     },
     {
@@ -147,32 +135,8 @@
       "type": "suburb",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.0000008646351742478526,
+      "distance": 8.634038433560698E-7,
       "isaddress": true
-    },
-    {
-      "localname": "okres Bratislava IV",
-      "place_id": 390035604,
-      "osm_id": 388245,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 18,
-      "distance": 0.00000036247968252132206,
-      "isaddress": true
-    },
-    {
-      "localname": "Bratislava",
-      "place_id": 390032597,
-      "osm_id": 1702499,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 6,
-      "rank_address": 16,
-      "distance": 0.0000006928638994507006,
-      "isaddress": false
     },
     {
       "localname": "Bratislava",
@@ -183,7 +147,19 @@
       "type": "city",
       "admin_level": 15,
       "rank_address": 16,
-      "distance": 0.0000008646351742478526,
+      "distance": 6.928638994507006E-7,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Bratislava IV",
+      "place_id": 390035604,
+      "osm_id": 388245,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 3.624799287809175E-7,
       "isaddress": true
     },
     {
@@ -195,7 +171,19 @@
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000018765401094678278,
+      "distance": 0.0000018765403922548404,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 436236092,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.0000018765403922548404,
       "isaddress": true
     },
     {

@@ -68,26 +68,26 @@
     },
     {
       "localname": "Nálepkovo",
-      "place_id": 175734825,
-      "osm_id": 2382090,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.0000000031330202680662537,
-      "isaddress": false
-    },
-    {
-      "localname": "Nálepkovo",
       "place_id": 174741381,
       "osm_id": 2382059,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
+      "rank_address": 18,
+      "distance": 7.305411487416498E-9,
+      "isaddress": true
+    },
+    {
+      "localname": "Nálepkovo",
+      "place_id": 175734825,
+      "osm_id": 2382090,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.0000000031330202680662537,
+      "distance": 7.305411487416498E-9,
       "isaddress": true
     },
     {
@@ -97,9 +97,9 @@
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000031970692587845053,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000018266595595370457,
       "isaddress": true
     },
     {
@@ -111,7 +111,7 @@
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.00000691738193608193,
+      "distance": 0.000006921946159613881,
       "isaddress": true
     },
     {
@@ -123,7 +123,7 @@
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.00000693805514612945,
+      "distance": 0.000006942415815996965,
       "isaddress": true
     },
     {

@@ -1,6 +1,6 @@
 {
-  "place_id": 173722708,
-  "parent_place_id": 172683018,
+  "place_id": 184856540,
+  "parent_place_id": 186898003,
   "osm_type": "W",
   "osm_id": 62123325,
   "category": "building",
@@ -19,11 +19,10 @@
   "housenumber": "311",
   "calculated_postcode": "908 75",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:15:46.600220+00:00",
+  "indexed_date": "2026-05-03T14:52:49.371969+00:00",
   "importance": 0.00004935454337372423,
   "calculated_importance": 0.00004935454337372423,
   "extratags": {
-    "source:addr": "minvskaddress 2023-11",
     "ref:minvskaddress": "2799521A"
   },
   "rank_address": 30,
@@ -32,14 +31,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.1376186717389,
+      17.1376187,
       48.5269262
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.1376186717389,
+      17.1376187,
       48.5269262
     ]
   },
@@ -54,62 +53,62 @@
     },
     {
       "localname": "Studienka",
-      "place_id": 172683018,
-      "osm_id": 305657002,
-      "osm_type": "W",
-      "class": "place",
-      "type": "village",
-      "admin_level": 15,
+      "place_id": 186898003,
+      "osm_id": 2206938,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
       "rank_address": 18,
       "distance": 0.0,
       "isaddress": true
     },
     {
       "localname": "Studienka",
-      "place_id": 173722476,
+      "place_id": 186679738,
       "osm_id": 2206972,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.000000013237475253544826,
-      "isaddress": false
-    },
-    {
-      "localname": "Studienka",
-      "place_id": 173661087,
-      "osm_id": 2206938,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.000000013237475253544826,
+      "distance": 0.0,
       "isaddress": true
     },
     {
       "localname": "okres Malacky",
-      "place_id": 408278699,
+      "place_id": 185969601,
       "osm_id": 388219,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000010436641220743421,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000010371705701002228,
       "isaddress": true
     },
     {
       "localname": "Bratislavský kraj",
-      "place_id": 408232807,
+      "place_id": 187251930,
       "osm_id": 388265,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000020217285166154056,
+      "distance": 0.0000020087262485396547,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 416673440,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.0000020087262485396547,
       "isaddress": true
     },
     {

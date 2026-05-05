@@ -1,6 +1,6 @@
 {
-  "place_id": 174818904,
-  "parent_place_id": 174331126,
+  "place_id": 187923545,
+  "parent_place_id": 188047399,
   "osm_type": "W",
   "osm_id": 164803783,
   "category": "building",
@@ -20,11 +20,10 @@
   "housenumber": "6785;6785 42;42",
   "calculated_postcode": "919 34",
   "country_code": "sk",
-  "indexed_date": "2024-11-06T01:29:24.748175+00:00",
+  "indexed_date": "2026-04-17T08:50:21.634971+00:00",
   "importance": 0.00005200045777061139,
   "calculated_importance": 0.00005200045777061139,
   "extratags": {
-    "source:addr": "minvskaddress 2023-02",
     "ref:minvskaddress": "5211050185"
   },
   "rank_address": 30,
@@ -33,15 +32,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.52798147427952,
-      48.37236705
+      17.5279815,
+      48.3723671
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.52798147427952,
-      48.37236705
+      17.5279815,
+      48.3723671
     ]
   },
   "address": [
@@ -55,7 +54,7 @@
     },
     {
       "localname": "Vysoká",
-      "place_id": 174331126,
+      "place_id": 188047399,
       "osm_id": 141326669,
       "osm_type": "W",
       "class": "highway",
@@ -66,63 +65,75 @@
       "isaddress": true
     },
     {
+      "localname": "Parnas",
+      "place_id": 188013708,
+      "osm_id": 13484176980,
+      "osm_type": "N",
+      "class": "place",
+      "type": "neighbourhood",
+      "admin_level": 15,
+      "rank_address": 24,
+      "distance": 0.0016031497481990373,
+      "isaddress": true
+    },
+    {
       "localname": "Biely Kostol",
-      "place_id": 175368987,
+      "place_id": 188123398,
       "osm_id": 2204010,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000002577460147120019,
+      "distance": 2.577460147120019E-8,
       "isaddress": false
     },
     {
       "localname": "Biely Kostol",
-      "place_id": 173856909,
+      "place_id": 190686056,
       "osm_id": 2203915,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 16,
-      "distance": 0.00000002577460147120019,
+      "distance": 2.577460147120019E-8,
       "isaddress": true
     },
     {
       "localname": "okres Trnava",
-      "place_id": 174391532,
+      "place_id": 187909920,
       "osm_id": 388202,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000006785305140790681,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 6.785305256582089E-7,
       "isaddress": true
     },
     {
       "localname": "Trnavský kraj",
-      "place_id": 175833397,
+      "place_id": 188079278,
       "osm_id": 388266,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000001298200076464473,
+      "distance": 0.0000012981996406161755,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 174734360,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000004123406377405383,
+      "distance": 0.000004123406172012646,
       "isaddress": true
     },
     {

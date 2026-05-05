@@ -1,6 +1,6 @@
 {
-  "place_id": 175202607,
-  "parent_place_id": 174896804,
+  "place_id": 173845522,
+  "parent_place_id": 174617055,
   "osm_type": "W",
   "osm_id": 42281278,
   "category": "highway",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "962 65",
   "country_code": "sk",
-  "indexed_date": "2025-03-05T23:45:50.331553+00:00",
+  "indexed_date": "2026-04-29T21:09:02.895835+00:00",
   "importance": 0.05338814297703514,
   "calculated_importance": 0.05338814297703514,
   "extratags": {},
@@ -21,76 +21,76 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.98595536520602,
-      48.29094190282565
+      18.985955399999998,
+      48.2909419
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.98595536520602,
-      48.29094190282565
+      18.985955399999998,
+      48.2909419
     ]
   },
   "address": [
     {
       "localname": "Hontianske Nemce",
-      "place_id": 174896804,
+      "place_id": 174617055,
       "osm_id": 2266152,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000006969984003565451,
+      "distance": 6.969984003565451E-8,
       "isaddress": true
     },
     {
       "localname": "Hontianske Nemce",
-      "place_id": 175014752,
+      "place_id": 173757024,
       "osm_id": 2266189,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000006969984003565451,
+      "distance": 6.969984003565451E-8,
       "isaddress": true
     },
     {
       "localname": "okres Krupina",
-      "place_id": 172605170,
+      "place_id": 175087830,
       "osm_id": 388232,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000037460185826327017,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 3.746021279931392E-7,
       "isaddress": true
     },
     {
       "localname": "Banskobystrický kraj",
-      "place_id": 175223038,
+      "place_id": 175185894,
       "osm_id": 388270,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000004802593326217842,
+      "distance": 0.000004802592923725357,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 175441210,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.00000727646714061258,
+      "distance": 0.0000072764672779180316,
       "isaddress": true
     },
     {

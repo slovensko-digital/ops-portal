@@ -1,6 +1,6 @@
 {
-  "place_id": 170094174,
-  "parent_place_id": 172190250,
+  "place_id": 184860777,
+  "parent_place_id": 182989598,
   "osm_type": "W",
   "osm_id": 1137551155,
   "category": "amenity",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "031 23",
   "country_code": "sk",
-  "indexed_date": "2025-07-28T09:12:24.029857+00:00",
+  "indexed_date": "2026-04-17T08:46:34.492126+00:00",
   "importance": 0.00006108415350571477,
   "calculated_importance": 0.00006108415350571477,
   "extratags": {},
@@ -21,22 +21,22 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      19.603907031026704,
-      49.08704145
+      19.603907,
+      49.0870415
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      19.603907031026704,
-      49.08704145
+      19.603907,
+      49.0870415
     ]
   },
   "address": [
     {
       "localname": "Jánošíkovo nábrežie",
-      "place_id": 172190250,
-      "osm_id": 35675275,
+      "place_id": 182989598,
+      "osm_id": 1469151664,
       "osm_type": "W",
       "class": "highway",
       "type": "secondary",
@@ -46,87 +46,99 @@
       "isaddress": true
     },
     {
-      "localname": "Liptovská Ondrašová",
-      "place_id": 170095256,
-      "osm_id": 2169238,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 10,
-      "rank_address": 20,
-      "distance": 0.00040930185709794697,
+      "localname": "Vrbica-sever",
+      "place_id": 381654961,
+      "osm_id": 13734649085,
+      "osm_type": "N",
+      "class": "place",
+      "type": "quarter",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 0.014535452177347185,
       "isaddress": false
     },
     {
+      "localname": "Nábrežie 4. apríla",
+      "place_id": 381654962,
+      "osm_id": 13734649086,
+      "osm_type": "N",
+      "class": "place",
+      "type": "quarter",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 0.012290996542995496,
+      "isaddress": true
+    },
+    {
       "localname": "Vrbica-nábrežie",
-      "place_id": 170828220,
+      "place_id": 184773226,
       "osm_id": 11445126972,
       "osm_type": "N",
       "class": "place",
       "type": "suburb",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.017043600796195595,
+      "distance": 0.016723758331785098,
       "isaddress": true
     },
     {
       "localname": "Liptovský Mikuláš",
-      "place_id": 171868236,
+      "place_id": 184206908,
       "osm_id": 2169241,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000009487841023647781,
+      "distance": 9.187824228290128E-8,
       "isaddress": true
     },
     {
       "localname": "Liptovský Mikuláš",
-      "place_id": 171811116,
+      "place_id": 184886928,
       "osm_id": 2169318,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000009487841023647781,
+      "distance": 9.187824228290128E-8,
       "isaddress": true
     },
     {
       "localname": "okres Liptovský Mikuláš",
-      "place_id": 170630367,
+      "place_id": 184872225,
       "osm_id": 388199,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000011329108775254945,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000011303835682691914,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 171862477,
+      "place_id": 184866488,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000004044788394617685,
+      "distance": 0.000004082642931616718,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 188576043,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000002856146083317041,
+      "distance": 0.0000028546389064210813,
       "isaddress": true
     },
     {

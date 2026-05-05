@@ -1,6 +1,6 @@
 {
-  "place_id": 409813785,
-  "parent_place_id": 175485032,
+  "place_id": 188606034,
+  "parent_place_id": 188576915,
   "osm_type": "W",
   "osm_id": 270396668,
   "category": "building",
@@ -18,10 +18,10 @@
     "streetnumber": "100",
     "conscriptionnumber": "4673"
   },
-  "housenumber": "100;4673 100;4673",
+  "housenumber": "4673;4673 100;100",
   "calculated_postcode": "974 11",
   "country_code": "sk",
-  "indexed_date": "2025-06-22T19:49:15.693371+00:00",
+  "indexed_date": "2026-04-17T08:48:22.954224+00:00",
   "importance": 0.00006656519417100813,
   "calculated_importance": 0.00006656519417100813,
   "extratags": {
@@ -33,15 +33,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      19.153795949999996,
-      48.76083425
+      19.1537959,
+      48.7608343
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      19.153795949999996,
-      48.76083425
+      19.1537959,
+      48.7608343
     ]
   },
   "address": [
@@ -55,7 +55,7 @@
     },
     {
       "localname": "Sásovská cesta",
-      "place_id": 175485032,
+      "place_id": 188576915,
       "osm_id": 35943307,
       "osm_type": "W",
       "class": "highway",
@@ -67,74 +67,74 @@
     },
     {
       "localname": "Sásová",
-      "place_id": 175527886,
+      "place_id": 188660937,
       "osm_id": 3507025,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 11,
       "rank_address": 22,
-      "distance": 0.00000007996012991480031,
+      "distance": 7.996055250559436E-8,
       "isaddress": true
     },
     {
       "localname": "Sásová",
-      "place_id": 175427439,
+      "place_id": 188565562,
       "osm_id": 2265285,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 20,
-      "distance": 0.00000004511012113708484,
+      "distance": 4.511012113708484E-8,
       "isaddress": true
     },
     {
       "localname": "Banská Bystrica",
-      "place_id": 175508800,
+      "place_id": 188582757,
       "osm_id": 2265296,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000021022807691890693,
+      "distance": 2.1022807691890693E-7,
       "isaddress": true
     },
     {
       "localname": "okres Banská Bystrica",
-      "place_id": 175048206,
+      "place_id": 188744156,
       "osm_id": 388240,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000021022807691890693,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 7.298689656781091E-7,
       "isaddress": true
     },
     {
       "localname": "Banskobystrický kraj",
-      "place_id": 175223038,
+      "place_id": 188565824,
       "osm_id": 388270,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000036905666709986966,
+      "distance": 0.000003690566352303802,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 188576043,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000032443633878565507,
+      "distance": 0.0000032443635883576273,
       "isaddress": true
     },
     {

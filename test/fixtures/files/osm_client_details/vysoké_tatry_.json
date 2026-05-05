@@ -1,6 +1,6 @@
 {
-  "place_id": 176125776,
-  "parent_place_id": 175717251,
+  "place_id": 188090146,
+  "parent_place_id": 188121364,
   "osm_type": "W",
   "osm_id": 739673764,
   "category": "amenity",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "059 60",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:09:43.972662+00:00",
+  "indexed_date": "2026-04-24T14:07:52.243208+00:00",
   "importance": 0.00005749523155561177,
   "calculated_importance": 0.00005749523155561177,
   "extratags": {
@@ -26,21 +26,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      20.272905924378165,
+      20.2729059,
       49.1650046
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      20.272905924378165,
+      20.2729059,
       49.1650046
     ]
   },
   "address": [
     {
       "localname": "Malinový chodník",
-      "place_id": 175717251,
+      "place_id": 188121364,
       "osm_id": 737727233,
       "osm_type": "W",
       "class": "highway",
@@ -52,7 +52,7 @@
     },
     {
       "localname": "Tatranské Matliare",
-      "place_id": 175925533,
+      "place_id": 188088933,
       "osm_id": 259641399,
       "osm_type": "N",
       "class": "place",
@@ -60,54 +60,78 @@
       "admin_level": 15,
       "rank_address": 22,
       "distance": 0.02214691911440686,
+      "isaddress": false
+    },
+    {
+      "localname": "Tatranská Lesná",
+      "place_id": 188085994,
+      "osm_id": 306597070,
+      "osm_type": "N",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 22,
+      "distance": 0.021843875979550623,
       "isaddress": true
     },
     {
       "localname": "Tatranská Lomnica",
-      "place_id": 175060806,
+      "place_id": 188090866,
       "osm_id": 2275121,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 20,
-      "distance": 0.00000005875002581276214,
+      "distance": 5.875002581276214E-8,
       "isaddress": true
     },
     {
       "localname": "Vysoké Tatry",
-      "place_id": 175762974,
+      "place_id": 188089368,
       "osm_id": 2275146,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.0000006340941768822309,
+      "distance": 6.340941768822309E-7,
       "isaddress": true
     },
     {
       "localname": "okres Poprad",
-      "place_id": 176050016,
+      "place_id": 188183613,
       "osm_id": 388250,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000011183351755466068,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000010919805024710821,
       "isaddress": true
     },
     {
       "localname": "Prešovský kraj",
-      "place_id": 176789858,
+      "place_id": 191183189,
       "osm_id": 388271,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000009142656278183976,
+      "distance": 0.000009142656609419393,
+      "isaddress": true
+    },
+    {
+      "localname": "Východné Slovensko",
+      "place_id": 188071906,
+      "osm_id": 946159,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.000010689876501585283,
       "isaddress": true
     },
     {

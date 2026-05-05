@@ -1,6 +1,6 @@
 {
-  "place_id": 179817660,
-  "parent_place_id": 173635280,
+  "place_id": 173668308,
+  "parent_place_id": 173767923,
   "osm_type": "W",
   "osm_id": 570988352,
   "category": "highway",
@@ -13,7 +13,7 @@
   "addresstags": {},
   "calculated_postcode": "922 04",
   "country_code": "sk",
-  "indexed_date": "2025-06-28T11:44:33.646826+00:00",
+  "indexed_date": "2026-04-29T19:43:34.716785+00:00",
   "importance": 0.05338374532692451,
   "calculated_importance": 0.05338374532692451,
   "extratags": {
@@ -27,21 +27,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.641345433120826,
-      48.57659891035088
+      17.6413454,
+      48.5765989
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.641345433120826,
-      48.57659891035088
+      17.6413454,
+      48.5765989
     ]
   },
   "address": [
     {
       "localname": "502",
-      "place_id": 179817660,
+      "place_id": 173668308,
       "osm_id": 570988352,
       "osm_type": "W",
       "class": "highway",
@@ -53,62 +53,62 @@
     },
     {
       "localname": "Dolný Lopašov",
-      "place_id": 173635280,
-      "osm_id": 2204218,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00000005370624828643415,
-      "isaddress": false
-    },
-    {
-      "localname": "Dolný Lopašov",
-      "place_id": 173596083,
+      "place_id": 173767923,
       "osm_id": 2204188,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.00000005370624828643415,
+      "rank_address": 18,
+      "distance": 5.370624828643415E-8,
       "isaddress": true
     },
     {
-      "localname": "okres Piešťany",
-      "place_id": 173698108,
-      "osm_id": 388190,
+      "localname": "Dolný Lopašov",
+      "place_id": 173619370,
+      "osm_id": 2204218,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000008136324594887367,
+      "rank_address": 16,
+      "distance": 5.370624828643415E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Piešťany",
+      "place_id": 173649626,
+      "osm_id": 388190,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 8.136322447967603E-7,
       "isaddress": true
     },
     {
       "localname": "Trnavský kraj",
-      "place_id": 175238560,
+      "place_id": 175833397,
       "osm_id": 388266,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000025778998819768164,
+      "distance": 0.000002577899867824426,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 174734360,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000002736281448003053,
+      "distance": 0.000002736281230126032,
       "isaddress": true
     },
     {

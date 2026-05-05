@@ -1,6 +1,6 @@
 {
-  "place_id": 171709693,
-  "parent_place_id": 172057529,
+  "place_id": 185206869,
+  "parent_place_id": 185039045,
   "osm_type": "W",
   "osm_id": 1084272741,
   "category": "building",
@@ -18,14 +18,13 @@
     "streetnumber": "33",
     "conscriptionnumber": "1570"
   },
-  "housenumber": "1570;33;1570 33",
+  "housenumber": "1570;1570 33;33",
   "calculated_postcode": "020 01",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:12:57.599883+00:00",
+  "indexed_date": "2026-04-17T08:49:04.781751+00:00",
   "importance": 0.00005404364080257904,
   "calculated_importance": 0.00005404364080257904,
   "extratags": {
-    "source:addr": "minvskaddress 2022-07",
     "ref:minvskaddress": "37725457"
   },
   "rank_address": 30,
@@ -34,14 +33,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.329173260612777,
+      18.3291733,
       49.1339069
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.329173260612777,
+      18.3291733,
       49.1339069
     ]
   },
@@ -56,7 +55,7 @@
     },
     {
       "localname": "Pod Zábrehom",
-      "place_id": 172057529,
+      "place_id": 185039045,
       "osm_id": 207938434,
       "osm_type": "W",
       "class": "highway",
@@ -67,63 +66,75 @@
       "isaddress": true
     },
     {
+      "localname": "Hrabovka",
+      "place_id": 185053754,
+      "osm_id": 2387781795,
+      "osm_type": "N",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 20,
+      "distance": 0.02243688831946323,
+      "isaddress": true
+    },
+    {
       "localname": "Púchov",
-      "place_id": 171921415,
+      "place_id": 183113732,
       "osm_id": 1744855,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000008843892265851087,
+      "distance": 8.843892265851087E-8,
       "isaddress": true
     },
     {
       "localname": "Púchov",
-      "place_id": 170921575,
+      "place_id": 185144719,
       "osm_id": 2140182,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000008843892265851087,
+      "distance": 8.843892265851087E-8,
       "isaddress": true
     },
     {
       "localname": "okres Púchov",
-      "place_id": 170196260,
+      "place_id": 183086707,
       "osm_id": 388248,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000008843892265851087,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 6.254305079095245E-7,
       "isaddress": true
     },
     {
       "localname": "Trenčiansky kraj",
-      "place_id": 175100938,
+      "place_id": 186372547,
       "osm_id": 388267,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000002495210382243578,
+      "distance": 0.000002495210557573256,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000007359585425093664,
+      "distance": 0.00000735958555066985,
       "isaddress": true
     },
     {
