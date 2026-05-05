@@ -90,10 +90,4 @@ module OsmClient
       f.response :json
     end
   end
-
-  def normalize_administrative_name(name)
-    return nil if name.blank?
-
-    name.sub(/\Aokres\s+/i, "")
-  end
 end
