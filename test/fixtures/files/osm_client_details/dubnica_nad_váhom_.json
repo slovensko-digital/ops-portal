@@ -1,6 +1,6 @@
 {
   "place_id": 174356326,
-  "parent_place_id": 174257289,
+  "parent_place_id": 174721832,
   "osm_type": "W",
   "osm_id": 36459578,
   "category": "highway",
@@ -15,7 +15,7 @@
   "addresstags": {},
   "calculated_postcode": "018 41",
   "country_code": "sk",
-  "indexed_date": "2024-11-05T11:53:05.043087+00:00",
+  "indexed_date": "2026-04-29T19:43:26.788388+00:00",
   "importance": 0.05338995422293427,
   "calculated_importance": 0.05338995422293427,
   "extratags": {
@@ -34,15 +34,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.174722329417335,
-      48.96012255
+      18.1747223,
+      48.9601226
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.174722329417335,
-      48.96012255
+      18.1747223,
+      48.9601226
     ]
   },
   "address": [
@@ -66,9 +66,9 @@
       "class": "place",
       "type": "suburb",
       "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.003543754700847229,
-      "isaddress": false
+      "rank_address": 22,
+      "distance": 0.0035437853462088106,
+      "isaddress": true
     },
     {
       "localname": "Stred III",
@@ -79,7 +79,7 @@
       "type": "administrative",
       "admin_level": 11,
       "rank_address": 20,
-      "distance": 0.000000051034184987075913,
+      "distance": 5.103441505495065E-8,
       "isaddress": true
     },
     {
@@ -91,7 +91,7 @@
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000008853070235842887,
+      "distance": 8.853057587634412E-8,
       "isaddress": true
     },
     {
@@ -101,9 +101,9 @@
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000008853070235842887,
+      "distance": 8.853057587634412E-8,
       "isaddress": true
     },
     {
@@ -113,9 +113,9 @@
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000006795737341028921,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 7.020582954890276E-7,
       "isaddress": true
     },
     {
@@ -127,7 +127,7 @@
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000007909546331120711,
+      "distance": 7.909548918238058E-7,
       "isaddress": true
     },
     {
@@ -139,7 +139,7 @@
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000005085982741722115,
+      "distance": 0.000005085983131520036,
       "isaddress": true
     },
     {

@@ -1,6 +1,6 @@
 {
-  "place_id": 175696581,
-  "parent_place_id": 175910384,
+  "place_id": 189062916,
+  "parent_place_id": 189031907,
   "osm_type": "W",
   "osm_id": 69644726,
   "category": "building",
@@ -19,7 +19,7 @@
   "housenumber": "513",
   "calculated_postcode": "094 22",
   "country_code": "sk",
-  "indexed_date": "2025-09-09T08:57:55.868529+00:00",
+  "indexed_date": "2026-04-17T08:45:11.891166+00:00",
   "importance": 0.00005566567483019787,
   "calculated_importance": 0.00005566567483019787,
   "extratags": {
@@ -32,14 +32,14 @@
     "type": "Point",
     "coordinates": [
       21.7730385,
-      48.808063399999995
+      48.8080634
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
       21.7730385,
-      48.808063399999995
+      48.8080634
     ]
   },
   "address": [
@@ -53,62 +53,50 @@
     },
     {
       "localname": "Nižný Hrušov",
-      "place_id": 172917823,
-      "osm_id": 2322297,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.0015918697936704023,
-      "isaddress": true
-    },
-    {
-      "localname": "Nižný Hrušov",
-      "place_id": 175910384,
+      "place_id": 189031907,
       "osm_id": 2322392,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
       "distance": 0.0,
       "isaddress": true
     },
     {
       "localname": "okres Vranov nad Topľou",
-      "place_id": 175948631,
+      "place_id": 187868341,
       "osm_id": 388227,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000020426174262370545,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.00000204261770917738,
       "isaddress": true
     },
     {
       "localname": "Prešovský kraj",
-      "place_id": 176789858,
+      "place_id": 189977130,
       "osm_id": 388271,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000006610168947384209,
+      "distance": 0.000006610168652753267,
       "isaddress": true
     },
     {
       "localname": "Východné Slovensko",
-      "place_id": 391220008,
+      "place_id": 189075585,
       "osm_id": 946159,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000047310017655152015,
+      "distance": 0.000004731001594167656,
       "isaddress": true
     },
     {

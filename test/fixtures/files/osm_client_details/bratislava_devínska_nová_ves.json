@@ -1,6 +1,6 @@
 {
-  "place_id": 174262225,
-  "parent_place_id": 174539088,
+  "place_id": 187692557,
+  "parent_place_id": 187530080,
   "osm_type": "W",
   "osm_id": 170454573,
   "category": "building",
@@ -18,14 +18,13 @@
     "streetnumber": "6",
     "conscriptionnumber": "5176"
   },
-  "housenumber": "5176;6;5176 6",
+  "housenumber": "6;5176;5176 6",
   "calculated_postcode": "841 07",
   "country_code": "sk",
-  "indexed_date": "2024-11-06T01:30:30.784329+00:00",
+  "indexed_date": "2026-04-17T08:51:30.047864+00:00",
   "importance": 0.00007727397573810967,
   "calculated_importance": 0.00007727397573810967,
   "extratags": {
-    "source:addr": "minvskaddress 2021-10",
     "ref:minvskaddress": "6186950"
   },
   "rank_address": 30,
@@ -34,15 +33,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      16.973240378103597,
-      48.205951049999996
+      16.9732404,
+      48.205951
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      16.973240378103597,
-      48.205951049999996
+      16.9732404,
+      48.205951
     ]
   },
   "address": [
@@ -56,7 +55,7 @@
     },
     {
       "localname": "Slovinec",
-      "place_id": 174539088,
+      "place_id": 187530080,
       "osm_id": 7956344,
       "osm_type": "W",
       "class": "highway",
@@ -67,160 +66,136 @@
       "isaddress": true
     },
     {
-      "localname": "Stará Devínska",
-      "place_id": 411712743,
-      "osm_id": 4430152923,
-      "osm_type": "N",
-      "class": "place",
-      "type": "quarter",
-      "admin_level": 15,
-      "rank_address": 22,
-      "distance": 0.0052714446786440265,
-      "isaddress": false
-    },
-    {
-      "localname": "Podhorské",
-      "place_id": 411712741,
-      "osm_id": 4430152921,
-      "osm_type": "N",
-      "class": "place",
-      "type": "quarter",
-      "admin_level": 15,
-      "rank_address": 22,
-      "distance": 0.0048863208183671705,
-      "isaddress": false
-    },
-    {
-      "localname": "Kostolné",
-      "place_id": 411712742,
-      "osm_id": 4430152922,
-      "osm_type": "N",
-      "class": "place",
-      "type": "quarter",
-      "admin_level": 15,
-      "rank_address": 22,
-      "distance": 0.004682917101552409,
-      "isaddress": false
-    },
-    {
       "localname": "Grba",
-      "place_id": 411712744,
+      "place_id": 187716446,
       "osm_id": 4430152924,
       "osm_type": "N",
       "class": "place",
       "type": "quarter",
       "admin_level": 15,
-      "rank_address": 22,
+      "rank_address": 24,
       "distance": 0.007714560431419388,
+      "isaddress": false
+    },
+    {
+      "localname": "Stará Devínska",
+      "place_id": 186445692,
+      "osm_id": 4430152923,
+      "osm_type": "N",
+      "class": "place",
+      "type": "quarter",
+      "admin_level": 15,
+      "rank_address": 24,
+      "distance": 0.0052714446786440265,
+      "isaddress": false
+    },
+    {
+      "localname": "Podhorské",
+      "place_id": 187663537,
+      "osm_id": 4430152921,
+      "osm_type": "N",
+      "class": "place",
+      "type": "quarter",
+      "admin_level": 15,
+      "rank_address": 24,
+      "distance": 0.0048863208183671705,
+      "isaddress": false
+    },
+    {
+      "localname": "Kostolné",
+      "place_id": 186431732,
+      "osm_id": 4430152922,
+      "osm_type": "N",
+      "class": "place",
+      "type": "quarter",
+      "admin_level": 15,
+      "rank_address": 24,
+      "distance": 0.004682917101552409,
       "isaddress": true
     },
     {
       "localname": "Devínska Nová Ves",
-      "place_id": 397764904,
+      "place_id": 187581757,
       "osm_id": 2208757,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 20,
-      "distance": 0.000000027873586780337675,
-      "isaddress": false
+      "rank_address": 22,
+      "distance": 2.7873586780337675E-8,
+      "isaddress": true
     },
     {
       "localname": "Devínska Nová Ves",
-      "place_id": 390035389,
+      "place_id": 186530939,
       "osm_id": 2208779,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 9,
       "rank_address": 20,
-      "distance": 0.000000027873586780337675,
+      "distance": 2.7873586780337675E-8,
       "isaddress": false
     },
     {
       "localname": "Devínska Nová Ves",
-      "place_id": 411712665,
-      "osm_id": 530544353,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.0027873586780337673,
-      "isaddress": false
-    },
-    {
-      "localname": "Devínska Nová Ves",
-      "place_id": 174467103,
+      "place_id": 187550069,
       "osm_id": 300186811,
       "osm_type": "W",
       "class": "place",
       "type": "suburb",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.00000013730196557282464,
-      "isaddress": true
-    },
-    {
-      "localname": "okres Bratislava IV",
-      "place_id": 390035604,
-      "osm_id": 388245,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 18,
-      "distance": 0.00000044531294972185017,
+      "distance": 1.3730246627431905E-7,
       "isaddress": true
     },
     {
       "localname": "Bratislava",
-      "place_id": 390032597,
-      "osm_id": 1702499,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 6,
-      "rank_address": 16,
-      "distance": 0.0000014602301837672997,
-      "isaddress": false
-    },
-    {
-      "localname": "Bratislava",
-      "place_id": 173466740,
+      "place_id": 185851194,
       "osm_id": 3992676,
       "osm_type": "R",
       "class": "place",
       "type": "city",
       "admin_level": 15,
       "rank_address": 16,
-      "distance": 0.0000016552176217044656,
+      "distance": 0.0000014602301837672997,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Bratislava IV",
+      "place_id": 187888781,
+      "osm_id": 388245,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 4.4531269343240834E-7,
       "isaddress": true
     },
     {
       "localname": "Bratislavský kraj",
-      "place_id": 408241572,
+      "place_id": 187251930,
       "osm_id": 388265,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000024064321104320353,
+      "distance": 0.000002406432469387997,
       "isaddress": true
     },
     {
-      "localname": "841 07",
-      "place_id": 397764905,
-      "osm_id": 4273178,
+      "localname": "Bratislavský kraj",
+      "place_id": 416673440,
+      "osm_id": 20603412,
       "osm_type": "R",
       "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
-      "rank_address": 5,
-      "distance": 0.00000017872351151498931,
-      "isaddress": false
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.000002406432469387997,
+      "isaddress": true
     },
     {
       "localname": "841 07",

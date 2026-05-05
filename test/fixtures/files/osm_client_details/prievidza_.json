@@ -1,6 +1,6 @@
 {
-  "place_id": 174915760,
-  "parent_place_id": 175361346,
+  "place_id": 189996662,
+  "parent_place_id": 187262875,
   "osm_type": "W",
   "osm_id": 617432513,
   "category": "amenity",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "972 02",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:11:49.890640+00:00",
+  "indexed_date": "2026-04-24T14:10:37.578287+00:00",
   "importance": 0.00005933546959635336,
   "calculated_importance": 0.00005933546959635336,
   "extratags": {
@@ -28,21 +28,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.607595594475654,
+      18.6075956,
       48.7722859
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.607595594475654,
+      18.6075956,
       48.7722859
     ]
   },
   "address": [
     {
       "localname": "J. Pauleho",
-      "place_id": 175361346,
+      "place_id": 187262875,
       "osm_id": 27066439,
       "osm_type": "W",
       "class": "highway",
@@ -53,87 +53,75 @@
       "isaddress": true
     },
     {
-      "localname": "Staré mesto",
-      "place_id": 174946034,
-      "osm_id": 4118513036,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.01629111713910305,
-      "isaddress": false
-    },
-    {
       "localname": "Píly",
-      "place_id": 175353576,
+      "place_id": 195293224,
       "osm_id": 387185446,
       "osm_type": "N",
       "class": "place",
       "type": "suburb",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.002018657398326491,
+      "distance": 0.0020186573983286002,
       "isaddress": true
     },
     {
       "localname": "Prievidza",
-      "place_id": 174128847,
+      "place_id": 187269512,
       "osm_id": 1553370,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000015681419081512492,
+      "distance": 1.5681419081512492E-7,
       "isaddress": true
     },
     {
       "localname": "Prievidza",
-      "place_id": 175431086,
+      "place_id": 187323781,
       "osm_id": 1557489,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000015681419081512492,
+      "distance": 1.5681419081512492E-7,
       "isaddress": true
     },
     {
       "localname": "okres Prievidza",
-      "place_id": 175368663,
+      "place_id": 187267700,
       "osm_id": 388235,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000015681419081512492,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 1.8041084571612023E-7,
       "isaddress": true
     },
     {
       "localname": "Trenčiansky kraj",
-      "place_id": 175100938,
+      "place_id": 189264024,
       "osm_id": 388267,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000003999158162292459,
+      "distance": 0.000003999158583335879,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 187249438,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000007385805773316172,
+      "distance": 0.00000738580598245125,
       "isaddress": true
     },
     {

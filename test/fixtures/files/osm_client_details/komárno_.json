@@ -1,6 +1,6 @@
 {
-  "place_id": 65729191,
-  "parent_place_id": 59539426,
+  "place_id": 67246168,
+  "parent_place_id": 66832420,
   "osm_type": "W",
   "osm_id": 116949677,
   "category": "building",
@@ -18,14 +18,13 @@
     "streetnumber": "13",
     "conscriptionnumber": "164"
   },
-  "housenumber": "164 13;13;164",
+  "housenumber": "164;164 13;13",
   "calculated_postcode": "945 01",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:14:30.285854+00:00",
+  "indexed_date": "2026-04-24T14:15:49.800349+00:00",
   "importance": 0.00006242084382386537,
   "calculated_importance": 0.00006242084382386537,
   "extratags": {
-    "source:addr": "minvskaddress 2023-08",
     "ref:minvskaddress": "14219282"
   },
   "rank_address": 30,
@@ -34,14 +33,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.136850699151914,
+      18.1368507,
       47.7563363
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.136850699151914,
+      18.1368507,
       47.7563363
     ]
   },
@@ -56,8 +55,8 @@
     },
     {
       "localname": "Hradná",
-      "place_id": 59539426,
-      "osm_id": 31026822,
+      "place_id": 66832420,
+      "osm_id": 729879889,
       "osm_type": "W",
       "class": "highway",
       "type": "residential",
@@ -68,75 +67,63 @@
     },
     {
       "localname": "Komárno",
-      "place_id": 59507339,
+      "place_id": 66859177,
       "osm_id": 2218848,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000003018159346357209,
+      "distance": 6.756997074145483E-8,
       "isaddress": true
     },
     {
       "localname": "Komárno",
-      "place_id": 59520820,
+      "place_id": 66812818,
       "osm_id": 2218900,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000003018159346357209,
+      "distance": 6.756997074145483E-8,
       "isaddress": true
     },
     {
       "localname": "okres Komárno",
-      "place_id": 59522279,
+      "place_id": 67809728,
       "osm_id": 388233,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000003018159346357209,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000010413505339606359,
       "isaddress": true
     },
     {
       "localname": "Nitriansky kraj",
-      "place_id": 174908163,
+      "place_id": 190196212,
       "osm_id": 388268,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000051040616533502,
+      "distance": 0.000005088193296790633,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 187249438,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000008007575740283188,
+      "distance": 0.00000801169458417616,
       "isaddress": true
-    },
-    {
-      "localname": "945 01",
-      "place_id": 59507479,
-      "osm_id": 6129664,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
-      "rank_address": 5,
-      "distance": 0.0000003606427545858716,
-      "isaddress": false
     },
     {
       "localname": "945 01",

@@ -1,6 +1,6 @@
 {
-  "place_id": 175236542,
-  "parent_place_id": 175557673,
+  "place_id": 191088613,
+  "parent_place_id": 191097775,
   "osm_type": "W",
   "osm_id": 61492736,
   "category": "building",
@@ -17,14 +17,13 @@
     "streetnumber": "45",
     "conscriptionnumber": "64"
   },
-  "housenumber": "45;64 45;64",
+  "housenumber": "64 45;45;64",
   "calculated_postcode": "044 15",
   "country_code": "sk",
-  "indexed_date": "2024-11-01T03:11:32.520895+00:00",
+  "indexed_date": "2026-04-24T14:06:38.421394+00:00",
   "importance": 0.00005669413290603521,
   "calculated_importance": 0.00005669413290603521,
   "extratags": {
-    "source:addr": "minvskaddress 2022-10",
     "ref:minvskaddress": "13774959"
   },
   "rank_address": 30,
@@ -33,14 +32,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      21.388429497435116,
+      21.3884295,
       48.6342662
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      21.388429497435116,
+      21.3884295,
       48.6342662
     ]
   },
@@ -55,7 +54,7 @@
     },
     {
       "localname": "Hlavná",
-      "place_id": 175557673,
+      "place_id": 191097775,
       "osm_id": 181056795,
       "osm_type": "W",
       "class": "highway",
@@ -67,62 +66,62 @@
     },
     {
       "localname": "Vyšná Myšľa",
-      "place_id": 175236656,
+      "place_id": 191088748,
       "osm_id": 2384726,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.0000000020772252829760374,
+      "distance": 2.0772252829879016E-9,
       "isaddress": false
     },
     {
       "localname": "Vyšná Myšľa",
-      "place_id": 174975953,
+      "place_id": 187902458,
       "osm_id": 2384650,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 16,
-      "distance": 0.0000000020772252829760374,
+      "distance": 2.0772252829879016E-9,
       "isaddress": true
     },
     {
       "localname": "okres Košice - okolie",
-      "place_id": 175888316,
+      "place_id": 190060909,
       "osm_id": 388209,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.000004145891739863131,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.000004145891438156096,
       "isaddress": true
     },
     {
       "localname": "Košický kraj",
-      "place_id": 391402096,
+      "place_id": 188172453,
       "osm_id": 388272,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000001020996365564511,
+      "distance": 0.0000010209959844470372,
       "isaddress": true
     },
     {
       "localname": "Východné Slovensko",
-      "place_id": 391402097,
+      "place_id": 188071906,
       "osm_id": 946159,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000027053024931190054,
+      "distance": 0.0000027053024454609977,
       "isaddress": true
     },
     {

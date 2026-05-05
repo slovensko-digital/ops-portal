@@ -1,6 +1,6 @@
 {
-  "place_id": 170918083,
-  "parent_place_id": 171823550,
+  "place_id": 184974742,
+  "parent_place_id": 184903372,
   "osm_type": "W",
   "osm_id": 386047730,
   "category": "leisure",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "029 01",
   "country_code": "sk",
-  "indexed_date": "2025-07-16T13:26:28.181998+00:00",
+  "indexed_date": "2026-04-17T08:47:40.572530+00:00",
   "importance": 0.00005339360646977977,
   "calculated_importance": 0.00005339360646977977,
   "extratags": {
@@ -23,21 +23,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      19.48396798125,
+      19.483968,
       49.4036508
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      19.48396798125,
+      19.483968,
       49.4036508
     ]
   },
   "address": [
     {
       "localname": "520a",
-      "place_id": 171823550,
+      "place_id": 184903372,
       "osm_id": 22715857,
       "osm_type": "W",
       "class": "highway",
@@ -49,74 +49,74 @@
     },
     {
       "localname": "Nábrežie",
-      "place_id": 171803244,
+      "place_id": 185011760,
       "osm_id": 7138539,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.000000027809972617139834,
-      "isaddress": true
+      "distance": 2.7809972617188324E-8,
+      "isaddress": false
     },
     {
       "localname": "Námestovo",
-      "place_id": 171717161,
+      "place_id": 182896469,
       "osm_id": 2166337,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.00000006977371797463652,
-      "isaddress": false
+      "rank_address": 18,
+      "distance": 6.977371797463652E-8,
+      "isaddress": true
     },
     {
       "localname": "Námestovo",
-      "place_id": 415366357,
+      "place_id": 183489539,
       "osm_id": 2166364,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
       "distance": 0.0000017261154420362403,
       "isaddress": true
     },
     {
       "localname": "okres Námestovo",
-      "place_id": 171826909,
+      "place_id": 184932673,
       "osm_id": 388260,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000010095413620384307,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000010095414365116411,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 171862477,
+      "place_id": 184866488,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000035727543301485294,
+      "distance": 0.00000357275415633218,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 188576043,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000005673957935993498,
+      "distance": 0.000005673957931455016,
       "isaddress": true
     },
     {

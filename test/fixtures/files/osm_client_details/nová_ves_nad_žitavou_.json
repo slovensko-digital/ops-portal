@@ -1,6 +1,6 @@
 {
-  "place_id": 175400972,
-  "parent_place_id": 174579140,
+  "place_id": 188374165,
+  "parent_place_id": 188318121,
   "osm_type": "W",
   "osm_id": 101809386,
   "category": "highway",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "951 51",
   "country_code": "sk",
-  "indexed_date": "2025-06-02T09:27:30.560766+00:00",
+  "indexed_date": "2026-04-29T18:09:36.604811+00:00",
   "importance": 0.053387933928435154,
   "calculated_importance": 0.053387933928435154,
   "extratags": {
@@ -25,112 +25,112 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.32703037269423,
-      48.29352188447259
+      18.3270304,
+      48.2935219
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.32703037269423,
-      48.29352188447259
+      18.3270304,
+      48.2935219
     ]
   },
   "address": [
     {
       "localname": "Nová Ves nad Žitavou",
-      "place_id": 174579140,
-      "osm_id": 2210142,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.000000011682421162778428,
-      "isaddress": false
-    },
-    {
-      "localname": "Slepčany",
-      "place_id": 175076484,
-      "osm_id": 2209874,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.00374250085501757,
-      "isaddress": false
-    },
-    {
-      "localname": "Slepčany",
-      "place_id": 175138321,
-      "osm_id": 2209895,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00374250085501757,
-      "isaddress": false
-    },
-    {
-      "localname": "Nová Ves nad Žitavou",
-      "place_id": 174792034,
+      "place_id": 188318121,
       "osm_id": 2210097,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 16,
-      "distance": 0.000000011682421162778428,
+      "distance": 1.1682421162778428E-8,
+      "isaddress": false
+    },
+    {
+      "localname": "Slepčany",
+      "place_id": 187027520,
+      "osm_id": 2209874,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
+      "rank_address": 16,
+      "distance": 0.0037424786145523452,
+      "isaddress": false
+    },
+    {
+      "localname": "Slepčany",
+      "place_id": 188133773,
+      "osm_id": 2209895,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 8,
+      "rank_address": 16,
+      "distance": 0.0037424786145523452,
+      "isaddress": false
+    },
+    {
+      "localname": "Nová Ves nad Žitavou",
+      "place_id": 186194149,
+      "osm_id": 2210142,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 8,
+      "rank_address": 16,
+      "distance": 1.1682421162778428E-8,
       "isaddress": true
     },
     {
       "localname": "okres Zlaté Moravce",
-      "place_id": 173876627,
+      "place_id": 188289519,
       "osm_id": 388217,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0037436156962916242,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0037435934558737657,
       "isaddress": false
     },
     {
       "localname": "okres Nitra",
-      "place_id": 174650804,
+      "place_id": 188248577,
       "osm_id": 388212,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.000002471078660213844,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000024710785769748495,
       "isaddress": true
     },
     {
       "localname": "Nitriansky kraj",
-      "place_id": 174663472,
+      "place_id": 188114872,
       "osm_id": 388268,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000006988657338344805,
+      "distance": 6.988656417724235E-7,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 174734360,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000004734381490821024,
+      "distance": 0.000004734381683631475,
       "isaddress": true
     },
     {

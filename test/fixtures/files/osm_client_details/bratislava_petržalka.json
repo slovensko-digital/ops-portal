@@ -1,6 +1,6 @@
 {
-  "place_id": 174631353,
-  "parent_place_id": 173291889,
+  "place_id": 188088545,
+  "parent_place_id": 187169370,
   "osm_type": "W",
   "osm_id": 362064332,
   "category": "amenity",
@@ -9,8 +9,9 @@
   "localname": "",
   "names": {},
   "addresstags": {},
+  "calculated_postcode": "851 01",
   "country_code": "sk",
-  "indexed_date": "2025-02-24T23:11:40.167492+00:00",
+  "indexed_date": "2026-04-29T12:02:48.713028+00:00",
   "importance": 0.00007727397573810967,
   "calculated_importance": 0.00007727397573810967,
   "extratags": {
@@ -24,21 +25,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.105308415900247,
-      48.12171955
+      17.1053084,
+      48.1217196
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.105308415900247,
-      48.12171955
+      17.1053084,
+      48.1217196
     ]
   },
   "address": [
     {
       "localname": "Hálova",
-      "place_id": 173291889,
+      "place_id": 187169370,
       "osm_id": 25495367,
       "osm_type": "W",
       "class": "highway",
@@ -49,68 +50,8 @@
       "isaddress": true
     },
     {
-      "localname": "Zadunajec",
-      "place_id": 402500672,
-      "osm_id": 12688982759,
-      "osm_type": "N",
-      "class": "place",
-      "type": "neighbourhood",
-      "admin_level": 15,
-      "rank_address": 24,
-      "distance": 0.009779469368020058,
-      "isaddress": false
-    },
-    {
-      "localname": "Dvory I",
-      "place_id": 174752207,
-      "osm_id": 11445334227,
-      "osm_type": "N",
-      "class": "place",
-      "type": "neighbourhood",
-      "admin_level": 15,
-      "rank_address": 24,
-      "distance": 0.006825574561892856,
-      "isaddress": false
-    },
-    {
-      "localname": "Dvory V",
-      "place_id": 174999938,
-      "osm_id": 11445334231,
-      "osm_type": "N",
-      "class": "place",
-      "type": "neighbourhood",
-      "admin_level": 15,
-      "rank_address": 24,
-      "distance": 0.006797558296917155,
-      "isaddress": false
-    },
-    {
-      "localname": "Dvory IV",
-      "place_id": 174203481,
-      "osm_id": 11445334230,
-      "osm_type": "N",
-      "class": "place",
-      "type": "neighbourhood",
-      "admin_level": 15,
-      "rank_address": 24,
-      "distance": 0.005287140532459705,
-      "isaddress": false
-    },
-    {
-      "localname": "Škovránčie pole",
-      "place_id": 411712761,
-      "osm_id": 12688982758,
-      "osm_type": "N",
-      "class": "place",
-      "type": "quarter",
-      "admin_level": 15,
-      "rank_address": 24,
-      "distance": 0.0046426115117530024,
-      "isaddress": false
-    },
-    {
       "localname": "Dvory III",
-      "place_id": 174715957,
+      "place_id": 187200594,
       "osm_id": 11445334229,
       "osm_type": "N",
       "class": "place",
@@ -118,102 +59,110 @@
       "admin_level": 15,
       "rank_address": 24,
       "distance": 0.00034567197831178334,
-      "isaddress": true
+      "isaddress": false
     },
     {
       "localname": "Dvory",
-      "place_id": 175187873,
+      "place_id": 187562460,
       "osm_id": 2553582,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 11,
+      "rank_address": 24,
+      "distance": 2.7843216085814452E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "Petržalka",
+      "place_id": 416435915,
+      "osm_id": 20610776,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 22,
-      "distance": 0.000000027843216085814452,
+      "distance": 1.102274658377332E-7,
       "isaddress": true
     },
     {
       "localname": "Petržalka",
-      "place_id": 174684947,
+      "place_id": 187854955,
       "osm_id": 2208781,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 9,
       "rank_address": 20,
-      "distance": 0.0000001102274658377332,
+      "distance": 1.102274658377332E-7,
       "isaddress": false
     },
     {
       "localname": "Bratislava",
-      "place_id": 173703479,
+      "place_id": 187339683,
       "osm_id": 293814124,
       "osm_type": "W",
       "class": "place",
       "type": "suburb",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.000000414190126200175,
-      "isaddress": true
-    },
-    {
-      "localname": "okres Bratislava V",
-      "place_id": 174173285,
-      "osm_id": 388210,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 18,
-      "distance": 0.0000004717990019521602,
+      "distance": 4.1500791682083387E-7,
       "isaddress": true
     },
     {
       "localname": "Bratislava",
-      "place_id": 173466740,
+      "place_id": 187573270,
       "osm_id": 3992676,
       "osm_type": "R",
       "class": "place",
       "type": "city",
       "admin_level": 15,
       "rank_address": 16,
-      "distance": 0.000000414190126200175,
-      "isaddress": false
+      "distance": 2.927947147746728E-7,
+      "isaddress": true
     },
     {
-      "localname": "Bratislava",
-      "place_id": 390032597,
-      "osm_id": 1702499,
+      "localname": "okres Bratislava V",
+      "place_id": 187194017,
+      "osm_id": 388210,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 6,
-      "rank_address": 16,
-      "distance": 0.0000002927947147746728,
+      "rank_address": 11,
+      "distance": 4.7179904535090913E-7,
       "isaddress": true
     },
     {
       "localname": "Bratislavský kraj",
-      "place_id": 408241572,
+      "place_id": 187909780,
       "osm_id": 388265,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000022023018771150262,
+      "distance": 0.000002202302015585014,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 382347102,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.000002202302015585014,
       "isaddress": true
     },
     {
       "localname": "851 01",
-      "place_id": 174040476,
-      "osm_id": 4217910,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
+      "class": "place",
+      "type": "postcode",
       "rank_address": 5,
-      "distance": 0.00000015152710051560338,
+      "distance": 0.0,
       "isaddress": true
     },
     {

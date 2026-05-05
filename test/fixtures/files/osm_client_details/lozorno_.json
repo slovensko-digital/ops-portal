@@ -1,6 +1,6 @@
 {
-  "place_id": 171932740,
-  "parent_place_id": 174756156,
+  "place_id": 186486652,
+  "parent_place_id": 187897887,
   "osm_type": "W",
   "osm_id": 457960340,
   "category": "leisure",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "900 55",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:15:56.973196+00:00",
+  "indexed_date": "2026-04-17T08:51:17.628073+00:00",
   "importance": 0.000049415579461311013,
   "calculated_importance": 0.000049415579461311013,
   "extratags": {},
@@ -21,21 +21,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.04577370513413,
+      17.0457737,
       48.333809
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.04577370513413,
+      17.0457737,
       48.333809
     ]
   },
   "address": [
     {
       "localname": "Kozinská",
-      "place_id": 174756156,
+      "place_id": 187897887,
       "osm_id": 175858162,
       "osm_type": "W",
       "class": "highway",
@@ -47,62 +47,74 @@
     },
     {
       "localname": "Lozorno",
-      "place_id": 172009495,
-      "osm_id": 301748881,
-      "osm_type": "W",
+      "place_id": 187843692,
+      "osm_id": 20401751,
+      "osm_type": "R",
       "class": "place",
       "type": "village",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.00000002032986888645381,
+      "distance": 2.032944217182466E-8,
       "isaddress": true
     },
     {
       "localname": "Lozorno",
-      "place_id": 174743861,
+      "place_id": 187885704,
       "osm_id": 2206920,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.0000000039491557375981004,
+      "distance": 3.9491557375981004E-9,
       "isaddress": true
     },
     {
       "localname": "Lozorno",
-      "place_id": 173854224,
+      "place_id": 187964685,
       "osm_id": 2206955,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.0000000039491557375981004,
+      "distance": 3.9491557375981004E-9,
       "isaddress": true
     },
     {
       "localname": "okres Malacky",
-      "place_id": 408278699,
+      "place_id": 185969601,
       "osm_id": 388219,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000011366337250584865,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000011366337957406985,
       "isaddress": true
     },
     {
       "localname": "Bratislavský kraj",
-      "place_id": 408232807,
+      "place_id": 187251930,
       "osm_id": 388265,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000012985086992396909,
+      "distance": 0.00000129850911834185,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 416673440,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.00000129850911834185,
       "isaddress": true
     },
     {

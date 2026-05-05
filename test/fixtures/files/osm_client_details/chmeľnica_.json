@@ -1,6 +1,6 @@
 {
-  "place_id": 175216650,
-  "parent_place_id": 176122022,
+  "place_id": 176033739,
+  "parent_place_id": 177177794,
   "osm_type": "W",
   "osm_id": 1027318368,
   "category": "highway",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "064 01",
   "country_code": "sk",
-  "indexed_date": "2024-12-09T08:36:12.364787+00:00",
+  "indexed_date": "2026-04-29T19:41:03.178896+00:00",
   "importance": 0.05338812924391543,
   "calculated_importance": 0.05338812924391543,
   "extratags": {},
@@ -21,64 +21,76 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      20.73308503653505,
-      49.29091171593656
+      20.733085,
+      49.290911699999995
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      20.73308503653505,
-      49.29091171593656
+      20.733085,
+      49.290911699999995
     ]
   },
   "address": [
     {
       "localname": "Chmeľnica",
-      "place_id": 176122022,
-      "osm_id": 2276242,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.000000043307101553924086,
-      "isaddress": false
-    },
-    {
-      "localname": "Chmeľnica",
-      "place_id": 176180527,
+      "place_id": 177177794,
       "osm_id": 2276154,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 16,
-      "distance": 0.000000043307101553924086,
-      "isaddress": true
+      "distance": 4.3307101553924086E-8,
+      "isaddress": false
     },
     {
-      "localname": "okres Stará Ľubovňa",
-      "place_id": 175782122,
-      "osm_id": 388238,
+      "localname": "Chmeľnica",
+      "place_id": 176007767,
+      "osm_id": 2276242,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000043728676600717076,
+      "rank_address": 16,
+      "distance": 4.3307101553924086E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Stará Ľubovňa",
+      "place_id": 176374278,
+      "osm_id": 388238,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 2.224429741394086E-7,
       "isaddress": true
     },
     {
       "localname": "Prešovský kraj",
-      "place_id": 176789858,
+      "place_id": 176320864,
       "osm_id": 388271,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000004870242356153862,
+      "distance": 0.0000048702426648576515,
+      "isaddress": true
+    },
+    {
+      "localname": "Východné Slovensko",
+      "place_id": 391233635,
+      "osm_id": 946159,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.000006971429453872756,
       "isaddress": true
     },
     {
