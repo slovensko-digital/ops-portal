@@ -1,6 +1,6 @@
 {
-  "place_id": 174917274,
-  "parent_place_id": 174254973,
+  "place_id": 187818724,
+  "parent_place_id": 186580704,
   "osm_type": "W",
   "osm_id": 60736272,
   "category": "building",
@@ -19,11 +19,10 @@
   "housenumber": "10898",
   "calculated_postcode": "831 07",
   "country_code": "sk",
-  "indexed_date": "2025-07-12T17:36:19.915788+00:00",
+  "indexed_date": "2026-05-01T15:58:55.541722+00:00",
   "importance": 0.00007727397573810967,
   "calculated_importance": 0.00007727397573810967,
   "extratags": {
-    "source:addr": "minvskaddress 2022-12",
     "ref:minvskaddress": "7102253422"
   },
   "rank_address": 30,
@@ -32,14 +31,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.20657229453441,
+      17.2065723,
       48.204613
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.20657229453441,
+      17.2065723,
       48.204613
     ]
   },
@@ -54,7 +53,19 @@
     },
     {
       "localname": "Vajnory",
-      "place_id": 174254973,
+      "place_id": 186580704,
+      "osm_id": 2208768,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
+      "rank_address": 22,
+      "distance": 0.0,
+      "isaddress": true
+    },
+    {
+      "localname": "Vajnory",
+      "place_id": 187748112,
       "osm_id": 2190578,
       "osm_type": "R",
       "class": "boundary",
@@ -62,54 +73,66 @@
       "admin_level": 9,
       "rank_address": 20,
       "distance": 0.0,
-      "isaddress": true
+      "isaddress": false
     },
     {
-      "localname": "okres Bratislava III",
-      "place_id": 174973279,
-      "osm_id": 388242,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 18,
-      "distance": 0.0000005869763633529479,
+      "localname": "Bratislava",
+      "place_id": 187932230,
+      "osm_id": 293814124,
+      "osm_type": "W",
+      "class": "place",
+      "type": "suburb",
+      "admin_level": 15,
+      "rank_address": 20,
+      "distance": 8.977196389413974E-7,
       "isaddress": true
     },
     {
       "localname": "Bratislava",
-      "place_id": 173466740,
+      "place_id": 185851194,
       "osm_id": 3992676,
       "osm_type": "R",
       "class": "place",
       "type": "city",
       "admin_level": 15,
       "rank_address": 16,
-      "distance": 0.0000008979895973038912,
-      "isaddress": false
-    },
-    {
-      "localname": "Bratislava",
-      "place_id": 390032597,
-      "osm_id": 1702499,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 6,
-      "rank_address": 16,
       "distance": 0.0000011087553171917878,
       "isaddress": true
     },
     {
+      "localname": "okres Bratislava III",
+      "place_id": 187857163,
+      "osm_id": 388242,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 5.869764885112574E-7,
+      "isaddress": true
+    },
+    {
       "localname": "Bratislavský kraj",
-      "place_id": 408241572,
+      "place_id": 187251930,
       "osm_id": 388265,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000012839605009770167,
+      "distance": 0.0000012839604123682775,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 416673440,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.0000012839604123682775,
       "isaddress": true
     },
     {

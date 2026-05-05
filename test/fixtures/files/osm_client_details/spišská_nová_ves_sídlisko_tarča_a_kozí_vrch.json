@@ -1,6 +1,6 @@
 {
-  "place_id": 175451593,
-  "parent_place_id": 176383739,
+  "place_id": 190778100,
+  "parent_place_id": 188019551,
   "osm_type": "W",
   "osm_id": 69056463,
   "category": "building",
@@ -18,10 +18,10 @@
     "streetnumber": "25",
     "conscriptionnumber": "2260"
   },
-  "housenumber": "2260;25;2260 25",
+  "housenumber": "2260 25;2260;25",
   "calculated_postcode": "052 01",
   "country_code": "sk",
-  "indexed_date": "2025-07-18T19:21:04.569859+00:00",
+  "indexed_date": "2026-04-24T14:06:27.127718+00:00",
   "importance": 0.00005942549782554387,
   "calculated_importance": 0.00005942549782554387,
   "extratags": {
@@ -33,14 +33,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      20.552428131615123,
+      20.5524281,
       48.938803
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      20.552428131615123,
+      20.5524281,
       48.938803
     ]
   },
@@ -55,7 +55,7 @@
     },
     {
       "localname": "Palárikova",
-      "place_id": 176383739,
+      "place_id": 188019551,
       "osm_id": 89010782,
       "osm_type": "W",
       "class": "highway",
@@ -67,75 +67,63 @@
     },
     {
       "localname": "Spišská Nová Ves",
-      "place_id": 176016302,
+      "place_id": 190329867,
       "osm_id": 2381974,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000009963482910106755,
+      "distance": 9.963482910106755E-8,
       "isaddress": true
     },
     {
       "localname": "Spišská Nová Ves",
-      "place_id": 174971539,
+      "place_id": 187975732,
       "osm_id": 2382009,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000009963482910106755,
+      "distance": 9.963482910106755E-8,
       "isaddress": true
     },
     {
       "localname": "okres Spišská Nová Ves",
-      "place_id": 176014889,
+      "place_id": 187984106,
       "osm_id": 388193,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000009963482910106755,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000011561911697349227,
       "isaddress": true
     },
     {
       "localname": "Košický kraj",
-      "place_id": 391220007,
+      "place_id": 188172453,
       "osm_id": 388272,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000007802445353271411,
+      "distance": 0.00000780244574314454,
       "isaddress": true
     },
     {
       "localname": "Východné Slovensko",
-      "place_id": 391220008,
+      "place_id": 188071906,
       "osm_id": 946159,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000075632133803379286,
+      "distance": 0.000007563213554532115,
       "isaddress": true
-    },
-    {
-      "localname": "052 01",
-      "place_id": 176068386,
-      "osm_id": 6140641,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
-      "rank_address": 5,
-      "distance": 0.00000011896953897779336,
-      "isaddress": false
     },
     {
       "localname": "052 01",

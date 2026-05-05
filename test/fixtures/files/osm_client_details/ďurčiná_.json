@@ -1,6 +1,6 @@
 {
-  "place_id": 171859203,
-  "parent_place_id": 171025773,
+  "place_id": 184428200,
+  "parent_place_id": 183035589,
   "osm_type": "W",
   "osm_id": 72048268,
   "category": "highway",
@@ -14,14 +14,12 @@
   "addresstags": {},
   "calculated_postcode": "051 01",
   "country_code": "sk",
-  "indexed_date": "2024-11-08T16:17:59.041905+00:00",
+  "indexed_date": "2026-04-29T18:08:27.902894+00:00",
   "importance": 0.053386382085908256,
   "calculated_importance": 0.053386382085908256,
   "extratags": {
     "abutters": "residential",
-    "maxspeed": "50",
-    "source:ref": "www.ssc.sk",
-    "source:maxspeed": "SK:urban"
+    "maxspeed": "50"
   },
   "rank_address": 26,
   "rank_search": 26,
@@ -29,21 +27,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.64951716404427,
-      49.066065628891195
+      18.6492531,
+      49.066249
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.64951716404427,
-      49.066065628891195
+      18.6492531,
+      49.066249
     ]
   },
   "address": [
     {
       "localname": "2110",
-      "place_id": 171859203,
+      "place_id": 184428200,
       "osm_id": 72048268,
       "osm_type": "W",
       "class": "highway",
@@ -55,62 +53,62 @@
     },
     {
       "localname": "Ďurčiná",
-      "place_id": 172021775,
-      "osm_id": 1859093,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.000000002089908348116709,
-      "isaddress": false
-    },
-    {
-      "localname": "Ďurčiná",
-      "place_id": 171025773,
+      "place_id": 183035589,
       "osm_id": 2227563,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.000000002089908348116709,
+      "rank_address": 18,
+      "distance": 2.1284174872422888E-9,
       "isaddress": true
     },
     {
-      "localname": "okres Žilina",
-      "place_id": 172010961,
-      "osm_id": 388256,
+      "localname": "Ďurčiná",
+      "place_id": 185051909,
+      "osm_id": 1859093,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000017716680459374572,
+      "rank_address": 16,
+      "distance": 2.1284174872422888E-9,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Žilina",
+      "place_id": 185016442,
+      "osm_id": 388256,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000011938486039804448,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 171862477,
+      "place_id": 184866488,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000005636822480417468,
+      "distance": 0.000005636822699772998,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 188576043,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000008498552117273322,
+      "distance": 0.000008498764065552693,
       "isaddress": true
     },
     {

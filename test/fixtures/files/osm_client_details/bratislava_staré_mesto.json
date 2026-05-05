@@ -1,6 +1,6 @@
 {
-  "place_id": 174831454,
-  "parent_place_id": 173824336,
+  "place_id": 186737484,
+  "parent_place_id": 187990618,
   "osm_type": "W",
   "osm_id": 38539536,
   "category": "amenity",
@@ -17,17 +17,17 @@
   "addresstags": {
     "city": "Bratislava",
     "street": "Primaciálne námestie",
-    "suburb": "I",
+    "suburb": "Staré Mesto",
     "country": "SK",
-    "postcode": "814 99",
-    "housenumber": "1",
+    "postcode": "81101",
+    "housenumber": "429/1",
     "streetnumber": "1",
     "conscriptionnumber": "429"
   },
-  "housenumber": "429;1",
-  "calculated_postcode": "814 99",
+  "housenumber": "1;429 1;429",
+  "calculated_postcode": "811 01",
   "country_code": "sk",
-  "indexed_date": "2025-07-12T17:36:08.454849+00:00",
+  "indexed_date": "2026-05-01T13:57:18.955445+00:00",
   "importance": 0.00007727397573810967,
   "calculated_importance": 0.00007727397573810967,
   "extratags": {
@@ -40,6 +40,7 @@
     "building:levels": "4",
     "contact:website": "https://www.bratislava.sk",
     "contact:facebook": "http://www.facebook.com/Bratislava.sk",
+    "ref:minvskaddress": "5973836",
     "toilets:wheelchair": "yes"
   },
   "rank_address": 30,
@@ -48,21 +49,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.10913819648798,
-      48.14451745
+      17.1091382,
+      48.1445175
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.10913819648798,
-      48.14451745
+      17.1091382,
+      48.1445175
     ]
   },
   "address": [
     {
       "localname": "Magistrát Hlavného mesta SR Bratislavy",
-      "place_id": 174831454,
+      "place_id": 186737484,
       "osm_id": 38539536,
       "osm_type": "W",
       "class": "amenity",
@@ -73,7 +74,7 @@
       "isaddress": true
     },
     {
-      "localname": "1",
+      "localname": "429/1",
       "class": "place",
       "type": "house_number",
       "rank_address": 28,
@@ -82,9 +83,9 @@
     },
     {
       "localname": "Primaciálne námestie",
-      "place_id": 173824336,
-      "osm_id": 759222203,
-      "osm_type": "W",
+      "place_id": 187990618,
+      "osm_id": 10495024,
+      "osm_type": "R",
       "class": "highway",
       "type": "pedestrian",
       "admin_level": 15,
@@ -94,114 +95,114 @@
     },
     {
       "localname": "Vnútorné mesto",
-      "place_id": 174897800,
+      "place_id": 187796606,
       "osm_id": 16609356,
       "osm_type": "R",
       "class": "place",
       "type": "neighbourhood",
       "admin_level": 15,
-      "rank_address": 22,
-      "distance": 0.000000007602126084183377,
+      "rank_address": 24,
+      "distance": 1.1320354234728419E-8,
       "isaddress": false
     },
     {
       "localname": "Historické jadro",
-      "place_id": 173460336,
+      "place_id": 185763423,
       "osm_id": 2678991,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 11,
+      "rank_address": 24,
+      "distance": 3.39383293194766E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "Staré Mesto",
+      "place_id": 416810851,
+      "osm_id": 1700676,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 22,
-      "distance": 0.0000000341052806677083,
+      "distance": 4.4293312418464384E-8,
       "isaddress": true
     },
     {
-      "localname": "Bratislava - mestská časť Staré Mesto",
-      "place_id": 173908289,
+      "localname": "Staré Mesto",
+      "place_id": 187892531,
       "osm_id": 1700677,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 9,
       "rank_address": 20,
-      "distance": 0.00000004315049127182617,
+      "distance": 4.4293312418464384E-8,
       "isaddress": false
     },
     {
       "localname": "Bratislava",
-      "place_id": 173703479,
+      "place_id": 187932230,
       "osm_id": 293814124,
       "osm_type": "W",
       "class": "place",
       "type": "suburb",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.0000002440348661427261,
-      "isaddress": true
-    },
-    {
-      "localname": "okres Bratislava I",
-      "place_id": 173948887,
-      "osm_id": 388234,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 18,
-      "distance": 0.00000013754709613607413,
+      "distance": 2.47790348732554E-7,
       "isaddress": true
     },
     {
       "localname": "Bratislava",
-      "place_id": 390032597,
-      "osm_id": 1702499,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 6,
-      "rank_address": 16,
-      "distance": 0.00000007397054792955781,
-      "isaddress": false
-    },
-    {
-      "localname": "Bratislava",
-      "place_id": 173466740,
+      "place_id": 185851194,
       "osm_id": 3992676,
       "osm_type": "R",
       "class": "place",
       "type": "city",
       "admin_level": 15,
       "rank_address": 16,
-      "distance": 0.0000002440348661427261,
+      "distance": 7.632889005480702E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Bratislava I",
+      "place_id": 187747727,
+      "osm_id": 388234,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 1.39890927825963E-7,
       "isaddress": true
     },
     {
       "localname": "Bratislavský kraj",
-      "place_id": 408241572,
+      "place_id": 187251930,
       "osm_id": 388265,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000019871632247283194,
+      "distance": 0.0000019899614548158843,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 416673440,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.0000019899614548158843,
       "isaddress": true
     },
     {
       "localname": "811 01",
-      "place_id": 173938013,
-      "osm_id": 4554741,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
-      "rank_address": 5,
-      "distance": 6.345722030155495e-10,
-      "isaddress": false
-    },
-    {
-      "localname": "814 99",
       "class": "place",
       "type": "postcode",
       "rank_address": 5,

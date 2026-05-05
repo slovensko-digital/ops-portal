@@ -1,6 +1,6 @@
 {
-  "place_id": 181690619,
-  "parent_place_id": 175491654,
+  "place_id": 191281396,
+  "parent_place_id": 188567740,
   "osm_type": "W",
   "osm_id": 1110114688,
   "category": "amenity",
@@ -9,12 +9,14 @@
   "localname": "",
   "names": {},
   "addresstags": {},
+  "calculated_postcode": "974 05",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:12:22.603554+00:00",
+  "indexed_date": "2026-04-17T08:48:28.699084+00:00",
   "importance": 0.00006656519417100813,
   "calculated_importance": 0.00006656519417100813,
   "extratags": {
-    "parking": "street_side"
+    "parking": "street_side",
+    "orientation": "perpendicular"
   },
   "rank_address": 30,
   "rank_search": 30,
@@ -22,21 +24,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      19.1314915745614,
-      48.719888499999996
+      19.1314916,
+      48.7198885
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      19.1314915745614,
-      48.719888499999996
+      19.1314916,
+      48.7198885
     ]
   },
   "address": [
     {
       "localname": "Kalinčiakova",
-      "place_id": 175491654,
+      "place_id": 188567740,
       "osm_id": 34632320,
       "osm_type": "W",
       "class": "highway",
@@ -47,111 +49,95 @@
       "isaddress": true
     },
     {
-      "localname": "Pršianska Terasa",
-      "place_id": 175443567,
-      "osm_id": 11443671013,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
+      "localname": "Radvaň",
+      "place_id": 188566487,
+      "osm_id": 3506255,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 11,
       "rank_address": 22,
-      "distance": 0.014394134790600813,
+      "distance": 0.00048527443019639473,
+      "isaddress": false
+    },
+    {
+      "localname": "Kráľová",
+      "place_id": 188603457,
+      "osm_id": 3506187,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 11,
+      "rank_address": 22,
+      "distance": 9.860532107347307E-8,
       "isaddress": true
     },
     {
       "localname": "Radvaň",
-      "place_id": 175311351,
+      "place_id": 187878418,
       "osm_id": 2265277,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 20,
-      "distance": 0.0000000221748094241809,
-      "isaddress": false
-    },
-    {
-      "localname": "Kráľová",
-      "place_id": 175360721,
-      "osm_id": 3506187,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 20,
-      "distance": 0.00000009861715202741942,
+      "distance": 2.218773287204867E-8,
       "isaddress": true
     },
     {
-      "localname": "Radvaň",
-      "place_id": 174503357,
-      "osm_id": 3506255,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00048327255948158793,
-      "isaddress": false
-    },
-    {
       "localname": "Banská Bystrica",
-      "place_id": 175508800,
+      "place_id": 188582757,
       "osm_id": 2265296,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000032369171940747875,
+      "distance": 3.238519690753594E-7,
       "isaddress": true
     },
     {
       "localname": "okres Banská Bystrica",
-      "place_id": 175048206,
+      "place_id": 188744156,
       "osm_id": 388240,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.000001051418889384928,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.000001051600526625985,
       "isaddress": true
     },
     {
       "localname": "Banskobystrický kraj",
-      "place_id": 175223038,
+      "place_id": 188565824,
       "osm_id": 388270,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000003615157234948528,
+      "distance": 0.0000036151783173503503,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 188576043,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000035921548275483562,
+      "distance": 0.0000035923408031567437,
       "isaddress": true
     },
     {
       "localname": "974 05",
-      "place_id": 175256677,
-      "osm_id": 4276334,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
+      "class": "place",
+      "type": "postcode",
       "rank_address": 5,
-      "distance": 0.00000009025907539970246,
+      "distance": 0.0,
       "isaddress": true
     },
     {

@@ -1,6 +1,6 @@
 {
-  "place_id": 171077799,
-  "parent_place_id": 171073785,
+  "place_id": 172075956,
+  "parent_place_id": 170616293,
   "osm_type": "W",
   "osm_id": 416675016,
   "category": "building",
@@ -19,7 +19,7 @@
   "housenumber": "820",
   "calculated_postcode": "023 35",
   "country_code": "sk",
-  "indexed_date": "2024-11-01T03:14:50.271168+00:00",
+  "indexed_date": "2026-05-01T20:39:53.526588+00:00",
   "importance": 0.000049406424048173,
   "calculated_importance": 0.000049406424048173,
   "extratags": {
@@ -32,14 +32,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.78714652466258,
+      18.7871465,
       49.3492393
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.78714652466258,
+      18.7871465,
       49.3492393
     ]
   },
@@ -54,50 +54,50 @@
     },
     {
       "localname": "Ochodnica",
-      "place_id": 171073785,
+      "place_id": 170616293,
       "osm_id": 1986774,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
       "distance": 0.0,
       "isaddress": true
     },
     {
       "localname": "okres Kysucké Nové Mesto",
-      "place_id": 171078179,
+      "place_id": 172258186,
       "osm_id": 388204,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.000000320699998402718,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 3.20700012761156E-7,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 171116730,
+      "place_id": 170469931,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000045013289195605825,
+      "distance": 0.000004501329126829089,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175250503,
+      "place_id": 175441210,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000008554722872915856,
+      "distance": 0.000008554723037352516,
       "isaddress": true
     },
     {

@@ -1,6 +1,6 @@
 {
-  "place_id": 175015679,
-  "parent_place_id": 175124465,
+  "place_id": 175198371,
+  "parent_place_id": 174975377,
   "osm_type": "W",
   "osm_id": 58502605,
   "category": "building",
@@ -12,17 +12,18 @@
     "city": "Semerovo",
     "place": "Semerovo",
     "country": "SK",
+    "postcode": "94132",
     "housenumber": "572",
     "conscriptionnumber": "572"
   },
   "housenumber": "572",
   "calculated_postcode": "941 32",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:15:15.273868+00:00",
+  "indexed_date": "2026-02-14T12:41:29.006837+00:00",
   "importance": 0.000053167772945708667,
   "calculated_importance": 0.000053167772945708667,
   "extratags": {
-    "source:conscriptionnumber": "kapor2"
+    "ref:minvskaddress": "18999057"
   },
   "rank_address": 30,
   "rank_search": 30,
@@ -30,15 +31,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.355994222284824,
-      48.011624350000005
+      18.355994199999998,
+      48.011624399999995
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.355994222284824,
-      48.011624350000005
+      18.355994199999998,
+      48.011624399999995
     ]
   },
   "address": [
@@ -52,50 +53,62 @@
     },
     {
       "localname": "Semerovo",
-      "place_id": 175124465,
+      "place_id": 173758671,
+      "osm_id": 2218497,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 10,
+      "rank_address": 18,
+      "distance": 0.002046984562716868,
+      "isaddress": true
+    },
+    {
+      "localname": "Semerovo",
+      "place_id": 174975377,
       "osm_id": 2218531,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
       "distance": 0.0,
       "isaddress": true
     },
     {
       "localname": "okres Nové Zámky",
-      "place_id": 59287162,
+      "place_id": 59635578,
       "osm_id": 388208,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000012986901665037852,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000012986899924531453,
       "isaddress": true
     },
     {
       "localname": "Nitriansky kraj",
-      "place_id": 174908163,
+      "place_id": 174663472,
       "osm_id": 388268,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000002124232543524526,
+      "distance": 0.0000021242325664515025,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 174734360,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000006817723853463047,
+      "distance": 0.0000068177239989598365,
       "isaddress": true
     },
     {

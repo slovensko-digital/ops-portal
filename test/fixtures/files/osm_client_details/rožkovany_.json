@@ -1,6 +1,6 @@
 {
-  "place_id": 176306972,
-  "parent_place_id": 176238590,
+  "place_id": 176056389,
+  "parent_place_id": 175166746,
   "osm_type": "W",
   "osm_id": 62231450,
   "category": "highway",
@@ -14,7 +14,7 @@
   "addresstags": {},
   "calculated_postcode": "082 71",
   "country_code": "sk",
-  "indexed_date": "2024-12-09T08:36:41.411725+00:00",
+  "indexed_date": "2026-04-29T21:06:11.951250+00:00",
   "importance": 0.0533877935454337,
   "calculated_importance": 0.0533877935454337,
   "extratags": {
@@ -29,21 +29,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      20.990633038705155,
-      49.13855847039745
+      20.990633,
+      49.138558499999995
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      20.990633038705155,
-      49.13855847039745
+      20.990633,
+      49.138558499999995
     ]
   },
   "address": [
     {
       "localname": "3188",
-      "place_id": 176306972,
+      "place_id": 176056389,
       "osm_id": 62231450,
       "osm_type": "W",
       "class": "highway",
@@ -55,50 +55,62 @@
     },
     {
       "localname": "Rožkovany",
-      "place_id": 176238590,
-      "osm_id": 2277154,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.0000000017715160241592068,
-      "isaddress": false
-    },
-    {
-      "localname": "Rožkovany",
-      "place_id": 175107741,
+      "place_id": 175166746,
       "osm_id": 2277096,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.0000000017715160241592068,
+      "rank_address": 18,
+      "distance": 1.771516024156705E-9,
       "isaddress": true
     },
     {
-      "localname": "okres Sabinov",
-      "place_id": 176196707,
-      "osm_id": 388246,
+      "localname": "Rožkovany",
+      "place_id": 176090204,
+      "osm_id": 2277154,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000011206223770499354,
+      "rank_address": 16,
+      "distance": 1.771516024156705E-9,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Sabinov",
+      "place_id": 175166795,
+      "osm_id": 388246,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 3.876779755261281E-7,
       "isaddress": true
     },
     {
       "localname": "Prešovský kraj",
-      "place_id": 176789858,
+      "place_id": 176496060,
       "osm_id": 388271,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000019795377516301325,
+      "distance": 0.000001979538080011861,
+      "isaddress": true
+    },
+    {
+      "localname": "Východné Slovensko",
+      "place_id": 391067204,
+      "osm_id": 946159,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.000004005297572998053,
       "isaddress": true
     },
     {

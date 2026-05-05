@@ -1,6 +1,6 @@
 {
-  "place_id": 175959037,
-  "parent_place_id": 175741179,
+  "place_id": 176465419,
+  "parent_place_id": 175832318,
   "osm_type": "W",
   "osm_id": 12127891,
   "category": "highway",
@@ -13,8 +13,9 @@
     "name:sk": "Novoveská cesta"
   },
   "addresstags": {},
+  "calculated_postcode": "053 31",
   "country_code": "sk",
-  "indexed_date": "2024-12-29T07:51:41.301552+00:00",
+  "indexed_date": "2026-04-29T19:40:48.535833+00:00",
   "importance": 0.05339275883115889,
   "calculated_importance": 0.05339275883115889,
   "extratags": {
@@ -29,21 +30,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      20.529135020520027,
-      48.91200172909505
+      20.529135,
+      48.9120017
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      20.529135020520027,
-      48.91200172909505
+      20.529135,
+      48.9120017
     ]
   },
   "address": [
     {
       "localname": "Novoveská cesta",
-      "place_id": 175959037,
+      "place_id": 176465419,
       "osm_id": 12127891,
       "osm_type": "W",
       "class": "highway",
@@ -55,98 +56,94 @@
     },
     {
       "localname": "Ferčekovce",
-      "place_id": 175945665,
+      "place_id": 176200429,
       "osm_id": 4244378,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 22,
-      "distance": 0.0043844476833022495,
+      "rank_address": 24,
+      "distance": 0.004384483273329277,
       "isaddress": false
     },
     {
       "localname": "Novoveská Huta",
-      "place_id": 175741179,
+      "place_id": 175832318,
       "osm_id": 4244379,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 22,
-      "distance": 0.000000099779952776103,
+      "rank_address": 24,
+      "distance": 9.9779952776103E-8,
       "isaddress": true
     },
     {
       "localname": "Spišská Nová Ves",
-      "place_id": 176016302,
+      "place_id": 176124679,
       "osm_id": 2381974,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.0000004110654351912589,
+      "distance": 4.110654351912589E-7,
       "isaddress": true
     },
     {
       "localname": "Spišská Nová Ves",
-      "place_id": 174971539,
+      "place_id": 175676568,
       "osm_id": 2382009,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.0000004110654351912589,
+      "distance": 4.110654351912589E-7,
       "isaddress": true
     },
     {
       "localname": "okres Spišská Nová Ves",
-      "place_id": 176014889,
+      "place_id": 175427951,
       "osm_id": 388193,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000004110654351912589,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000013267004141561206,
       "isaddress": true
     },
     {
       "localname": "Košický kraj",
-      "place_id": 391220007,
+      "place_id": 391233634,
       "osm_id": 388272,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000007934835141473853,
+      "distance": 0.000007934835536096354,
       "isaddress": true
     },
     {
       "localname": "Východné Slovensko",
-      "place_id": 391220008,
+      "place_id": 391233635,
       "osm_id": 946159,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.00000776999126093788,
+      "distance": 0.000007769991435341281,
       "isaddress": true
     },
     {
-      "localname": "052 01",
-      "place_id": 176068386,
-      "osm_id": 6140641,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
+      "localname": "053 31",
+      "class": "place",
+      "type": "postcode",
       "rank_address": 5,
-      "distance": 0.004384696189943385,
+      "distance": 0.0,
       "isaddress": true
     },
     {

@@ -1,6 +1,6 @@
 {
-  "place_id": 175184516,
-  "parent_place_id": 175317593,
+  "place_id": 188509016,
+  "parent_place_id": 188604736,
   "osm_type": "W",
   "osm_id": 58065905,
   "category": "building",
@@ -21,11 +21,10 @@
   "housenumber": "11 16;16;11",
   "calculated_postcode": "972 45",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:11:53.074478+00:00",
+  "indexed_date": "2026-04-17T08:48:14.793570+00:00",
   "importance": 0.000052444495307805256,
   "calculated_importance": 0.000052444495307805256,
   "extratags": {
-    "source:addr": "minvskaddress 2024-01",
     "building:levels": "1",
     "ref:minvskaddress": "25700807"
   },
@@ -35,14 +34,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.516431472372226,
+      18.5164315,
       48.6579124
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.516431472372226,
+      18.5164315,
       48.6579124
     ]
   },
@@ -57,7 +56,7 @@
     },
     {
       "localname": "Mirka Nešpora",
-      "place_id": 175317593,
+      "place_id": 188604736,
       "osm_id": 155609875,
       "osm_type": "W",
       "class": "highway",
@@ -69,62 +68,62 @@
     },
     {
       "localname": "Bystričany",
-      "place_id": 175197942,
+      "place_id": 186489139,
       "osm_id": 2187729,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000001233597523505662,
+      "distance": 1.233597523505662E-8,
       "isaddress": true
     },
     {
       "localname": "Bystričany",
-      "place_id": 173663616,
+      "place_id": 188536220,
       "osm_id": 2187803,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000001233597523505662,
+      "distance": 1.233597523505662E-8,
       "isaddress": true
     },
     {
       "localname": "okres Prievidza",
-      "place_id": 175368663,
+      "place_id": 188445623,
       "osm_id": 388235,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000015543819112592923,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000015229106849297005,
       "isaddress": true
     },
     {
       "localname": "Trenčiansky kraj",
-      "place_id": 175100938,
+      "place_id": 186372547,
       "osm_id": 388267,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000003767466724108421,
+      "distance": 0.0000037674670640083965,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000006191569219830504,
+      "distance": 0.000006191569436593905,
       "isaddress": true
     },
     {

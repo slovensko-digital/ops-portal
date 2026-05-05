@@ -1,6 +1,6 @@
 {
-  "place_id": 171434316,
-  "parent_place_id": 178157565,
+  "place_id": 184014922,
+  "parent_place_id": 191840219,
   "osm_type": "W",
   "osm_id": 289818080,
   "category": "building",
@@ -17,15 +17,14 @@
     "streetnumber": "16",
     "conscriptionnumber": "1099"
   },
-  "housenumber": "16;1099 16;1099",
+  "housenumber": "16;1099;1099 16",
   "calculated_postcode": "015 01",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:10:19.697373+00:00",
+  "indexed_date": "2026-04-24T14:10:51.771441+00:00",
   "importance": 0.00005503242542148497,
   "calculated_importance": 0.00005503242542148497,
   "extratags": {
     "house": "terraced",
-    "source:addr": "minvskaddress 2023-02",
     "ref:minvskaddress": "531304212A"
   },
   "rank_address": 30,
@@ -34,15 +33,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.63635132886997,
-      49.08195025
+      18.6363513,
+      49.0819503
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.63635132886997,
-      49.08195025
+      18.6363513,
+      49.0819503
     ]
   },
   "address": [
@@ -56,7 +55,7 @@
     },
     {
       "localname": "Benkova",
-      "place_id": 178157565,
+      "place_id": 191840219,
       "osm_id": 910578937,
       "osm_type": "W",
       "class": "highway",
@@ -68,62 +67,62 @@
     },
     {
       "localname": "Rajec",
-      "place_id": 172093087,
-      "osm_id": 1859086,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00000006162056027821272,
-      "isaddress": false
-    },
-    {
-      "localname": "Rajec",
-      "place_id": 171817285,
+      "place_id": 185661892,
       "osm_id": 2227548,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.00000006162056027821272,
+      "rank_address": 18,
+      "distance": 6.162056027821272E-8,
       "isaddress": true
     },
     {
-      "localname": "okres Žilina",
-      "place_id": 172010961,
-      "osm_id": 388256,
+      "localname": "Rajec",
+      "place_id": 185845536,
+      "osm_id": 1859086,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000017428249727591577,
+      "rank_address": 16,
+      "distance": 6.162056027821272E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Žilina",
+      "place_id": 185630019,
+      "osm_id": 388256,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000012157431292477513,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 171862477,
+      "place_id": 183681114,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000005770272901396244,
+      "distance": 0.000005770273122424389,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 189104584,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000008721782294822281,
+      "distance": 0.000008721782492190984,
       "isaddress": true
     },
     {

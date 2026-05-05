@@ -1,6 +1,6 @@
 {
-  "place_id": 173693767,
-  "parent_place_id": 173693439,
+  "place_id": 185465445,
+  "parent_place_id": 185465322,
   "osm_type": "W",
   "osm_id": 357542724,
   "category": "highway",
@@ -13,7 +13,7 @@
   "addresstags": {},
   "calculated_postcode": "922 01",
   "country_code": "sk",
-  "indexed_date": "2025-09-04T13:42:56.164947+00:00",
+  "indexed_date": "2026-04-29T18:09:04.594721+00:00",
   "importance": 0.053383167009994625,
   "calculated_importance": 0.053383167009994625,
   "extratags": {
@@ -39,7 +39,7 @@
   "address": [
     {
       "localname": "Námestie sv. Imricha",
-      "place_id": 173693767,
+      "place_id": 185465445,
       "osm_id": 357542724,
       "osm_type": "W",
       "class": "highway",
@@ -51,43 +51,43 @@
     },
     {
       "localname": "Ostrov",
-      "place_id": 173693439,
+      "place_id": 185465322,
       "osm_id": 2204200,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.000000019770335454947493,
+      "distance": 1.9770335454947493E-8,
       "isaddress": true
     },
     {
       "localname": "Ostrov",
-      "place_id": 173688231,
+      "place_id": 186719571,
       "osm_id": 2204242,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.000000019770335454947493,
+      "distance": 1.9770335454947493E-8,
       "isaddress": true
     },
     {
       "localname": "okres Piešťany",
-      "place_id": 173698108,
+      "place_id": 186730694,
       "osm_id": 388190,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000006682672927770062,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 6.682674312369049E-7,
       "isaddress": true
     },
     {
       "localname": "Trnavský kraj",
-      "place_id": 175238560,
+      "place_id": 188079278,
       "osm_id": 388266,
       "osm_type": "R",
       "class": "boundary",
@@ -99,14 +99,14 @@
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000017692224590257214,
+      "distance": 0.0000017692224590257093,
       "isaddress": true
     },
     {

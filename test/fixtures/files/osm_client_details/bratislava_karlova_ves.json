@@ -16,10 +16,10 @@
     "streetnumber": "8",
     "conscriptionnumber": "3174"
   },
-  "housenumber": "3174 8;8;3174",
+  "housenumber": "3174;3174 8;8",
   "calculated_postcode": "841 05",
   "country_code": "sk",
-  "indexed_date": "2024-11-06T01:30:29.026730+00:00",
+  "indexed_date": "2026-01-02T00:11:32.742163+00:00",
   "importance": 0.00007727397573810967,
   "calculated_importance": 0.00007727397573810967,
   "extratags": {},
@@ -68,9 +68,9 @@
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 10,
-      "rank_address": 22,
-      "distance": 0.000000025393478080011455,
+      "admin_level": 11,
+      "rank_address": 24,
+      "distance": 2.5393478080011455E-8,
       "isaddress": true
     },
     {
@@ -81,9 +81,9 @@
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 20,
-      "distance": 0.000000053886658181814327,
-      "isaddress": false
+      "rank_address": 22,
+      "distance": 5.3886658181814327E-8,
+      "isaddress": true
     },
     {
       "localname": "Karlova Ves",
@@ -94,7 +94,7 @@
       "type": "administrative",
       "admin_level": 9,
       "rank_address": 20,
-      "distance": 0.000000053886658181814327,
+      "distance": 5.3886658181814327E-8,
       "isaddress": false
     },
     {
@@ -106,32 +106,8 @@
       "type": "suburb",
       "admin_level": 15,
       "rank_address": 20,
-      "distance": 0.0000008220287368973216,
+      "distance": 8.220287368973216E-7,
       "isaddress": true
-    },
-    {
-      "localname": "okres Bratislava IV",
-      "place_id": 390035604,
-      "osm_id": 388245,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 18,
-      "distance": 0.0000005654359298765152,
-      "isaddress": true
-    },
-    {
-      "localname": "Bratislava",
-      "place_id": 390032597,
-      "osm_id": 1702499,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 6,
-      "rank_address": 16,
-      "distance": 0.0000006025121931919827,
-      "isaddress": false
     },
     {
       "localname": "Bratislava",
@@ -142,7 +118,19 @@
       "type": "city",
       "admin_level": 15,
       "rank_address": 16,
-      "distance": 0.0000008220287368973216,
+      "distance": 6.025121931919827E-7,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Bratislava IV",
+      "place_id": 390035604,
+      "osm_id": 388245,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 5.654360717198938E-7,
       "isaddress": true
     },
     {
@@ -154,6 +142,18 @@
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
+      "distance": 0.0000021836794809176925,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 436236092,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
       "distance": 0.0000021836794809176925,
       "isaddress": true
     },

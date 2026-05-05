@@ -1,6 +1,6 @@
 {
-  "place_id": 175044136,
-  "parent_place_id": 172405188,
+  "place_id": 189349803,
+  "parent_place_id": 186823832,
   "osm_type": "W",
   "osm_id": 61249936,
   "category": "building",
@@ -17,14 +17,13 @@
     "streetnumber": "13",
     "conscriptionnumber": "608"
   },
-  "housenumber": "608 13;13;608",
+  "housenumber": "13;608 13;608",
   "calculated_postcode": "906 13",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:13:37.435531+00:00",
+  "indexed_date": "2026-04-17T08:49:42.576718+00:00",
   "importance": 0.00005227817196913127,
   "calculated_importance": 0.00005227817196913127,
   "extratags": {
-    "source:addr": "minvskaddress 2020-12",
     "ref:minvskaddress": "27735334"
   },
   "rank_address": 30,
@@ -33,15 +32,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.53617033228739,
-      48.66403165
+      17.5361703,
+      48.6640317
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.53617033228739,
-      48.66403165
+      17.5361703,
+      48.6640317
     ]
   },
   "address": [
@@ -55,7 +54,7 @@
     },
     {
       "localname": "Janka Kráľa",
-      "place_id": 172405188,
+      "place_id": 186823832,
       "osm_id": 55997484,
       "osm_type": "W",
       "class": "highway",
@@ -67,55 +66,55 @@
     },
     {
       "localname": "Brezová pod Bradlom",
-      "place_id": 173640009,
+      "place_id": 185566343,
       "osm_id": 150797509,
       "osm_type": "W",
       "class": "landuse",
       "type": "residential",
       "admin_level": 15,
-      "rank_address": 22,
-      "distance": 0.00000002209892060715807,
+      "rank_address": 24,
+      "distance": 2.209892060715807E-8,
       "isaddress": true
     },
     {
       "localname": "Brezová pod Bradlom",
-      "place_id": 173241436,
+      "place_id": 186923884,
       "osm_id": 2219618,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.000000022760269393517362,
+      "distance": 2.2760269393517362E-8,
       "isaddress": true
     },
     {
       "localname": "Brezová pod Bradlom",
-      "place_id": 170874488,
+      "place_id": 185484573,
       "osm_id": 2187991,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.000000022760269393517362,
+      "distance": 2.2760269393517362E-8,
       "isaddress": true
     },
     {
       "localname": "okres Myjava",
-      "place_id": 175051413,
+      "place_id": 189356516,
       "osm_id": 388257,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000009738462179864134,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 9.738460209140118E-7,
       "isaddress": true
     },
     {
       "localname": "Trenčiansky kraj",
-      "place_id": 175100938,
+      "place_id": 186372547,
       "osm_id": 388267,
       "osm_type": "R",
       "class": "boundary",
@@ -127,14 +126,14 @@
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 188284157,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000003983833168097916,
+      "distance": 0.0000039838331680979245,
       "isaddress": true
     },
     {

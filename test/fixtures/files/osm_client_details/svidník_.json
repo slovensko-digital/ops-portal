@@ -1,6 +1,6 @@
 {
-  "place_id": 176697083,
-  "parent_place_id": 176072400,
+  "place_id": 176958975,
+  "parent_place_id": 177007953,
   "osm_type": "W",
   "osm_id": 279492219,
   "category": "highway",
@@ -13,7 +13,7 @@
   "addresstags": {},
   "calculated_postcode": "089 01",
   "country_code": "sk",
-  "indexed_date": "2024-12-09T08:36:02.400566+00:00",
+  "indexed_date": "2026-04-29T19:40:10.262216+00:00",
   "importance": 0.05339067139696342,
   "calculated_importance": 0.05339067139696342,
   "extratags": {
@@ -27,21 +27,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      21.572937234072686,
-      49.30964393981513
+      21.5729372,
+      49.3096439
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      21.572937234072686,
-      49.30964393981513
+      21.5729372,
+      49.3096439
     ]
   },
   "address": [
     {
       "localname": "Mládeže",
-      "place_id": 176697083,
+      "place_id": 176958975,
       "osm_id": 279492219,
       "osm_type": "W",
       "class": "highway",
@@ -53,50 +53,62 @@
     },
     {
       "localname": "Svidník",
-      "place_id": 176072400,
-      "osm_id": 2321595,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00000000943169112087023,
-      "isaddress": false
-    },
-    {
-      "localname": "Svidník",
-      "place_id": 175680073,
+      "place_id": 177007953,
       "osm_id": 2321570,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.00000000943169112087023,
+      "rank_address": 18,
+      "distance": 9.43169112085895E-9,
       "isaddress": true
     },
     {
-      "localname": "okres Svidník",
-      "place_id": 176649064,
-      "osm_id": 388226,
+      "localname": "Svidník",
+      "place_id": 176456825,
+      "osm_id": 2321595,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000000943169112087023,
+      "rank_address": 16,
+      "distance": 9.43169112085895E-9,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Svidník",
+      "place_id": 176759279,
+      "osm_id": 388226,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 5.59172603608259E-7,
       "isaddress": true
     },
     {
       "localname": "Prešovský kraj",
-      "place_id": 176789858,
+      "place_id": 176320864,
       "osm_id": 388271,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000004323493063822376,
+      "distance": 0.000004323492768926552,
+      "isaddress": true
+    },
+    {
+      "localname": "Východné Slovensko",
+      "place_id": 391233635,
+      "osm_id": 946159,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.0000048917000000083205,
       "isaddress": true
     },
     {

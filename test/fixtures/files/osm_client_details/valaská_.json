@@ -1,6 +1,6 @@
 {
-  "place_id": 175319573,
-  "parent_place_id": 175676259,
+  "place_id": 187476914,
+  "parent_place_id": 187535404,
   "osm_type": "W",
   "osm_id": 38879849,
   "category": "highway",
@@ -13,7 +13,7 @@
   "addresstags": {},
   "calculated_postcode": "976 46",
   "country_code": "sk",
-  "indexed_date": "2024-11-08T16:17:52.882164+00:00",
+  "indexed_date": "2026-04-29T18:39:17.933327+00:00",
   "importance": 0.05338660639353014,
   "calculated_importance": 0.05338660639353014,
   "extratags": {
@@ -27,21 +27,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      19.568254579534543,
-      48.80803778533121
+      19.5682546,
+      48.8080378
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      19.568254579534543,
-      48.80803778533121
+      19.5682546,
+      48.8080378
     ]
   },
   "address": [
     {
       "localname": "Školská",
-      "place_id": 175319573,
+      "place_id": 187476914,
       "osm_id": 38879849,
       "osm_type": "W",
       "class": "highway",
@@ -53,7 +53,7 @@
     },
     {
       "localname": "Piesok",
-      "place_id": 175676259,
+      "place_id": 187535404,
       "osm_id": 488283995,
       "osm_type": "N",
       "class": "place",
@@ -65,62 +65,62 @@
     },
     {
       "localname": "Valaská",
-      "place_id": 174471362,
-      "osm_id": 2265957,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.0000000813356652152309,
-      "isaddress": false
-    },
-    {
-      "localname": "Valaská",
-      "place_id": 175434352,
+      "place_id": 187562471,
       "osm_id": 2265933,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.0000000813356652152309,
+      "rank_address": 18,
+      "distance": 8.13356652152309E-8,
       "isaddress": true
     },
     {
-      "localname": "okres Brezno",
-      "place_id": 174942144,
-      "osm_id": 388241,
+      "localname": "Valaská",
+      "place_id": 189233259,
+      "osm_id": 2265957,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000007230583517172082,
+      "rank_address": 16,
+      "distance": 8.13356652152309E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Brezno",
+      "place_id": 187825982,
+      "osm_id": 388241,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 9.130249065282733E-7,
       "isaddress": true
     },
     {
       "localname": "Banskobystrický kraj",
-      "place_id": 175223038,
+      "place_id": 190100540,
       "osm_id": 388270,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000034133587991301135,
+      "distance": 0.000003413358994340422,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 189104584,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000009847162510495644,
+      "distance": 9.847160519261534E-7,
       "isaddress": true
     },
     {

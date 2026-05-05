@@ -1,6 +1,6 @@
 {
-  "place_id": 172076484,
-  "parent_place_id": 171673525,
+  "place_id": 184566126,
+  "parent_place_id": 185404535,
   "osm_type": "W",
   "osm_id": 77036397,
   "category": "highway",
@@ -14,7 +14,7 @@
   "addresstags": {},
   "calculated_postcode": "013 61",
   "country_code": "sk",
-  "indexed_date": "2025-07-23T11:21:17.225002+00:00",
+  "indexed_date": "2026-04-30T07:35:05.771375+00:00",
   "importance": 0.053382411688410736,
   "calculated_importance": 0.053382411688410736,
   "extratags": {
@@ -28,21 +28,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.588730957283786,
-      49.2143025680163
+      18.588731,
+      49.2143026
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.588730957283786,
-      49.2143025680163
+      18.588731,
+      49.2143026
     ]
   },
   "address": [
     {
       "localname": "2002",
-      "place_id": 172076484,
+      "place_id": 184566126,
       "osm_id": 77036397,
       "osm_type": "W",
       "class": "highway",
@@ -54,62 +54,62 @@
     },
     {
       "localname": "Hlboké nad Váhom",
-      "place_id": 171673525,
+      "place_id": 185404535,
       "osm_id": 2226096,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.0000000027961353686485247,
+      "distance": 2.7961353686485247E-9,
       "isaddress": true
     },
     {
       "localname": "Hlboké nad Váhom",
-      "place_id": 172076251,
+      "place_id": 184565672,
       "osm_id": 1857548,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.0000000027961353686485247,
+      "distance": 2.7961353686485247E-9,
       "isaddress": true
     },
     {
       "localname": "okres Bytča",
-      "place_id": 172142723,
+      "place_id": 185015739,
       "osm_id": 388195,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.000000548549704421516,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 5.485499820116668E-7,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 171862477,
+      "place_id": 184799860,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000006138098700514832,
+      "distance": 0.000006138098924249831,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 188227354,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000009573577180460315,
+      "distance": 0.000009573577369668283,
       "isaddress": true
     },
     {

@@ -1,6 +1,6 @@
 {
-  "place_id": 175116003,
-  "parent_place_id": 174468642,
+  "place_id": 187242444,
+  "parent_place_id": 190312938,
   "osm_type": "W",
   "osm_id": 1094730352,
   "category": "highway",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "951 92",
   "country_code": "sk",
-  "indexed_date": "2024-11-08T16:18:17.437441+00:00",
+  "indexed_date": "2026-04-29T18:43:03.841122+00:00",
   "importance": 0.05338470817120619,
   "calculated_importance": 0.05338470817120619,
   "extratags": {},
@@ -21,76 +21,76 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.378104766069644,
-      48.4470118069248
+      18.3781048,
+      48.4470118
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.378104766069644,
-      48.4470118069248
+      18.3781048,
+      48.4470118
     ]
   },
   "address": [
     {
       "localname": "Žikava",
-      "place_id": 175175422,
-      "osm_id": 2209897,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.00000003340135102061987,
-      "isaddress": false
-    },
-    {
-      "localname": "Žikava",
-      "place_id": 174468642,
+      "place_id": 190312938,
       "osm_id": 2209890,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.00000003340135102061987,
+      "rank_address": 18,
+      "distance": 3.340135102061987E-8,
       "isaddress": true
     },
     {
-      "localname": "okres Zlaté Moravce",
-      "place_id": 174175650,
-      "osm_id": 388217,
+      "localname": "Žikava",
+      "place_id": 187068896,
+      "osm_id": 2209897,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000006695117501000876,
+      "rank_address": 16,
+      "distance": 3.340135102061987E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Zlaté Moravce",
+      "place_id": 187183349,
+      "osm_id": 388217,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 4.3937041246426935E-7,
       "isaddress": true
     },
     {
       "localname": "Nitriansky kraj",
-      "place_id": 174908163,
+      "place_id": 190196212,
       "osm_id": 388268,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000002261974888081179,
+      "distance": 0.0000022619749377010825,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 187249438,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.0000047186657241296486,
+      "distance": 0.000004718665942853962,
       "isaddress": true
     },
     {

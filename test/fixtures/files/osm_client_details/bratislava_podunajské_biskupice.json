@@ -19,7 +19,7 @@
   "housenumber": "11729",
   "calculated_postcode": "821 07",
   "country_code": "sk",
-  "indexed_date": "2025-07-12T17:36:05.103520+00:00",
+  "indexed_date": "2026-05-01T15:59:44.280557+00:00",
   "importance": 0.00007727397573810967,
   "calculated_importance": 0.00007727397573810967,
   "extratags": {
@@ -32,14 +32,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      17.213186633614924,
+      17.2131866,
       48.1258652
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      17.213186633614924,
+      17.2131866,
       48.1258652
     ]
   },
@@ -65,18 +65,6 @@
       "isaddress": true
     },
     {
-      "localname": "okres Bratislava II",
-      "place_id": 174401898,
-      "osm_id": 388239,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 18,
-      "distance": 0.00000006603320408462603,
-      "isaddress": true
-    },
-    {
       "localname": "Bratislava",
       "place_id": 173466740,
       "osm_id": 3992676,
@@ -85,19 +73,19 @@
       "type": "city",
       "admin_level": 15,
       "rank_address": 16,
-      "distance": 0.0000008142718904311692,
-      "isaddress": false
+      "distance": 0.0000010158825476776424,
+      "isaddress": true
     },
     {
-      "localname": "Bratislava",
-      "place_id": 390032597,
-      "osm_id": 1702499,
+      "localname": "okres Bratislava II",
+      "place_id": 174401898,
+      "osm_id": 388239,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 6,
-      "rank_address": 16,
-      "distance": 0.0000010158831064911502,
+      "rank_address": 11,
+      "distance": 6.603372890422212E-8,
       "isaddress": true
     },
     {
@@ -109,7 +97,19 @@
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000020343506054453066,
+      "distance": 0.000002034349985807267,
+      "isaddress": true
+    },
+    {
+      "localname": "Bratislavský kraj",
+      "place_id": 436236092,
+      "osm_id": 20603412,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.000002034349985807267,
       "isaddress": true
     },
     {

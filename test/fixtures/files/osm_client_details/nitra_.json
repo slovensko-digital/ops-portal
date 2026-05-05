@@ -1,6 +1,6 @@
 {
-  "place_id": 174538426,
-  "parent_place_id": 175213472,
+  "place_id": 175351317,
+  "parent_place_id": 175592755,
   "osm_type": "W",
   "osm_id": 135744300,
   "category": "building",
@@ -21,7 +21,7 @@
   "housenumber": "18;18 18",
   "calculated_postcode": "949 01",
   "country_code": "sk",
-  "indexed_date": "2025-05-19T08:56:55.835960+00:00",
+  "indexed_date": "2025-10-25T11:34:07.416256+00:00",
   "importance": 0.00006510795757987362,
   "calculated_importance": 0.00006510795757987362,
   "extratags": {
@@ -33,15 +33,15 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.09584144395491,
-      48.323310750000005
+      18.095841399999998,
+      48.323310799999994
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.09584144395491,
-      48.323310750000005
+      18.095841399999998,
+      48.323310799999994
     ]
   },
   "address": [
@@ -55,7 +55,7 @@
     },
     {
       "localname": "Dolnozoborská",
-      "place_id": 175213472,
+      "place_id": 175592755,
       "osm_id": 5184080,
       "osm_type": "W",
       "class": "highway",
@@ -67,99 +67,87 @@
     },
     {
       "localname": "Dolný Zobor",
-      "place_id": 402727118,
+      "place_id": 402731789,
       "osm_id": 12697906865,
       "osm_type": "N",
       "class": "place",
       "type": "quarter",
       "admin_level": 15,
       "rank_address": 24,
-      "distance": 0.0021550522329078768,
+      "distance": 0.0021640396295824794,
       "isaddress": true
     },
     {
       "localname": "Stredný Zobor",
-      "place_id": 175186300,
+      "place_id": 175263185,
       "osm_id": 18074477,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 11,
       "rank_address": 22,
-      "distance": 0.00000005720303710987453,
+      "distance": 5.720356235958504E-8,
       "isaddress": true
     },
     {
       "localname": "Zobor",
-      "place_id": 174542363,
+      "place_id": 175443100,
       "osm_id": 2210126,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 20,
-      "distance": 0.0000000680089313693495,
+      "distance": 5.7201893832291266E-8,
       "isaddress": true
     },
     {
       "localname": "Nitra",
-      "place_id": 175062321,
+      "place_id": 175368363,
       "osm_id": 2210192,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000011556956576881285,
+      "distance": 1.1556956576881285E-7,
       "isaddress": true
     },
     {
       "localname": "okres Nitra",
-      "place_id": 175172329,
+      "place_id": 174650804,
       "osm_id": 388212,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000002809096029191465,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 2.8090954434657823E-7,
       "isaddress": true
     },
     {
       "localname": "Nitriansky kraj",
-      "place_id": 174908163,
+      "place_id": 174663472,
       "osm_id": 388268,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.0000026447547073745993,
+      "distance": 0.0000026448130399444087,
       "isaddress": true
     },
     {
       "localname": "Západné Slovensko",
-      "place_id": 175277405,
+      "place_id": 174734360,
       "osm_id": 946157,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.00000273804819970531,
+      "distance": 0.0000027380483491132837,
       "isaddress": true
-    },
-    {
-      "localname": "949 01",
-      "place_id": 175075966,
-      "osm_id": 4206364,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "postal_code",
-      "admin_level": 15,
-      "rank_address": 5,
-      "distance": 0.0000001781440675634257,
-      "isaddress": false
     },
     {
       "localname": "949 01",

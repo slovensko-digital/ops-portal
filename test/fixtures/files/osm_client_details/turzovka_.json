@@ -1,6 +1,6 @@
 {
-  "place_id": 171911852,
-  "parent_place_id": 170896634,
+  "place_id": 184656009,
+  "parent_place_id": 184552104,
   "osm_type": "W",
   "osm_id": 450042790,
   "category": "highway",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "023 54",
   "country_code": "sk",
-  "indexed_date": "2024-11-08T16:17:59.588538+00:00",
+  "indexed_date": "2026-04-30T07:35:05.416264+00:00",
   "importance": 0.05338693293659873,
   "calculated_importance": 0.05338693293659873,
   "extratags": {
@@ -23,57 +23,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.622346638039883,
-      49.40580334237534
+      18.6223466,
+      49.4058033
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.622346638039883,
-      49.40580334237534
+      18.6223466,
+      49.4058033
     ]
   },
   "address": [
     {
-      "localname": "Vyšný Koniec",
-      "place_id": 171828592,
-      "osm_id": 11445123257,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.015937374236995122,
-      "isaddress": false
-    },
-    {
-      "localname": "Závodie",
-      "place_id": 171861430,
-      "osm_id": 11445123256,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.008529376205212635,
-      "isaddress": false
-    },
-    {
-      "localname": "Predmier",
-      "place_id": 170767277,
-      "osm_id": 11445123255,
-      "osm_type": "N",
-      "class": "place",
-      "type": "suburb",
-      "admin_level": 15,
-      "rank_address": 20,
-      "distance": 0.007216360795442971,
-      "isaddress": false
-    },
-    {
       "localname": "Turzovka-Stred",
-      "place_id": 170896634,
+      "place_id": 184552104,
       "osm_id": 11445123254,
       "osm_type": "N",
       "class": "place",
@@ -85,62 +49,62 @@
     },
     {
       "localname": "Turzovka",
-      "place_id": 170890873,
+      "place_id": 184546519,
       "osm_id": 2145237,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000003587995425023445,
+      "distance": 3.587995425023445E-8,
       "isaddress": true
     },
     {
       "localname": "Turzovka",
-      "place_id": 171966722,
+      "place_id": 184696189,
       "osm_id": 2145257,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000003587995425023445,
+      "distance": 3.587995425023445E-8,
       "isaddress": true
     },
     {
       "localname": "okres Čadca",
-      "place_id": 171738522,
+      "place_id": 185277098,
       "osm_id": 388191,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.000001697117533988127,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000010040477058013791,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 171862477,
+      "place_id": 184799860,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000006261810026178934,
+      "distance": 0.000006261810234802702,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 188227354,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000010245623258578148,
+      "distance": 0.000010245623429370103,
       "isaddress": true
     },
     {

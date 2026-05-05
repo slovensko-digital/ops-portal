@@ -1,6 +1,6 @@
 {
-  "place_id": 176118627,
-  "parent_place_id": 176054744,
+  "place_id": 188072536,
+  "parent_place_id": 189274200,
   "osm_type": "W",
   "osm_id": 1104440706,
   "category": "leisure",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "054 01",
   "country_code": "sk",
-  "indexed_date": "2024-11-09T08:08:40.406814+00:00",
+  "indexed_date": "2026-04-17T08:45:40.538876+00:00",
   "importance": 0.00006118791485461231,
   "calculated_importance": 0.00006118791485461231,
   "extratags": {
@@ -24,21 +24,21 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      20.59168262204679,
+      20.5916826,
       49.0210024
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      20.59168262204679,
+      20.5916826,
       49.0210024
     ]
   },
   "address": [
     {
       "localname": "Sídlisko Pri Prameni",
-      "place_id": 176054744,
+      "place_id": 189274200,
       "osm_id": 71234118,
       "osm_type": "W",
       "class": "highway",
@@ -50,50 +50,62 @@
     },
     {
       "localname": "Levoča",
-      "place_id": 176210354,
+      "place_id": 189325629,
       "osm_id": 2275724,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.000000051046399177632395,
+      "distance": 5.1046399177632395E-8,
       "isaddress": true
     },
     {
       "localname": "Levoča",
-      "place_id": 176336018,
+      "place_id": 189245740,
       "osm_id": 2275758,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.000000051046399177632395,
+      "distance": 5.1046399177632395E-8,
       "isaddress": true
     },
     {
       "localname": "okres Levoča",
-      "place_id": 176189687,
+      "place_id": 189297006,
       "osm_id": 388252,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.000000051046399177632395,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 0.0000012953650844221414,
       "isaddress": true
     },
     {
       "localname": "Prešovský kraj",
-      "place_id": 176789858,
+      "place_id": 189977130,
       "osm_id": 388271,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.00000602029685209672,
+      "distance": 0.000006020297180082117,
+      "isaddress": true
+    },
+    {
+      "localname": "Východné Slovensko",
+      "place_id": 189075585,
+      "osm_id": 946159,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 3,
+      "rank_address": 6,
+      "distance": 0.000007282021844659492,
       "isaddress": true
     },
     {

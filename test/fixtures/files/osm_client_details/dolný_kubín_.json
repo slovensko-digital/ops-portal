@@ -1,6 +1,6 @@
 {
-  "place_id": 171104764,
-  "parent_place_id": 170500873,
+  "place_id": 183712758,
+  "parent_place_id": 185291861,
   "osm_type": "W",
   "osm_id": 1155099667,
   "category": "building",
@@ -21,7 +21,7 @@
   "housenumber": "1778 7;7;1778",
   "calculated_postcode": "026 01",
   "country_code": "sk",
-  "indexed_date": "2025-05-02T19:27:50.168788+00:00",
+  "indexed_date": "2026-04-24T14:09:32.180661+00:00",
   "importance": 0.0000558701457236136,
   "calculated_importance": 0.0000558701457236136,
   "extratags": {
@@ -33,14 +33,14 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      19.29547435,
+      19.2954744,
       49.2112247
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      19.29547435,
+      19.2954744,
       49.2112247
     ]
   },
@@ -55,7 +55,7 @@
     },
     {
       "localname": "Obrancov mieru",
-      "place_id": 170500873,
+      "place_id": 185291861,
       "osm_id": 76783628,
       "osm_type": "W",
       "class": "highway",
@@ -67,7 +67,7 @@
     },
     {
       "localname": "Banisko",
-      "place_id": 171343325,
+      "place_id": 183813344,
       "osm_id": 10156343977,
       "osm_type": "N",
       "class": "place",
@@ -79,7 +79,7 @@
     },
     {
       "localname": "Brezovec",
-      "place_id": 170948616,
+      "place_id": 185290356,
       "osm_id": 9920993154,
       "osm_type": "N",
       "class": "place",
@@ -91,62 +91,62 @@
     },
     {
       "localname": "Dolný Kubín",
-      "place_id": 172271287,
+      "place_id": 183692528,
       "osm_id": 2149383,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
       "rank_address": 18,
-      "distance": 0.00000003105188925015404,
+      "distance": 3.105188925015404E-8,
       "isaddress": true
     },
     {
       "localname": "Dolný Kubín",
-      "place_id": 172089158,
+      "place_id": 191626033,
       "osm_id": 2149419,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 9,
+      "admin_level": 8,
       "rank_address": 16,
-      "distance": 0.00000003105188925015404,
+      "distance": 3.105188925015404E-8,
       "isaddress": true
     },
     {
       "localname": "okres Dolný Kubín",
-      "place_id": 170505635,
+      "place_id": 183750464,
       "osm_id": 388186,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
-      "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.00000003105188925015404,
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 3.081450484771912E-7,
       "isaddress": true
     },
     {
       "localname": "Žilinský kraj",
-      "place_id": 172106157,
+      "place_id": 183681114,
       "osm_id": 388269,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000000956725340571171,
+      "distance": 9.56725131005754E-7,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175947134,
+      "place_id": 189104584,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000004171006233165991,
+      "distance": 0.0000041710063203828974,
       "isaddress": true
     },
     {

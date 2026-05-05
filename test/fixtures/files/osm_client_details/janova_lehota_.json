@@ -1,6 +1,6 @@
 {
-  "place_id": 174802195,
-  "parent_place_id": 176739690,
+  "place_id": 175613403,
+  "parent_place_id": 175352167,
   "osm_type": "W",
   "osm_id": 51725127,
   "category": "highway",
@@ -11,7 +11,7 @@
   "addresstags": {},
   "calculated_postcode": "966 24",
   "country_code": "sk",
-  "indexed_date": "2024-11-08T16:18:02.306042+00:00",
+  "indexed_date": "2026-04-29T19:41:47.315219+00:00",
   "importance": 0.05338777676050962,
   "calculated_importance": 0.05338777676050962,
   "extratags": {},
@@ -21,76 +21,76 @@
   "centroid": {
     "type": "Point",
     "coordinates": [
-      18.779019918213564,
-      48.664993731010235
+      18.779019899999998,
+      48.6649937
     ]
   },
   "geometry": {
     "type": "Point",
     "coordinates": [
-      18.779019918213564,
-      48.664993731010235
+      18.779019899999998,
+      48.6649937
     ]
   },
   "address": [
     {
       "localname": "Janova Lehota",
-      "place_id": 175566714,
-      "osm_id": 2261459,
-      "osm_type": "R",
-      "class": "boundary",
-      "type": "administrative",
-      "admin_level": 9,
-      "rank_address": 16,
-      "distance": 0.0000000357642420442688,
-      "isaddress": false
-    },
-    {
-      "localname": "Janova Lehota",
-      "place_id": 176739690,
+      "place_id": 175352167,
       "osm_id": 2261426,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 10,
-      "rank_address": 16,
-      "distance": 0.0000000357642420442688,
+      "rank_address": 18,
+      "distance": 3.57642420442688E-8,
       "isaddress": true
     },
     {
-      "localname": "okres Žiar nad Hronom",
-      "place_id": 175245414,
-      "osm_id": 388189,
+      "localname": "Janova Lehota",
+      "place_id": 175233020,
+      "osm_id": 2261459,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 8,
-      "rank_address": 12,
-      "distance": 0.0000009607021433149762,
+      "rank_address": 16,
+      "distance": 3.57642420442688E-8,
+      "isaddress": true
+    },
+    {
+      "localname": "okres Žiar nad Hronom",
+      "place_id": 175622742,
+      "osm_id": 388189,
+      "osm_type": "R",
+      "class": "boundary",
+      "type": "administrative",
+      "admin_level": 6,
+      "rank_address": 11,
+      "distance": 5.529087304583283E-7,
       "isaddress": true
     },
     {
       "localname": "Banskobystrický kraj",
-      "place_id": 175223038,
+      "place_id": 175459323,
       "osm_id": 388270,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 4,
       "rank_address": 8,
-      "distance": 0.000006569257291701969,
+      "distance": 0.000006569256857761421,
       "isaddress": true
     },
     {
       "localname": "Stredné Slovensko",
-      "place_id": 175405342,
+      "place_id": 175947134,
       "osm_id": 946158,
       "osm_type": "R",
       "class": "boundary",
       "type": "administrative",
       "admin_level": 3,
       "rank_address": 6,
-      "distance": 0.000007120939340062336,
+      "distance": 0.0000071209395397194616,
       "isaddress": true
     },
     {
