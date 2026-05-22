@@ -40,23 +40,6 @@ class Municipality < ApplicationRecord
     streets.whitelisted.find_by_name(name).present?
   end
 
-  def self.find_by_address(city:, municipality:, suburb:, street: nil)
-    municipality_district = MunicipalityDistrict.find_by_address(city: city, municipality: municipality, suburb: suburb)
-    if municipality_district
-      return [ municipality_district.municipality, municipality_district ] if municipality_district.active?
-
-      if street.present? && municipality_district.municipality.whitelisted_street?(street)
-        return [ municipality_district.municipality, municipality_district ]
-      end
-
-      return [ nil, municipality_district ]
-    end
-
-    r = active.where("? = ANY(aliases)", municipality).first
-    r ||= active.where("? = ANY(aliases)", suburb).first
-    [ r, nil ]
-  end
-
   def self.find_by_coordinates(latitude, longitude, street: nil)
     return [ nil, nil ] if latitude.blank? || longitude.blank?
 
