@@ -13,7 +13,7 @@ module MunicipalityBoundaryTestHelper
     SQL
 
     ActiveRecord::Base.connection.execute(
-      ActiveRecord::Base.sanitize_sql([sql, municipality.id, district&.id, wkt])
+      ActiveRecord::Base.sanitize_sql([ sql, municipality.id, district&.id, wkt ])
     )
   end
 end
