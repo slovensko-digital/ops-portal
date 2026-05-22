@@ -66,7 +66,7 @@ class Issues::Draft < ApplicationRecord
   before_save :reset_address_details, if: -> { will_save_change_to_latitude? || will_save_change_to_longitude? }
 
   def confirm
-    municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb, street: address_street)
+    municipality, municipality_district = Municipality.find_by_coordinates(latitude, longitude, street: address_street)
 
     Issue.transaction do
       issue = Issue.new(
@@ -188,9 +188,9 @@ class Issues::Draft < ApplicationRecord
   end
 
   def municipality_supported
-    return if address_data.blank?
+    return if latitude.blank? || longitude.blank?
 
-    active_municipality, municipality_district = Municipality.find_by_address(city: address_city, municipality: address_municipality, suburb: address_suburb, street: address_street)
+    active_municipality, municipality_district = Municipality.find_by_coordinates(latitude, longitude, street: address_street)
     errors.add(:base, :municipality_supported_on_old_portal) if active_municipality && active_municipality.active_on_old_portal?
     errors.add(:base, :municipality_unsupported) if active_municipality.nil? && municipality_district.nil?
     errors.add(:base, :municipality_district_unsupported) if active_municipality.nil? && municipality_district
