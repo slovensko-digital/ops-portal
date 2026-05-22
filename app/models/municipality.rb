@@ -56,4 +56,35 @@ class Municipality < ApplicationRecord
     r ||= active.where("? = ANY(aliases)", suburb).first
     [ r, nil ]
   end
+
+  def self.find_by_coordinates(latitude, longitude, street: nil)
+    return [ nil, nil ] if latitude.blank? || longitude.blank?
+
+    district_boundary = MunicipalityBoundary.districts
+      .containing_point(latitude, longitude)
+      .first
+
+    if district_boundary
+      district = district_boundary.municipality_district
+      municipality = district.municipality
+      return [ municipality, district ] if municipality.active? && district.active?
+
+      if street.present? && municipality.whitelisted_street?(street)
+        return [ municipality, district ]
+      end
+
+      return [ nil, district ]
+    end
+
+    municipality_boundary = MunicipalityBoundary.municipalities
+      .containing_point(latitude, longitude)
+      .first
+
+    if municipality_boundary
+      municipality = municipality_boundary.municipality
+      return [ municipality, nil ] if municipality.active?
+    end
+
+    [ nil, nil ]
+  end
 end
