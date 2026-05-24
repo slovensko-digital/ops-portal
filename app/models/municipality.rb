@@ -29,6 +29,7 @@ class Municipality < ApplicationRecord
   has_many :municipality_districts
   has_many :streets
   has_many :issues
+  has_many :municipality_boundaries
 
   scope :active, -> { where(active: true) }
   scope :archived, -> { where(archived: true) }
@@ -65,7 +66,7 @@ class Municipality < ApplicationRecord
 
     if municipality_boundary
       municipality = municipality_boundary.municipality
-      return [ municipality, nil ] if municipality.active?
+      return [ municipality, nil ] if municipality&.active?
     end
 
     [ nil, nil ]

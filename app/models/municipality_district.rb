@@ -20,6 +20,7 @@ class MunicipalityDistrict < ApplicationRecord
   belongs_to :municipality
   has_many :streets, dependent: :nullify
   has_many :issues
+  has_many :municipality_boundaries
 
   scope :archived, -> { where(archived: true) }
   scope :active, -> { where(active: true) }

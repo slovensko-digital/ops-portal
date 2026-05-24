@@ -1394,11 +1394,12 @@ ALTER SEQUENCE public.municipalities_id_seq OWNED BY public.municipalities.id;
 
 CREATE TABLE public.municipality_boundaries (
     id bigint NOT NULL,
-    municipality_id bigint NOT NULL,
+    municipality_id bigint,
     municipality_district_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    boundary public.geometry(Geometry,4326) NOT NULL
+    boundary public.geometry(Geometry,4326) NOT NULL,
+    boundary_kind character varying DEFAULT 'municipality'::character varying NOT NULL
 );
 
 
@@ -3577,6 +3578,13 @@ CREATE INDEX index_municipality_boundaries_on_boundary ON public.municipality_bo
 
 
 --
+-- Name: index_municipality_boundaries_on_municipality_and_district; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_municipality_boundaries_on_municipality_and_district ON public.municipality_boundaries USING btree (municipality_id, municipality_district_id);
+
+
+--
 -- Name: index_municipality_boundaries_on_municipality_district_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4427,6 +4435,9 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260524134500'),
+('20260524113000'),
+('20260522170432'),
 ('20260522000002'),
 ('20260424105720'),
 ('20260328185530'),
