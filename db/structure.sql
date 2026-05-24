@@ -3578,13 +3578,6 @@ CREATE INDEX index_municipality_boundaries_on_boundary ON public.municipality_bo
 
 
 --
--- Name: index_municipality_boundaries_on_municipality_and_district; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_municipality_boundaries_on_municipality_and_district ON public.municipality_boundaries USING btree (municipality_id, municipality_district_id);
-
-
---
 -- Name: index_municipality_boundaries_on_municipality_district_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4435,6 +4428,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260524143000'),
 ('20260524134500'),
 ('20260524113000'),
 ('20260522170432'),
