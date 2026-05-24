@@ -4,14 +4,14 @@ require "cgi"
 namespace :municipality_boundaries do
   desc "Download and import all Slovak municipality boundaries from Overpass API"
   task download_and_import_municipalities: :environment do
-    unless File.exist?("municipalities.geojson")
+    unless File.exist?("tmp/municipalities.geojson")
       puts "No local municipalities.geojson file found. Downloading from Overpass API..."
       puts "Downloading municipalities from Overpass API (this may take 1-2 minutes)..."
       geojson = OverpassClient.fetch_municipalities_geojson
-      File.write("municipalities.geojson", JSON.pretty_generate(geojson)) # Save a copy of the downloaded data for reference/debugging
+      File.write("tmp/municipalities.geojson", JSON.pretty_generate(geojson)) # Save a copy of the downloaded data for reference/debugging
     else
       puts "Using local municipalities.geojson file..."
-      geojson = JSON.parse(File.read("municipalities.geojson"))
+      geojson = JSON.parse(File.read("tmp/municipalities.geojson"))
     end
 
     features = geojson["features"] || []
