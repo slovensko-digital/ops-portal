@@ -536,7 +536,7 @@ class ZammadApiClient
   end
 
   def get_groups
-    @client.group.all
+    @client.group.all.page(1, 500) { }
   end
 
   def find_ticket_responsible_subject(ticket_id)
