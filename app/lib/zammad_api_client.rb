@@ -179,7 +179,7 @@ class ZammadApiClient
     issue = issue_update.activity.issue
     issue_ticket = @client.ticket.find(issue.resolution_external_id)
 
-    unless issue_update.author.external_id
+    if issue_update.author && !issue_update.author.external_id
       issue_update.author.update!(external_id: create_customer!(issue_update.author))
     end
 
@@ -190,15 +190,15 @@ class ZammadApiClient
       title: "#{issue_update.resolves_issue? ? "Overenie" : "Aktualizácia"} podnetu #{issue_update.issue.title || 'Bez názvu'}",
       body: issue_update.text.presence || "(bez popisu)",
       group: issue_ticket.group,
-      customer_id: issue_update.author.external_id,
-      origin_by_id: issue_update.author.external_id,
+      customer_id: issue_update.author&.external_id,
+      origin_by_id: issue_update.author&.external_id,
       ops_state: "waiting",
       portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
       issue_resolved: issue_update.resolves_issue? ? "yes" : "no",
       likes_count: issue_update.activity.likes_count,
       origin: DEFAULT_ORIGIN,
       article: {
-        origin_by_id: issue_update.author.external_id,
+        origin_by_id: issue_update.author&.external_id,
         sender: DEFAULT_SENDER,
         type: DEFAULT_ARTICLE_TYPE,
         body: issue_update.text.presence || "(bez popisu)",
