@@ -15,6 +15,6 @@ class Triage::FireWebhookJob < ApplicationJob
     }
 
     response = provider.post(client.url, payload.to_json, headers)
-    raise "Unexpected response status: #{response.status}" unless response.status&.between?(200, 299)
+    raise "Unexpected response status: #{response.status} with body: #{response.body}" unless response.status&.between?(200, 299)
   end
 end
