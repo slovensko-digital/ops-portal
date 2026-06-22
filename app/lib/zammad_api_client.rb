@@ -179,7 +179,7 @@ class ZammadApiClient
     issue = issue_update.activity.issue
     issue_ticket = @client.ticket.find(issue.resolution_external_id)
 
-    unless issue_update.author.external_id
+    if issue_update.author && !issue_update.author.external_id
       issue_update.author.update!(external_id: create_customer!(issue_update.author))
     end
 
@@ -190,15 +190,15 @@ class ZammadApiClient
       title: "#{issue_update.resolves_issue? ? "Overenie" : "Aktualizácia"} podnetu #{issue_update.issue.title || 'Bez názvu'}",
       body: issue_update.text.presence || "(bez popisu)",
       group: issue_ticket.group,
-      customer_id: issue_update.author.external_id,
-      origin_by_id: issue_update.author.external_id,
+      customer_id: issue_update.author&.external_id,
+      origin_by_id: issue_update.author&.external_id,
       ops_state: "waiting",
       portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
       issue_resolved: issue_update.resolves_issue? ? "yes" : "no",
       likes_count: issue_update.activity.likes_count,
       origin: DEFAULT_ORIGIN,
       article: {
-        origin_by_id: issue_update.author.external_id,
+        origin_by_id: issue_update.author&.external_id,
         sender: DEFAULT_SENDER,
         type: DEFAULT_ARTICLE_TYPE,
         body: issue_update.text.presence || "(bez popisu)",
@@ -270,6 +270,9 @@ class ZammadApiClient
     ticket.address_lat = issue.latitude
     ticket.address_lon = issue.longitude
     ticket.ops_state = issue.state.key
+    ticket.category = issue.category&.triage_external_id || issue.category&.name
+    ticket.subcategory = issue.subcategory&.name
+    ticket.subtype = issue.subtype&.name
     ticket.likes_count = issue.likes_count
     ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } }
 
@@ -434,6 +437,9 @@ class ZammadApiClient
   def create_system_note!(ticket_id, body, content_type: "text/plain", type: "note", internal: true, sender: "System")
     ticket = @client.ticket.find(ticket_id)
 
+    last_matching = ticket.articles.select { |a| a.internal == internal && a.sender == sender && a.body == body }.last
+    return last_matching.id if last_matching && last_matching.id == ticket.articles.last.id
+
     article = ticket.article(
       content_type: content_type,
       body: body,
@@ -533,7 +539,7 @@ class ZammadApiClient
   end
 
   def get_groups
-    @client.group.all
+    @client.group.all.page(1, 500) { }
   end
 
   def find_ticket_responsible_subject(ticket_id)
@@ -560,6 +566,10 @@ class ZammadApiClient
       link_object_source: "Ticket",
       link_object_source_number: child_ticket_number
     })
+  rescue RuntimeError => e
+    # 422 means the link already exists (enforced by Zammad's LinkUniquenessValidator and a DB unique index).
+    # raw_api_request raises "Request failed with status 422" in this case, so the check is safe.
+    raise e unless e.message.include?("422")
   end
 
   def get_ticket_resolution_parent_links(ticket_id)
