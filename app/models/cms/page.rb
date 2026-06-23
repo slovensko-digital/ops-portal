@@ -30,6 +30,10 @@ class Cms::Page < ApplicationRecord
     with_tags([ "published" ])
   end
 
+  def self.top
+    with_tags([ "top" ])
+  end
+
   def self.find_by_path(root_category, slugs)
     if slugs.count == 2
       category = Cms::Category.find_by(parent_category: root_category, slug: slugs.first)
