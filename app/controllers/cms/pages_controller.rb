@@ -14,19 +14,22 @@ class Cms::PagesController < ApplicationController
     if @page
       render :show
     else
-      @top_pages = @category.pages.published.order("RANDOM()").limit(2)
+      pages = @category.pages.published
+                      .order(created_at: :desc)
 
-      @hero_pages = @category.pages.published
-                             .where.not(id: @top_pages.select(:id))
-                             .order(created_at: :desc)
-                             .limit(3)
+      @top_pages = pages.where("? = ANY(tags)", "top")
+                        .limit(2)
 
-      @pages = @category.pages.published
-                        .where.not(id: @top_pages.select(:id))
-                        .where.not(id: @hero_pages.select(:id))
-                        .order(created_at: :desc)
-                        .page(params[:page])
-                        .per(8)
+      excluded_ids = @top_pages.ids
+
+      @hero_pages = pages.where.not(id: excluded_ids)
+                         .limit(3)
+
+      excluded_ids += @hero_pages.ids
+
+      @pages = pages.where.not(id: excluded_ids)
+                    .page(params[:page])
+                    .per(8)
     end
   end
 
