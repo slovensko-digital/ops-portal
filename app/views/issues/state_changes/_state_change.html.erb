@@ -1,19 +1,39 @@
 <% change = state_change %>
 <%= turbo_frame_tag change do %>
-  <div class="<%= class_names("comment", government: false) %>" id="state_change_<%= change.id %>">
-    <div class="comment-header">
-      <div class="subject">
-        <%= link_to_comment_author_profile(change) %>
+  <div class="state-change-message" id="state_change_<%= change.id %>">
+
+    <div class="change-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3 4 7l4 4"/>
+        <path d="M4 7h16"/>
+        <path d="M16 21l4-4-4-4"/>
+        <path d="M20 17H4"/>
+      </svg>
+    </div>
+
+    <div class="content">
+      <div class="text">
+        <span>Stav podnetu bol zmenený z</span>
+
+        <% if change.previous_state %>
+          <span class="state-badge state-<%= change.previous_state.name.parameterize %>">
+            <%= change.previous_state.name %>
+          </span>
+        <% else %>
+          <span class="state-badge state-unknown">neznámeho stavu</span>
+        <% end %>
+
+        <svg class="arrow-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+
+        <span class="state-badge state-<%= change.new_state.name.parameterize %>">
+          <%= change.new_state.name %>
+        </span>
       </div>
     </div>
+
     <div class="date"><%= l change.created_at.to_date %></div>
-    <div class="comment-content">
-      <p>
-        Stav podnetu bol zmenený z
-        <strong><%= change.previous_state&.name || "neznámeho stavu" %></strong>
-        na
-        <strong><%= change.new_state.name %></strong>
-      </p>
-    </div>
   </div>
 <% end %>
