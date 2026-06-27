@@ -7,7 +7,6 @@
 #  slug          :string           not null
 #  tags          :string           default([]), is an Array
 #  text          :text             not null
-#  thumbnail_url :string
 #  title         :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null

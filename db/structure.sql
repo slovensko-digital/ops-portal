@@ -275,8 +275,7 @@ CREATE TABLE public.cms_pages (
     updated_at timestamp(6) without time zone NOT NULL,
     tags character varying[] DEFAULT '{}'::character varying[],
     category_id bigint NOT NULL,
-    raw text NOT NULL,
-    thumbnail_url character varying
+    raw text NOT NULL
 );
 
 
@@ -941,7 +940,6 @@ CREATE TABLE public.issues_responsible_subject_changes (
     hidden boolean DEFAULT false NOT NULL,
     change_type integer NOT NULL,
     uuid uuid NOT NULL,
-    triage_external_id integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -4626,7 +4624,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20260524113000'),
 ('20260522170432'),
 ('20260522000002'),
-('20260501141746'),
 ('20260424105720'),
 ('20260417220948'),
 ('20260328185530'),

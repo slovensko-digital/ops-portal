@@ -11,7 +11,6 @@ class CreateIssuesResponsibleSubjectChanges < ActiveRecord::Migration[8.1]
       t.integer :change_type, null: false
 
       t.uuid :uuid, null: false
-      t.integer :triage_external_id
 
       t.timestamps
     end
