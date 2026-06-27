@@ -275,7 +275,8 @@ CREATE TABLE public.cms_pages (
     updated_at timestamp(6) without time zone NOT NULL,
     tags character varying[] DEFAULT '{}'::character varying[],
     category_id bigint NOT NULL,
-    raw text NOT NULL
+    raw text NOT NULL,
+    thumbnail_url character varying
 );
 
 
@@ -1111,6 +1112,41 @@ CREATE SEQUENCE public.issues_subtypes_id_seq
 --
 
 ALTER SEQUENCE public.issues_subtypes_id_seq OWNED BY public.issues_subtypes.id;
+
+
+--
+-- Name: issues_system_responsible_subject_changes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.issues_system_responsible_subject_changes (
+    id bigint NOT NULL,
+    activity_id bigint NOT NULL,
+    previous_responsible_subject_id bigint,
+    new_responsible_subject_id bigint,
+    hidden boolean DEFAULT false NOT NULL,
+    uuid uuid NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: issues_system_responsible_subject_changes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.issues_system_responsible_subject_changes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: issues_system_responsible_subject_changes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.issues_system_responsible_subject_changes_id_seq OWNED BY public.issues_system_responsible_subject_changes.id;
 
 
 --
@@ -2203,6 +2239,13 @@ ALTER TABLE ONLY public.issues_subtypes ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
+-- Name: issues_system_responsible_subject_changes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_system_responsible_subject_changes ALTER COLUMN id SET DEFAULT nextval('public.issues_system_responsible_subject_changes_id_seq'::regclass);
+
+
+--
 -- Name: issues_updates id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2604,6 +2647,14 @@ ALTER TABLE ONLY public.issues_subtypes
 
 
 --
+-- Name: issues_system_responsible_subject_changes issues_system_responsible_subject_changes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_system_responsible_subject_changes
+    ADD CONSTRAINT issues_system_responsible_subject_changes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: issues_updates issues_updates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2793,6 +2844,20 @@ ALTER TABLE ONLY public.user_verification_keys
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idx_on_new_responsible_subject_id_b929640653; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_on_new_responsible_subject_id_b929640653 ON public.issues_system_responsible_subject_changes USING btree (new_responsible_subject_id);
+
+
+--
+-- Name: idx_on_previous_responsible_subject_id_1816f9df1b; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_on_previous_responsible_subject_id_1816f9df1b ON public.issues_system_responsible_subject_changes USING btree (previous_responsible_subject_id);
 
 
 --
@@ -3482,6 +3547,13 @@ CREATE INDEX index_issues_subtypes_on_subcategory_id ON public.issues_subtypes U
 
 
 --
+-- Name: index_issues_system_responsible_subject_changes_on_activity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_issues_system_responsible_subject_changes_on_activity_id ON public.issues_system_responsible_subject_changes USING btree (activity_id);
+
+
+--
 -- Name: index_issues_updates_on_activity_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4062,6 +4134,14 @@ ALTER TABLE ONLY public.issues_drafts
 
 
 --
+-- Name: issues_system_responsible_subject_changes fk_rails_4bf8e52711; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_system_responsible_subject_changes
+    ADD CONSTRAINT fk_rails_4bf8e52711 FOREIGN KEY (previous_responsible_subject_id) REFERENCES public.responsible_subjects(id);
+
+
+--
 -- Name: issues fk_rails_4e60020611; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4139,6 +4219,14 @@ ALTER TABLE ONLY public.issues_comments
 
 ALTER TABLE ONLY public.connector_users
     ADD CONSTRAINT fk_rails_5f56c261d9 FOREIGN KEY (connector_tenant_id) REFERENCES public.connector_tenants(id);
+
+
+--
+-- Name: issues_system_responsible_subject_changes fk_rails_640fabb1c2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_system_responsible_subject_changes
+    ADD CONSTRAINT fk_rails_640fabb1c2 FOREIGN KEY (activity_id) REFERENCES public.issues_activities(id);
 
 
 --
@@ -4299,6 +4387,14 @@ ALTER TABLE ONLY public.responsible_subjects
 
 ALTER TABLE ONLY public.cms_pages
     ADD CONSTRAINT fk_rails_9e7d844076 FOREIGN KEY (category_id) REFERENCES public.cms_categories(id) ON DELETE CASCADE;
+
+
+--
+-- Name: issues_system_responsible_subject_changes fk_rails_a18c2a245d; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.issues_system_responsible_subject_changes
+    ADD CONSTRAINT fk_rails_a18c2a245d FOREIGN KEY (new_responsible_subject_id) REFERENCES public.responsible_subjects(id);
 
 
 --
@@ -4524,11 +4620,13 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260627093621'),
 ('20260524143000'),
 ('20260524134500'),
 ('20260524113000'),
 ('20260522170432'),
 ('20260522000002'),
+('20260501141746'),
 ('20260424105720'),
 ('20260417220948'),
 ('20260328185530'),

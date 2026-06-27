@@ -8,11 +8,18 @@ module Notifications
         next unless subscription.subscriber.email_notifiable?
 
         case Issues::State.find(state_id_change.last).key
+        when "sent_to_responsible"
+          next unless issue.author == subscription.subscriber
+          notification_mailer.with(subscription: subscription).issue_sent_to_responsible.deliver_later
         when "rejected"
           next unless issue.author == subscription.subscriber
           notification_mailer.with(subscription: subscription).issue_rejected.deliver_later
         when "duplicate"
           notification_mailer.with(subscription: subscription).issue_marked_as_duplicate.deliver_later
+        when "waiting"
+          notification_mailer.with(subscription: subscription).issue_waiting.deliver_later
+        when "in_progress"
+          notification_mailer.with(subscription: subscription).issue_in_progress.deliver_later
         when "resolved"
           notification_mailer.with(subscription: subscription).issue_resolved.deliver_later
         when "unresolved"

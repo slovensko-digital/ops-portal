@@ -1,0 +1,50 @@
+<% change = system_responsible_subject_change %>
+<%= turbo_frame_tag change do %>
+  <div class="state-change-message" id="system_rs_change_<%= change.id %>">
+
+    <div class="change-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+        <path d="M9 22v-4h6v4"></path>
+        <path d="M8 6h.01"></path>
+        <path d="M16 6h.01"></path>
+        <path d="M12 6h.01"></path>
+        <path d="M12 10h.01"></path>
+        <path d="M12 14h.01"></path>
+        <path d="M16 10h.01"></path>
+        <path d="M16 14h.01"></path>
+        <path d="M8 10h.01"></path>
+        <path d="M8 14h.01"></path>
+      </svg>
+    </div>
+
+    <div class="content">
+      <div class="text">
+        <span>Zodpovedný subjekt bol zmenený z</span>
+
+        <% if change.previous_responsible_subject %>
+          <span class="state-badge state-unknown" style="background-color: #f1f5f9; color: #475569;">
+            <%= change.previous_responsible_subject.subject_name %>
+          </span>
+        <% else %>
+          <span class="state-badge state-unknown">neznámeho subjektu</span>
+        <% end %>
+
+        <svg class="arrow-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+
+        <% if change.new_responsible_subject %>
+          <span class="state-badge state-unknown" style="background-color: #e2e8f0; color: #1e293b; font-weight: 600;">
+            <%= change.new_responsible_subject.subject_name %>
+          </span>
+        <% else %>
+          <span class="state-badge state-unknown">nikoho</span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="date"><%= l change.created_at.to_date %></div>
+  </div>
+<% end %>

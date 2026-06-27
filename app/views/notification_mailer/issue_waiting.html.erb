@@ -1,0 +1,14 @@
+<%= ops_title "Podnet čaká na riešenie" %>
+<p class="ops-email-paragraph">
+  <% if @issue.author == @user %>
+    Dobrý deň, status Vášho podnetu <%= ops_issue_link @issue %> bol zmenený na <b>Čakajúci</b>. Samospráva o probléme vie, no jeho riešenie aktuálne vyžaduje viac času.
+  <% else %>
+    Dobrý deň, status podnetu <%= ops_issue_link @issue %>, ktorý sledujete, bol zmenený na <b>Čakajúci</b>.
+  <% end %>
+  Dôvod zmeny stavu nájdete v <b><%= link_to "detaile podnetu", issue_url(@issue), class: "ops-email-link", target: "_blank" %></b>.
+</p>
+<p class="ops-email-paragraph">
+  <%= ops_button "Reagovať na nový status", "#{issue_url(@issue)}#new_issue_activity" %>
+</p>
+<%= render "signature" %>
+<%= render "unsubscribe" %>
