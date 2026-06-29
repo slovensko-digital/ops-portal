@@ -28,10 +28,6 @@ class NotificationMailer < ApplicationMailer
     mail
   end
 
-  def issue_sent_to_responsible
-    mail
-  end
-
   def issue_accepted
     mail
   end

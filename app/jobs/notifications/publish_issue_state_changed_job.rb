@@ -8,9 +8,6 @@ module Notifications
         next unless subscription.subscriber.email_notifiable?
 
         case Issues::State.find(state_id_change.last).key
-        when "sent_to_responsible"
-          next unless issue.author == subscription.subscriber
-          notification_mailer.with(subscription: subscription).issue_sent_to_responsible.deliver_later
         when "rejected"
           next unless issue.author == subscription.subscriber
           notification_mailer.with(subscription: subscription).issue_rejected.deliver_later

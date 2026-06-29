@@ -940,6 +940,7 @@ CREATE TABLE public.issues_responsible_subject_changes (
     hidden boolean DEFAULT false NOT NULL,
     change_type integer NOT NULL,
     uuid uuid NOT NULL,
+    triage_external_id integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
