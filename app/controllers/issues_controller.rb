@@ -8,6 +8,8 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
+    elsif session.key?(:last_municipality)
+      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district])
     elsif current_user.municipality
       issues_path(obec: current_user.municipality.name)
     else
@@ -18,6 +20,9 @@ class IssuesController < ApplicationController
   end
 
   def index
+    session[:last_municipality] = params[:obec] || ""
+    session[:last_municipality_district] = params[:cast] || ""
+
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
     scope = Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject)
@@ -244,7 +249,7 @@ class IssuesController < ApplicationController
           end
         ),
 
-        SearchEngine::Controls::Dropdown.new(
+        SearchEngine::Controls::Autocomplete.new(
           param_name: :obec,
           label: "Obec",
           items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
