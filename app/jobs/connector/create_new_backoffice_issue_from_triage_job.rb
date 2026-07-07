@@ -1,5 +1,5 @@
 class Connector::CreateNewBackofficeIssueFromTriageJob < ApplicationJob
-  SKIPPED_TICKETS_OPS_STATES = %w[waiting rejected]
+  SKIPPED_TICKETS_OPS_STATES = %w[waiting waiting_for_author rejected]
 
   def perform(
     tenant,
