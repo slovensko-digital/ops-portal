@@ -282,8 +282,31 @@
 	
 	
 	// Aktuality
-	section.news .news-con {
-		grid-template-columns: 1fr 1fr 1fr;
+	section.news {
+		.news-con {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+
+		.news-top-section {
+			grid-template-columns: repeat(4, 1fr);
+		}
+
+		.news-latest-grid {
+			grid-column: span 3;
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		.news-latest-main {
+			grid-column: span 2;
+		}
+
+		.news-latest-secondary {
+			grid-column: span 1;
+		}
+
+		.news-top-articles {
+			grid-column: span 1;
+		}
 	}
 	
 	.news-grid-bottom {
