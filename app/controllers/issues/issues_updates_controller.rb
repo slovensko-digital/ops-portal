@@ -39,6 +39,11 @@ class Issues::IssuesUpdatesController < ApplicationController
     @update.published = true
 
     if @update.save
+      if @update.resolves_issue?
+        @issue.update!(state: Issues::State.find_by!(key: "marked_as_resolved"))
+        SyncIssueToTriageJob.perform_later(@issue, sync_activities: false)
+      end
+
       respond_to do |format|
         format.turbo_stream
         format.html {
