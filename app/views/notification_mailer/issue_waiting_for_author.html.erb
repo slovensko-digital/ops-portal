@@ -1,18 +1,10 @@
 <%= ops_title "Podnet si vyžaduje Vašu pozornosť" %>
 <p class="ops-email-paragraph">
-  <% if @issue.author == @user %>
-    Dobrý deň, pri Vašom podnete <%= ops_issue_link @issue %> sú potrebné doplňujúce informácie, aby sa mohlo pokračovať v jeho riešení.
-  <% else %>
-    Dobrý deň, status podnetu <%= ops_issue_link @issue %>, ktorý sledujete, bol zmenený na <b>Čaká na autora</b>.
-  <% end %>
+  Dobrý deň, pri Vašom podnete <%= ops_issue_link @issue %> sú potrebné doplňujúce informácie.
 </p>
 
 <p class="ops-email-paragraph">
-  <% if @issue.author == @user %>
-    Prečítajte si prosím najnovšiu správu v <b><%= link_to "detaile podnetu", issue_url(@issue), class: "ops-email-link", target: "_blank" %></b> a doplňte požadované údaje.
-  <% else %>
-    Viac informácií nájdete v <b><%= link_to "detaile podnetu", issue_url(@issue), class: "ops-email-link", target: "_blank" %></b>.
-  <% end %>
+  Prečítajte si prosím najnovšiu správu v <b><%= link_to "detaile podnetu", issue_url(@issue), class: "ops-email-link", target: "_blank" %></b> a doplňte požadované údaje.
 </p>
 
 <p class="ops-email-paragraph">
