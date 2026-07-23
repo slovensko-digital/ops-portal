@@ -5,7 +5,9 @@ module Import
     SKIPPED_TICKETS_OPS_STATES = %w[waiting rejected]
 
     def perform(responsible_subject, import_issue_from_triage_job: ::Connector::CreateNewBackofficeIssueFromTriageJob)
-      client = ::Client.find_by(responsible_subject: responsible_subject)
+      raise "There must be exactly one client for responsible subject in this import job: #{responsible_subject.label}" unless responsible_subject.clients.size == 1
+
+      client = responsible_subject.clients.first
       tenant = ::Connector::Tenant.active.find_by(ops_api_subject_identifier: client.id)
 
       zammad_api_client = ::Connector::BackofficeZammadEnvironment.client(tenant)

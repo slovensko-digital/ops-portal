@@ -30,6 +30,7 @@ class Cms::ImportPageJob < ApplicationJob
         slug: topic_raw["slug"],
         tags: topic_raw["tags"].map { |tag| tag["name"] },
         text: post_raw["cooked"],
+        thumbnail_url: topic_raw["image_url"],
         raw: post_raw["raw"],
         category: category,
         created_at: topic_raw["created_at"],
