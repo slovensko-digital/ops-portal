@@ -13,6 +13,10 @@ module Notifications
           notification_mailer.with(subscription: subscription).issue_rejected.deliver_later
         when "duplicate"
           notification_mailer.with(subscription: subscription).issue_marked_as_duplicate.deliver_later
+        when "waiting"
+          notification_mailer.with(subscription: subscription).issue_waiting.deliver_later
+        when "in_progress"
+          notification_mailer.with(subscription: subscription).issue_in_progress.deliver_later
         when "resolved"
           notification_mailer.with(subscription: subscription).issue_resolved.deliver_later
         when "unresolved"

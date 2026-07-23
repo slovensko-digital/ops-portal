@@ -2541,6 +2541,76 @@ section.podnet .podnet-discussion .comment {
   padding: 30px 20px;
   word-break: break-word;
 }
+section.podnet .podnet-discussion .state-change-message {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 10px 0;
+  padding: 10px 20px;
+}
+
+section.podnet .podnet-discussion .state-change-message .change-icon {
+  align-items: center;
+  background: variables.$blue-light;
+  border-radius: 50%;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+  flex-shrink: 0;
+
+  svg {
+    stroke: variables.$blue-dark;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+section.podnet .podnet-discussion .state-change-message .content {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+section.podnet .podnet-discussion .state-change-message .text {
+  align-items: center;
+  color: variables.$black-light;
+  display: flex;
+  flex-wrap: wrap;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  gap: 8px;
+  font-weight: variables.$medium;
+}
+
+section.podnet .podnet-discussion .state-change-message .state-badge {
+  border-radius: 12px;
+  color: variables.$black;
+  font-size: variables.em(14,16);
+  font-weight: variables.$semibold;
+  padding: 4px 12px;
+}
+
+section.podnet .podnet-discussion .state-change-message .arrow-right {
+  stroke: variables.$black-light;
+  width: 16px;
+  height: 16px;
+}
+
+section.podnet .podnet-discussion .state-change-message .date {
+  color: variables.$black-light;
+  font-size: variables.em(14,16);
+  margin-left: auto;
+}
+
+section.podnet .podnet-discussion .comment-con > *:has(.state-change-message) + * .comment,
+section.podnet .podnet-discussion .comment-con > *:has(.state-change-message) + * .edit-comment-form {
+  border-top: 1px solid variables.$black;
+}
+
 section.podnet .podnet-discussion .duplicate {
   background: variables.$green-light;
 }
@@ -3470,4 +3540,3 @@ footer .footer-nav-bottom {
 
 // 1600px
 @include meta.load-css("_100em.scss");
-

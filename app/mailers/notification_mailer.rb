@@ -52,7 +52,21 @@ class NotificationMailer < ApplicationMailer
     mail
   end
 
+  def issue_in_progress
+    mail
+  end
+
   def issue_marked_as_duplicate
+    mail
+  end
+
+  def issue_waiting
+    mail
+  end
+
+  def issue_responsible_subject_changed(previous_rs)
+    @previous_rs = previous_rs
+    @new_rs = @issue.responsible_subject
     mail
   end
 
