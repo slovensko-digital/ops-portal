@@ -1673,7 +1673,8 @@ ul.dropdown-list li:hover {
   background: variables.$line;
 }
 
-ul.dropdown-list li a {
+ul.dropdown-list li a,
+ul.dropdown-list li label {
   color: variables.$black;
   display: block;
   padding: 12px 14px;
@@ -1683,7 +1684,8 @@ ul.dropdown-list li.active {
   background: variables.$line;
 }
 
-ul.dropdown-list li.check-box a {
+ul.dropdown-list li.check-box a,
+ul.dropdown-list li.check-box label {
   align-items: center;
   display: grid;
   gap: 0 4px;
@@ -1699,6 +1701,9 @@ ul.dropdown-list li.check-box svg {
 }
 ul.dropdown-list li.check-box:hover svg {
   display: block;
+}
+ul.dropdown-list li.district label {
+  padding-left: 40px;
 }
 ul.dropdown-list li.active .form-check-box {
   background: variables.$blue;

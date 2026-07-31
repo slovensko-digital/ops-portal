@@ -31,6 +31,8 @@ class Municipality < ApplicationRecord
   has_many :issues
   has_many :municipality_boundaries
 
+  has_many :active_districts, -> { active.order(Arel.sql("name COLLATE unicode")) }, class_name: "MunicipalityDistrict"
+
   scope :active, -> { where(active: true) }
   scope :archived, -> { where(archived: true) }
 

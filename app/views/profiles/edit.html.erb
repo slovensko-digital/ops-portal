@@ -75,18 +75,46 @@
 
       <div class="form-items-con">
         <div class="form-item-wrapper">
-          <%= f.label :municipality_id, "Preferované mesto alebo obec" %>
+          <%= f.label :preferred_places, "Preferované mestá alebo obce" %>
 
-          <%= f.select :municipality_id,
-                       options_for_select(
-                         Municipality.where(active: true).order(:name).pluck(:name, :id),
-                         @user.municipality_id
-                       ),
-                       { include_blank: "" },
-                       { id: "municipality_id", class: 'dropdown-button', aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
-          <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
+          <%= f.hidden_field :preferred_places, multiple: true, value: "" %>
+
+          <div class="autocomplete-wrapper" style="position: relative;"
+               data-controller="preferred-places"
+               data-action="click@window->preferred-places#close">
+
+            <div style="position: relative;">
+              <input
+                type="text"
+                class="form-input"
+                data-preferred-places-target="input"
+                data-action="focusin->preferred-places#open input->preferred-places#filter"
+                autocomplete="off" />
+
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20" style="position: absolute; right: 14px; top: 15px; width: 14px; pointer-events: none; fill: #1c3054;">
+                <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
+              </svg>
+            </div>
+
+            <ul class="dropdown-list none"
+                data-preferred-places-target="list"
+                style="overflow-y: auto; position: absolute; width: 100%; z-index: 50; top: 100%; margin-top: 5px;">
+
+              <% preferred_places_options(@user, @municipalities).each do |municipality| %>
+                <%= render 'profiles/preferred_place_item', f: f, item: municipality %>
+
+                <% municipality[:districts].each do |district| %>
+                  <%= render 'profiles/preferred_place_item', f: f, item: district %>
+                <% end %>
+              <% end %>
+
+            </ul>
+          </div>
         </div>
-        <div class="form-notice">Budete vidieť najmä podnety a oznamy z&nbsp;preferovaného mesta alebo obce.</div>
+
+        <div class="form-notice">
+          Vyhľadajte a zaškrtnite si mestá a mestské časti, z ktorých chcete vidieť najviac podnetov a dostávať novinky.
+        </div>
       </div>
 
       <div class="form-items-con">

@@ -1,0 +1,29 @@
+<li class="check-box <%= 'district' if item[:is_district] %> <%= 'active' if item[:selected] %>"
+    data-preferred-places-target="item">
+
+  <label class="check-box-label <%= 'check-box-label--district' if item[:is_district] %>">
+
+    <%= f.check_box :preferred_places,
+                    {
+                      multiple: true,
+                      class: "sr-only",
+                      checked: item[:selected],
+                      data: {
+                        preferred_places_target: "checkbox",
+                        label: item[:label],
+                        action: "change->preferred-places#toggle"
+                      }
+                    },
+                    item[:value],
+                    nil
+    %>
+
+    <div class="form-check-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
+        <polygon points="5.51 15.78 0 10.26 1.06 9.2 5.51 13.66 14.94 4.22 16 5.28 5.51 15.78"/>
+      </svg>
+    </div>
+
+    <span class="<%= 'item-title--bold' unless item[:is_district] %>"><%= item[:label] %></span>
+  </label>
+</li>

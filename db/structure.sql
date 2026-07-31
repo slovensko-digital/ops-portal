@@ -1973,6 +1973,7 @@ CREATE TABLE public.users (
     imported_at timestamp(6) without time zone,
     responsible_subject_id bigint,
     type character varying,
+    preferred_places character varying[] DEFAULT '{}'::character varying[],
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
@@ -4429,6 +4430,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260723144648'),
 ('20260524143000'),
 ('20260524134500'),
 ('20260524113000'),
