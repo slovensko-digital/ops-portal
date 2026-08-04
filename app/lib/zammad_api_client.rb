@@ -499,6 +499,7 @@ class ZammadApiClient
     return false unless result
 
     result.firstname = user.display_name
+    result.lastname = "" if user.anonymous?
     result.save
   end
 
