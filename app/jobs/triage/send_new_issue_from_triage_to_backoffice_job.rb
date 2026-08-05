@@ -4,6 +4,7 @@ class Triage::SendNewIssueFromTriageToBackofficeJob < ApplicationJob
     responsible_subject = ResponsibleSubject.find(responsible_subject_data[:value])
 
     raise "Responsible subject not found: #{responsible_subject_data[:value]}" unless responsible_subject
+    return unless responsible_subject.pro?
 
     raise "No clients found for responsible subject: #{responsible_subject.subject_name}" if responsible_subject.clients.empty?
 
