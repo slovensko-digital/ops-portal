@@ -5,7 +5,7 @@ class Triage::SendNewIssueFromTriageToBackofficeJob < ApplicationJob
 
     raise "Responsible subject not found: #{responsible_subject_data[:value]}" unless responsible_subject
 
-    raise "No clients found for responsible subject: #{responsible_subject.label}" if responsible_subject.clients.empty?
+    raise "No clients found for responsible subject: #{responsible_subject.subject_name}" if responsible_subject.clients.empty?
 
     responsible_subject.clients.each do |client|
       webhook_client.new(client).issue_created(ticket_id)
