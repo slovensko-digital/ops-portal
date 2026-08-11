@@ -30,6 +30,7 @@ class Municipality < ApplicationRecord
   has_many :streets
   has_many :issues
   has_many :municipality_boundaries
+  has_and_belongs_to_many :users
 
   has_many :active_districts, -> { active.order(Arel.sql("name COLLATE unicode")) }, class_name: "MunicipalityDistrict"
 
