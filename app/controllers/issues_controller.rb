@@ -267,6 +267,13 @@ class IssuesController < ApplicationController
           param_name: :lokalita,
           label: "Obec / Mestská časť",
           multiple: true,
+          filter_label: ->(value) do
+            if value.to_s.start_with?("-")
+              "Okrem: #{value.delete_prefix("-")}"
+            else
+              value.to_s.split(" - ", 2).last
+            end
+          end,
           items: ->(params) do
             locations = Array(params[:lokalita]).compact_blank
             positives = locations.reject { _1.start_with?("-") }
@@ -326,7 +333,6 @@ class IssuesController < ApplicationController
               [ parent, *children ]
             end
           end,
-
           filter: ->(scope, params) do
             locations = Array(params[:lokalita]).compact_blank
             next scope if locations.empty?
