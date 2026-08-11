@@ -8,8 +8,8 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
-    elsif session[:last_municipality].present?
-      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
+    elsif session[:last_lokalita].present?
+      issues_path(lokalita: session[:last_lokalita])
     elsif current_user.preferred_places.any?
       issues_path(lokalita: current_user.preferred_places)
     else
@@ -20,12 +20,21 @@ class IssuesController < ApplicationController
   end
 
   def index
-    if params[:obec].present?
-      session[:last_municipality] = params[:obec]
-      session[:last_municipality_district] = params[:cast]
+    if params[:obec].present? || params[:cast].present?
+      if params[:cast].present? && params[:obec].present?
+        params[:lokalita] = ["#{params[:obec]} - #{params[:cast]}"]
+      elsif params[:obec].present?
+        params[:lokalita] = [params[:obec]]
+      end
+
+      params.delete(:obec)
+      params.delete(:cast)
+    end
+
+    if params[:lokalita].present?
+      session[:last_lokalita] = params[:lokalita]
     else
-      session.delete(:last_municipality)
-      session.delete(:last_municipality_district)
+      session.delete(:last_lokalita)
     end
 
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
