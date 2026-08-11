@@ -22,9 +22,9 @@ class IssuesController < ApplicationController
   def index
     if params[:obec].present? || params[:cast].present?
       if params[:cast].present? && params[:obec].present?
-        params[:lokalita] = ["#{params[:obec]} - #{params[:cast]}"]
+        params[:lokalita] = [ "#{params[:obec]} - #{params[:cast]}" ]
       elsif params[:obec].present?
-        params[:lokalita] = [params[:obec]]
+        params[:lokalita] = [ params[:obec] ]
       end
 
       params.delete(:obec)
