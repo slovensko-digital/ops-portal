@@ -19,8 +19,8 @@ module SearchEngine
         values = Array(results.search_params[@param_name])
 
         items.map do |item_data|
-          add_vals = item_data[:add_params] || (values + [item_data[:value]]).uniq
-          remove_vals = item_data[:remove_params] || (values - [item_data[:value]]).uniq
+          add_vals = item_data[:add_params] || (values + [ item_data[:value] ]).uniq
+          remove_vals = item_data[:remove_params] || (values - [ item_data[:value] ]).uniq
 
           TreeItem.new(
             label: item_data[:label],

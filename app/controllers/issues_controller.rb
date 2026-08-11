@@ -281,7 +281,7 @@ class IssuesController < ApplicationController
                   value: municipality.name,
                   level: 0,
                   selected: municipality_selected,
-                  add_params: parent_values + [municipality.name],
+                  add_params: parent_values + [ municipality.name ],
                   remove_params: parent_values
                 }
 
@@ -299,8 +299,8 @@ class IssuesController < ApplicationController
                       value: value,
                       level: 1,
                       selected: selected,
-                      add_params: locations - [negative_value],
-                      remove_params: (locations + [negative_value]).uniq
+                      add_params: locations - [ negative_value ],
+                      remove_params: (locations + [ negative_value ]).uniq
                     }
                   else
                     {
@@ -308,13 +308,13 @@ class IssuesController < ApplicationController
                       value: value,
                       level: 1,
                       selected: selected,
-                      add_params: (locations + [value]).uniq,
-                      remove_params: locations - [value]
+                      add_params: (locations + [ value ]).uniq,
+                      remove_params: locations - [ value ]
                     }
                   end
               end
 
-              [parent, *children]
+              [ parent, *children ]
             end
           end,
 
