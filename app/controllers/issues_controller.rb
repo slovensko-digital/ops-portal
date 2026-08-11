@@ -259,58 +259,106 @@ class IssuesController < ApplicationController
           label: "Obec / Mestská časť",
           multiple: true,
           items: ->(params) do
-            selected = Array(params[:lokalita]).compact_blank
+            locations = Array(params[:lokalita]).compact_blank
+            positives = locations.reject { _1.start_with?("-") }
+            negatives = locations.select { _1.start_with?("-") }
 
             Municipality.active
               .where(active_on_old_portal: false)
               .includes(:active_districts)
               .order(Arel.sql("name COLLATE unicode"))
               .flat_map do |municipality|
-                municipality_selected = selected.include?(municipality.name)
+                municipality_selected = positives.include?(municipality.name)
 
-                [
-                  {
-                    label: municipality.name,
-                    value: municipality.name,
-                    level: 0,
-                    selected: municipality_selected
-                  },
-                  *municipality.active_districts.map do |district|
-                    value = "#{municipality.name} - #{district.name}"
+                parent_values = locations.reject do |location|
+                  location == municipality.name ||
+                    location.start_with?("#{municipality.name} - ") ||
+                    location.start_with?("-#{municipality.name} - ")
+                end
 
+                parent = {
+                  label: municipality.name,
+                  value: municipality.name,
+                  level: 0,
+                  selected: municipality_selected,
+                  add_params: parent_values + [municipality.name],
+                  remove_params: parent_values
+                }
+
+                children = municipality.active_districts.map do |district|
+                  value = "#{municipality.name} - #{district.name}"
+                  negative_value = "-#{value}"
+
+                  selected =
+                    positives.include?(value) ||
+                    (municipality_selected && !negatives.include?(negative_value))
+
+                  if municipality_selected
                     {
                       label: district.name,
                       value: value,
                       level: 1,
-                      selected: municipality_selected || selected.include?(value)
+                      selected: selected,
+                      add_params: locations - [negative_value],
+                      remove_params: (locations + [negative_value]).uniq
+                    }
+                  else
+                    {
+                      label: district.name,
+                      value: value,
+                      level: 1,
+                      selected: selected,
+                      add_params: (locations + [value]).uniq,
+                      remove_params: locations - [value]
                     }
                   end
-                ]
               end
+
+              [parent, *children]
+            end
           end,
+
           filter: ->(scope, params) do
             locations = Array(params[:lokalita]).compact_blank
             next scope if locations.empty?
 
-            municipalities, districts = locations.partition { _1.exclude?(" - ") }
+            positives, negatives = locations.partition { _1.exclude?("-") }
+            negatives = negatives.map { _1.delete_prefix("-") }
+
+            municipalities, districts = positives.partition { _1.exclude?(" - ") }
 
             municipality_ids = Municipality.active
-              .where(name: municipalities)
-              .pluck(:id)
+              .where(name: municipalities).pluck(:id)
 
             district_ids = districts
-              .map { _1.split(" - ", 2) }
-              .reduce(MunicipalityDistrict.none) do |query, (municipality, district)|
-                query.or(
-                  MunicipalityDistrict
-                    .joins(:municipality)
-                    .where(municipalities: { name: municipality }, name: district)
-                )
-              end.pluck(:id)
+              .then { |values| MunicipalityDistrict.where(name: values) }
+              .joins(:municipality)
+              .where(municipalities: { name: districts.map { _1.split(" - ", 2).first } })
+              .pluck(:id)
 
-            scope
-              .where(municipality_id: municipality_ids)
-              .or(scope.where(municipality_district_id: district_ids))
+            excluded_district_ids = negatives
+              .map { _1.split(" - ", 2) }
+              .then do |pairs|
+                MunicipalityDistrict
+                  .joins(:municipality)
+                  .where(
+                    name: pairs.map(&:last),
+                    municipalities: { name: pairs.map(&:first) }
+                  )
+                  .pluck(:id)
+              end
+
+            conditions = []
+
+            if municipality_ids.any?
+              condition = scope.where(municipality_id: municipality_ids)
+              condition = condition.where.not(municipality_district_id: excluded_district_ids) if excluded_district_ids.any?
+              conditions << condition
+            end
+
+            conditions << scope.where(municipality_district_id: district_ids) if district_ids.any?
+
+            conditions.reduce(:or) || scope.none
           end
         ),
 

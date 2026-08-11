@@ -18,29 +18,19 @@ module SearchEngine
 
         values = Array(results.search_params[@param_name])
 
-        out = items.map do |item_data|
-          if item_data.is_a?(Hash)
-            label = item_data[:label]
-            val = item_data[:value] || label
-            level = item_data[:level] || 0
-            is_selected = item_data.key?(:selected) ? item_data[:selected] : values.include?(val)
-          else
-            label = item_data.to_s
-            val = item_data.to_s
-            level = 0
-            is_selected = values.include?(val)
-          end
+        items.map do |item_data|
+          add_vals = item_data[:add_params] || (values + [item_data[:value]]).uniq
+          remove_vals = item_data[:remove_params] || (values - [item_data[:value]]).uniq
 
           TreeItem.new(
-            label: label,
-            value: val,
-            level: level,
-            selected: is_selected,
-            add_params: results.search_params.merge(@param_name => @multiple ? (values + [ val ]).uniq : val),
-            remove_params: results.search_params.merge(@param_name => @multiple ? (values - [ val ]).uniq : nil),
-            )
+            label: item_data[:label],
+            value: item_data[:value],
+            level: item_data[:level] || 0,
+            selected: item_data[:selected],
+            add_params: results.search_params.merge(@param_name => @multiple ? add_vals : item_data[:value]),
+            remove_params: results.search_params.merge(@param_name => @multiple ? remove_vals : nil)
+          )
         end
-        out
       end
     end
   end
