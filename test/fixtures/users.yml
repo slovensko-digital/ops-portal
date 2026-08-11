@@ -10,7 +10,6 @@ one:
   onboarded: true
   email_global_unsubscribe_token: one<%= SecureRandom.urlsafe_base64(32) %>
   phone_verified: true
-  municipalities: banska_bystrica
   
 two:
   type: User::Citizen
