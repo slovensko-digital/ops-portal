@@ -3,20 +3,29 @@
 
   <label class="check-box-label <%= 'check-box-label--district' if item[:is_district] %>">
 
-    <%= f.check_box :preferred_places,
-                    {
-                      multiple: true,
-                      class: "sr-only",
-                      checked: item[:selected],
-                      data: {
-                        preferred_places_target: "checkbox",
-                        label: item[:label],
-                        action: "change->preferred-places#toggle"
-                      }
-                    },
-                    item[:value],
-                    nil
-    %>
+    <% if item[:is_district] %>
+      <%= f.check_box :municipality_district_ids, {
+        multiple: true,
+        class: "sr-only",
+        checked: item[:selected],
+        data: {
+          preferred_places_target: "checkbox",
+          label: item[:label],
+          action: "change->preferred-places#toggle"
+        }
+      }, item[:id], nil %>
+    <% else %>
+      <%= f.check_box :municipality_ids, {
+        multiple: true,
+        class: "sr-only",
+        checked: item[:selected],
+        data: {
+          preferred_places_target: "checkbox",
+          label: item[:label],
+          action: "change->preferred-places#toggle"
+        }
+      }, item[:id], nil %>
+    <% end %>
 
     <div class="form-check-box">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">

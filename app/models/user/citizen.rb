@@ -32,7 +32,6 @@
 #  phone_verification_code          :string
 #  phone_verification_code_attempts :integer          default(0), not null
 #  phone_verified                   :boolean          default(FALSE), not null
-#  preferred_places                 :string           default([]), is an Array
 #  resident                         :boolean
 #  sex                              :integer
 #  signature                        :string
@@ -53,7 +52,6 @@
 #  city_id                          :integer
 #  external_id                      :integer
 #  legacy_id                        :integer
-#  municipality_id                  :bigint
 #  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #

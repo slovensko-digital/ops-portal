@@ -1711,6 +1711,19 @@ ul.dropdown-list li.active .form-check-box {
 ul.dropdown-list li.active svg {
   display: block;
 }
+ul.dropdown-list {
+  li.nested-level-1 a {
+    padding-left: 40px;
+  }
+
+  li.nested-level-2 a {
+    padding-left: 60px;
+  }
+
+  span.item-title--bold {
+    font-weight: variables.$semibold;
+  }
+}
 .podnety-filter-con .dropdown-button {
   font-size: variables.em(16,16) !important;
   line-height: variables.em(16,16) !important;

@@ -55,7 +55,7 @@ class ProfilesController < ApplicationController
     params.require(:user).permit(
       :name, :anonymous, :email_notifiable, :birth_year,
       :terms_of_service, :newsletter_accepted, :gdpr_stats_accepted, :onboarded,
-      preferred_places: []
+      municipality_ids: [], municipality_district_ids: []
     )
   end
 

@@ -77,7 +77,8 @@
         <div class="form-item-wrapper">
           <%= f.label :preferred_places, "Preferované mestá alebo obce" %>
 
-          <%= f.hidden_field :preferred_places, multiple: true, value: "" %>
+          <%= f.hidden_field :municipality_ids, multiple: true, value: "" %>
+          <%= f.hidden_field :municipality_district_ids, multiple: true, value: "" %>
 
           <div class="autocomplete-wrapper" style="position: relative;"
                data-controller="preferred-places"

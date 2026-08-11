@@ -10,8 +10,8 @@ class IssuesController < ApplicationController
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
     elsif session[:last_municipality].present?
       issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
-    elsif current_user.municipality
-      issues_path(obec: current_user.municipality.name)
+    elsif current_user.preferred_places.any?
+      issues_path(lokalita: current_user.preferred_places)
     else
       issues_path
     end
@@ -254,32 +254,63 @@ class IssuesController < ApplicationController
           end
         ),
 
-        SearchEngine::Controls::Autocomplete.new(
-          param_name: :obec,
-          label: "Obec",
-          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
-          filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = Municipality.active.where(name: params[:obec]).pluck(:id)
-            scope.where(municipality_id: ids)
-          end
-        ),
-
-        SearchEngine::Controls::Dropdown.new(
-          param_name: :cast,
-          label: "Mestská časť",
+        SearchEngine::Controls::TreeAutocomplete.new(
+          param_name: :lokalita,
+          label: "Obec / Mestská časť",
+          multiple: true,
           items: ->(params) do
-            return [] unless params[:obec].present?
+            selected = Array(params[:lokalita]).compact_blank
 
-            MunicipalityDistrict.joins(:municipality)
-              .where(municipalities: { name: params[:obec], active: true })
-              .order(Arel.sql("municipality_districts.name COLLATE unicode"))
-              .pluck(:name)
+            Municipality.active
+              .where(active_on_old_portal: false)
+              .includes(:active_districts)
+              .order(Arel.sql("name COLLATE unicode"))
+              .flat_map do |municipality|
+                municipality_selected = selected.include?(municipality.name)
+
+                [
+                  {
+                    label: municipality.name,
+                    value: municipality.name,
+                    level: 0,
+                    selected: municipality_selected
+                  },
+                  *municipality.active_districts.map do |district|
+                    value = "#{municipality.name} - #{district.name}"
+
+                    {
+                      label: district.name,
+                      value: value,
+                      level: 1,
+                      selected: municipality_selected || selected.include?(value)
+                    }
+                  end
+                ]
+              end
           end,
           filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
-            scope.where(municipality_district_id: ids)
+            locations = Array(params[:lokalita]).compact_blank
+            next scope if locations.empty?
+
+            municipalities, districts = locations.partition { _1.exclude?(" - ") }
+
+            municipality_ids = Municipality.active
+              .where(name: municipalities)
+              .pluck(:id)
+
+            district_ids = districts
+              .map { _1.split(" - ", 2) }
+              .reduce(MunicipalityDistrict.none) do |query, (municipality, district)|
+                query.or(
+                  MunicipalityDistrict
+                    .joins(:municipality)
+                    .where(municipalities: { name: municipality }, name: district)
+                )
+              end.pluck(:id)
+
+            scope
+              .where(municipality_id: municipality_ids)
+              .or(scope.where(municipality_district_id: district_ids))
           end
         ),
 

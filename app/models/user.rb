@@ -32,7 +32,6 @@
 #  phone_verification_code          :string
 #  phone_verification_code_attempts :integer          default(0), not null
 #  phone_verified                   :boolean          default(FALSE), not null
-#  preferred_places                 :string           default([]), is an Array
 #  resident                         :boolean
 #  sex                              :integer
 #  signature                        :string
@@ -53,7 +52,6 @@
 #  city_id                          :integer
 #  external_id                      :integer
 #  legacy_id                        :integer
-#  municipality_id                  :bigint
 #  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #
@@ -74,6 +72,8 @@ class User < ApplicationRecord
   has_many :watched_issues, through: :issue_subscriptions, source: :issue
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
   has_many :issues_updates, class_name: "Issues::Update", foreign_key: :author_id
+  has_and_belongs_to_many :municipalities
+  has_and_belongs_to_many :municipality_districts
   has_one_attached :avatar do |avatar|
     avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
     avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
@@ -104,6 +104,10 @@ class User < ApplicationRecord
 
   def name
     [ firstname, lastname ].compact.join(" ")
+  end
+
+  def preferred_places
+    municipalities.pluck(:name) + municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }
   end
 
   def name=(value)
