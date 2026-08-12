@@ -15,7 +15,8 @@ class ProfilesTest < ApplicationSystemTestCase
     choose "user_anonymous_true"
 
     # Select municipality
-    select "Nitra", from: "municipality_id"
+    find('input[data-preferred-places-target="input"]').click
+    find("label", exact_text: "Nitra").click
 
     # Set email notifications
     choose "user_email_notifiable_true"
