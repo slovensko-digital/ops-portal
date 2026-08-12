@@ -57,7 +57,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
 
     get relevant_issues_url
 
-    assert_redirected_to issues_url(obec: user.municipalities.first!.name)
+    assert_redirected_to issues_url(lokalita: user.municipalities.first!.name)
   end
 
   test "should redirect anonymous user to all issues" do
