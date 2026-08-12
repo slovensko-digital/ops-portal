@@ -14,12 +14,14 @@ module ProfilesHelper
       {
         id: m.id,
         label: m.name,
+        full_label: m.name,
         selected: user_m_ids.include?(m.id),
         is_district: false,
         districts: m.active_districts.map do |md|
           {
             id: md.id,
-            label: "#{m.name} - #{md.name}",
+            label: md.name,
+            full_label: "#{m.name} - #{md.name}",
             selected: user_md_ids.include?(md.id),
             is_district: true
           }

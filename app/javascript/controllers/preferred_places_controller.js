@@ -53,7 +53,7 @@ export default class extends Controller {
             return
         }
 
-        const names = checkedBoxes.map(cb => cb.dataset.label)
+        const names = checkedBoxes.map(cb => cb.dataset.fullLabel)
 
         if (names.length <= 2) {
             this.inputTarget.placeholder = names.join(", ")

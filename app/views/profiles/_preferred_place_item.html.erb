@@ -1,6 +1,5 @@
-<li class="check-box <%= 'district' if item[:is_district] %> <%= 'active' if item[:selected] %>"
+<li class="<%= class_names("check-box", district: item[:is_district], active: item[:selected]) %>"
     data-preferred-places-target="item">
-
   <label class="check-box-label <%= 'check-box-label--district' if item[:is_district] %>">
 
     <% if item[:is_district] %>
@@ -11,6 +10,7 @@
         data: {
           preferred_places_target: "checkbox",
           label: item[:label],
+          full_label: item[:full_label],
           action: "change->preferred-places#toggle"
         }
       }, item[:id], nil %>
@@ -22,6 +22,7 @@
         data: {
           preferred_places_target: "checkbox",
           label: item[:label],
+          full_label: item[:full_label],
           action: "change->preferred-places#toggle"
         }
       }, item[:id], nil %>
@@ -33,6 +34,6 @@
       </svg>
     </div>
 
-    <span class="<%= 'item-title--bold' unless item[:is_district] %>"><%= item[:label] %></span>
+    <span class="<%= class_names("item-title--bold": !item[:is_district]) %>"><%= item[:label] %></span>
   </label>
 </li>
