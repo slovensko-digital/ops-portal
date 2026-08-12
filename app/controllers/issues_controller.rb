@@ -20,19 +20,16 @@ class IssuesController < ApplicationController
   end
 
   def index
-    if params[:obec].present? || params[:cast].present?
-      if params[:cast].present? && params[:obec].present?
-        params[:lokalita] = [ "#{params[:obec]} - #{params[:cast]}" ]
-      elsif params[:obec].present?
-        params[:lokalita] = [ params[:obec] ]
-      end
-
-      params.delete(:obec)
-      params.delete(:cast)
+    lokalita = if params[:obec].present? && params[:cast].present?
+        [ "#{params[:obec]} - #{params[:cast]}" ]
+    elsif params[:obec].present?
+        [ params[:obec] ]
+    else
+        params[:lokalita]
     end
 
-    if params[:lokalita].present?
-      session[:last_lokalita] = params[:lokalita]
+    if lokalita.present?
+      session[:last_lokalita] = lokalita
     else
       session.delete(:last_lokalita)
     end
@@ -337,37 +334,26 @@ class IssuesController < ApplicationController
             locations = Array(params[:lokalita]).compact_blank
             next scope if locations.empty?
 
-            positives, negatives = locations.partition { _1.exclude?("-") }
+            positives, negatives = locations.partition { !_1.start_with?("-") }
             negatives = negatives.map { _1.delete_prefix("-") }
 
-            municipalities, districts = positives.partition { _1.exclude?(" - ") }
+            municipalities, districts = positives.partition { !_1.include?(" - ") }
 
             municipality_ids = Municipality.active
-              .where(name: municipalities).pluck(:id)
-
-            district_ids = districts
-              .then { |values| MunicipalityDistrict.where(name: values) }
-              .joins(:municipality)
-              .where(municipalities: { name: districts.map { _1.split(" - ", 2).first } })
+              .where(name: municipalities)
               .pluck(:id)
 
-            excluded_district_ids = negatives
-              .map { _1.split(" - ", 2) }
-              .then do |pairs|
-                MunicipalityDistrict
-                  .joins(:municipality)
-                  .where(
-                    name: pairs.map(&:last),
-                    municipalities: { name: pairs.map(&:first) }
-                  )
-                  .pluck(:id)
-              end
+            district_ids = districts.then { find_district_ids(_1) }
+            excluded_district_ids = negatives.then { find_district_ids(_1) }
 
             conditions = []
 
             if municipality_ids.any?
               condition = scope.where(municipality_id: municipality_ids)
-              condition = condition.where.not(municipality_district_id: excluded_district_ids) if excluded_district_ids.any?
+              condition = condition.where.not(
+                municipality_district_id: excluded_district_ids
+              ) if excluded_district_ids.any?
+
               conditions << condition
             end
 
@@ -516,5 +502,21 @@ class IssuesController < ApplicationController
       per_page: 12,
       default_permitted_params: [ "tab" ]
     )
+  end
+
+  def find_district_ids(locations)
+    locations
+      .map { _1.split(" - ", 2) }
+      .reduce(MunicipalityDistrict.none) do |query, (municipality, district)|
+        query.or(
+          MunicipalityDistrict
+            .joins(:municipality)
+            .where(
+              municipalities: { name: municipality },
+              name: district
+            )
+        )
+      end
+      .pluck(:id)
   end
 end
