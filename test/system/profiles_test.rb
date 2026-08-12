@@ -37,7 +37,7 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_equal "Updated Citizen Name", user.name
     assert_equal 1990, user.birth_year
     assert_equal true, user.anonymous
-    assert_equal Municipality.find_by(name: "Nitra").id, user.municipalities.first!.id
+    assert_equal Municipality.find_by(name: "Nitra").id, user.municipalities.second!.id
     assert_equal true, user.email_notifiable
     assert_equal true, user.newsletter_accepted
     assert_equal true, user.gdpr_stats_accepted
