@@ -7,7 +7,7 @@ class Issues::ModerateCommentJob < ApplicationJob
     evaluation = llm_evaluate_comment(comment)
 
     score = evaluation["overall_score"].to_f
-    threshold = ENV.fetch("COMMENT_AUTO_HIDE_THRESHOLD", 0.8).to_f
+    threshold = ENV.fetch("COMMENT_AUTO_HIDE_THRESHOLD", 0.9).to_f
 
     comment.ai_evaluation = evaluation
     comment.hidden = true if score >= threshold
