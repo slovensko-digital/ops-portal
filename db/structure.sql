@@ -826,7 +826,8 @@ CREATE TABLE public.issues_comments (
     legacy_comment_id integer,
     legacy_communication_id integer,
     uuid uuid,
-    last_edited_at timestamp(6) without time zone
+    last_edited_at timestamp(6) without time zone,
+    ai_evaluation jsonb DEFAULT '{}'::jsonb
 );
 
 
@@ -4429,6 +4430,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260813133737'),
 ('20260524143000'),
 ('20260524134500'),
 ('20260524113000'),

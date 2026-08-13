@@ -3,6 +3,7 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
+#  ai_evaluation                 :jsonb
 #  author_email                  :string
 #  author_name                   :string
 #  hidden                        :boolean          default(FALSE)
@@ -78,5 +79,9 @@ class Issues::Comment < ApplicationRecord
 
   def notify_subscribers
     Notifications::PublishNewIssueCommentJob.perform_later(self)
+  end
+
+  def moderate
+    Issues::ModerateCommentJob.perform_later(self)
   end
 end
