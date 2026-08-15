@@ -168,7 +168,7 @@ class IssuesController < ApplicationController
           label: "Stav podnetu",
           items: -> do
             Issues::State.order(:name).pluck(:name) -
-            [ "Archivovaný", "Čakajúci", "Zamietnutý", "Vyriešený (skrytý)", "Duplicitný" ] +
+            [ "Archivovaný", "Čakajúci", "Čaká na autora", "Zamietnutý", "Vyriešený (skrytý)", "Duplicitný" ] +
             [ "Archivovaný" ] # add as last option
           end,
           filter: ->(scope, params) do
