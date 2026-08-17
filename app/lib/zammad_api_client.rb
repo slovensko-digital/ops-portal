@@ -103,7 +103,7 @@ class ZammadApiClient
         origin: ticket.origin,
         process_type: ticket.process_type,
         title: ticket.title,
-        description: ticket.body,
+        description: ticket.description,
         likes_count: ticket.likes_count,
         portal_url: ticket.portal_url,
         issue_resolved: ticket.issue_resolved,
@@ -127,7 +127,7 @@ class ZammadApiClient
       process_type: process_type,
       issue_type: issue.issue_type,
       title: issue.title.presence || "Bez názvu",
-      body: issue.description,
+      description: issue.description,
       group: group,
       customer_id: issue.author.external_id,
       origin_by_id: issue.author.external_id,
@@ -188,7 +188,7 @@ class ZammadApiClient
       ops_issue_identifier: issue_update.id,
       process_type: "portal_issue_verification",
       title: "#{issue_update.resolves_issue? ? "Overenie" : "Aktualizácia"} podnetu #{issue_update.issue.title || 'Bez názvu'}",
-      body: issue_update.text.presence || "(bez popisu)",
+      description: issue_update.text.presence || "(bez popisu)",
       group: issue_ticket.group,
       customer_id: issue_update.author&.external_id,
       origin_by_id: issue_update.author&.external_id,
@@ -259,7 +259,7 @@ class ZammadApiClient
     ticket = @client.ticket.find(ticket_id)
 
     ticket.title = issue.title
-    ticket.body = issue.description
+    ticket.description = issue.description
     ticket.issue_type = issue.issue_type
     ticket.address_state = issue.address_region # TODO rename this?
     ticket.address_county = issue.address_district # TODO rename this?
@@ -676,7 +676,7 @@ class ZammadApiClient
       origin: ticket.origin,
       process_type: ticket.process_type,
       title: ticket.title,
-      description: ticket.body,
+      description: ticket.description,
       author: ticket.anonymous ? nil : User.find_by(external_id: ticket.customer_id || ticket.created_by_id),
       author_response: build_author_response(:user_portal_comment, ticket.customer_id || ticket.created_by_id),
       responsible_subject: responsible_subject,
