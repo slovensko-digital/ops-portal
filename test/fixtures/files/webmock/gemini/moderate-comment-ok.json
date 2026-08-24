@@ -1,0 +1,15 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\n  \"irrelevant\": 0.1,\n  \"vulgar\": 0.0,\n  \"insulting\": 0.0,\n  \"sarcastic\": 0.0,\n  \"political\": 0.0,\n  \"overall_score\": 0.1,\n  \"reason\": \"Slušná otázka na doplnenie detailov.\"\n}"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP"
+    }
+  ]
+}
