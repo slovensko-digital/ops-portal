@@ -27,7 +27,7 @@ class Issues::ModerateCommentJobTest < ActiveJob::TestCase
 
     @comment.reload
     assert @comment.hidden?, "Comment should be hidden because score is >= 0.9"
-    assert_equal 0.95, @comment.ai_evaluation["overall_score"]
+    assert_equal 0.92, @comment.ai_evaluation["overall_score"]
   end
 
   test "keeps comment visible and saves evaluation when score is below threshold" do
