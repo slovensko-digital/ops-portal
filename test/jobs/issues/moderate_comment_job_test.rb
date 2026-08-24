@@ -1,6 +1,9 @@
 require "test_helper"
+require "test_helpers/request_helper"
 
 class Issues::ModerateCommentJobTest < ActiveJob::TestCase
+  include RequestHelper
+
   setup do
     @comment = issues_comments(:two_comment2)
 
