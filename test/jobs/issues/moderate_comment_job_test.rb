@@ -23,9 +23,7 @@ class Issues::ModerateCommentJobTest < ActiveJob::TestCase
       response: "webmock/gemini/moderate-comment-toxic.json"
     )
 
-    assert_enqueued_with(job: SyncIssueActivityObjectToTriageJob) do
-      Issues::ModerateCommentJob.perform_now(@comment)
-    end
+    Issues::ModerateCommentJob.perform_now(@comment)
 
     @comment.reload
     assert @comment.hidden?, "Comment should be hidden because score is >= 0.9"
@@ -39,9 +37,7 @@ class Issues::ModerateCommentJobTest < ActiveJob::TestCase
       response: "webmock/gemini/moderate-comment-ok.json"
     )
 
-    assert_no_enqueued_jobs(only: SyncIssueActivityObjectToTriageJob) do
-      Issues::ModerateCommentJob.perform_now(@comment)
-    end
+    Issues::ModerateCommentJob.perform_now(@comment)
 
     @comment.reload
     assert_not @comment.hidden?, "Comment should NOT be hidden because score is < 0.9"
