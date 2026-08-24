@@ -2,7 +2,7 @@ require "test_helper"
 
 class Issues::ModerateCommentJobTest < ActiveJob::TestCase
   setup do
-    @comment = issues_comments(:one_comment1)
+    @comment = issues_comments(:two_comment2)
 
     @comment.update!(hidden: false, ai_evaluation: nil)
 

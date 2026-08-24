@@ -11,3 +11,9 @@ two_comment1:
   type: Issues::UserComment
   user_author: one
   activity: issue_two_activity_comment1
+
+two_comment2:
+  type: Issues::UserComment
+  user_author: one
+  text: test comment
+  activity: issue_two_activity_comment2
