@@ -1,4 +1,5 @@
 require "application_system_test_case"
+require "test_helpers/request_helper"
 
 class NonFullAccessUserTest < ApplicationSystemTestCase
   setup do
