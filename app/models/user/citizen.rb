@@ -52,7 +52,6 @@
 #  city_id                          :integer
 #  external_id                      :integer
 #  legacy_id                        :integer
-#  municipality_id                  :bigint
 #  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #
