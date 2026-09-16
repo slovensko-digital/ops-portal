@@ -1,9 +1,8 @@
 <%= link_to cms_page_path([ page.category.slug, page.slug ]), class: "news-block" do %>
-  <% if page.thumbnail_url.present? %>
-    <div class="news-block-image">
-      <%= image_tag page.thumbnail_url, alt: page.title %>
-    </div>
-  <% end %>
+  <% thumbnail = page.thumbnail_url.presence || image_path("og-image.png") %>
+  <div class="news-block-image" style="background-image: url('<%= thumbnail %>')">
+    <%= image_tag thumbnail, alt: page.title %>
+  </div>
   <h2 class="news-block-title"><%= page.title %></h2>
   <div class="date"><%= l page.created_at.to_date %></div>
 <% end %>

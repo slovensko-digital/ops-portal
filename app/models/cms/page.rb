@@ -18,6 +18,20 @@ class Cms::Page < ApplicationRecord
 
   validates :title, :slug, :text, presence: true
 
+  def self.thumbnail_from_cooked(html)
+    img = Nokogiri::HTML.fragment(html.to_s).css("img").find do |node|
+      (node["class"].to_s.split & %w[emoji avatar]).empty?
+    end
+    normalize_image_url(img["src"]) if img
+  end
+
+  def self.normalize_image_url(src)
+    return "https:#{src}" if src.start_with?("//")
+    return "#{ENV["DISCOURSE_URL"]}#{src}" if src.start_with?("/")
+
+    src
+  end
+
   def self.with_tags(tags)
     if tags.present?
       where("tags @> ARRAY[?]::varchar[]", tags)
