@@ -93,7 +93,7 @@ gem "rack-cors"
 gem "rodauth-rails", "~> 2.1"
 gem "rodauth-i18n"
 gem "rodauth-omniauth", "~> 0.6"
-gem "omniauth-facebook", "~> 10.0"
+gem "omniauth-facebook", "~> 11.0"
 gem "omniauth-google-oauth2", "~> 1.2"
 
 # Used by Rodauth. Enables Sequel to use Active Record's database connection
