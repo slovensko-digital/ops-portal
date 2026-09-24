@@ -101,7 +101,7 @@ gem "sequel-activerecord_connection", "~> 2.0"
 # Used by Rodauth for password hashing
 gem "bcrypt", "~> 3.1"
 # Used by Rodauth for rendering built-in view and email templates
-gem "tilt", "~> 2.4"
+gem "tilt", "~> 2.9"
 
 # deployment
 gem "kamal", "~> 2.6"
