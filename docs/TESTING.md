@@ -30,6 +30,12 @@ status and that the body matches the expected schema (keys and value types),
 not just that it is `200`. For a webhook we assert authentication failures and
 that the right job was enqueued with the right arguments.
 
+Endpoints that only redirect (the legacy URL redirects) are tested here too,
+with `assert_redirected_to` on the exact target and `assert_response
+:not_found` where the source record is missing. A system test would only
+prove that the browser followed the redirect to a page other tests already
+cover, and it cannot assert the status code.
+
 ### Models: unit tests (`test/models`)
 
 Test our own logic, not the framework. Skip plain `validates :x, presence:

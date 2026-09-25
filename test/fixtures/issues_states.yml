@@ -10,6 +10,7 @@ waiting:
 in_progress:
   name: V riešení
   key: in_progress
+  legacy_id: 2
   color: "#5598C4"
 
 resolved:
