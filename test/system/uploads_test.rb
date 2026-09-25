@@ -25,10 +25,15 @@ class UploadsTest < ApplicationSystemTestCase
     attach_file "new_files[]", file_fixture("graffiti-with-geo.jpg").to_s, visible: false
     assert_selector "figure.small-picture img"
 
+    # Blob.last is unreliable here: rendering the preview stores the processed variant as another blob
+    blob = ActiveStorage::Blob.find_signed!(find("input[name='blobs[]']", visible: false).value)
+    original_src = page.evaluate_script("document.querySelector('figure.small-picture img').getAttribute('src')")
+
     find("figure.small-picture .rotate-button").click
 
-    assert_selector "figure.small-picture img"
-    assert_equal 270, ActiveStorage::Blob.last.reload.rotation
+    # the rotated variant has a different URL, so its arrival proves the request finished
+    assert_no_selector "figure.small-picture img[src='#{original_src}']"
+    assert_equal 270, blob.reload.rotation
   end
 
   test "photo can be removed before submitting" do
