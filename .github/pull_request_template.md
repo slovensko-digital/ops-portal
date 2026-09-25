@@ -5,3 +5,7 @@
 ## Solution
 
 <!-- The approach taken in this PR and the key decisions behind it. Mention alternatives you rejected, anything intentionally left out, and how a reviewer can verify it. -->
+
+## Demo
+
+<!-- Screenshots, a demo video, or a link to one, showing the change in action. Write "Not applicable" for changes with nothing to show (e.g. refactors, CI, docs). -->

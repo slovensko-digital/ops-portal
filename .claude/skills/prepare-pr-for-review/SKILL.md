@@ -1,14 +1,15 @@
 ---
 name: prepare-pr-for-review
-description: Prepare a pull request for review on GitHub with a description structured as "The problem" and "Solution", filled in from the branch diff, commits and linked issue, using the repo's PR template. Use this whenever the user wants to open, create, submit, publish or "make" a PR, says the branch is ready for review, asks to push and open a PR, or wants an existing PR's title or description written, rewritten or updated. Trigger even if the user does not mention the description itself; the structured description is the point.
+description: Prepare a pull request for review on GitHub with a description structured as "The problem", "Solution" and "Demo", filled in from the branch diff, commits and linked issue, using the repo's PR template. Use this whenever the user wants to open, create, submit, publish or "make" a PR, says the branch is ready for review, asks to push and open a PR, or wants an existing PR's title or description written, rewritten or updated. Trigger even if the user does not mention the description itself; the structured description is the point.
 ---
 
 # Prepare PR for review
 
-Open (or update) a GitHub pull request whose description tells a reviewer two things
-clearly: what problem existed, and how this branch solves it. Reviewers in this repo
-read the description before the diff, so a body that is just an issue link or a
-screenshot forces them to reverse-engineer intent from code. The two sections fix that.
+Open (or update) a GitHub pull request whose description tells a reviewer three things
+clearly: what problem existed, how this branch solves it, and what it looks like in
+action. Reviewers in this repo read the description before the diff, so a body that is
+just an issue link or a bare screenshot forces them to reverse-engineer intent from
+code. The structured sections fix that.
 
 The body always follows `.github/pull_request_template.md`. Read it first: it is the
 source of truth for section names and hints, and it keeps PRs opened from the GitHub UI
@@ -77,8 +78,14 @@ deliberately out of scope, and any follow-up needed. Point at the one or two fil
 where the interesting logic lives. Finish with how to verify (test command, manual
 steps, or screenshot). Do not list every changed file; the diff already does that.
 
-Keep screenshots or images the user provided, placing them at the end of the
-Solution section.
+**Demo.** Show the change working: screenshots, a demo video, or a link to one.
+Use whatever the user provided in the conversation (image markdown, GitHub asset URLs,
+Loom or similar links) verbatim. If they provided nothing and the change has a visible
+effect, ask for a screenshot or recording before opening the PR; a reviewer who can see
+the result rarely needs to run the branch. For changes with nothing to show, such as
+refactors, CI, seeds or docs, write "Not applicable" and say why in a few words. Do not
+delete the heading; an empty or missing section reads as forgotten rather than
+intentional.
 
 ### 5. Create or update the PR
 
@@ -125,4 +132,9 @@ UI as it is.
 
 Verify: run the issues controller tests, or open one of
 your own issues, click *Resolve*, and check that it disappears from the operators' queue.
+
+## Demo
+
+Not applicable, the change is a single state transition with no UI change; the
+verification steps above cover it.
 ```
