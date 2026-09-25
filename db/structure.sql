@@ -827,7 +827,7 @@ CREATE TABLE public.issues_comments (
     legacy_communication_id integer,
     uuid uuid,
     last_edited_at timestamp(6) without time zone,
-    ai_evaluation jsonb DEFAULT '{}'::jsonb
+    ai_evaluation jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
