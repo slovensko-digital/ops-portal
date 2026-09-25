@@ -1,0 +1,27 @@
+<%= ops_title "Zmena zodpovedného subjektu" %>
+<p class="ops-email-paragraph">
+  Dobrý deň,
+  <% if @issue.author == @user %>
+    radi by sme Vás informovali, že pri Vašom podnete <%= ops_issue_link @issue %>
+  <% else %>
+    radi by sme Vás informovali, že pri podnete <%= ops_issue_link @issue %>, ktorý sledujete,
+  <% end %>
+  došlo k zmene zodpovedného subjektu.
+</p>
+<p class="ops-email-paragraph">
+  Podnet bol presunutý
+  <% if @previous_rs %>
+    z kompetencie <strong><%= @previous_rs.subject_name %></strong>
+  <% end %>
+  na <strong><%= @new_rs&.subject_name || "iný subjekt" %></strong>. Zvolený subjekt bol o podnete informovaný a v najbližšej dobe sa ním bude zaoberať.
+</p>
+<p class="ops-email-paragraph">
+  <%= ops_button "Zobraziť podnet", "#{issue_url(@issue)}#new_issue_activity" %>
+</p>
+<% if @issue.author == @user %>
+  <p class="ops-email-paragraph">
+    Ďakujeme za Vašu spoluprácu.
+  </p>
+<% end %>
+<%= render "signature" %>
+<%= render "unsubscribe" %>

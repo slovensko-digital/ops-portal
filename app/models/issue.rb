@@ -106,6 +106,10 @@ class Issue < ApplicationRecord
   scope :resolution_process, -> { where.not(resolution_external_id: nil) }
 
   before_save :recalculate_computed_fields
+
+  after_update :track_state_change
+  after_update :track_responsible_subject_change
+
   after_update :notify_subscribers
 
   def imported?
@@ -237,6 +241,38 @@ class Issue < ApplicationRecord
     save
   end
 
+  def track_state_change
+    return unless saved_change_to_state_id?
+
+    previous_state_id, new_state_id = saved_change_to_state_id
+    previous_state = Issues::State.find_by(id: previous_state_id)
+    new_state = Issues::State.find_by(id: new_state_id)
+
+    return unless new_state
+
+    activity = Issues::StateChangeActivity.create!(issue: self)
+    Issues::StateChange.create!(
+      activity: activity,
+      previous_state: previous_state,
+      new_state: new_state
+    )
+  end
+
+  def track_responsible_subject_change
+    return unless saved_change_to_responsible_subject_id?
+
+    previous_rs_id, new_rs_id = saved_change_to_responsible_subject_id
+    previous_rs = ResponsibleSubject.find_by(id: previous_rs_id)
+    new_rs = ResponsibleSubject.find_by(id: new_rs_id)
+
+    activity = Issues::SystemResponsibleSubjectChangeActivity.create!(issue: self)
+    Issues::SystemResponsibleSubjectChange.create!(
+      activity: activity,
+      previous_responsible_subject: previous_rs,
+      new_responsible_subject: new_rs
+    )
+  end
+
   def notify_subscribers
     if issue_type == "praise"
       return unless saved_change_to_state_id?
@@ -251,6 +287,8 @@ class Issue < ApplicationRecord
       Notifications::PublishIssueAcceptedJob.perform_later(self)
     elsif saved_change_to_state_id?
       Notifications::PublishIssueStateChangedJob.perform_later(self, state_id_change: saved_change_to_state_id)
+    elsif saved_change_to_responsible_subject_id?
+      Notifications::PublishIssueResponsibleSubjectChangedJob.perform_later(self, responsible_subject_id_change: saved_change_to_responsible_subject_id)
     end
   end
 end
