@@ -20,14 +20,6 @@ class IssuesController < ApplicationController
   end
 
   def index
-    if params[:obec].present?
-      session[:last_municipality] = params[:obec]
-      session[:last_municipality_district] = params[:cast]
-    else
-      session.delete(:last_municipality)
-      session.delete(:last_municipality_district)
-    end
-
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
     scope = Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject)
@@ -47,6 +39,8 @@ class IssuesController < ApplicationController
     when "map"
         @search_results = search_engine.search(scope, params)
     end
+
+    remember_last_municipality(@search_results.search_params)
   end
 
   def geo
@@ -115,6 +109,16 @@ class IssuesController < ApplicationController
   end
 
   private
+
+  def remember_last_municipality(search_params)
+    if search_params[:obec].present?
+      session[:last_municipality] = search_params[:obec]
+      session[:last_municipality_district] = search_params[:cast]
+    else
+      session.delete(:last_municipality)
+      session.delete(:last_municipality_district)
+    end
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_issue
