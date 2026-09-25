@@ -1,4 +1,5 @@
 require "test_helper"
+SimpleCov.command_name "test:system"
 require "test_helpers/auth_helper"
 require "capybara"
 
