@@ -15,7 +15,8 @@ class ProfilesTest < ApplicationSystemTestCase
     choose "user_anonymous_true"
 
     # Select municipality
-    select "Nitra", from: "municipality_id"
+    find('input[data-preferred-places-target="input"]').click
+    find("label", exact_text: "Nitra").click
 
     # Set email notifications
     choose "user_email_notifiable_true"
@@ -36,7 +37,7 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_equal "Updated Citizen Name", user.name
     assert_equal 1990, user.birth_year
     assert_equal true, user.anonymous
-    assert_equal Municipality.find_by(name: "Nitra").id, user.municipality_id
+    assert_equal Municipality.find_by(name: "Nitra").id, user.municipalities.second!.id
     assert_equal true, user.email_notifiable
     assert_equal true, user.newsletter_accepted
     assert_equal true, user.gdpr_stats_accepted

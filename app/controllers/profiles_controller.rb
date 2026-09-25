@@ -1,6 +1,8 @@
 class ProfilesController < ApplicationController
   before_action :require_user, except: [ :please_create ]
   before_action :set_user, except: [ :please_create, :please_verify ]
+
+  before_action :set_municipalities, only: [ :edit, :update ]
   before_action :set_cms_pages, only: :show, if: -> { current_user.responsible_subject }
 
   before_action :ensure_citizen, only: [ :edit, :update, :settings, :watched_issues ]
@@ -50,13 +52,24 @@ class ProfilesController < ApplicationController
   end
 
   def user_attributes
-    params.require(:user).permit(:name, :anonymous, :municipality_id, :email_notifiable, :birth_year, :terms_of_service, :newsletter_accepted, :gdpr_stats_accepted, :onboarded)
+    params.require(:user).permit(
+      :name, :anonymous, :email_notifiable, :birth_year,
+      :terms_of_service, :newsletter_accepted, :gdpr_stats_accepted, :onboarded,
+      municipality_ids: [], municipality_district_ids: []
+    )
   end
 
   def ensure_citizen
     if @user.responsible_subject
       redirect_to profile_path, alert: "Túto akciu nemôžete vykonať."
     end
+  end
+
+  def set_municipalities
+    @municipalities = Municipality.active
+                                  .where(active_on_old_portal: false)
+                                  .includes(:active_districts)
+                                  .order(Arel.sql("name COLLATE unicode"))
   end
 
   def set_cms_pages

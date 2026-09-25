@@ -1696,7 +1696,8 @@ ul.dropdown-list li:hover {
   background: variables.$line;
 }
 
-ul.dropdown-list li a {
+ul.dropdown-list li a,
+ul.dropdown-list li label {
   color: variables.$black;
   display: block;
   padding: 12px 14px;
@@ -1706,7 +1707,8 @@ ul.dropdown-list li.active {
   background: variables.$line;
 }
 
-ul.dropdown-list li.check-box a {
+ul.dropdown-list li.check-box a,
+ul.dropdown-list li.check-box label {
   align-items: center;
   display: grid;
   gap: 0 4px;
@@ -1723,11 +1725,27 @@ ul.dropdown-list li.check-box svg {
 ul.dropdown-list li.check-box:hover svg {
   display: block;
 }
+ul.dropdown-list li.district label {
+  padding-left: 40px;
+}
 ul.dropdown-list li.active .form-check-box {
   background: variables.$blue;
 }
 ul.dropdown-list li.active svg {
   display: block;
+}
+ul.dropdown-list {
+  li.nested-level-1 a {
+    padding-left: 40px;
+  }
+
+  li.nested-level-2 a {
+    padding-left: 60px;
+  }
+
+  span.item-title--bold {
+    font-weight: variables.$semibold;
+  }
 }
 .podnety-filter-con .dropdown-button {
   font-size: variables.em(16,16) !important;
