@@ -10,8 +10,22 @@ class IssueTest < ActiveSupport::TestCase
   end
 
   test "is valid with a municipality" do
-    issue = Issue.new(title: "Test issue title", description: "Test issue description that is long enough", category: issues_categories(:one), state: issues_states(:waiting), municipality: municipalities(:trencin))
+    issue = Issue.new(title: "Test issue title", description: "Test issue description that is long enough", category: issues_categories(:one), state: issues_states(:waiting), municipality: municipalities(:trencin), photos: [ active_storage_blobs(:issue_photo) ])
     assert issue.valid?
+  end
+
+  test "requires a photo unless imported or a praise" do
+    issue = issues(:one)
+    issue.photos = []
+    assert_not issue.valid?
+    assert_includes issue.errors[:photos], "sú povinné. Nahrajte aspoň jednu."
+
+    issue.imported_at = Time.current
+    assert issue.valid?
+
+    praise = issues(:praise_waiting)
+    assert_empty praise.photos
+    assert praise.valid?
   end
 
   # visibility and editability

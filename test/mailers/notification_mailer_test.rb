@@ -25,7 +25,7 @@ class NotificationMailerTest < ActionMailer::TestCase
   end
 
   test "subject names the type of the record" do
-    question = issues(:one).dup.tap { |i| i.issue_type = :question; i.triage_external_id = nil; i.resolution_external_id = nil; i.save! }
+    question = issues(:one).dup.tap { |i| i.issue_type = :question; i.triage_external_id = nil; i.resolution_external_id = nil; i.photos.attach(active_storage_blobs(:issue_photo)); i.save! }
     subscription = question.subscriptions.create!(subscriber: users(:two))
     assert_equal "Odkaz pre starostu | #{question.title} (Otázka ##{question.id})", NotificationMailer.with(subscription: subscription).issue_resolved.subject
 
