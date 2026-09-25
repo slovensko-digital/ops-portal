@@ -3,7 +3,7 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
-#  ai_evaluation                 :jsonb
+#  ai_evaluation                 :jsonb            not null
 #  author_email                  :string
 #  author_name                   :string
 #  hidden                        :boolean          default(FALSE)
