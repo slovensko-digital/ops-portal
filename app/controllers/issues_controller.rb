@@ -8,10 +8,10 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
-    elsif session[:last_municipality].present?
-      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
-    elsif current_user.municipality
-      issues_path(obec: current_user.municipality.name)
+    elsif session[:last_lokalita].present?
+      issues_path(lokalita: session[:last_lokalita])
+    elsif current_user.preferred_places.any?
+      issues_path(lokalita: current_user.preferred_places)
     else
       issues_path
     end
@@ -20,12 +20,18 @@ class IssuesController < ApplicationController
   end
 
   def index
-    if params[:obec].present?
-      session[:last_municipality] = params[:obec]
-      session[:last_municipality_district] = params[:cast]
+    lokalita = if params[:obec].present? && params[:cast].present?
+        [ "#{params[:obec]} - #{params[:cast]}" ]
+    elsif params[:obec].present?
+        [ params[:obec] ]
     else
-      session.delete(:last_municipality)
-      session.delete(:last_municipality_district)
+        params[:lokalita]
+    end
+
+    if lokalita.present?
+      session[:last_lokalita] = lokalita
+    else
+      session.delete(:last_lokalita)
     end
 
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
@@ -254,32 +260,106 @@ class IssuesController < ApplicationController
           end
         ),
 
-        SearchEngine::Controls::Autocomplete.new(
-          param_name: :obec,
-          label: "Obec",
-          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
-          filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = Municipality.active.where(name: params[:obec]).pluck(:id)
-            scope.where(municipality_id: ids)
-          end
-        ),
-
-        SearchEngine::Controls::Dropdown.new(
-          param_name: :cast,
-          label: "Mestská časť",
+        SearchEngine::Controls::TreeAutocomplete.new(
+          param_name: :lokalita,
+          label: "Obec / Mestská časť",
+          multiple: true,
+          filter_label: ->(value) do
+            if value.to_s.start_with?("-")
+              "Okrem: #{value.delete_prefix("-")}"
+            else
+              value.to_s.split(" - ", 2).last
+            end
+          end,
           items: ->(params) do
-            return [] unless params[:obec].present?
+            locations = Array(params[:lokalita]).compact_blank
+            positives = locations.reject { _1.start_with?("-") }
+            negatives = locations.select { _1.start_with?("-") }
 
-            MunicipalityDistrict.joins(:municipality)
-              .where(municipalities: { name: params[:obec], active: true })
-              .order(Arel.sql("municipality_districts.name COLLATE unicode"))
-              .pluck(:name)
+            Municipality.active
+              .where(active_on_old_portal: false)
+              .includes(:active_districts)
+              .order(Arel.sql("name COLLATE unicode"))
+              .flat_map do |municipality|
+                municipality_selected = positives.include?(municipality.name)
+
+                parent_values = locations.reject do |location|
+                  location == municipality.name ||
+                    location.start_with?("#{municipality.name} - ") ||
+                    location.start_with?("-#{municipality.name} - ")
+                end
+
+                parent = {
+                  label: municipality.name,
+                  value: municipality.name,
+                  level: 0,
+                  selected: municipality_selected,
+                  add_params: parent_values + [ municipality.name ],
+                  remove_params: parent_values
+                }
+
+                children = municipality.active_districts.map do |district|
+                  value = "#{municipality.name} - #{district.name}"
+                  negative_value = "-#{value}"
+
+                  selected =
+                    positives.include?(value) ||
+                    (municipality_selected && !negatives.include?(negative_value))
+
+                  if municipality_selected
+                    {
+                      label: district.name,
+                      value: value,
+                      level: 1,
+                      selected: selected,
+                      add_params: locations - [ negative_value ],
+                      remove_params: (locations + [ negative_value ]).uniq
+                    }
+                  else
+                    {
+                      label: district.name,
+                      value: value,
+                      level: 1,
+                      selected: selected,
+                      add_params: (locations + [ value ]).uniq,
+                      remove_params: locations - [ value ]
+                    }
+                  end
+              end
+
+              [ parent, *children ]
+            end
           end,
           filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
-            scope.where(municipality_district_id: ids)
+            locations = Array(params[:lokalita]).compact_blank
+            next scope if locations.empty?
+
+            positives, negatives = locations.partition { !_1.start_with?("-") }
+            negatives = negatives.map { _1.delete_prefix("-") }
+
+            municipalities, districts = positives.partition { !_1.include?(" - ") }
+
+            municipality_ids = Municipality.active
+              .where(name: municipalities)
+              .pluck(:id)
+
+            district_ids = districts.then { find_district_ids(_1) }
+            excluded_district_ids = negatives.then { find_district_ids(_1) }
+
+            conditions = []
+
+            if municipality_ids.any?
+              condition = scope.where(municipality_id: municipality_ids)
+              condition = condition.where.not(
+                municipality_district_id: excluded_district_ids
+              ) if excluded_district_ids.any?
+
+              conditions << condition
+            end
+
+            conditions << scope.where(municipality_district_id: district_ids) if district_ids.any?
+
+            conditions.reduce(:or) || scope.none
           end
         ),
 
@@ -422,5 +502,21 @@ class IssuesController < ApplicationController
       per_page: 12,
       default_permitted_params: [ "tab" ]
     )
+  end
+
+  def find_district_ids(locations)
+    locations
+      .map { _1.split(" - ", 2) }
+      .reduce(MunicipalityDistrict.none) do |query, (municipality, district)|
+        query.or(
+          MunicipalityDistrict
+            .joins(:municipality)
+            .where(
+              municipalities: { name: municipality },
+              name: district
+            )
+        )
+      end
+      .pluck(:id)
   end
 end

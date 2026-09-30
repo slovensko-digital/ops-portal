@@ -75,18 +75,41 @@
 
       <div class="form-items-con">
         <div class="form-item-wrapper">
-          <%= f.label :municipality_id, "Preferované mesto alebo obec" %>
+          <%= f.label :preferred_places, "Preferované mestá alebo obce" %>
 
-          <%= f.select :municipality_id,
-                       options_for_select(
-                         Municipality.where(active: true).order(:name).pluck(:name, :id),
-                         @user.municipality_id
-                       ),
-                       { include_blank: "" },
-                       { id: "municipality_id", class: 'dropdown-button', aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
-          <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
+          <%= f.hidden_field :municipality_ids, multiple: true, value: "" %>
+          <%= f.hidden_field :municipality_district_ids, multiple: true, value: "" %>
+
+          <div class="autocomplete-wrapper"
+               data-controller="preferred-places"
+               data-action="
+                focusin->toggle#show
+                input->autocomplete#filter
+                keydown.enter->autocomplete#enter">
+            <input
+              type="text"
+              class="form-input"
+              data-preferred-places-target="input"
+              data-action="focusin->preferred-places#open input->preferred-places#filter"
+              id="preferred_places"
+              autocomplete="off" />
+
+            <ul class="dropdown-list none"
+                data-preferred-places-target="list">
+              <% preferred_places_options(@user, @municipalities).each do |municipality| %>
+                <%= render 'profiles/preferred_place_item', f: f, item: municipality %>
+
+                <% municipality[:districts].each do |district| %>
+                  <%= render 'profiles/preferred_place_item', f: f, item: district %>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
         </div>
-        <div class="form-notice">Budete vidieť najmä podnety a oznamy z&nbsp;preferovaného mesta alebo obce.</div>
+
+        <div class="form-notice">
+          Vyhľadajte a zaškrtnite si mestá a mestské časti, z ktorých chcete vidieť najviac podnetov a dostávať novinky.
+        </div>
       </div>
 
       <div class="form-items-con">
