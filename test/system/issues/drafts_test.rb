@@ -1,8 +1,8 @@
 require "application_system_test_case"
-require "test_helpers/issues/drafts_helper"
+require "test_helpers/request_helper"
 
 class Issues::DraftsTest < ApplicationSystemTestCase
-  include Issues::DraftsHelper
+  include RequestHelper
 
   setup do
     @user = users(:one)
