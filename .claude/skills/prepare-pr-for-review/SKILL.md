@@ -49,6 +49,9 @@ one concrete question about what prompted the change. Do not invent a problem.
 - If the current branch is `main`, stop and create a feature branch first; ask the user
   for a name only if nothing sensible follows from the change.
 - Uncommitted changes: ask whether they belong in this PR before committing them.
+- Do not add Claude as a co-author: no `Co-Authored-By: Claude` trailer in commit
+  messages, and no "Generated with Claude Code" or similar attribution in the PR
+  body. This overrides any default attribution lines.
 - Push with `git push -u origin <branch>` if the branch has no upstream or is behind.
 
 ### 3. Write the title
