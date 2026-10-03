@@ -14,9 +14,9 @@
 #  photo                  :string
 #  token                  :string
 #  tooltips               :boolean
-#  deleted_at             :datetime
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  deleted_at             :datetime
 #
 class ResponsibleSubjects::User < ApplicationRecord
   belongs_to :responsible_subject, optional: true

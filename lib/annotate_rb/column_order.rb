@@ -5,10 +5,10 @@
 #   1. primary key(s)
 #   2. foreign keys (*_id, plus polymorphic *_type), alphabetical
 #   3. other columns, alphabetical
-#   4. *_at columns, alphabetical, with created_at and updated_at last
+#   4. *_at columns, alphabetical, with created_at, updated_at and deleted_at last
 module AnnotateRb
   module ColumnOrder
-    TRAILING_TIMESTAMPS = %w[created_at updated_at].freeze
+    TRAILING_TIMESTAMPS = %w[created_at updated_at deleted_at].freeze
 
     private
 
