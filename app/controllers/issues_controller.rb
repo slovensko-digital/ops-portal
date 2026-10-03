@@ -162,6 +162,27 @@ class IssuesController < ApplicationController
     @search_engine ||= SearchEngine.new(
       filters: [
         SearchEngine::Controls::Dropdown.new(
+          param_name: :zobrazit,
+          label: "Zobrazovať",
+          items: -> { logged_in? ? [ "Moje dopyty", "Sledované dopyty" ] : [] },
+          multiple: false,
+          default_label: "Všetko",
+          filter: ->(scope, params) do
+            return scope unless logged_in?
+            return scope unless params[:zobrazit].present?
+
+            case params[:zobrazit]
+            when "Moje dopyty"
+              scope.where(author_id: current_user.id)
+            when "Sledované dopyty"
+              scope.joins(:subscriptions).where(issue_subscriptions: { subscriber_id: current_user.id })
+            else
+              scope
+            end
+          end
+        ),
+
+        SearchEngine::Controls::Dropdown.new(
           param_name: :dopyt,
           label: "Typ dopytu",
           items: %w[Podnet Otázka Pochvala],
@@ -348,27 +369,6 @@ class IssuesController < ApplicationController
               )
             end
           end,
-        ),
-
-        SearchEngine::Controls::Dropdown.new(
-          param_name: :zobrazit,
-          label: "Zobrazovať",
-          items: -> { logged_in? ? [ "Moje dopyty", "Sledované dopyty" ] : [] },
-          multiple: false,
-          default_label: "Všetko",
-          filter: ->(scope, params) do
-            return scope unless logged_in?
-            return scope unless params[:zobrazit].present?
-
-            case params[:zobrazit]
-            when "Moje dopyty"
-              scope.where(author_id: current_user.id)
-            when "Sledované dopyty"
-              scope.joins(:subscriptions).where(issue_subscriptions: { subscriber_id: current_user.id })
-            else
-              scope
-            end
-          end
         )
       ],
 
