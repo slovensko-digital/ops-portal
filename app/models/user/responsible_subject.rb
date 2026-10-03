@@ -3,6 +3,12 @@
 # Table name: users
 #
 #  id                               :bigint           not null, primary key
+#  city_id                          :integer
+#  external_id                      :integer
+#  legacy_id                        :integer
+#  municipality_id                  :bigint
+#  responsible_subject_id           :bigint
+#  street_id                        :bigint
 #  about                            :string
 #  active                           :boolean
 #  admin_name                       :string
@@ -19,7 +25,6 @@
 #  firstname                        :string
 #  gdpr_accepted                    :boolean
 #  gdpr_stats_accepted              :boolean          default(FALSE)
-#  imported_at                      :datetime
 #  lastname                         :string
 #  login                            :string
 #  newsletter_accepted              :boolean          default(FALSE), not null
@@ -27,7 +32,6 @@
 #  organization                     :boolean
 #  password_hash                    :string
 #  phone                            :string
-#  phone_verification_attempted_at  :datetime
 #  phone_verification_attempts      :integer          default(0), not null
 #  phone_verification_code          :string
 #  phone_verification_code_attempts :integer          default(0), not null
@@ -41,20 +45,16 @@
 #  stats_issues_percentile          :decimal(5, 4)    default(0.0)
 #  stats_verified_issues_count      :integer          default(0)
 #  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
-#  status                           :integer          default("unverified"), not null
+#  status                           :integer          default(1), not null
 #  timestamp                        :datetime
 #  type                             :string
 #  uuid                             :uuid             not null
 #  verification                     :string
 #  verified                         :boolean          default(FALSE)
+#  imported_at                      :datetime
+#  phone_verification_attempted_at  :datetime
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
-#  city_id                          :integer
-#  external_id                      :integer
-#  legacy_id                        :integer
-#  municipality_id                  :bigint
-#  responsible_subject_id           :bigint
-#  street_id                        :bigint
 #
 class User::ResponsibleSubject < User
   validates :responsible_subject, presence: true

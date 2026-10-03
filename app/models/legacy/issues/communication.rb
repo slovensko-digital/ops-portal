@@ -3,10 +3,17 @@
 # Table name: legacy_issues_communications
 #
 #  id                                  :bigint           not null, primary key
+#  activity_id                         :bigint           not null
+#  admin_id                            :integer
+#  agent_author_id                     :bigint
+#  legacy_id                           :integer
+#  person_id                           :integer
+#  responsible_subjects_user_author_id :bigint
+#  triage_external_id                  :integer
+#  user_id                             :integer
 #  confirmation_needed                 :boolean
 #  email                               :string
 #  from_responsible_subject            :boolean
-#  imported_at                         :datetime
 #  internal                            :boolean
 #  ip                                  :inet
 #  message                             :string
@@ -20,16 +27,9 @@
 #  text                                :string
 #  type                                :string
 #  uuid                                :uuid
+#  imported_at                         :datetime
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  activity_id                         :bigint           not null
-#  admin_id                            :integer
-#  agent_author_id                     :bigint
-#  legacy_id                           :integer
-#  person_id                           :integer
-#  responsible_subjects_user_author_id :bigint
-#  triage_external_id                  :integer
-#  user_id                             :integer
 #
 class Legacy::Issues::Communication < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
