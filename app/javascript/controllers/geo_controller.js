@@ -4,31 +4,20 @@ import {LocateControl} from "leaflet.locatecontrol";
 
 // Connects to data-controller="geo"
 export default class extends Controller {
-    static targets = ["latitude", "longitude", "zoom", "map", "search", "localize", "support"]
+    static targets = ["latitude", "longitude", "zoom", "map", "search", "localize", "support", "hint", "submit"]
     static classes = ["supported"]
+    static values = {minZoom: Number}
 
     connect() {
         if (navigator.geolocation !== undefined) {
             this.supportTargets.forEach(target => target.classList.add(this.supportedClass));
         }
 
-        this.map = L.map(this.mapTarget, {dragging: !L.Browser.mobile})
+        this.map = L.map(this.mapTarget)
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(this.map);
-
-        const onTwoFingerDrag = (e) => {
-            if (e.type === 'touchstart' && e.touches.length === 1) {
-                e.currentTarget.classList.add('map--swiping')
-            } else {
-                e.currentTarget.classList.remove('map--swiping')
-            }
-        }
-
-        this.mapTarget.addEventListener("touchstart", onTwoFingerDrag);
-        this.mapTarget.addEventListener("touchend", onTwoFingerDrag);
-
 
         new LocateControl({strings: {title: 'Aktuálna poloha'}}).addTo(this.map);
 
@@ -41,6 +30,7 @@ export default class extends Controller {
 
         this.map.setView(place, zoom);
         this.map.addEventListener('moveend', this.setInputs.bind(this));
+        this.toggleSubmit();
     }
 
     setInputs() {
@@ -48,6 +38,17 @@ export default class extends Controller {
         this.latitudeTarget.value = pos.lat;
         this.longitudeTarget.value = pos.lng;
         this.zoomTarget.value = this.map.getZoom();
+        this.toggleSubmit();
+    }
+
+    // The location is only precise enough once the map is zoomed in, so the
+    // button stays disabled until then instead of failing validation.
+    toggleSubmit() {
+        const located = this.latitudeTarget.value !== '' && this.longitudeTarget.value !== '';
+        const precise = located && this.map.getZoom() >= this.minZoomValue;
+
+        this.submitTarget.disabled = !precise;
+        this.hintTarget.hidden = precise;
     }
 
     search(event) {

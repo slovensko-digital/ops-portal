@@ -7,7 +7,6 @@ export default class extends Controller {
 
     connect() {
         const map = L.map(this.mapTarget, {
-            dragging: !L.Browser.mobile,
             maxZoom: 19
         });
 

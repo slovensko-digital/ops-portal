@@ -36,6 +36,8 @@
 #  updated_at              :datetime         not null
 #
 class Issues::Draft < ApplicationRecord
+  GEO_MIN_ZOOM = 15
+
   has_many_attached :photos do |photo|
     photo.variant :llm, resize_to_limit: [ 800, 600 ], preprocessed: true
     photo.variant :thumb, resize_to_limit: [ 320, 240 ], preprocessed: true
@@ -56,7 +58,7 @@ class Issues::Draft < ApplicationRecord
   validates_length_of :description, minimum: 25, maximum: 1800, allow_blank: true, on: :details_step
 
   validate :latlon_present, on: :geo_step
-  validates_numericality_of :zoom, greater_than: 14, allow_nil: true, on: :geo_step
+  validates_numericality_of :zoom, greater_than_or_equal_to: GEO_MIN_ZOOM, allow_nil: true, on: :geo_step
   validate :photos_allowed_content_type, on: :photos_step
 
   validate :no_duplicates_nearby, on: :checks_step, unless: :duplicates_shown?

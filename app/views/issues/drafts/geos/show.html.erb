@@ -1,4 +1,4 @@
-<section class="report" data-controller="geo" data-geo-supported-class="geo--supported">
+<section class="report report-geo" data-controller="geo" data-geo-supported-class="geo--supported" data-geo-min-zoom-value="<%= Issues::Draft::GEO_MIN_ZOOM %>">
   <%= link_to edit_issues_draft_path(@draft), class: "button-back" do %>
     <span>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 20">
@@ -42,6 +42,7 @@
       <div class="issues-draft-map" data-geo-target="map">
         <div class="issues-draft-map-pointer">&#8982;</div>
       </div>
+      <div class="issues-draft-map-hint" data-geo-target="hint" hidden>Priblížte mapu a nastavte presnú polohu podnetu.</div>
     </div>
   </div>
 
@@ -50,9 +51,9 @@
     <%= form.hidden_field :longitude, data: { "geo-target": :longitude } %>
     <%= form.hidden_field :zoom, data: { "geo-target": :zoom } %>
     <% if params[:next] == 'summary' %>
-      <%= form.submit "Uložiť", class: "button" %>
+      <%= form.submit "Uložiť", class: "button", data: { "geo-target": :submit } %>
     <% else %>
-      <%= form.submit "Pokračovať", class: "button" %>
+      <%= form.submit "Pokračovať", class: "button", data: { "geo-target": :submit } %>
     <% end %>
   <% end %>
 </section>

@@ -63,6 +63,73 @@ strong, b {
     position: relative;
 }
 
+.issues-draft-map-hint {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 6px;
+    color: #fff;
+    left: 54px;
+    padding: 8px 12px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    text-align: center;
+    top: 10px;
+    z-index: 1000;
+}
+
+.issues-draft-map-hint[hidden] {
+    display: none;
+}
+
+section.report.report-geo .button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+// On phones and tablets the location step fills the screen below the header
+// and does not scroll, so dragging the map never fights with page scrolling.
+@media only screen and (max-width: 63.99em) {
+    body:has(section.report-geo) > footer {
+        display: none;
+    }
+
+    section.report.report-geo {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 60px);
+        padding-bottom: 16px;
+        padding-top: 16px;
+    }
+
+    section.report.report-geo .button-back,
+    section.report.report-geo h1,
+    section.report.report-geo .report-suggestion-description,
+    section.report.report-geo .error-summary {
+        margin-bottom: 12px;
+    }
+
+    section.report.report-geo .report-map-con {
+        flex: 1;
+        gap: 12px 0;
+    }
+
+    section.report.report-geo .report-map {
+        flex: 1;
+        min-height: 200px;
+    }
+
+    section.report.report-geo .issues-draft-map {
+        height: auto;
+        inset: 0;
+        position: absolute;
+    }
+
+    section.report.report-geo .button {
+        margin-top: 12px;
+    }
+}
+
 .issues-draft-map-pointer {
     position: absolute;
     top: 50%;
@@ -449,24 +516,4 @@ turbo-frame[autoscroll] > :first-child {
   turbo-frame[autoscroll] > :first-child {
     scroll-margin-top: 155px;
   }
-}
-
-.map--swiping::after {
-  content: 'Na výber presnej polohy použite dva prsty.';
-  text-align: center;
-  color: #fff;
-  font-size: 24px;
-  font-weight: 300;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 9999;
-  pointer-events: none;
 }
