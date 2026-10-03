@@ -71,7 +71,7 @@
                         controller: "geolocate",
                         action: "geolocate#redirect:prevent",
                         geolocate_supported_class: "geolocate-supported",
-                        geolocate_url_value: search_issues_path(pin: nil),
+                        geolocate_url_value: search_issues_path(without_location_params),
                         geolocate_active_value: params[:pin].present?
                       } do %>
           <span>Moja poloha</span>
