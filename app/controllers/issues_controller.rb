@@ -9,17 +9,17 @@ class IssuesController < ApplicationController
   before_action :check_edit_permissions, only: %i[ edit update ]
 
   def relevant
-    path = if current_user.responsible_subject
-      issues_path(zodpovedny: current_user.responsible_subject.subject_name)
+    filters = if current_user.responsible_subject
+      { zodpovedny: current_user.responsible_subject.subject_name }
     elsif session[:last_municipality].present?
-      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
+      { obec: session[:last_municipality], cast: session[:last_municipality_district].presence }
     elsif current_user.municipality
-      issues_path(obec: current_user.municipality.name)
+      { obec: current_user.municipality.name }
     else
-      issues_path
+      {}
     end
 
-    redirect_to path
+    redirect_to issues_path(**filters, zobrazit: params[:zobrazit].presence)
   end
 
   def index
@@ -161,6 +161,25 @@ class IssuesController < ApplicationController
   def search_engine
     @search_engine ||= SearchEngine.new(
       filters: [
+        SearchEngine::Controls::Dropdown.new(
+          param_name: :zobrazit,
+          label: "Zobrazovať",
+          items: -> { logged_in? ? [ "Moje dopyty", "Sledované dopyty" ] : [] },
+          default_label: "Všetko",
+          filter: ->(scope, params) do
+            return scope unless logged_in?
+
+            conditions = {
+              "Moje dopyty" => -> { scope.where(author_id: current_user.id) },
+              "Sledované dopyty" => -> { scope.where(id: current_user.issue_subscriptions.select(:issue_id)) }
+            }.values_at(*Array(params[:zobrazit])).compact.map(&:call)
+
+            return scope if conditions.empty?
+
+            conditions.reduce(:or)
+          end
+        ),
+
         SearchEngine::Controls::Dropdown.new(
           param_name: :dopyt,
           label: "Typ dopytu",
@@ -348,27 +367,6 @@ class IssuesController < ApplicationController
               )
             end
           end,
-        ),
-
-        SearchEngine::Controls::Dropdown.new(
-          param_name: :zobrazit,
-          label: "Zobrazovať",
-          items: -> { logged_in? ? [ "Moje dopyty", "Sledované dopyty" ] : [] },
-          multiple: false,
-          default_label: "Všetko",
-          filter: ->(scope, params) do
-            return scope unless logged_in?
-            return scope unless params[:zobrazit].present?
-
-            case params[:zobrazit]
-            when "Moje dopyty"
-              scope.where(author_id: current_user.id)
-            when "Sledované dopyty"
-              scope.joins(:subscriptions).where(issue_subscriptions: { subscriber_id: current_user.id })
-            else
-              scope
-            end
-          end
         )
       ],
 

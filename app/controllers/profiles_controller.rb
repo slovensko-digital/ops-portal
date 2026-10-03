@@ -3,7 +3,7 @@ class ProfilesController < ApplicationController
   before_action :set_user, except: [ :please_create, :please_verify ]
   before_action :set_cms_pages, only: :show, if: -> { current_user.responsible_subject }
 
-  before_action :ensure_citizen, only: [ :edit, :update, :settings, :watched_issues ]
+  before_action :ensure_citizen, only: [ :edit, :update, :settings ]
 
   def please_create
   end
@@ -17,12 +17,6 @@ class ProfilesController < ApplicationController
   def show
     @tab = :my
     @issues = current_user.issues.newest.page(params[:page]).per(8)
-  end
-
-  def watched_issues
-    @tab = :watched
-    @issues = current_user.watched_issues.currently_viewable_by(current_user).newest.page(params[:page]).per(8)
-    render :show
   end
 
   def settings

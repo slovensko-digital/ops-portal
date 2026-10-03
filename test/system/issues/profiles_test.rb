@@ -4,6 +4,7 @@ require "test_helpers/issues/drafts_helper"
 class ProfilesTest < ApplicationSystemTestCase
   test "citizen user sees citizen profile" do
     @user = users(:one)
+    issues(:legacy1).update_columns(municipality_id: @user.municipality_id)
     login_as(@user)
 
     click_on "Jozef Mokry"
