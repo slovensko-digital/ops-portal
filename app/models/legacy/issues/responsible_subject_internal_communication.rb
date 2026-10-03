@@ -4,6 +4,7 @@
 # Table name: legacy_issues_communications
 #
 #  id                                  :bigint           not null, primary key
+#  type                                :string
 #  activity_id                         :bigint           not null
 #  admin_id                            :integer
 #  agent_author_id                     :bigint
@@ -26,7 +27,6 @@
 #  solved_in                           :string
 #  subject                             :string
 #  text                                :string
-#  type                                :string
 #  uuid                                :uuid
 #  imported_at                         :datetime
 #  created_at                          :datetime         not null

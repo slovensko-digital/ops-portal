@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id                               :bigint           not null, primary key
+#  type                             :string
 #  city_id                          :integer
 #  external_id                      :integer
 #  legacy_id                        :integer
@@ -47,7 +48,6 @@
 #  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
 #  status                           :integer          default(1), not null
 #  timestamp                        :datetime
-#  type                             :string
 #  uuid                             :uuid             not null
 #  verification                     :string
 #  verified                         :boolean          default(FALSE)

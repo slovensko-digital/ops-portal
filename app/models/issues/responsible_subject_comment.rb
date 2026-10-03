@@ -3,6 +3,7 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
+#  type                          :string
 #  activity_id                   :bigint           not null
 #  agent_author_id               :bigint
 #  legacy_comment_id             :integer
@@ -16,7 +17,6 @@
 #  ip                            :inet
 #  legacy_data                   :jsonb
 #  text                          :string
-#  type                          :string
 #  uuid                          :uuid
 #  verification                  :integer
 #  imported_at                   :datetime
