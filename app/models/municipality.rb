@@ -3,6 +3,8 @@
 # Table name: municipalities
 #
 #  id                         :bigint           not null, primary key
+#  district_id                :bigint
+#  legacy_id                  :integer
 #  active                     :boolean
 #  active_on_old_portal       :boolean          default(FALSE), not null
 #  aliases                    :string           default([]), not null, is an Array
@@ -21,8 +23,6 @@
 #  sub                        :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  district_id                :bigint
-#  legacy_id                  :integer
 #
 class Municipality < ApplicationRecord
   belongs_to :district, optional: true

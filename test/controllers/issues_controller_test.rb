@@ -48,6 +48,12 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url(obec: "Nitra", cast: nil)
   end
 
+  test "should ignore filter params of unexpected shape" do
+    get "/dopyty?kategoria[foo]=bar&obec[foo]=bar&podkategoria[0][x]=y&q[a]=b"
+    assert_response :success
+    assert_nil session[:last_municipality]
+  end
+
   test "should not show resolved_private issues" do
     get issue_url(issues(:resolved_private))
     assert_response :not_found
@@ -88,5 +94,12 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, feature.dig("properties", "count")
     assert feature.dig("properties").key?("min_latitude")
     assert_nil feature.dig("properties", "title")
+  end
+
+  test "filter button shows the number of active filters" do
+    get issues_url(obec: [ "Bratislava", "Nitra" ], obdobie: "Tento rok")
+
+    assert_select "button.button-filter[aria-label=?]", "Filter, aktívne filtre: 3"
+    assert_select "button.button-filter .filter-count", text: "3"
   end
 end

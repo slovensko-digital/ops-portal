@@ -2046,6 +2046,27 @@ section.podnety nav.suggestions .button-location {
 .hidden-list {
   display: none;
 }
+
+// Number of active filters on the mobile "Filter" button
+button.button-filter {
+  position: relative;
+}
+
+button.button-filter .filter-count {
+  position: absolute;
+  top: -7px;
+  right: -5px;
+  min-width: 22px;
+  height: 22px;
+  line-height: 22px;
+  padding: 0;
+  border-radius: 100%;
+  background: variables.$red;
+  color: variables.$white;
+  font-size: variables.em(13,16);
+  font-weight: variables.$normal;
+  pointer-events: none;
+}
 /*
 button.button-filter {
 	align-items: center;
