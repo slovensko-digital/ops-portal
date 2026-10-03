@@ -165,20 +165,18 @@ class IssuesController < ApplicationController
           param_name: :zobrazit,
           label: "Zobrazovať",
           items: -> { logged_in? ? [ "Moje dopyty", "Sledované dopyty" ] : [] },
-          multiple: false,
           default_label: "Všetko",
           filter: ->(scope, params) do
             return scope unless logged_in?
-            return scope unless params[:zobrazit].present?
 
-            case params[:zobrazit]
-            when "Moje dopyty"
-              scope.where(author_id: current_user.id)
-            when "Sledované dopyty"
-              scope.joins(:subscriptions).where(issue_subscriptions: { subscriber_id: current_user.id })
-            else
-              scope
-            end
+            conditions = {
+              "Moje dopyty" => -> { scope.where(author_id: current_user.id) },
+              "Sledované dopyty" => -> { scope.where(id: current_user.issue_subscriptions.select(:issue_id)) }
+            }.values_at(*Array(params[:zobrazit])).compact.map(&:call)
+
+            return scope if conditions.empty?
+
+            conditions.reduce(:or)
           end
         ),
 
