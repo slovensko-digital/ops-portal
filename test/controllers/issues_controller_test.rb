@@ -41,13 +41,13 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url
   end
 
-  test "relevant issues keep the zobrazit filter" do
+  test "relevant issues with zobrazit filter skip location filters" do
     user = users(:one)
 
     post "/login", params: { email: user.email, password: "password" }
-    get relevant_issues_url(zobrazit: "Sledované dopyty")
+    get relevant_issues_url(obec: user.municipality.name, zobrazit: "Sledované dopyty")
 
-    assert_redirected_to issues_url(obec: user.municipality.name, zobrazit: "Sledované dopyty")
+    assert_redirected_to issues_url(zobrazit: "Sledované dopyty")
   end
 
   test "last visited municipality is remembered for relevant issues" do

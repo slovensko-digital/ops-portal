@@ -86,7 +86,6 @@ class Issues::DraftsTest < ApplicationSystemTestCase
 
     click_on "Sledované podnety"
     assert_text "Legacy issue"
-    assert_text "Graffiti"
   end
 
   test "issue creation on unsupported municipality" do

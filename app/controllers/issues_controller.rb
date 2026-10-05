@@ -9,17 +9,21 @@ class IssuesController < ApplicationController
   before_action :check_edit_permissions, only: %i[ edit update ]
 
   def relevant
-    filters = if current_user.responsible_subject
-      { zodpovedny: current_user.responsible_subject.subject_name }
-    elsif session[:last_municipality].present?
-      { obec: session[:last_municipality], cast: session[:last_municipality_district].presence }
-    elsif current_user.municipality
-      { obec: current_user.municipality.name }
-    else
-      {}
+    if params[:zobrazit].present?
+      redirect_to issues_path(zobrazit: params[:zobrazit]) and return
     end
 
-    redirect_to issues_path(**filters, zobrazit: params[:zobrazit].presence)
+    path = if current_user.responsible_subject
+      issues_path(zodpovedny: current_user.responsible_subject.subject_name)
+    elsif session[:last_municipality].present?
+      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
+    elsif current_user.municipality
+      issues_path(obec: current_user.municipality.name)
+    else
+      issues_path
+    end
+
+    redirect_to path
   end
 
   def index

@@ -72,7 +72,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
     user.subscribe_to(issues(:legacy1))
     login_as user
 
-    visit issues_path(zobrazit: ["Moje dopyty", "Sledované dopyty"])
+    visit issues_path(zobrazit: [ "Moje dopyty", "Sledované dopyty" ])
     assert_text @bratislava.title
     assert_text issues(:legacy1).title
     assert_no_text @nitra.title
