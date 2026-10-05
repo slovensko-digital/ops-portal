@@ -54,6 +54,6 @@
 :model_dir:
   - app/models
 :require:
-  - ./lib/annotate_rb/column_order
+  - ./lib/tasks/annotate_rb/column_order
 :root_dir:
   - ''
