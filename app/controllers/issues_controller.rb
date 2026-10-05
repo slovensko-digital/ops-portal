@@ -9,10 +9,6 @@ class IssuesController < ApplicationController
   before_action :check_edit_permissions, only: %i[ edit update ]
 
   def relevant
-    if params[:zobrazit].present?
-      redirect_to issues_path(zobrazit: params[:zobrazit]) and return
-    end
-
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
     elsif session[:last_municipality].present?
