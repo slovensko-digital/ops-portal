@@ -3,6 +3,11 @@
 # Table name: legacy_agents
 #
 #  id               :bigint           not null, primary key
+#  city_id          :integer
+#  external_id      :integer
+#  legacy_id        :integer
+#  municipality_id  :bigint
+#  street_id        :bigint
 #  about            :string
 #  active           :boolean
 #  admin_name       :string
@@ -32,11 +37,6 @@
 #  verified         :boolean          default(FALSE)
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  city_id          :integer
-#  external_id      :integer
-#  legacy_id        :integer
-#  municipality_id  :bigint
-#  street_id        :bigint
 #
 class Legacy::Agent < ApplicationRecord
   belongs_to :municipality, optional: true

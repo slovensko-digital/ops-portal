@@ -3,7 +3,13 @@
 # Table name: responsible_subjects
 #
 #  id                           :bigint           not null, primary key
-#  active                       :boolean
+#  district_id                  :bigint
+#  external_id                  :string
+#  legacy_id                    :integer
+#  municipality_district_id     :bigint
+#  municipality_id              :bigint
+#  responsible_subjects_type_id :bigint           not null
+#  active                       :boolean          default(TRUE), not null
 #  code                         :string
 #  email                        :string
 #  name                         :string
@@ -12,12 +18,6 @@
 #  subject_name                 :string
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
-#  district_id                  :bigint
-#  external_id                  :string
-#  legacy_id                    :integer
-#  municipality_district_id     :bigint
-#  municipality_id              :bigint
-#  responsible_subjects_type_id :bigint           not null
 #
 class ResponsibleSubject < ApplicationRecord
   has_many :categories, class_name: "ResponsibleSubjects::Category"

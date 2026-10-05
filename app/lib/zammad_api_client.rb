@@ -261,10 +261,17 @@ class ZammadApiClient
 
   def sync_previous_responsible_subject!(ticket_id, previous_responsible_subject)
     ticket = @client.ticket.find(ticket_id)
-    unless previous_responsible_subject[:label] == ticket.responsible_subject[:label] && previous_responsible_subject[:value].to_s == ticket.responsible_subject[:value].to_s
-      ticket.previous_responsible_subject = previous_responsible_subject
-      ticket.save
-    end
+
+    value = {
+      label: previous_responsible_subject.subject_name,
+      value: previous_responsible_subject.id
+    }
+
+    return if value[:label] == ticket.responsible_subject[:label] &&
+              value[:value].to_s == ticket.responsible_subject[:value].to_s
+
+    ticket.previous_responsible_subject = value
+    ticket.save
   end
 
   def close_ticket!(ticket_id)
@@ -292,7 +299,7 @@ class ZammadApiClient
     ticket.subcategory = issue.subcategory&.name
     ticket.subtype = issue.subtype&.name
     ticket.likes_count = issue.likes_count
-    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } }
+    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } } || {}
 
     ticket.save
 

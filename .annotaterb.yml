@@ -53,6 +53,7 @@
 :additional_file_patterns: []
 :model_dir:
   - app/models
-:require: []
+:require:
+  - ./lib/tasks/annotate_rb/column_order
 :root_dir:
   - ''

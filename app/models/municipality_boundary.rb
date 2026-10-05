@@ -3,12 +3,12 @@
 # Table name: municipality_boundaries
 #
 #  id                       :bigint           not null, primary key
+#  municipality_district_id :bigint
+#  municipality_id          :bigint
 #  boundary                 :geometry(Geometr not null
 #  boundary_kind            :string           default("municipality"), not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  municipality_district_id :bigint
-#  municipality_id          :bigint
 #
 class MunicipalityBoundary < ApplicationRecord
   belongs_to :municipality, optional: true

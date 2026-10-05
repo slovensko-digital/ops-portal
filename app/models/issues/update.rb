@@ -3,26 +3,26 @@
 # Table name: issues_updates
 #
 #  id                  :bigint           not null, primary key
-#  confirmed           :boolean          default(FALSE)
-#  email               :string
-#  hidden              :boolean          default(FALSE)
-#  imported_at         :datetime
-#  ip                  :inet
-#  last_edited_at      :datetime
-#  name                :string
-#  published           :boolean
-#  resolves_issue      :boolean          default(FALSE), not null
-#  text                :string
-#  uuid                :uuid
-#  verification_status :integer          default("pending"), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
 #  activity_id         :bigint           not null
 #  author_id           :bigint
 #  confirmed_by_id     :bigint
 #  external_id         :string
 #  legacy_id           :integer
 #  triage_external_id  :integer
+#  confirmed           :boolean          default(FALSE)
+#  email               :string
+#  hidden              :boolean          default(FALSE)
+#  ip                  :inet
+#  name                :string
+#  published           :boolean
+#  resolves_issue      :boolean          default(FALSE), not null
+#  text                :string
+#  uuid                :uuid
+#  verification_status :integer          default(0), not null
+#  imported_at         :datetime
+#  last_edited_at      :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 class Issues::Update < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
