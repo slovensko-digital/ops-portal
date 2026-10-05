@@ -190,6 +190,13 @@ class ZammadApiClient
       issue_update.author.update!(external_id: create_customer!(issue_update.author))
     end
 
+    ops_state = "waiting"
+    state = "new"
+    if issue_update.resolves_issue? && issue_update.author == issue.author
+      ops_state = "accepted"
+      state = "closed"
+    end
+
     ticket = @client.ticket.create(
       number: issue_update.ticket_number,
       ops_issue_identifier: issue_update.id,
@@ -200,7 +207,8 @@ class ZammadApiClient
       owner: issue_ticket.owner,
       customer_id: issue_update.author&.external_id,
       origin_by_id: issue_update.author&.external_id,
-      ops_state: "waiting",
+      ops_state: ops_state,
+      state: state,
       portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
       issue_resolved: issue_update.resolves_issue? ? "yes" : "no",
       likes_count: issue_update.activity.likes_count,
@@ -243,6 +251,8 @@ class ZammadApiClient
         ticket.responsible_subject = value
       when "investment"
         ticket.investment = value
+      when "state"
+        ticket.state = value
       end
     end
 
