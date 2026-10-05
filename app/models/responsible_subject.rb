@@ -9,7 +9,7 @@
 #  municipality_district_id     :bigint
 #  municipality_id              :bigint
 #  responsible_subjects_type_id :bigint           not null
-#  active                       :boolean
+#  active                       :boolean          default(TRUE), not null
 #  code                         :string
 #  email                        :string
 #  name                         :string
