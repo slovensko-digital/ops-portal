@@ -3,6 +3,13 @@
 # Table name: users
 #
 #  id                               :bigint           not null, primary key
+#  type                             :string
+#  city_id                          :integer
+#  external_id                      :integer
+#  legacy_id                        :integer
+#  municipality_id                  :bigint
+#  responsible_subject_id           :bigint
+#  street_id                        :bigint
 #  about                            :string
 #  active                           :boolean
 #  admin_name                       :string
@@ -19,7 +26,6 @@
 #  firstname                        :string
 #  gdpr_accepted                    :boolean
 #  gdpr_stats_accepted              :boolean          default(FALSE)
-#  imported_at                      :datetime
 #  lastname                         :string
 #  login                            :string
 #  newsletter_accepted              :boolean          default(FALSE), not null
@@ -27,7 +33,6 @@
 #  organization                     :boolean
 #  password_hash                    :string
 #  phone                            :string
-#  phone_verification_attempted_at  :datetime
 #  phone_verification_attempts      :integer          default(0), not null
 #  phone_verification_code          :string
 #  phone_verification_code_attempts :integer          default(0), not null
@@ -41,19 +46,15 @@
 #  stats_issues_percentile          :decimal(5, 4)    default(0.0)
 #  stats_verified_issues_count      :integer          default(0)
 #  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
-#  status                           :integer          default("unverified"), not null
+#  status                           :integer          default(1), not null
 #  timestamp                        :datetime
-#  type                             :string
 #  uuid                             :uuid             not null
 #  verification                     :string
 #  verified                         :boolean          default(FALSE)
+#  imported_at                      :datetime
+#  phone_verification_attempted_at  :datetime
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
-#  city_id                          :integer
-#  external_id                      :integer
-#  legacy_id                        :integer
-#  responsible_subject_id           :bigint
-#  street_id                        :bigint
 #
 class User < ApplicationRecord
   include Rodauth::Rails.model
@@ -63,6 +64,7 @@ class User < ApplicationRecord
   attr_accessor :phone_verification_number
 
   belongs_to :responsible_subject, class_name: "::ResponsibleSubject", optional: true
+  belongs_to :municipality, optional: true
   belongs_to :street, optional: true
   has_many :issues, foreign_key: :author_id
   has_many :issues_drafts, class_name: "Issues::Draft", foreign_key: :author_id
@@ -71,8 +73,6 @@ class User < ApplicationRecord
   has_many :watched_issues, through: :issue_subscriptions, source: :issue
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
   has_many :issues_updates, class_name: "Issues::Update", foreign_key: :author_id
-  has_and_belongs_to_many :municipalities
-  has_and_belongs_to_many :municipality_districts
   has_one_attached :avatar do |avatar|
     avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
     avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
@@ -103,10 +103,6 @@ class User < ApplicationRecord
 
   def name
     [ firstname, lastname ].compact.join(" ")
-  end
-
-  def preferred_places
-    municipalities.pluck(:name) + municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }
   end
 
   def name=(value)

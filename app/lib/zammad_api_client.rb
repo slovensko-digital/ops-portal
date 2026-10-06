@@ -18,6 +18,14 @@ class ZammadApiClient
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
   MARKED_AS_RESOLVED_TAGS = [ "[[vyriesene]]", "[[vyriešené]]", "[[vyrieseny]]", "[[vyriešený]]" ]
   REFERRED_TAGS = [ "[[odstupene]]", "[[odstúpené]]", "[[odstupeny]]", "[[odstúpený]]" ]
+  AUTOMATED_EMAIL_SENDER_PATTERNS = [
+    /\b(?:auto(?:mated)?[-_. ]?reply|bounce|do[-_. ]?not[-_. ]?reply|mailer-daemon|no[-_. ]?reply|postmaster)@/i
+  ]
+  AUTOMATED_EMAIL_SUBJECT_PATTERNS = [
+    /\b(?:automatic|auto(?:mated)?)\s*reply\b/i,
+    /\b(?:out of (?:the )?office|away from (?:the )?office)\b/i,
+    /\b(?:delivery (?:has )?(?:failed|failure|status)|undeliverable|mail delivery failed)\b/i
+  ]
 
   ATTACHMENTS_UPDATE_ARTICLE_BODY = "Aktualizované prílohy"
   ATTACHMENTS_UPDATE_ARTICLE_TYPE = "note"
@@ -29,7 +37,6 @@ class ZammadApiClient
     :agent_portal_and_backoffice_comment,     # agent comment visible on portal, triage and backoffice
     :responsible_subject_portal_and_backoffice_comment,      # responsible subject comment visible on portal, triage and backoffice
     :agent_backoffice_comment                 # agent comment visible in triage and backoffice
-    # :responsible_subject_backoffice_comment,# responsible subject comment visible in triage and backoffice
     # :user_private_comment,                  # user comment visible on portal in triage_process
     # :agent_private_comment,                 # agent comment visible on portal in triage_process
     # :system_note,                           # system note
@@ -183,6 +190,13 @@ class ZammadApiClient
       issue_update.author.update!(external_id: create_customer!(issue_update.author))
     end
 
+    ops_state = "waiting"
+    state = "new"
+    if issue_update.resolves_issue? && issue_update.author == issue.author
+      ops_state = "accepted"
+      state = "closed"
+    end
+
     ticket = @client.ticket.create(
       number: issue_update.ticket_number,
       ops_issue_identifier: issue_update.id,
@@ -190,9 +204,11 @@ class ZammadApiClient
       title: "#{issue_update.resolves_issue? ? "Overenie" : "Aktualizácia"} podnetu #{issue_update.issue.title || 'Bez názvu'}",
       description: issue_update.text.presence || "(bez popisu)",
       group: issue_ticket.group,
+      owner: issue_ticket.owner,
       customer_id: issue_update.author&.external_id,
       origin_by_id: issue_update.author&.external_id,
-      ops_state: "waiting",
+      ops_state: ops_state,
+      state: state,
       portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
       issue_resolved: issue_update.resolves_issue? ? "yes" : "no",
       likes_count: issue_update.activity.likes_count,
@@ -235,6 +251,8 @@ class ZammadApiClient
         ticket.responsible_subject = value
       when "investment"
         ticket.investment = value
+      when "state"
+        ticket.state = value
       end
     end
 
@@ -243,10 +261,17 @@ class ZammadApiClient
 
   def sync_previous_responsible_subject!(ticket_id, previous_responsible_subject)
     ticket = @client.ticket.find(ticket_id)
-    unless previous_responsible_subject[:label] == ticket.responsible_subject[:label] && previous_responsible_subject[:value].to_s == ticket.responsible_subject[:value].to_s
-      ticket.previous_responsible_subject = previous_responsible_subject
-      ticket.save
-    end
+
+    value = {
+      label: previous_responsible_subject.subject_name,
+      value: previous_responsible_subject.id
+    }
+
+    return if value[:label] == ticket.responsible_subject[:label] &&
+              value[:value].to_s == ticket.responsible_subject[:value].to_s
+
+    ticket.previous_responsible_subject = value
+    ticket.save
   end
 
   def close_ticket!(ticket_id)
@@ -274,7 +299,7 @@ class ZammadApiClient
     ticket.subcategory = issue.subcategory&.name
     ticket.subtype = issue.subtype&.name
     ticket.likes_count = issue.likes_count
-    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } }
+    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } } || {}
 
     ticket.save
 
@@ -627,7 +652,7 @@ class ZammadApiClient
           uuid: user.uuid
         }
       end
-    elsif [ :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment ].include?(article_type)
+    elsif article_type == :responsible_subject_portal_and_backoffice_comment
       responsible_subject = zammad_api_client.user.find(author.external_id)
       if responsible_subject.nil?
         Rails.logger.warn("Responsible subject with id: #{author.external_id} not found in Triage Zammad")
@@ -720,7 +745,7 @@ class ZammadApiClient
       else
         User.find_by(external_id: article.origin_by_id || article.created_by_id)
       end
-    when :responsible_subject_portal_and_backoffice_comment, :responsible_subject_backoffice_comment
+    when :responsible_subject_portal_and_backoffice_comment
       result = ResponsibleSubject.find_by(external_id: article.origin_by_id || article.created_by_id)
 
       unless result.present?
@@ -784,20 +809,13 @@ class ZammadApiClient
       article_author = zammad_api_client.user.find(article.origin_by_id || article.created_by_id)
       return :user_portal_comment if article.sender == "Customer" && article_author&.origin == "portal"
 
-      if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
-        if article.sender == "Customer" && (article_author&.organization.present? || article_author&.roles&.include?("Zodpovedný Subjekt"))
-          if article.type == "email"
-            body = EmailParser.parse_text(article.body)
-            if body.first(100).include?(OPS_PORTAL_ARTICLE_TAG)
-              return :responsible_subject_portal_and_backoffice_comment
-            else
-              return :responsible_subject_backoffice_comment
-            end
-          else
-            return :responsible_subject_portal_and_backoffice_comment
-          end
-        end
+      if article.sender == "Customer" && responsible_subject_article_author?(article_author)
+        return if automated_email?(article)
 
+        return :responsible_subject_portal_and_backoffice_comment
+      end
+
+      if article.body.include?(OPS_PORTAL_ARTICLE_TAG)
         if article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
           return :agent_portal_and_backoffice_comment if article.sender == "Agent"
         else
@@ -806,8 +824,7 @@ class ZammadApiClient
       elsif article.body.include?(RESPONSIBLE_SUBJECT_ARTICLE_TAG)
         return :agent_backoffice_comment if article.sender == "Agent"
       else
-        return nil unless article.sender == "Customer" && (article_author&.organization.present? || article_author&.roles&.include?("Zodpovedný Subjekt"))
-        return :responsible_subject_backoffice_comment
+        return nil
       end
     else
       # TODO add more process_types
@@ -815,5 +832,23 @@ class ZammadApiClient
     end
 
     raise "Unknown article type: #{article.type} for process type: #{process_type}"
+  end
+
+  def responsible_subject_article_author?(article_author)
+    article_author&.organization.present? || article_author&.roles&.include?("Zodpovedný Subjekt")
+  end
+
+  def automated_email?(article)
+    return false unless article.type == "email"
+
+    preferences = article.respond_to?(:preferences) ? article.preferences : {}
+    auto_submitted = preferences&.[]("Auto-Submitted") || preferences&.[](:"Auto-Submitted")
+    return true if [ "auto-generated", "auto-replied" ].include?(auto_submitted.to_s.downcase)
+
+    sender = article.respond_to?(:from) ? article.from.to_s : ""
+    subject = article.respond_to?(:subject) ? article.subject.to_s : ""
+
+    AUTOMATED_EMAIL_SENDER_PATTERNS.any? { |pattern| sender.match?(pattern) } ||
+      AUTOMATED_EMAIL_SUBJECT_PATTERNS.any? { |pattern| subject.match?(pattern) }
   end
 end

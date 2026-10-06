@@ -3,19 +3,7 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
-#  author_email                  :string
-#  author_name                   :string
-#  hidden                        :boolean          default(FALSE)
-#  imported_at                   :datetime
-#  ip                            :inet
-#  last_edited_at                :datetime
-#  legacy_data                   :jsonb
-#  text                          :string
 #  type                          :string
-#  uuid                          :uuid
-#  verification                  :integer
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
 #  activity_id                   :bigint           not null
 #  agent_author_id               :bigint
 #  legacy_comment_id             :integer
@@ -23,6 +11,19 @@
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
+#  ai_evaluation                 :jsonb            not null
+#  author_email                  :string
+#  author_name                   :string
+#  hidden                        :boolean          default(FALSE)
+#  ip                            :inet
+#  legacy_data                   :jsonb
+#  text                          :string
+#  uuid                          :uuid
+#  verification                  :integer
+#  imported_at                   :datetime
+#  last_edited_at                :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
 #
 class Issues::ResponsibleSubjectComment < Issues::Comment
   validates :agent_author_id, absence: true
@@ -46,11 +47,11 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
   end
 
   def triage_activity_body
-    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, super ].join(" ")
+    super
   end
 
   def backoffice_activity_body
-    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, text ].join(" ")
+    text
   end
 
   def internal?
@@ -63,10 +64,6 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
 
   def triage_visible?
     visible?
-  end
-
-  def triage_activity_body
-    [ TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG, super ].join(" ")
   end
 
   def responsible_subject?

@@ -1,6 +1,9 @@
 class IssuesController < ApplicationController
+  include NormalizedParams
+
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
+  before_action :remember_last_municipality, only: :index
   before_action :force_responsible_subject_login, only: :show, if: -> { params.key?(:force_rs_login) }
   before_action :check_show_permissions, only: :show
   before_action :check_edit_permissions, only: %i[ edit update ]
@@ -8,10 +11,10 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
-    elsif session[:last_lokalita].present?
-      issues_path(lokalita: session[:last_lokalita])
-    elsif current_user.preferred_places.any?
-      issues_path(lokalita: current_user.preferred_places)
+    elsif session[:last_municipality].present?
+      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
+    elsif current_user.municipality
+      issues_path(obec: current_user.municipality.name)
     else
       issues_path
     end
@@ -20,20 +23,6 @@ class IssuesController < ApplicationController
   end
 
   def index
-    lokalita = if params[:obec].present? && params[:cast].present?
-        [ "#{params[:obec]} - #{params[:cast]}" ]
-    elsif params[:obec].present?
-        [ params[:obec] ]
-    else
-        params[:lokalita]
-    end
-
-    if lokalita.present?
-      session[:last_lokalita] = lokalita
-    else
-      session.delete(:last_lokalita)
-    end
-
     @tab = params[:tab].in?(%w[map stats]) ? params[:tab] : "list"
 
     scope = Issue.searchable.includes(:state, :municipality_district, :municipality, :responsible_subject)
@@ -41,9 +30,9 @@ class IssuesController < ApplicationController
     case @tab
     when "list"
         scope = scope.with_attached_photos
-        @search_results = search_engine.search(scope, params)
+        @search_results = search_engine.search(scope, search_params)
     when "stats"
-        @search_results = search_engine.stats(scope, params) do |scope, results|
+        @search_results = search_engine.stats(scope, search_params) do |scope, results|
           results.stats = {
             by_state: scope.group("state").order("count_all DESC").async_count,
             by_category: scope.group("category").order("count_all DESC").async_count,
@@ -51,14 +40,14 @@ class IssuesController < ApplicationController
           }
         end
     when "map"
-        @search_results = search_engine.search(scope, params)
+        @search_results = search_engine.search(scope, search_params)
     end
   end
 
   def geo
     scope = Issue.searchable.includes(:state)
 
-    @search_results = search_engine.stats(scope, params) do |scope, results|
+    @search_results = search_engine.stats(scope, search_params) do |scope, results|
       target_zoom = case params[:z].to_i
       when 1..5
           2
@@ -122,6 +111,16 @@ class IssuesController < ApplicationController
 
   private
 
+  def remember_last_municipality
+    if search_params[:obec].present?
+      session[:last_municipality] = search_params[:obec]
+      session[:last_municipality_district] = search_params[:cast]
+    else
+      session.delete(:last_municipality)
+      session.delete(:last_municipality_district)
+    end
+  end
+
   # Use callbacks to share common setup or constraints between actions.
   def set_issue
     @issue = Issue.find(params.expect(:id))
@@ -151,8 +150,16 @@ class IssuesController < ApplicationController
 
   ZAMMAD_TICKET_NAME_REGEXP = /Tic?ket#.-(\d+)/ # Ticket#T-300000, Tiket#R-300000
 
+  def search_params
+    @search_params ||= begin
+      permitted = search_engine.required_params + [ :tab ]
+
+      normalize_array_params(params, permitted).permit(*permitted).to_h
+    end
+  end
+
   def search_engine
-    SearchEngine.new(
+    @search_engine ||= SearchEngine.new(
       filters: [
         SearchEngine::Controls::Dropdown.new(
           param_name: :dopyt,
@@ -499,8 +506,7 @@ class IssuesController < ApplicationController
         )
       ],
 
-      per_page: 12,
-      default_permitted_params: [ "tab" ]
+      per_page: 12
     )
   end
 

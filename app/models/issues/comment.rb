@@ -3,19 +3,7 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
-#  author_email                  :string
-#  author_name                   :string
-#  hidden                        :boolean          default(FALSE)
-#  imported_at                   :datetime
-#  ip                            :inet
-#  last_edited_at                :datetime
-#  legacy_data                   :jsonb
-#  text                          :string
 #  type                          :string
-#  uuid                          :uuid
-#  verification                  :integer
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
 #  activity_id                   :bigint           not null
 #  agent_author_id               :bigint
 #  legacy_comment_id             :integer
@@ -23,6 +11,19 @@
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
+#  ai_evaluation                 :jsonb            not null
+#  author_email                  :string
+#  author_name                   :string
+#  hidden                        :boolean          default(FALSE)
+#  ip                            :inet
+#  legacy_data                   :jsonb
+#  text                          :string
+#  uuid                          :uuid
+#  verification                  :integer
+#  imported_at                   :datetime
+#  last_edited_at                :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
 #
 class Issues::Comment < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
