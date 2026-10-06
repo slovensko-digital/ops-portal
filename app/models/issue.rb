@@ -3,6 +3,19 @@
 # Table name: issues
 #
 #  id                                  :bigint           not null, primary key
+#  archived_state_id                   :bigint
+#  author_id                           :bigint
+#  category_id                         :bigint
+#  legacy_id                           :integer
+#  municipality_district_id            :bigint
+#  municipality_id                     :bigint           not null
+#  owner_id                            :bigint
+#  resolution_external_id              :integer
+#  responsible_subject_id              :bigint
+#  state_id                            :bigint
+#  subcategory_id                      :bigint
+#  subtype_id                          :bigint
+#  triage_external_id                  :integer
 #  address_city                        :string
 #  address_country                     :string
 #  address_country_code                :string
@@ -17,35 +30,22 @@
 #  comments_count                      :integer          default(0), not null
 #  description                         :string           not null
 #  discussion_closed                   :boolean          default(FALSE)
-#  effective_at                        :datetime
 #  fulltext_extra                      :string
-#  imported_at                         :datetime
-#  issue_type                          :integer          default("issue")
-#  last_activity_at                    :datetime
-#  last_synced_at                      :datetime
+#  issue_type                          :integer          default(1)
 #  latitude                            :float
 #  legacy_data                         :jsonb
 #  likes_count                         :integer          default(0), not null
 #  longitude                           :float
 #  public                              :boolean          default(FALSE), not null
+#  title                               :string           not null
+#  effective_at                        :datetime
+#  imported_at                         :datetime
+#  last_activity_at                    :datetime
+#  last_synced_at                      :datetime
 #  resolution_started_at               :datetime
 #  responsible_subject_last_contact_at :datetime
-#  title                               :string           not null
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
-#  archived_state_id                   :bigint
-#  author_id                           :bigint
-#  category_id                         :bigint
-#  legacy_id                           :integer
-#  municipality_district_id            :bigint
-#  municipality_id                     :bigint           not null
-#  owner_id                            :bigint
-#  resolution_external_id              :integer
-#  responsible_subject_id              :bigint
-#  state_id                            :bigint
-#  subcategory_id                      :bigint
-#  subtype_id                          :bigint
-#  triage_external_id                  :integer
 #
 class Issue < ApplicationRecord
   include PgSearch::Faster
@@ -83,7 +83,7 @@ class Issue < ApplicationRecord
   validates :triage_external_id, uniqueness: true, allow_nil: true
   validates :category_id, presence: true, unless: ->(issue) { issue.issue_type == "praise" || issue.archived? }
   validates_presence_of :title, :description, unless: :imported?
-  validates_presence_of :photos, unless: -> { :imported? || issue_type == "praise" }
+  validates_presence_of :photos, unless: -> { imported? || issue_type == "praise" }
   validates_length_of :title, minimum: 10, maximum: 200, allow_blank: true, unless: :imported?
   validates_length_of :description, minimum: 25, maximum: 3500, allow_blank: true, unless: :imported?
 

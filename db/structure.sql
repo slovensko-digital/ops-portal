@@ -1479,7 +1479,7 @@ CREATE TABLE public.responsible_subjects (
     email character varying,
     name character varying,
     code character varying,
-    active boolean,
+    active boolean DEFAULT true NOT NULL,
     pro boolean,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -4430,6 +4430,9 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261003120000'),
+('20261003115900'),
+('20261003105314'),
 ('20260813133737'),
 ('20260705131733'),
 ('20260524143000'),
