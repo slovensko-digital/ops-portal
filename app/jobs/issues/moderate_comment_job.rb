@@ -18,7 +18,7 @@ class Issues::ModerateCommentJob < ApplicationJob
 
   def llm_evaluate_comment(comment)
     prompt = <<~LLM
-      Podnet
+      Issue
 
       Title:
       #{comment.issue.title}
