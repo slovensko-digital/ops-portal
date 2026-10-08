@@ -112,7 +112,7 @@ class IssuesController < ApplicationController
   private
 
   def remember_last_lokalita
-    lokalita = Array(search_params[:lokalita]).compact_blank.presence || locality_from_legacy_params
+    lokalita = Array(search_params[:lokalita]).compact_blank.presence
 
     if lokalita.present?
       session[:last_lokalita] = lokalita
@@ -123,13 +123,17 @@ class IssuesController < ApplicationController
     end
   end
 
-  def locality_from_legacy_params
-    return unless params[:obec].is_a?(String) && params[:obec].present?
+  def lokalita_from_legacy_params
+    obec = params[:obec]
 
-    if params[:cast].is_a?(String) && params[:cast].present?
-      [ "#{params[:obec]} - #{params[:cast]}" ]
-    else
-      [ params[:obec] ]
+    if obec.is_a?(Array)
+      obec.select { _1.is_a?(String) }.map(&:strip).reject(&:empty?).presence
+    elsif obec.is_a?(String) && obec.present?
+      if params[:cast].is_a?(String) && params[:cast].present?
+        [ "#{obec} - #{params[:cast]}" ]
+      else
+        [ obec ]
+      end
     end
   end
 
@@ -184,9 +188,11 @@ class IssuesController < ApplicationController
 
   def search_params
     @search_params ||= begin
-      permitted = search_engine.required_params + [ :tab ]
+       permitted = search_engine.required_params + [ :tab ]
 
-      normalize_array_params(params, permitted).permit(*permitted).to_h
+       sp = normalize_array_params(params, permitted).permit(*permitted).to_h
+       sp[:lokalita] = Array(sp[:lokalita]).presence || lokalita_from_legacy_params
+       sp
     end
   end
 
