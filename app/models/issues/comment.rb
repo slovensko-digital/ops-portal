@@ -80,4 +80,8 @@ class Issues::Comment < ApplicationRecord
   def notify_subscribers
     Notifications::PublishNewIssueCommentJob.perform_later(self)
   end
+
+  def moderate
+    Issues::ModerateCommentJob.perform_later(self)
+  end
 end
