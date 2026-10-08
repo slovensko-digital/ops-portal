@@ -3,7 +3,7 @@ class IssuesController < ApplicationController
 
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
-  before_action :remember_last_municipality, only: :index
+  before_action :remember_last_lokalita, only: :index
   before_action :force_responsible_subject_login, only: :show, if: -> { params.key?(:force_rs_login) }
   before_action :check_show_permissions, only: :show
   before_action :check_edit_permissions, only: %i[ edit update ]
@@ -11,10 +11,10 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
-    elsif session[:last_municipality].present?
-      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
-    elsif current_user.municipality
-      issues_path(obec: current_user.municipality.name)
+    elsif session[:last_lokalita].present?
+      issues_path(lokalita: session[:last_lokalita])
+    elsif current_user.preferred_places.any?
+      issues_path(lokalita: current_user.preferred_places)
     else
       issues_path
     end
@@ -111,14 +111,50 @@ class IssuesController < ApplicationController
 
   private
 
-  def remember_last_municipality
-    if search_params[:obec].present?
-      session[:last_municipality] = search_params[:obec]
-      session[:last_municipality_district] = search_params[:cast]
-    else
+  def remember_last_lokalita
+    lokalita = Array(search_params[:lokalita]).compact_blank.presence
+
+    if lokalita.present?
+      session[:last_lokalita] = lokalita
       session.delete(:last_municipality)
       session.delete(:last_municipality_district)
+    else
+      session.delete(:last_lokalita)
     end
+  end
+
+  def lokalita_from_legacy_params
+    obec = params[:obec]
+
+    if obec.is_a?(Array)
+      obec.select { _1.is_a?(String) }.map(&:strip).reject(&:empty?).presence
+    elsif obec.is_a?(String) && obec.present?
+      if params[:cast].is_a?(String) && params[:cast].present?
+        [ "#{obec} - #{params[:cast]}" ]
+      else
+        [ obec ]
+      end
+    end
+  end
+
+  def last_lokalita
+    migrate_legacy_lokalita_session!
+    Array(session[:last_lokalita]).compact_blank.presence
+  end
+
+  def migrate_legacy_lokalita_session!
+    return if session[:last_lokalita].present?
+    return unless session[:last_municipality].is_a?(String) && session[:last_municipality].present?
+
+    session[:last_lokalita] =
+      if session[:last_municipality_district].is_a?(String) && session[:last_municipality_district].present?
+        [ "#{session[:last_municipality]} - #{session[:last_municipality_district]}" ]
+      else
+        [ session[:last_municipality] ]
+      end
+
+    session.delete(:last_municipality)
+    session.delete(:last_municipality_district)
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -152,9 +188,11 @@ class IssuesController < ApplicationController
 
   def search_params
     @search_params ||= begin
-      permitted = search_engine.required_params + [ :tab ]
+       permitted = search_engine.required_params + [ :tab ]
 
-      normalize_array_params(params, permitted).permit(*permitted).to_h
+       sp = normalize_array_params(params, permitted).permit(*permitted).to_h
+       sp[:lokalita] = Array(sp[:lokalita]).presence || lokalita_from_legacy_params
+       sp
     end
   end
 
@@ -267,33 +305,88 @@ class IssuesController < ApplicationController
           end
         ),
 
-        SearchEngine::Controls::Autocomplete.new(
-          param_name: :obec,
-          label: "Obec",
-          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
-          filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = Municipality.active.where(name: params[:obec]).pluck(:id)
-            scope.where(municipality_id: ids)
-          end
-        ),
-
-        SearchEngine::Controls::Dropdown.new(
-          param_name: :cast,
-          label: "Mestská časť",
-          items: ->(params) do
-            return [] unless params[:obec].present?
-
-            MunicipalityDistrict.joins(:municipality)
-              .where(municipalities: { name: params[:obec], active: true })
-              .order(Arel.sql("municipality_districts.name COLLATE unicode"))
-              .pluck(:name)
+        SearchEngine::Controls::TreeAutocomplete.new(
+          param_name: :lokalita,
+          label: "Obec / Mestská časť",
+          multiple: true,
+          filter_label: ->(value) do
+            if value.to_s.start_with?("-")
+              "Okrem: #{value.delete_prefix("-")}"
+            else
+              value.to_s.split(" - ", 2).last
+            end
           end,
-          filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
-            scope.where(municipality_district_id: ids)
-          end
+          items: ->(params) do
+            locations = Array(params[:lokalita]).compact_blank
+            positives = locations.reject { _1.start_with?("-") }
+            negatives = locations.select { _1.start_with?("-") }
+
+            Municipality.active
+                        .where(active_on_old_portal: false)
+                        .includes(:active_districts)
+                        .order(Arel.sql("name COLLATE unicode"))
+                        .flat_map do |municipality|
+              municipality_selected = positives.include?(municipality.name)
+
+              parent_values = locations.reject do |location|
+                location == municipality.name ||
+                  location.start_with?("#{municipality.name} - ") ||
+                  location.start_with?("-#{municipality.name} - ")
+              end
+
+              parent = {
+                label: municipality.name,
+                value: municipality.name,
+                level: 0,
+                selected: municipality_selected,
+                add_params: parent_values + [ municipality.name ],
+                remove_params: parent_values
+              }
+
+              children = municipality.active_districts.map do |district|
+                value = "#{municipality.name} - #{district.name}"
+                negative_value = "-#{value}"
+
+                selected =
+                  positives.include?(value) ||
+                  (municipality_selected && !negatives.include?(negative_value))
+
+                if municipality_selected
+                  if positives.include?(value)
+                    {
+                      label: district.name,
+                      value: value,
+                      level: 1,
+                      selected: selected,
+                      add_params: locations - [ negative_value ],
+                      remove_params: ((locations - [ value ]) + [ negative_value ]).uniq
+                    }
+                  else
+                    {
+                      label: district.name,
+                      value: value,
+                      level: 1,
+                      selected: selected,
+                      add_params: locations - [ negative_value ],
+                      remove_params: (locations + [ negative_value ]).uniq
+                    }
+                  end
+                else
+                  {
+                    label: district.name,
+                    value: value,
+                    level: 1,
+                    selected: selected,
+                    add_params: (locations + [ value ]).uniq,
+                    remove_params: locations - [ value ]
+                  }
+                end
+              end
+
+              [ parent, *children ]
+            end
+          end,
+          filter: ->(scope, params) { SearchEngine::Filters::Locality.new(params[:lokalita]).apply(scope) }
         ),
 
         SearchEngine::Controls::Autocomplete.new(

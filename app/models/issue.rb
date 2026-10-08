@@ -193,9 +193,9 @@ class Issue < ApplicationRecord
   end
 
   def self.relevant_for(user)
-    return where(municipality: user.municipality) if user&.municipality
+    return self if user.municipalities.empty? && user.municipality_districts.empty?
 
-    self
+    where(municipality: user.municipalities).or(where(municipality_district: user.municipality_districts))
   end
 
   def self.within_distance_from_point(lat, lon, distance)

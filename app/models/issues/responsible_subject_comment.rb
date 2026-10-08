@@ -11,6 +11,7 @@
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
+#  ai_evaluation                 :jsonb            not null
 #  author_email                  :string
 #  author_name                   :string
 #  hidden                        :boolean          default(FALSE)
