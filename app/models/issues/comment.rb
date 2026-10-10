@@ -11,6 +11,7 @@
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
+#  ai_evaluation                 :jsonb            not null
 #  author_email                  :string
 #  author_name                   :string
 #  hidden                        :boolean          default(FALSE)
@@ -78,5 +79,13 @@ class Issues::Comment < ApplicationRecord
 
   def notify_subscribers
     Notifications::PublishNewIssueCommentJob.perform_later(self)
+  end
+
+  def schedule_moderation
+    if within_editing_window?
+      Issues::ModerateCommentJob.set(wait_until: editing_window_end).perform_later(self)
+    else
+      Issues::ModerateCommentJob.perform_later(self)
+    end
   end
 end
