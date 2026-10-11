@@ -1,6 +1,6 @@
 module ProfilesHelper
   def preferred_places(user)
-    names = user.municipalities.pluck(:name) + user.municipality_districts.map { |d| "#{d.municipality.name} - #{d.name}" }
+    names = user.municipalities.pluck(:name) + user.municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }
     return "&mdash;".html_safe if names.empty?
 
     names.sort.join(", ")

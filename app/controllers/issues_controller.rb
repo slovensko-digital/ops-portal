@@ -11,8 +11,8 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
-    elsif session[:last_lokalita].present?
-      issues_path(lokalita: session[:last_lokalita])
+    elsif last_lokalita.present?
+      issues_path(lokalita: last_lokalita)
     elsif current_user.preferred_places.any?
       issues_path(lokalita: current_user.preferred_places)
     else
