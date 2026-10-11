@@ -250,7 +250,7 @@ class Issue < ApplicationRecord
 
     return unless new_state
 
-    activity = Issues::StateChangeActivity.create!(issue: self)
+    activity = Issues::StateChangeActivity.create!(issue_id: id)
     Issues::StateChange.create!(
       activity: activity,
       previous_state: previous_state,

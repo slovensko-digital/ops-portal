@@ -122,6 +122,19 @@ class ZammadApiClient
     end
   end
 
+  def get_ticket_history(ticket_id)
+    response = raw_api_request(:get, "ticket_history/#{ticket_id}")
+    history = response["history"]
+    raise "Unexpected ticket_history response shape: #{response.keys.inspect}" unless history.is_a?(Array)
+
+    history.sort_by { |entry| entry["created_at"].to_s }
+  rescue RuntimeError => e
+    raise e unless e.message.include?("Couldn't find Ticket with") || e.message.include?("Request failed with status 404")
+
+    Rails.logger.info("Couldn't find history for ticket with id: #{ticket_id}")
+    nil
+  end
+
   def create_ticket_from_issue!(issue, issue_number:, process_type: DEFAULT_PROCESS_TYPE, state: nil, group: DEFAULT_GROUP, sender: DEFAULT_SENDER, owner_id: nil)
     ops_state = issue.state&.key
     if issue.issue_type == "praise" && ops_state == "resolved_private"

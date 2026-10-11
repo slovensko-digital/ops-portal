@@ -267,4 +267,35 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     stripped_body = @subject.send(:strip_tags_from_article_body, body)
     assert_equal "This is a test body with tags , , and .", stripped_body
   end
+
+  test "get_ticket_history requests the ticket_history endpoint and returns entries oldest first" do
+    entries = [
+      { "history_type" => "updated", "history_object" => "Ticket", "history_attribute" => "ops_state",
+        "value_from" => "in_progress", "value_to" => "resolved", "created_at" => "2024-06-02T10:00:00.000Z" },
+      { "history_type" => "updated", "history_object" => "Ticket", "history_attribute" => "ops_state",
+        "value_from" => "waiting", "value_to" => "in_progress", "created_at" => "2024-06-01T10:00:00.000Z" }
+    ]
+
+    @subject.stub :raw_api_request, ->(method, endpoint, *) {
+      assert_equal :get, method
+      assert_equal "ticket_history/42", endpoint
+      { "history" => entries, "assets" => {} }
+    } do
+      history = @subject.get_ticket_history(42)
+
+      assert_equal %w[waiting in_progress], history.map { |entry| entry["value_from"] }
+    end
+  end
+
+  test "get_ticket_history returns nil when the ticket does not exist" do
+    @subject.stub :raw_api_request, ->(*) { raise RuntimeError, "Request failed with status 404" } do
+      assert_nil @subject.get_ticket_history(42)
+    end
+  end
+
+  test "get_ticket_history re-raises non-404 errors" do
+    @subject.stub :raw_api_request, ->(*) { raise RuntimeError, "Request failed with status 500" } do
+      assert_raises(RuntimeError) { @subject.get_ticket_history(42) }
+    end
+  end
 end
