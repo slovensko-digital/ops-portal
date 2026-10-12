@@ -166,7 +166,7 @@ Rails.application.routes.draw do
     mount GoodJob::Engine => "admin/good_job"
 
     namespace :admin do
-      resources :municipality_boundaries, path: "municipality-boundaries", only: [ :index, :show ]
+      resources :municipality_boundaries, path: "municipality_boundaries", only: [ :index, :show ]
     end
   end
 
