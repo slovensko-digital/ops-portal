@@ -112,7 +112,7 @@ export default class extends Controller {
 
             const url = new URL(this.urlValue, window.location.origin);
             url.search = params.toString();
-            url.searchParams.set('kind', kind);
+            url.searchParams.set('kinds[]', kind);
             url.searchParams.set('z', this.map.getZoom());
             // a selection is small enough to load whole, so the map can zoom to it
             if (!selection.length) url.searchParams.set('bbox', this.map.getBounds().toBBoxString());

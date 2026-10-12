@@ -3,7 +3,7 @@
 <div data-controller="municipality-boundaries-map"
      data-municipality-boundaries-map-url-value="<%= admin_municipality_boundaries_path(format: :json) %>"
      data-municipality-boundaries-map-detail-url-value="<%= admin_municipality_boundary_path(":id") %>"
-     data-municipality-boundaries-map-selected-value="<%= @selected_boundary.to_json %>"
+     data-municipality-boundaries-map-selected-value="<%= @selected_boundary ? { id: @selected_boundary.id, kind: @selected_boundary.boundary_kind, bounds: @selected_boundary.bounds }.to_json : "{}" %>"
      data-action="keydown.esc@window->municipality-boundaries-map#unselect"
      style="display: contents;">
   <header class="admin-header">
@@ -11,12 +11,14 @@
 
     <%= form_with url: admin_municipality_boundaries_path, method: :get, class: "admin-filter",
                   data: { municipality_boundaries_map_target: "filter", action: "change->municipality-boundaries-map#filter submit->municipality-boundaries-map#filter:prevent click@window->municipality-boundaries-map#closeTree" } do %>
-      <% options = Admin::MunicipalityBoundariesController %>
-      <%= render "checkbox_group", name: :kinds, legend: "Vrstvy", options: options::KINDS, values: @filter.kinds,
+      <%= render "checkbox_group", name: :kinds, legend: "Vrstvy", values: @filter.kinds,
+                                   options: { "municipality" => "Obce", "district" => "Mestské časti" },
                                    colors: { "municipality" => "municipality", "district" => "district" } %>
-      <%= render "checkbox_group", name: :matched, legend: "Párovanie", options: options::MATCHED_OPTIONS, values: @filter.matched,
+      <%= render "checkbox_group", name: :matched, legend: "Párovanie", values: @filter.matched,
+                                   options: { "matched" => "Spárované", "unmatched" => "Nespárované" },
                                    colors: { "unmatched" => "unmatched" } %>
-      <%= render "checkbox_group", name: :active, legend: "Aktivita obce", options: options::ACTIVE_OPTIONS, values: @filter.active,
+      <%= render "checkbox_group", name: :active, legend: "Aktivita obce", values: @filter.active,
+                                   options: { "true" => "Aktívne", "false" => "Neaktívne" },
                                    target: "activeGroup", disabled: @filter.matched.exclude?("matched") %>
 
       <%= render "municipality_tree", municipalities: @municipalities, districts_by_municipality_id: @districts_by_municipality_id,

@@ -23,6 +23,23 @@ class MunicipalityBoundary::AdminFilter
     scopes.reduce(:or) || MunicipalityBoundary.none
   end
 
+  # Boundaries with the names and flags shown on the map and their outline as GeoJSON in "geojson",
+  # simplified to about one pixel at the given zoom, so the geometry is not more detailed than the map can show.
+  def map_features(zoom:)
+    tolerance = 360.0 / (256 * 2**zoom.to_i.clamp(0, 19))
+
+    boundaries.select(
+      "municipality_boundaries.id",
+      "municipality_boundaries.boundary_kind",
+      "municipality_boundaries.municipality_id",
+      "municipality_boundaries.municipality_district_id",
+      "municipalities.name AS municipality_name",
+      "municipalities.active AS municipality_active",
+      "municipality_districts.name AS municipality_district_name",
+      MunicipalityBoundary.sanitize_sql([ "ST_AsGeoJSON(ST_SimplifyPreserveTopology(boundary, ?), 5) AS geojson", tolerance ])
+    )
+  end
+
   private
 
   def options(values, all)

@@ -21,7 +21,7 @@ class Admin::MunicipalityBoundariesControllerTest < ActionDispatch::IntegrationT
     create_municipality_boundary(municipality: municipalities(:trencin), center_lat: 48.9, center_lon: 18.04)
     login(@admin)
 
-    get admin_municipality_boundaries_path(format: :json), params: { kind: "municipality", matched: [ "matched" ], z: 10, bbox: @bbox }
+    get admin_municipality_boundaries_path(format: :json), params: { kinds: [ "municipality" ], matched: [ "matched" ], z: 10, bbox: @bbox }
 
     assert_response :success
     body = response.parsed_body
@@ -64,7 +64,7 @@ class Admin::MunicipalityBoundariesControllerTest < ActionDispatch::IntegrationT
   end
 
   def assert_admin_routes_not_found(boundary)
-    get admin_municipality_boundaries_path(format: :json), params: { kind: "municipality", z: 10, bbox: @bbox }
+    get admin_municipality_boundaries_path(format: :json), params: { kinds: [ "municipality" ], z: 10, bbox: @bbox }
     assert_response :not_found
 
     get admin_municipality_boundary_path(boundary)

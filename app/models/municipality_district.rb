@@ -24,4 +24,6 @@ class MunicipalityDistrict < ApplicationRecord
 
   scope :archived, -> { where(archived: true) }
   scope :active, -> { where(active: true) }
+  scope :with_boundaries, -> { where(id: MunicipalityBoundary.select(:municipality_district_id)) }
+  scope :alphabetical, -> { order(Arel.sql("municipality_districts.name COLLATE unicode")) }
 end

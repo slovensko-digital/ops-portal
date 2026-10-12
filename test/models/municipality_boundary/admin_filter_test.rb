@@ -61,7 +61,38 @@ class MunicipalityBoundary::AdminFilterTest < ActiveSupport::TestCase
     assert_ids [ @trencin_boundary ], bbox: "17.9,48.8,18.2,49.0"
   end
 
+  test "map features carry the names and flags shown on the map and the outline as GeoJSON" do
+    feature = MunicipalityBoundary::AdminFilter.new(municipality_district_ids: [ @stare_mesto.id ], kinds: [ "district" ])
+      .map_features(zoom: 12).sole
+
+    assert_equal @stare_mesto_boundary.id, feature.id
+    assert_equal "district", feature.boundary_kind
+    assert_equal "Bratislava", feature.municipality_name
+    assert_equal true, feature.municipality_active
+    assert_equal @stare_mesto.name, feature.municipality_district_name
+    assert_predicate feature, :matched?
+    assert_equal "Polygon", JSON.parse(feature.geojson)["type"]
+  end
+
+  test "map features are simplified more when zoomed out" do
+    detailed = create_municipality_boundary_with_wkt("POLYGON((17 48, 17.0001 48.05, 17 48.1, 17.1 48.1, 17.1 48, 17 48))")
+    filter = MunicipalityBoundary::AdminFilter.new(kinds: [ "municipality" ], matched: [ "unmatched" ])
+
+    points = ->(zoom) { JSON.parse(filter.map_features(zoom: zoom).find { it.id == detailed.id }.geojson)["coordinates"].first.size }
+
+    assert_equal 6, points.call(19)
+    assert_equal 5, points.call(5)
+  end
+
   private
+
+  def create_municipality_boundary_with_wkt(wkt)
+    ActiveRecord::Base.connection.execute(ActiveRecord::Base.sanitize_sql([ <<~SQL, wkt ]))
+      INSERT INTO municipality_boundaries (boundary_kind, boundary, created_at, updated_at)
+      VALUES ('municipality', ST_SetSRID(ST_GeomFromText(?), 4326), NOW(), NOW())
+    SQL
+    MunicipalityBoundary.order(:id).last
+  end
 
   def assert_ids(expected, **options)
     assert_equal expected.map(&:id).sort, MunicipalityBoundary::AdminFilter.new(**options).boundaries.ids.sort
