@@ -53,7 +53,6 @@ export default class extends Controller {
             this.districtCheckboxes(event.target).forEach(district => district.checked = event.target.checked);
         }
         if (event.target.name === 'municipality_district_ids[]') this.syncMunicipality(this.municipalityCheckbox(event.target));
-        // picked city districts are only visible on the district layer
         const pickedDistricts = event.target.name === 'municipality_district_ids[]' ||
             (event.target.name === 'municipality_ids[]' && this.districtCheckboxes(event.target).length > 0);
         if (event.target.checked && pickedDistricts) this.filterTarget.querySelector('#kinds_district').checked = true;
@@ -78,7 +77,6 @@ export default class extends Controller {
         return district.closest('ul').closest('li').querySelector(':scope > label input[type=checkbox]');
     }
 
-    // a municipality is checked with all of its districts, partly checked with some of them
     syncMunicipality(municipality) {
         const districts = this.districtCheckboxes(municipality).map(district => district.checked);
         if (!districts.length) return;

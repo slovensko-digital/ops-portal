@@ -23,42 +23,12 @@ class MunicipalityBoundary::AdminFilter
     scopes.reduce(:or) || MunicipalityBoundary.none
   end
 
-  # The boundaries as a GeoJSON FeatureCollection string with the names and flags shown on the map. It is built
-  # in Postgres, so the outlines are not parsed and serialized again in Ruby. Outlines are simplified to about
-  # one pixel at the given zoom, so the geometry is not more detailed than the map can show.
-  def map_feature_collection(zoom:)
-    tolerance = 360.0 / (256 * 2**zoom.to_i.clamp(0, 19))
-
-    features = boundaries.left_joins(:municipality, :municipality_district).select(MunicipalityBoundary.sanitize_sql([ <<~SQL, tolerance ]))
-      json_build_object(
-        'type', 'Feature',
-        'geometry', ST_AsGeoJSON(ST_SimplifyPreserveTopology(boundary, ?), 5)::json,
-        'properties', json_build_object(
-          'id', municipality_boundaries.id,
-          'kind', municipality_boundaries.boundary_kind,
-          'municipality_id', municipality_boundaries.municipality_id,
-          'municipality_name', municipalities.name,
-          'municipality_active', municipalities.active,
-          'municipality_district_id', municipality_boundaries.municipality_district_id,
-          'municipality_district_name', municipality_districts.name,
-          'matched', #{MunicipalityBoundary::MATCHED_SQL}
-        )
-      ) AS feature
-    SQL
-
-    MunicipalityBoundary.connection.select_value(<<~SQL)
-      SELECT json_build_object('type', 'FeatureCollection', 'features', COALESCE(json_agg(feature), '[]'::json))::text
-      FROM (#{features.to_sql}) features
-    SQL
-  end
-
   private
 
   def options(values, all)
     values.nil? ? all : Array(values).compact_blank & all
   end
 
-  # a bbox that is not 4 numbers is ignored
   def parse_bbox(bbox)
     coordinates = bbox.to_s.split(",").map { Float(it, exception: false) }
     coordinates if coordinates.size == 4 && coordinates.all?
@@ -67,16 +37,14 @@ class MunicipalityBoundary::AdminFilter
   def base
     return MunicipalityBoundary.none if kinds.empty?
 
-    scope = MunicipalityBoundary.left_joins(:municipality, :municipality_district)
-    scope = scope.where("boundary && ST_MakeEnvelope(?, ?, ?, ?, 4326)", *@bbox) if @bbox
+    scope = @bbox ? MunicipalityBoundary.within_bbox(*@bbox) : MunicipalityBoundary.all
     kinds.map { by_selection(scope.where(boundary_kind: it), it) }.reduce(:or)
   end
 
-  # district boundaries are filtered by the active flag of the municipality they belong to
   def by_active(scope)
     return scope if (ACTIVE - active).empty?
 
-    scope.where(municipalities: { active: active.map { it == "true" } })
+    scope.with_municipality_active(active.map { it == "true" })
   end
 
   # A selected municipality shows its own boundary and all of its districts. Selecting some of its districts
