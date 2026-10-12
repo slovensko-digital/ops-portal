@@ -22,7 +22,7 @@ class BackfillIssueStateChangesFromTriageHistory < ActiveRecord::Migration[8.1]
   private
 
   def ticket_ids(issue)
-    [issue.triage_external_id, issue.resolution_external_id].compact.uniq
+    [ issue.triage_external_id, issue.resolution_external_id ].compact.uniq
   end
 
   def backfilled?(issue)
