@@ -5,14 +5,14 @@
 #  id                         :bigint           not null, primary key
 #  district_id                :bigint
 #  legacy_id                  :integer
-#  active                     :boolean
+#  active                     :boolean          default(FALSE), not null
 #  active_on_old_portal       :boolean          default(FALSE), not null
 #  aliases                    :string           default([]), not null, is an Array
-#  archived                   :boolean          default(FALSE)
+#  archived                   :boolean          default(FALSE), not null
 #  category                   :integer
 #  email                      :string
 #  handled_by                 :integer
-#  has_municipality_districts :boolean
+#  has_municipality_districts :boolean          default(FALSE), not null
 #  languages                  :string
 #  latitude                   :float
 #  logo                       :string
