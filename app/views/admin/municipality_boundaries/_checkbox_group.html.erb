@@ -1,0 +1,13 @@
+<fieldset class="filter-group" <%= "disabled" if local_assigns[:disabled] %>
+          <%= tag.attributes(data: { municipality_boundaries_map_target: local_assigns[:target] }) %>>
+  <legend><%= legend %></legend>
+  <% options.each do |option, label| %>
+    <label class="toggle">
+      <%= check_box_tag "#{name}[]", option, values.include?(option), id: "#{name}_#{option}" %>
+      <% if (color = local_assigns[:colors]&.dig(option)) %>
+        <i class="swatch" style="background: var(--color-<%= color %>);"></i>
+      <% end %>
+      <span><%= label %></span>
+    </label>
+  <% end %>
+</fieldset>

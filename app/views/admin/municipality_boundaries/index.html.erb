@@ -11,11 +11,16 @@
 
     <%= form_with url: admin_municipality_boundaries_path, method: :get, class: "admin-filter",
                   data: { municipality_boundaries_map_target: "filter", action: "change->municipality-boundaries-map#filter submit->municipality-boundaries-map#filter:prevent click@window->municipality-boundaries-map#closeTree" } do %>
-      <%= render "boundary_tree", boundaries: @boundaries %>
+      <% options = Admin::MunicipalityBoundariesController %>
+      <%= render "checkbox_group", name: :kinds, legend: "Vrstvy", options: options::KINDS, values: @filter.kinds,
+                                   colors: { "municipality" => "municipality", "district" => "district" } %>
+      <%= render "checkbox_group", name: :matched, legend: "Párovanie", options: options::MATCHED_OPTIONS, values: @filter.matched,
+                                   colors: { "unmatched" => "unmatched" } %>
+      <%= render "checkbox_group", name: :active, legend: "Aktivita obce", options: options::ACTIVE_OPTIONS, values: @filter.active,
+                                   target: "activeGroup", disabled: @filter.matched.exclude?("matched") %>
 
       <%= render "municipality_tree", municipalities: @municipalities, districts_by_municipality_id: @districts_by_municipality_id,
-                                      municipality_ids: @municipality_ids, municipality_district_ids: @municipality_district_ids %>
-
+                                      municipality_ids: @filter.municipality_ids, municipality_district_ids: @filter.municipality_district_ids %>
     <% end %>
   </header>
 

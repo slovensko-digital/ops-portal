@@ -6,11 +6,18 @@ const cssColor = name => getComputedStyle(document.documentElement).getPropertyV
 
 // Connects to data-controller="municipality-boundaries-map"
 export default class extends Controller {
-    static targets = ["map", "filter", "tree", "panel", "detail"]
+    static targets = ["map", "filter", "activeGroup", "tree", "panel", "detail"]
     static values = {url: String, detailUrl: String, selected: Object}
 
     connect() {
         this.map = L.map(this.mapTarget, {maxZoom: 19});
+        this.layers = {};
+        this.selected = null;
+        // a shared link with a selected boundary opens its detail first, so the map fits next to the panel
+        if (this.selectedValue.id) {
+            this.selected = {kind: this.selectedValue.kind, id: this.selectedValue.id};
+            this.openDetail(this.selected.id);
+        }
         this.map.fitBounds(this.selectedValue.bounds || [[47.483, 15.781], [50.032, 22.813]]);
 
         L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -19,15 +26,12 @@ export default class extends Controller {
             maxZoom: 19,
         }).addTo(this.map);
 
-        this.syncTreeParents();
-        this.treeTargets.forEach(tree => this.updateTreeSummary(tree));
-        this.layers = {};
-        this.selected = null;
-        // a shared link with a selected boundary opens its detail, the map is already zoomed to it
-        if (this.selectedValue.id) {
-            this.selected = {kind: this.selectedValue.kind, id: this.selectedValue.id};
-            this.openDetail(this.selected.id);
-        }
+        // city districts lie inside their municipality, so their layer is kept on top
+        this.map.createPane('municipality').style.zIndex = 400;
+        this.map.createPane('district').style.zIndex = 410;
+
+        this.map.on('zoomstart', () => this.zooming = true);
+        this.map.on('zoomend', () => this.zooming = false);
         this.map.on('click', () => this.unselect());
         this.map.on('moveend', () => this.load());
         this.load({fitToSelection: !this.selected});
@@ -41,25 +45,14 @@ export default class extends Controller {
     filter(event) {
         if (event.target.type === 'search') return;
 
-        if (event.target.dataset.treeParent) this.childCheckboxes(event.target).forEach(child => child.checked = event.target.checked);
-        this.syncTreeParents();
+        // a picked city district is only visible on the district layer
+        if (event.target.name === 'municipality_district_ids[]' && event.target.checked) this.filterTarget.querySelector('#kinds_district').checked = true;
+        // the municipality activity only applies to matched boundaries
+        this.activeGroupTarget.disabled = !this.filterTarget.querySelector('#matched_matched').checked;
+
         this.treeTargets.forEach(tree => this.updateTreeSummary(tree));
         this.updateUrl();
         this.load({fitToSelection: true});
-    }
-
-    // keeps the address bar in sync with the filter and the selected boundary, so the page can be shared
-    updateUrl() {
-        const params = new URLSearchParams();
-        for (const [name, value] of new FormData(this.filterTarget)) {
-            if (value !== '') params.append(name, value);
-        }
-        if (!params.has('boundaries[]')) params.append('boundaries[]', '');
-        if (this.selected) params.set('boundary', this.selected.id);
-
-        const url = new URL(window.location.href);
-        url.search = params.toString();
-        Turbo.navigator.history.replace(url);
     }
 
     closeTree(event) {
@@ -68,52 +61,47 @@ export default class extends Controller {
         });
     }
 
-    // a parent checkbox only toggles its children, it is not a filter value by itself
-    childCheckboxes(parent) {
-        return [...parent.closest('li').querySelectorAll(':scope > ul input[type=checkbox]:not([data-tree-parent])')];
-    }
-
-    syncTreeParents() {
-        this.element.querySelectorAll('[data-tree-parent]').forEach(parent => {
-            const checked = this.childCheckboxes(parent).map(child => child.checked);
-            parent.checked = checked.every(Boolean);
-            parent.indeterminate = !parent.checked && checked.some(Boolean);
-        });
-    }
-
-    // Lists the topmost fully checked nodes, prefixed with the labels of their parent nodes,
-    // e.g. "Obce, Mestské časti › Spárované › Aktívne".
     updateTreeSummary(tree) {
-        const label = checkbox => checkbox.closest('label').querySelector('span').textContent;
-        const parents = checkbox => {
-            const result = [];
-            for (let li = checkbox.closest('li').parentElement.closest('li'); li && tree.contains(li); li = li.parentElement.closest('li')) {
-                const parent = li.querySelector(':scope > label [data-tree-parent]');
-                if (parent) result.unshift(parent);
-            }
-            return result;
-        };
-
         const labels = [...tree.querySelectorAll('input[type=checkbox]:checked')]
-            .filter(checkbox => !parents(checkbox).some(parent => parent.checked))
-            .map(checkbox => [...parents(checkbox), checkbox].map(label).join(' › '));
+            .map(checkbox => checkbox.closest('label').querySelector('span').textContent);
         const summary = tree.querySelector('[data-tree-summary]');
-        summary.textContent = labels.length ? labels.join(', ') : summary.dataset.treeSummary || 'Všetky';
+        summary.textContent = labels.length ? labels.join(', ') : summary.dataset.treeSummary;
         summary.closest('summary').title = summary.textContent;
     }
 
+    // A group with nothing checked is sent as an empty value ("kinds[]="), because a missing group
+    // means all of its options on the server. A disabled group is left out.
+    filterParams() {
+        const params = new URLSearchParams();
+        for (const [name, value] of new FormData(this.filterTarget)) {
+            if (value !== '') params.append(name, value);
+        }
+        this.filterTarget.querySelectorAll('fieldset:not([disabled]) input[type=checkbox][name$="[]"]').forEach(({name}) => {
+            if (!params.has(name)) params.append(name, '');
+        });
+        return params;
+    }
+
+    // keeps the address bar in sync with the filter and the selected boundary, so the page can be shared
+    updateUrl() {
+        const params = this.filterParams();
+        if (this.selected) params.set('boundary', this.selected.id);
+
+        const url = new URL(window.location.href);
+        url.search = params.toString();
+        Turbo.navigator.history.replace(url);
+    }
+
     load({fitToSelection = false} = {}) {
+        // kept until a load finishes, a newer load (e.g. after the map moved) must not drop the fit
+        if (fitToSelection) this.pendingFit = true;
         this.abortController?.abort();
         this.abortController = new AbortController();
         const signal = this.abortController.signal;
-        const filter = new FormData(this.filterTarget);
-        const statusesByKind = {};
-        filter.getAll('boundaries[]').forEach(value => {
-            const [kind, status] = value.split(':');
-            (statusesByKind[kind] ??= []).push(status);
-        });
-        const kinds = Object.keys(statusesByKind);
-        const selection = [...filter.getAll('municipality_ids[]'), ...filter.getAll('municipality_district_ids[]')];
+        const params = this.filterParams();
+        const kinds = params.getAll('kinds[]').filter(Boolean);
+        params.delete('kinds[]');
+        const selection = [...params.getAll('municipality_ids[]'), ...params.getAll('municipality_district_ids[]')];
 
         Object.entries(this.layers).forEach(([kind, layer]) => {
             if (!kinds.includes(kind)) this.map.removeLayer(layer);
@@ -123,11 +111,9 @@ export default class extends Controller {
             const layer = this.layerFor(kind).addTo(this.map);
 
             const url = new URL(this.urlValue, window.location.origin);
+            url.search = params.toString();
             url.searchParams.set('kind', kind);
-            statusesByKind[kind].forEach(status => url.searchParams.append('statuses[]', status));
             url.searchParams.set('z', this.map.getZoom());
-            filter.getAll('municipality_ids[]').forEach(id => url.searchParams.append('municipality_ids[]', id));
-            filter.getAll('municipality_district_ids[]').forEach(id => url.searchParams.append('municipality_district_ids[]', id));
             // a selection is small enough to load whole, so the map can zoom to it
             if (!selection.length) url.searchParams.set('bbox', this.map.getBounds().toBBoxString());
 
@@ -142,13 +128,19 @@ export default class extends Controller {
 
         Promise.all(requests)
             .then(() => {
-                if (!fitToSelection || !selection.length) return;
+                const fit = this.pendingFit;
+                this.pendingFit = false;
+                if (!fit || !selection.length) return;
 
                 const bounds = L.latLngBounds([]);
                 kinds.forEach(kind => {
                     if (this.layers[kind].getLayers().length) bounds.extend(this.layers[kind].getBounds());
                 });
-                if (bounds.isValid()) this.map.fitBounds(bounds, {padding: [20, 20]});
+                if (!bounds.isValid()) return;
+
+                // Leaflet ignores a zoom requested while another zoom is still animating
+                const fitBounds = () => this.map.fitBounds(bounds, {padding: [20, 20]});
+                this.zooming ? this.map.once('zoomend', fitBounds) : fitBounds();
             })
             .catch(error => {
                 if (error.name !== 'AbortError') throw error;
@@ -157,6 +149,7 @@ export default class extends Controller {
 
     layerFor(kind) {
         this.layers[kind] ??= L.geoJSON(null, {
+            pane: kind,
             style: feature => {
                 const color = cssColor(feature.properties.matched ? kind : 'unmatched');
                 const style = {color, weight: 1.5, fillColor: color, fillOpacity: 0.1, className: `boundary-${feature.properties.id}`};
@@ -226,7 +219,8 @@ export default class extends Controller {
         if (this.panelTarget.hidden !== open) return;
 
         this.panelTarget.hidden = !open;
-        this.map.invalidateSize();
+        // keep the map where it is, by default Leaflet keeps the center and shifts the view by half the panel
+        this.map.invalidateSize({pan: false});
     }
 
     tooltipContent(properties) {

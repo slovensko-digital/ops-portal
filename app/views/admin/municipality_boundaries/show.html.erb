@@ -11,7 +11,7 @@
     <dt>Typ</dt>
     <dd><%= @boundary.boundary_kind == "district" ? "Mestská časť" : "Obec" %></dd>
     <dt>Spárovaná</dt>
-    <dd><%= (@boundary.boundary_kind == "district" ? district : municipality) ? "áno" : "nie" %></dd>
+    <dd><%= @boundary.matched? ? "áno" : "nie" %></dd>
   </dl>
 
   <h3>Obec</h3>
