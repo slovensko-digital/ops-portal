@@ -21,13 +21,9 @@ class Admin::MunicipalityBoundariesController < ApplicationController
   private
 
   def filter_params
-    {
-      kinds: params[:kinds],
-      matched: params[:matched],
-      active: params[:active],
-      municipality_ids: params[:municipality_ids],
-      municipality_district_ids: params[:municipality_district_ids],
-      bbox: params[:bbox]
-    }
+    params
+      .slice(:kinds, :matched, :active, :municipality_ids, :municipality_district_ids, :bbox)
+      .permit(:bbox, kinds: [], matched: [], active: [], municipality_ids: [], municipality_district_ids: [])
+      .to_h.symbolize_keys
   end
 end
