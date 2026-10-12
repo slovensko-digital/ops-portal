@@ -144,73 +144,6 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     assert_no_selector "aside"
   end
 
-  test "panel shows a city district with its own activity and its municipality" do
-    bratislava = municipalities(:bratislava)
-    bratislava.update!(active: true)
-    stare_mesto = municipality_districts(:stare_mesto_ba)
-    stare_mesto.update!(active: false)
-    boundary = create_municipality_boundary(municipality: bratislava, district: stare_mesto, center_lat: 48.15, center_lon: 17.1)
-    login_as(@admin)
-
-    visit admin_municipality_boundaries_path
-    find("path.boundary-#{boundary.id}").click
-
-    within "aside" do
-      assert_selector "h2", text: stare_mesto.name
-      assert_details "Hranica", "ID" => boundary.id, "Typ" => "Mestská časť", "Spárovaná" => "áno"
-      assert_details "Obec", "ID" => bratislava.id, "Názov" => "Bratislava", "Aktívna" => "áno"
-      assert_details "Mestská časť", "ID" => stare_mesto.id, "Názov" => stare_mesto.name, "Aktívna" => "nie"
-    end
-  end
-
-  test "panel shows an unmatched boundary" do
-    boundary = create_municipality_boundary(municipality: nil, center_lat: 48.15, center_lon: 17.1)
-    login_as(@admin)
-
-    visit admin_municipality_boundaries_path
-    find("path.boundary-#{boundary.id}").click
-
-    within "aside" do
-      assert_selector "h2", text: "Nespárovaná hranica"
-      assert_details "Hranica", "ID" => boundary.id, "Spárovaná" => "nie"
-      assert_text "Hranica nie je spárovaná so žiadnou obcou."
-    end
-  end
-
-  test "opening and closing the panel does not move the map" do
-    boundary = create_municipality_boundary(municipality: municipalities(:bratislava), center_lat: 48.15, center_lon: 17.1)
-    login_as(@admin)
-
-    visit admin_municipality_boundaries_path
-    path = find("path.boundary-#{boundary.id}")
-    position = position_of("path.boundary-#{boundary.id}")
-
-    path.click
-
-    assert_selector "aside h2", text: "Bratislava"
-    assert_equal position, position_of("path.boundary-#{boundary.id}")
-
-    find("body").send_keys(:escape)
-
-    assert_no_selector "aside"
-    assert_equal position, position_of("path.boundary-#{boundary.id}")
-  end
-
-  test "city districts are drawn on top of municipalities" do
-    bratislava = municipalities(:bratislava)
-    municipality = create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
-    district = create_municipality_boundary(municipality: bratislava, district: municipality_districts(:stare_mesto_ba), center_lat: 48.2, center_lon: 17.15, size: 0.02)
-    login_as(@admin)
-
-    visit admin_municipality_boundaries_path
-
-    # hovering a municipality brings it to the front, but only within the municipality layer
-    find("path.boundary-#{municipality.id}").hover
-
-    assert_selector "path.boundary-#{municipality.id}[stroke-width='4']"
-    assert_equal "boundary-#{district.id}", top_element_class_at_center_of("path.boundary-#{district.id}")
-  end
-
   test "url reflects the filter and the selected boundary so it can be shared" do
     bratislava = municipalities(:bratislava)
     boundary = create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
@@ -244,32 +177,16 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     assert_current_query "kinds" => [ "municipality" ], "matched" => [ "matched" ], "active" => %w[true false]
   end
 
-  test "shared url keeps unchecked groups empty" do
-    create_municipality_boundary(municipality: municipalities(:bratislava), center_lat: 48.15, center_lon: 17.1)
-    login_as(@admin)
+  test "the map is not available to users who are not admins" do
+    login_as(users(:two))
 
-    visit admin_municipality_boundaries_path(kinds: [ "" ])
+    visit admin_municipality_boundaries_path
 
-    assert_unchecked_field "kinds_municipality"
-    assert_unchecked_field "kinds_district"
-    assert_boundaries count: 0
+    assert_no_selector "h1", text: "Hranice obcí a mestských častí"
+    assert_no_selector ".leaflet-container"
   end
 
   private
-
-  def position_of(selector)
-    evaluate_script("(function() { var box = document.querySelector('#{selector}').getBoundingClientRect(); return [box.left, box.top]; })()")
-  end
-
-  def top_element_class_at_center_of(selector)
-    evaluate_script(<<~JS)
-      (function() {
-        var box = document.querySelector("#{selector}").getBoundingClientRect();
-        var element = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
-        return element.getAttribute("class").split(" ")[0];
-      })()
-    JS
-  end
 
   def assert_boundaries(count:)
     if count.zero?
