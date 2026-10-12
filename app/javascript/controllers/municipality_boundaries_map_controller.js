@@ -33,6 +33,8 @@ export default class extends Controller {
         this.map.on('zoomstart', () => this.zooming = true);
         this.map.on('zoomend', () => this.zooming = false);
         this.map.on('click', () => this.unselect());
+        // a boundary redrawn under a resting pointer can miss its mouseout, so leaving the map clears the hover
+        this.map.on('mouseout', () => this.hovered && this.unhover(this.hovered));
         this.map.on('moveend', () => this.load());
         this.load({fitToSelection: !this.selected});
     }
@@ -155,13 +157,11 @@ export default class extends Controller {
             onEachFeature: (feature, layer) => {
                 layer.bindTooltip(this.tooltipContent(feature.properties), {sticky: true});
                 layer.on('mouseover', () => {
+                    this.hovered = layer;
                     layer.setStyle({weight: 4, fillOpacity: Math.max(0.35, layer.options.fillOpacity)});
                     layer.bringToFront();
                 });
-                layer.on('mouseout', () => {
-                    this.layers[kind].resetStyle(layer);
-                    this.selectedLayer()?.bringToFront();
-                });
+                layer.on('mouseout', () => this.unhover(layer));
                 layer.on('click', event => {
                     L.DomEvent.stopPropagation(event);
                     this.isSelected(feature) ? this.unselect() : this.select(layer);
@@ -169,6 +169,13 @@ export default class extends Controller {
             },
         });
         return this.layers[kind];
+    }
+
+    unhover(layer) {
+        if (this.hovered === layer) this.hovered = null;
+        layer.closeTooltip();
+        layer.feature && this.layers[layer.feature.properties.kind].resetStyle(layer);
+        this.selectedLayer()?.bringToFront();
     }
 
     isSelected(feature) {
