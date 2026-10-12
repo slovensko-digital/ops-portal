@@ -144,6 +144,25 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     assert_no_selector "aside"
   end
 
+  test "panel shows a city district with its own activity and its municipality" do
+    bratislava = municipalities(:bratislava)
+    bratislava.update!(active: true)
+    stare_mesto = municipality_districts(:stare_mesto_ba)
+    stare_mesto.update!(active: false)
+    boundary = create_municipality_boundary(municipality: bratislava, district: stare_mesto, center_lat: 48.15, center_lon: 17.1)
+    login_as(@admin)
+
+    visit admin_municipality_boundaries_path
+    find("path.boundary-#{boundary.id}").click
+
+    within "aside" do
+      assert_selector "h2", text: stare_mesto.name
+      assert_details "Hranica", "ID" => boundary.id, "Typ" => "Mestská časť", "Spárovaná" => "áno"
+      assert_details "Obec", "ID" => bratislava.id, "Názov" => "Bratislava", "Aktívna" => "áno"
+      assert_details "Mestská časť", "ID" => stare_mesto.id, "Názov" => stare_mesto.name, "Aktívna" => "nie"
+    end
+  end
+
   test "panel shows an unmatched boundary" do
     boundary = create_municipality_boundary(municipality: nil, center_lat: 48.15, center_lon: 17.1)
     login_as(@admin)
