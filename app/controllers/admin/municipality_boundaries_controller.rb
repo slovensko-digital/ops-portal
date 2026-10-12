@@ -27,7 +27,7 @@ class Admin::MunicipalityBoundariesController < ApplicationController
   # An option list missing from the params keeps all options, an empty one ("kinds[]=") keeps none,
   # so a shared link shows the same map.
   def filter(kinds: params[:kinds], bbox: nil)
-    MunicipalityBoundary::Filter.new(
+    MunicipalityBoundary::AdminFilter.new(
       kinds: kinds,
       matched: params[:matched],
       active: params[:active],

@@ -1,6 +1,6 @@
 require "test_helper"
 
-class MunicipalityBoundary::FilterTest < ActiveSupport::TestCase
+class MunicipalityBoundary::AdminFilterTest < ActiveSupport::TestCase
   setup do
     @bratislava = municipalities(:bratislava)
     @bratislava.update!(active: true)
@@ -64,6 +64,6 @@ class MunicipalityBoundary::FilterTest < ActiveSupport::TestCase
   private
 
   def assert_ids(expected, **options)
-    assert_equal expected.map(&:id).sort, MunicipalityBoundary::Filter.new(**options).boundaries.ids.sort
+    assert_equal expected.map(&:id).sort, MunicipalityBoundary::AdminFilter.new(**options).boundaries.ids.sort
   end
 end

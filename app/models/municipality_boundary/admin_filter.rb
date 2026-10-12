@@ -1,6 +1,6 @@
 # Filters boundaries shown on the admin boundaries map. A list left out (nil) keeps all of its options,
 # an empty list keeps none.
-class MunicipalityBoundary::Filter
+class MunicipalityBoundary::AdminFilter
   MATCHED = %w[matched unmatched].freeze
   ACTIVE = %w[true false].freeze
 
