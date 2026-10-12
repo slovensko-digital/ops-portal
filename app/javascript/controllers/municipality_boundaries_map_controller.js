@@ -1,6 +1,8 @@
 import {Controller} from "@hotwired/stimulus"
 import L from 'leaflet';
 
+const SLOVAKIA_BOUNDS = [[47.483, 15.781], [50.032, 22.813]];
+
 // Connects to data-controller="municipality-boundaries-map"
 export default class extends Controller {
     static targets = ["map", "filter", "activeGroup", "tree", "panel", "detail"]
@@ -15,7 +17,7 @@ export default class extends Controller {
             this.selected = {kind: this.selectedValue.kind, id: this.selectedValue.id};
             this.openDetail(this.selected.id);
         }
-        this.map.fitBounds(this.selectedValue.bounds || [[47.483, 15.781], [50.032, 22.813]]);
+        this.map.fitBounds(this.selectedValue.bounds || SLOVAKIA_BOUNDS);
 
         L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap',
