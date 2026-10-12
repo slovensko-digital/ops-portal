@@ -1,0 +1,27 @@
+<% municipality = @boundary.municipality %>
+<% district = @boundary.municipality_district %>
+
+<%= turbo_frame_tag "boundary_detail" do %>
+  <h2><%= district&.name || municipality&.name || "Nespárovaná hranica" %></h2>
+
+  <h3>Hranica</h3>
+  <dl>
+    <dt>ID</dt>
+    <dd><%= @boundary.id %></dd>
+    <dt>Typ</dt>
+    <dd><%= @boundary.boundary_kind == "district" ? "Mestská časť" : "Obec" %></dd>
+    <dt>Spárovaná</dt>
+    <dd><%= @boundary.matched? ? "áno" : "nie" %></dd>
+  </dl>
+
+  <% if municipality %>
+    <%= render "record_details", heading: "Obec", record: municipality %>
+  <% else %>
+    <h3>Obec</h3>
+    <p>Hranica nie je spárovaná so žiadnou obcou.</p>
+  <% end %>
+
+  <% if district %>
+    <%= render "record_details", heading: "Mestská časť", record: district %>
+  <% end %>
+<% end %>
