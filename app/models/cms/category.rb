@@ -3,11 +3,11 @@
 # Table name: cms_categories
 #
 #  id                 :bigint           not null, primary key
+#  parent_category_id :bigint
 #  name               :string           not null
 #  slug               :string           not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  parent_category_id :bigint
 #
 class Cms::Category < ApplicationRecord
   belongs_to :parent_category, class_name: "Cms::Category", optional: true

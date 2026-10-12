@@ -3,6 +3,8 @@
 # Table name: issues_categories
 #
 #  id                 :bigint           not null, primary key
+#  legacy_id          :integer
+#  triage_external_id :integer
 #  alias              :string
 #  catch_all          :boolean          default(FALSE)
 #  description        :string
@@ -12,8 +14,6 @@
 #  weight             :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  legacy_id          :integer
-#  triage_external_id :integer
 #
 class Issues::Category < ApplicationRecord
   has_many :subcategories, class_name: "Issues::Subcategory", dependent: :destroy

@@ -3,17 +3,17 @@
 # Table name: issues_responsible_subject_changes
 #
 #  id                            :bigint           not null, primary key
+#  activity_id                   :bigint           not null
+#  responsible_subject_author_id :bigint
+#  responsible_subject_id        :bigint
+#  triage_external_id            :integer
+#  user_author_id                :bigint
 #  change_type                   :integer          not null
 #  hidden                        :boolean          default(FALSE), not null
 #  text                          :string
 #  uuid                          :uuid             not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  activity_id                   :bigint           not null
-#  responsible_subject_author_id :bigint
-#  responsible_subject_id        :bigint
-#  triage_external_id            :integer
-#  user_author_id                :bigint
 #
 class Issues::ResponsibleSubjectChange < ApplicationRecord
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy

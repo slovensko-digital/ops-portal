@@ -3,7 +3,10 @@
 # Table name: responsible_subjects_users
 #
 #  id                     :bigint           not null, primary key
-#  deleted_at             :datetime
+#  legacy_id              :integer
+#  organization_unit_id   :bigint
+#  responsible_subject_id :bigint
+#  role_id                :bigint           not null
 #  email                  :string
 #  gdpr_accepted          :boolean
 #  login                  :string
@@ -13,10 +16,7 @@
 #  tooltips               :boolean
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  legacy_id              :integer
-#  organization_unit_id   :bigint
-#  responsible_subject_id :bigint
-#  role_id                :bigint           not null
+#  deleted_at             :datetime
 #
 class ResponsibleSubjects::User < ApplicationRecord
   belongs_to :responsible_subject, optional: true

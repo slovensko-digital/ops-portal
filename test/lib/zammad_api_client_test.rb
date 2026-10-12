@@ -262,6 +262,32 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     end
   end
 
+  test "update_ticket_from_issue! sends empty hash when issue has no responsible subject" do
+    issue = issues(:one)
+    issue.update!(responsible_subject: nil)
+    ticket = OpenStruct.new(responsible_subject: { label: "Old", value: 1 })
+    ticket_client = Minitest::Mock.new
+    ticket_client.expect :find, ticket, [ 1 ]
+    @subject.instance_variable_set(:@client, OpenStruct.new(ticket: ticket_client))
+
+    @subject.update_ticket_from_issue!(1, issue)
+
+    assert_equal({}, ticket.responsible_subject)
+    ticket_client.verify
+  end
+
+  test "update_ticket_from_issue! sends label and value when issue has responsible subject" do
+    issue = issues(:sent_to_responsible)
+    ticket = OpenStruct.new(responsible_subject: {})
+    ticket_client = Minitest::Mock.new
+    ticket_client.expect :find, ticket, [ 1 ]
+    @subject.instance_variable_set(:@client, OpenStruct.new(ticket: ticket_client))
+
+    @subject.update_ticket_from_issue!(1, issue)
+
+    assert_equal({ label: issue.responsible_subject.name, value: issue.responsible_subject.id }, ticket.responsible_subject)
+  end
+
   test "strip_tags_from_article_body removes all tags" do
     body = "[[pre zodpovedny subjekt]] \nThis is a test body with tags [[ops portal]], [[vyriesene]], and [[odstúpený]].  "
     stripped_body = @subject.send(:strip_tags_from_article_body, body)

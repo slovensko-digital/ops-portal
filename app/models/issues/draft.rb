@@ -3,6 +3,12 @@
 # Table name: issues_drafts
 #
 #  id                      :bigint           not null, primary key
+#  author_id               :bigint           not null
+#  category_id             :bigint
+#  issue_id                :bigint
+#  issue_type              :string           default("issue"), not null
+#  subcategory_id          :bigint
+#  subtype_id              :bigint
 #  address_city            :string
 #  address_country         :string
 #  address_country_code    :string
@@ -18,7 +24,6 @@
 #  checks                  :jsonb
 #  description             :string
 #  duplicates_shown        :boolean          default(FALSE), not null
-#  issue_type              :string           default("issue"), not null
 #  latitude                :float
 #  latlon_from_exif        :boolean          default(FALSE)
 #  longitude               :float
@@ -29,11 +34,6 @@
 #  zoom                    :integer
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  author_id               :bigint           not null
-#  category_id             :bigint
-#  issue_id                :bigint
-#  subcategory_id          :bigint
-#  subtype_id              :bigint
 #
 class Issues::Draft < ApplicationRecord
   has_many_attached :photos do |photo|

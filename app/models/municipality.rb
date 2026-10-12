@@ -3,14 +3,16 @@
 # Table name: municipalities
 #
 #  id                         :bigint           not null, primary key
-#  active                     :boolean
+#  district_id                :bigint
+#  legacy_id                  :integer
+#  active                     :boolean          default(FALSE), not null
 #  active_on_old_portal       :boolean          default(FALSE), not null
 #  aliases                    :string           default([]), not null, is an Array
-#  archived                   :boolean          default(FALSE)
+#  archived                   :boolean          default(FALSE), not null
 #  category                   :integer
 #  email                      :string
 #  handled_by                 :integer
-#  has_municipality_districts :boolean
+#  has_municipality_districts :boolean          default(FALSE), not null
 #  languages                  :string
 #  latitude                   :float
 #  logo                       :string
@@ -21,8 +23,6 @@
 #  sub                        :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  district_id                :bigint
-#  legacy_id                  :integer
 #
 class Municipality < ApplicationRecord
   belongs_to :district, optional: true
@@ -33,6 +33,8 @@ class Municipality < ApplicationRecord
 
   scope :active, -> { where(active: true) }
   scope :archived, -> { where(archived: true) }
+  scope :with_boundaries, -> { where(id: MunicipalityBoundary.select(:municipality_id)) }
+  scope :alphabetical, -> { order(Arel.sql("name COLLATE unicode")) }
 
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # TODO Pomenovanie ciselnych hodnot iba podla nasho usudku

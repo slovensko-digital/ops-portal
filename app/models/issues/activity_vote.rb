@@ -3,11 +3,11 @@
 # Table name: issues_activity_votes
 #
 #  id          :bigint           not null, primary key
+#  activity_id :bigint           not null
+#  voter_id    :bigint           not null
 #  vote        :integer          not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  activity_id :bigint           not null
-#  voter_id    :bigint           not null
 #
 class Issues::ActivityVote < ApplicationRecord
   belongs_to :activity

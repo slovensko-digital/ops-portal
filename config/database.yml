@@ -20,6 +20,14 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= 3 + ENV.fetch("RAILS_MAX_THREADS", 5).to_i + ENV.fetch("GOOD_JOB_MAX_THREADS", 5).to_i %>
 
+  # Ride out brief PostgreSQL restarts, such as the weekly package upgrade.
+  # While the server is starting it rejects connections with
+  # "FATAL: the database system is starting up"; these settings make the
+  # adapter retry connection-class errors instead of raising them as 500s.
+  connect_timeout: 3
+  connection_retries: 100
+  retry_deadline: 20
+
 development:
   <<: *default
 

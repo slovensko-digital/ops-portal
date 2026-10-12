@@ -1422,12 +1422,12 @@ CREATE TABLE public.municipalities (
     sub character varying,
     email character varying,
     municipality_type integer,
-    has_municipality_districts boolean,
+    has_municipality_districts boolean DEFAULT false NOT NULL,
     handled_by integer,
     latitude double precision,
     longitude double precision,
     population integer,
-    active boolean,
+    active boolean DEFAULT false NOT NULL,
     category integer,
     languages character varying,
     logo character varying,
@@ -1436,7 +1436,7 @@ CREATE TABLE public.municipalities (
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     active_on_old_portal boolean DEFAULT false NOT NULL,
-    archived boolean DEFAULT false
+    archived boolean DEFAULT false NOT NULL
 );
 
 
@@ -1548,7 +1548,7 @@ CREATE TABLE public.responsible_subjects (
     email character varying,
     name character varying,
     code character varying,
-    active boolean,
+    active boolean DEFAULT true NOT NULL,
     pro boolean,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -4619,7 +4619,12 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261012100100'),
+('20261012100000'),
 ('20261011120000'),
+('20261003120000'),
+('20261003115900'),
+('20261003105314'),
 ('20260705131733'),
 ('20260627093621'),
 ('20260524143000'),

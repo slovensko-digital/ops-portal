@@ -3,6 +3,9 @@
 # Table name: streets
 #
 #  id                       :bigint           not null, primary key
+#  legacy_id                :integer
+#  municipality_district_id :bigint
+#  municipality_id          :bigint           not null
 #  latitude                 :float
 #  longitude                :float
 #  name                     :string
@@ -11,9 +14,6 @@
 #  whitelisted              :boolean          default(FALSE)
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  legacy_id                :integer
-#  municipality_district_id :bigint
-#  municipality_id          :bigint           not null
 #
 class Street < ApplicationRecord
   belongs_to :municipality
