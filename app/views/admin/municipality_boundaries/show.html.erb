@@ -14,29 +14,14 @@
     <dd><%= @boundary.matched? ? "áno" : "nie" %></dd>
   </dl>
 
-  <h3>Obec</h3>
   <% if municipality %>
-    <dl>
-      <dt>ID</dt>
-      <dd><%= municipality.id %></dd>
-      <dt>Názov</dt>
-      <dd><%= municipality.name %></dd>
-      <dt>Aktívna</dt>
-      <dd><%= municipality.active ? "áno" : "nie" %></dd>
-    </dl>
+    <%= render "record_details", heading: "Obec", record: municipality %>
   <% else %>
+    <h3>Obec</h3>
     <p>Hranica nie je spárovaná so žiadnou obcou.</p>
   <% end %>
 
   <% if district %>
-    <h3>Mestská časť</h3>
-    <dl>
-      <dt>ID</dt>
-      <dd><%= district.id %></dd>
-      <dt>Názov</dt>
-      <dd><%= district.name %></dd>
-      <dt>Aktívna</dt>
-      <dd><%= district.active ? "áno" : "nie" %></dd>
-    </dl>
+    <%= render "record_details", heading: "Mestská časť", record: district %>
   <% end %>
 <% end %>
