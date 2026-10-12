@@ -12,7 +12,6 @@
 #
 class MunicipalityBoundary < ApplicationRecord
   KINDS = %w[municipality district].freeze
-  # a municipality boundary is matched to a municipality, a district boundary to a district
   MATCHED_SQL = "(CASE municipality_boundaries.boundary_kind WHEN 'district' " \
                 "THEN municipality_boundaries.municipality_district_id IS NOT NULL " \
                 "ELSE municipality_boundaries.municipality_id IS NOT NULL END)".freeze

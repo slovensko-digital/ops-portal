@@ -45,9 +45,7 @@ export default class extends Controller {
     filter(event) {
         if (event.target.type === 'search') return;
 
-        // a picked city district is only visible on the district layer
         if (event.target.name === 'municipality_district_ids[]' && event.target.checked) this.filterTarget.querySelector('#kinds_district').checked = true;
-        // the municipality activity only applies to matched boundaries
         this.activeGroupTarget.disabled = !this.filterTarget.querySelector('#matched_matched').checked;
 
         this.treeTargets.forEach(tree => this.updateTreeSummary(tree));
@@ -82,7 +80,6 @@ export default class extends Controller {
         return params;
     }
 
-    // keeps the address bar in sync with the filter and the selected boundary, so the page can be shared
     updateUrl() {
         const params = this.filterParams();
         if (this.selected) params.set('boundary', this.selected.id);
