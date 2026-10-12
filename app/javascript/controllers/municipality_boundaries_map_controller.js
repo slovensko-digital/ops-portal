@@ -29,6 +29,11 @@ export default class extends Controller {
         this.map.createPane('municipality').style.zIndex = 400;
         this.map.createPane('district').style.zIndex = 410;
 
+        this.treeTargets.forEach(tree => {
+            tree.querySelectorAll('input[name="municipality_ids[]"]').forEach(checkbox => this.syncMunicipality(checkbox));
+            this.updateTreeSummary(tree);
+        });
+
         this.map.on('zoomstart', () => this.zooming = true);
         this.map.on('zoomend', () => this.zooming = false);
         this.map.on('click', () => this.unselect());
@@ -44,7 +49,14 @@ export default class extends Controller {
     filter(event) {
         if (event.target.type === 'search') return;
 
-        if (event.target.name === 'municipality_district_ids[]' && event.target.checked) this.filterTarget.querySelector('#kinds_district').checked = true;
+        if (event.target.name === 'municipality_ids[]') {
+            this.districtCheckboxes(event.target).forEach(district => district.checked = event.target.checked);
+        }
+        if (event.target.name === 'municipality_district_ids[]') this.syncMunicipality(this.municipalityCheckbox(event.target));
+        // picked city districts are only visible on the district layer
+        const pickedDistricts = event.target.name === 'municipality_district_ids[]' ||
+            (event.target.name === 'municipality_ids[]' && this.districtCheckboxes(event.target).length > 0);
+        if (event.target.checked && pickedDistricts) this.filterTarget.querySelector('#kinds_district').checked = true;
         this.activeGroupTarget.disabled = !this.filterTarget.querySelector('#matched_matched').checked;
 
         this.treeTargets.forEach(tree => this.updateTreeSummary(tree));
@@ -58,8 +70,27 @@ export default class extends Controller {
         });
     }
 
+    districtCheckboxes(municipality) {
+        return [...municipality.closest('li').querySelectorAll(':scope > ul input[type=checkbox]')];
+    }
+
+    municipalityCheckbox(district) {
+        return district.closest('ul').closest('li').querySelector(':scope > label input[type=checkbox]');
+    }
+
+    // a municipality is checked with all of its districts, partly checked with some of them
+    syncMunicipality(municipality) {
+        const districts = this.districtCheckboxes(municipality).map(district => district.checked);
+        if (!districts.length) return;
+
+        municipality.checked = districts.every(Boolean);
+        municipality.indeterminate = !municipality.checked && districts.some(Boolean);
+    }
+
+    // a fully checked municipality stands for its districts in the summary
     updateTreeSummary(tree) {
         const labels = [...tree.querySelectorAll('input[type=checkbox]:checked')]
+            .filter(checkbox => checkbox.name !== 'municipality_district_ids[]' || !this.municipalityCheckbox(checkbox).checked)
             .map(checkbox => checkbox.closest('label').querySelector('span').textContent);
         const summary = tree.querySelector('[data-tree-summary]');
         summary.textContent = labels.length ? labels.join(', ') : summary.dataset.treeSummary;

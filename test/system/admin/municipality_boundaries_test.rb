@@ -59,11 +59,13 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     assert_boundaries count: 0
   end
 
-  test "admin selects a municipality and a city district in the tree" do
+  test "admin selects a municipality with its city districts in the tree" do
     bratislava = municipalities(:bratislava)
     stare_mesto = municipality_districts(:stare_mesto_ba)
+    other_district = MunicipalityDistrict.where(municipality: bratislava).where.not(id: stare_mesto.id).first
     create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
     create_municipality_boundary(municipality: bratislava, district: stare_mesto, center_lat: 48.22, center_lon: 17.17, size: 0.02)
+    create_municipality_boundary(municipality: bratislava, district: other_district, center_lat: 48.1, center_lon: 17.05, size: 0.02)
     trencin = municipalities(:trencin)
     create_municipality_boundary(municipality: trencin, center_lat: 48.9, center_lon: 18.04)
     login_as(@admin)
@@ -73,18 +75,25 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     assert_boundaries count: 2
 
     find("summary", text: "Obec: Všetky").click
+    check "municipality_ids_#{bratislava.id}"
+
+    assert_checked_field "municipality_district_ids_#{stare_mesto.id}"
+    assert_checked_field "municipality_district_ids_#{other_district.id}"
+    assert_checked_field "kinds_district"
+    assert_selector "summary", text: "Obec: Bratislava"
+    assert_boundaries count: 3
+
+    uncheck "municipality_district_ids_#{other_district.id}"
+
+    assert_selector "summary", text: "Obec: #{stare_mesto.name}"
+    assert evaluate_script("document.getElementById('municipality_ids_#{bratislava.id}').indeterminate")
+    # Bratislava and its Staré Mesto district
+    assert_boundaries count: 2
+
     fill_in "Hľadať obec alebo mestskú časť", with: "trencin"
     check trencin.name
 
-    assert_selector "summary", text: "Obec: #{trencin.name}"
-    assert_boundaries count: 1
-
-    fill_in "Hľadať obec alebo mestskú časť", with: "stare mesto"
-    check stare_mesto.name
-
-    assert_selector "summary", text: "Obec: #{trencin.name}, #{stare_mesto.name}"
-    assert_checked_field "kinds_district"
-    # Trenčín, plus Bratislava and its Staré Mesto district
+    assert_selector "summary", text: "Obec: #{stare_mesto.name}, #{trencin.name}"
     assert_boundaries count: 3
 
     find("h1").click
