@@ -3,7 +3,7 @@
 <div data-controller="municipality-boundaries-map"
      data-municipality-boundaries-map-url-value="<%= admin_municipality_boundaries_path(format: :json) %>"
      data-municipality-boundaries-map-detail-url-value="<%= admin_municipality_boundary_path(":id") %>"
-     data-municipality-boundaries-map-selected-value="<%= @selected_boundary ? { id: @selected_boundary.id, kind: @selected_boundary.boundary_kind, bounds: @selected_boundary.bounds }.to_json : "{}" %>"
+     data-municipality-boundaries-map-selected-value="<%= @selected_boundary ? { id: @selected_boundary.id, bounds: @selected_boundary.bounds }.to_json : "{}" %>"
      data-action="keydown.esc@window->municipality-boundaries-map#unselect"
      style="display: contents;">
   <header class="admin-header">

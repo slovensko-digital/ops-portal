@@ -32,7 +32,7 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     find("path.boundary-#{bratislava_boundary.id}").hover
 
     assert_selector ".leaflet-tooltip", text: "Bratislava"
-    assert_selector "path.boundary-#{bratislava_boundary.id}[stroke-width='4']"
+    assert_equal "4px", evaluate_script("getComputedStyle(document.querySelector('path.boundary-#{bratislava_boundary.id}')).strokeWidth")
 
     uncheck "active_false"
 
@@ -106,9 +106,8 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     assert_no_selector "aside"
 
     find("path.boundary-#{bratislava_boundary.id}").click
-    find("h1").hover
 
-    assert_selector "path.boundary-#{bratislava_boundary.id}[stroke-width='4']"
+    assert_selector "path.boundary-#{bratislava_boundary.id}.selected-boundary"
     within "aside" do
       assert_selector "h2", text: "Bratislava"
       assert_details "Hranica", "ID" => bratislava_boundary.id, "Typ" => "Obec", "Spárovaná" => "áno"
@@ -116,27 +115,24 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     end
 
     find("path.boundary-#{trencin_boundary.id}").click
-    find("h1").hover
 
-    assert_selector "path.boundary-#{trencin_boundary.id}[stroke-width='4']"
-    assert_selector "path.boundary-#{bratislava_boundary.id}[stroke-width='1.5']"
+    assert_selector "path.boundary-#{trencin_boundary.id}.selected-boundary"
+    assert_selector "path.boundary-#{bratislava_boundary.id}:not(.selected-boundary)"
     within "aside" do
       assert_details "Obec", "ID" => trencin.id, "Názov" => trencin.name, "Aktívna" => "nie"
     end
 
     find("path.boundary-#{trencin_boundary.id}").click
-    find("h1").hover
 
-    assert_selector "path.boundary-#{trencin_boundary.id}[stroke-width='1.5']"
+    assert_selector "path.boundary-#{trencin_boundary.id}:not(.selected-boundary)"
     assert_no_selector "aside"
 
     find("path.boundary-#{bratislava_boundary.id}").click
     assert_selector "aside h2", text: "Bratislava"
     find("body").send_keys(:escape)
-    find("h1").hover
 
     assert_no_selector "aside"
-    assert_selector "path.boundary-#{bratislava_boundary.id}[stroke-width='1.5']"
+    assert_selector "path.boundary-#{bratislava_boundary.id}:not(.selected-boundary)"
 
     find("path.boundary-#{bratislava_boundary.id}").click
     within("aside") { click_on "Zavrieť" }
@@ -167,7 +163,7 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     visit shared_url
 
     assert_selector "aside h2", text: "Bratislava"
-    assert_selector "path.boundary-#{boundary.id}[stroke-width='4']"
+    assert_selector "path.boundary-#{boundary.id}.selected-boundary"
     assert_unchecked_field "kinds_district"
     assert_unchecked_field "matched_unmatched"
 
@@ -197,7 +193,8 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
   end
 
   def assert_current_query(expected)
-    assert_equal expected, Rack::Utils.parse_nested_query(URI.parse(current_url).query).transform_keys { it.delete_suffix("[]") }
+    query = Rack::Utils.parse_nested_query(URI.parse(current_url).query)
+    assert_equal expected, query.transform_keys { it.delete_suffix("[]") }.transform_values { it.is_a?(Array) ? it.compact_blank : it }
   end
 
   def assert_details(section, values)

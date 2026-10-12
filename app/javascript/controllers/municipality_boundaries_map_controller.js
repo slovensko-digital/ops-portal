@@ -11,11 +11,11 @@ export default class extends Controller {
     connect() {
         this.map = L.map(this.mapTarget, {maxZoom: 19});
         this.layers = {};
-        this.selected = null;
+        this.selectedId = null;
         // a shared link with a selected boundary opens its detail first, so the map fits next to the panel
         if (this.selectedValue.id) {
-            this.selected = {kind: this.selectedValue.kind, id: this.selectedValue.id};
-            this.openDetail(this.selected.id);
+            this.selectedId = this.selectedValue.id;
+            this.openDetail(this.selectedId);
         }
         this.map.fitBounds(this.selectedValue.bounds || SLOVAKIA_BOUNDS);
 
@@ -32,10 +32,8 @@ export default class extends Controller {
         this.map.on('zoomstart', () => this.zooming = true);
         this.map.on('zoomend', () => this.zooming = false);
         this.map.on('click', () => this.unselect());
-        // a boundary redrawn under a resting pointer can miss its mouseout, so leaving the map clears the hover
-        this.map.on('mouseout', () => this.hovered && this.unhover(this.hovered));
         this.map.on('moveend', () => this.load());
-        this.load({fitToSelection: !this.selected});
+        this.load({fitToSelection: !this.selectedId});
     }
 
     disconnect() {
@@ -68,22 +66,13 @@ export default class extends Controller {
         summary.closest('summary').title = summary.textContent;
     }
 
-    // A group with nothing checked is sent as an empty value ("kinds[]="), because a missing group
-    // means all of its options on the server. A disabled group is left out.
     filterParams() {
-        const params = new URLSearchParams();
-        for (const [name, value] of new FormData(this.filterTarget)) {
-            if (value !== '') params.append(name, value);
-        }
-        this.filterTarget.querySelectorAll('fieldset:not([disabled]) input[type=checkbox][name$="[]"]').forEach(({name}) => {
-            if (!params.has(name)) params.append(name, '');
-        });
-        return params;
+        return new URLSearchParams(new FormData(this.filterTarget));
     }
 
     updateUrl() {
         const params = this.filterParams();
-        if (this.selected) params.set('boundary', this.selected.id);
+        if (this.selectedId) params.set('boundary', this.selectedId);
 
         const url = new URL(window.location.href);
         url.search = params.toString();
@@ -95,109 +84,89 @@ export default class extends Controller {
         if (fitToSelection) this.pendingFit = true;
         this.abortController?.abort();
         this.abortController = new AbortController();
-        const signal = this.abortController.signal;
+
         const params = this.filterParams();
         const kinds = params.getAll('kinds[]').filter(Boolean);
-        params.delete('kinds[]');
         const selection = [...params.getAll('municipality_ids[]'), ...params.getAll('municipality_district_ids[]')];
 
         Object.entries(this.layers).forEach(([kind, layer]) => {
             if (!kinds.includes(kind)) this.map.removeLayer(layer);
         });
 
-        const requests = kinds.map(kind => {
-            const layer = this.layerFor(kind).addTo(this.map);
+        const url = new URL(this.urlValue, window.location.origin);
+        url.search = params.toString();
+        url.searchParams.set('z', this.map.getZoom());
+        // a selection is small enough to load whole, so the map can zoom to it
+        if (!selection.length) url.searchParams.set('bbox', this.map.getBounds().toBBoxString());
 
-            const url = new URL(this.urlValue, window.location.origin);
-            url.search = params.toString();
-            url.searchParams.set('kinds[]', kind);
-            url.searchParams.set('z', this.map.getZoom());
-            // a selection is small enough to load whole, so the map can zoom to it
-            if (!selection.length) url.searchParams.set('bbox', this.map.getBounds().toBBoxString());
-
-            return fetch(url, {signal, headers: {Accept: 'application/json'}})
-                .then(response => response.json())
-                .then(data => {
+        fetch(url, {signal: this.abortController.signal, headers: {Accept: 'application/json'}})
+            .then(response => response.json())
+            .then(data => {
+                kinds.forEach(kind => {
+                    const layer = this.layerFor(kind).addTo(this.map);
                     layer.clearLayers();
-                    layer.addData(data);
-                    this.selectedLayer()?.bringToFront();
+                    layer.addData(data.features.filter(feature => feature.properties.kind === kind));
                 });
-        });
+                this.selectedLayer()?.bringToFront();
 
-        Promise.all(requests)
-            .then(() => {
                 const fit = this.pendingFit;
                 this.pendingFit = false;
-                if (!fit || !selection.length) return;
-
-                const bounds = L.latLngBounds([]);
-                kinds.forEach(kind => {
-                    if (this.layers[kind].getLayers().length) bounds.extend(this.layers[kind].getBounds());
-                });
-                if (!bounds.isValid()) return;
-
-                // Leaflet ignores a zoom requested while another zoom is still animating
-                const fitBounds = () => this.map.fitBounds(bounds, {padding: [20, 20]});
-                this.zooming ? this.map.once('zoomend', fitBounds) : fitBounds();
+                if (fit && selection.length) this.fitTo(kinds.map(kind => this.layers[kind]));
             })
             .catch(error => {
                 if (error.name !== 'AbortError') throw error;
             });
     }
 
+    fitTo(layers) {
+        const bounds = L.latLngBounds([]);
+        layers.forEach(layer => {
+            if (layer.getLayers().length) bounds.extend(layer.getBounds());
+        });
+        if (!bounds.isValid()) return;
+
+        // Leaflet ignores a zoom requested while another zoom is still animating
+        const fitBounds = () => this.map.fitBounds(bounds, {padding: [20, 20]});
+        this.zooming ? this.map.once('zoomend', fitBounds) : fitBounds();
+    }
+
+    // The look of a boundary, including hover and selection, comes from its classes and the CSS in the layout.
     layerFor(kind) {
         this.layers[kind] ??= L.geoJSON(null, {
             pane: kind,
-            style: feature => {
-                // the colors come from the boundary-<kind> and unmatched-boundary classes in the layout
-                const className = `boundary-${feature.properties.id} boundary-${kind}${feature.properties.matched ? '' : ' unmatched-boundary'}`;
-                const style = {weight: 1.5, fillOpacity: 0.1, className};
-                return this.isSelected(feature) ? {...style, weight: 4, fillOpacity: 0.45} : style;
-            },
+            style: ({properties}) => ({
+                className: [
+                    'boundary', `boundary-${properties.id}`, `boundary-${kind}`,
+                    properties.matched ? null : 'unmatched-boundary',
+                    properties.id === this.selectedId ? 'selected-boundary' : null,
+                ].filter(Boolean).join(' '),
+            }),
             onEachFeature: (feature, layer) => {
                 layer.bindTooltip(this.tooltipContent(feature.properties), {sticky: true});
-                layer.on('mouseover', () => {
-                    this.hovered = layer;
-                    layer.setStyle({weight: 4, fillOpacity: Math.max(0.35, layer.options.fillOpacity)});
-                    layer.bringToFront();
-                });
-                layer.on('mouseout', () => this.unhover(layer));
                 layer.on('click', event => {
                     L.DomEvent.stopPropagation(event);
-                    this.isSelected(feature) ? this.unselect() : this.select(layer);
+                    feature.properties.id === this.selectedId ? this.unselect() : this.select(layer);
                 });
             },
         });
         return this.layers[kind];
     }
 
-    unhover(layer) {
-        if (this.hovered === layer) this.hovered = null;
-        layer.closeTooltip();
-        layer.feature && this.layers[layer.feature.properties.kind].resetStyle(layer);
-        this.selectedLayer()?.bringToFront();
-    }
-
-    isSelected(feature) {
-        return this.selected?.kind === feature.properties.kind && this.selected?.id === feature.properties.id;
-    }
-
     selectedLayer() {
-        if (!this.selected) return null;
+        if (!this.selectedId) return null;
 
-        return this.layers[this.selected.kind]?.getLayers().find(layer => this.isSelected(layer.feature));
+        return Object.values(this.layers)
+            .flatMap(layer => layer.getLayers())
+            .find(layer => layer.feature.properties.id === this.selectedId);
     }
 
     select(layer) {
-        const {properties} = layer.feature;
-        const previous = this.selectedLayer();
-        this.selected = {kind: properties.kind, id: properties.id};
-        if (previous) this.layers[previous.feature.properties.kind].resetStyle(previous);
-
-        this.layers[properties.kind].resetStyle(layer);
+        this.selectedLayer()?.getElement()?.classList.remove('selected-boundary');
+        this.selectedId = layer.feature.properties.id;
+        layer.getElement()?.classList.add('selected-boundary');
         layer.bringToFront();
 
-        this.openDetail(properties.id);
+        this.openDetail(this.selectedId);
         this.updateUrl();
     }
 
@@ -207,11 +176,10 @@ export default class extends Controller {
     }
 
     unselect() {
-        if (!this.selected) return;
+        if (!this.selectedId) return;
 
-        const layer = this.selectedLayer();
-        this.selected = null;
-        if (layer) this.layers[layer.feature.properties.kind].resetStyle(layer);
+        this.selectedLayer()?.getElement()?.classList.remove('selected-boundary');
+        this.selectedId = null;
 
         this.detailTarget.removeAttribute('src');
         this.detailTarget.replaceChildren();

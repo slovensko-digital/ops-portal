@@ -29,8 +29,7 @@ class MunicipalityBoundary < ApplicationRecord
   scope :unmatched, -> { where.not(MATCHED_SQL) }
 
   scope :with_bounds, -> {
-    select(:id, :boundary_kind,
-      "ST_XMin(boundary) AS min_lon", "ST_YMin(boundary) AS min_lat", "ST_XMax(boundary) AS max_lon", "ST_YMax(boundary) AS max_lat")
+    select(:id, "ST_XMin(boundary) AS min_lon", "ST_YMin(boundary) AS min_lat", "ST_XMax(boundary) AS max_lon", "ST_YMax(boundary) AS max_lat")
   }
 
   # [[south, west], [north, east]], needs the with_bounds scope
