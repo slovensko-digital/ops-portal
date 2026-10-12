@@ -67,24 +67,38 @@ class MunicipalityBoundary::AdminFilterTest < ActiveSupport::TestCase
     assert_ids MunicipalityBoundary.all, bbox: "17.9,48.8,18.2,north"
   end
 
-  test "map features carry the names and flags shown on the map and the outline as GeoJSON" do
-    feature = MunicipalityBoundary::AdminFilter.new(municipality_district_ids: [ @stare_mesto.id ], kinds: [ "district" ])
-      .map_features(zoom: 12).sole
+  test "map feature collection carries the names and flags shown on the map and the outline as GeoJSON" do
+    collection = JSON.parse(MunicipalityBoundary::AdminFilter.new(municipality_district_ids: [ @stare_mesto.id ], kinds: [ "district" ])
+      .map_feature_collection(zoom: 12))
 
-    assert_equal @stare_mesto_boundary.id, feature.id
-    assert_equal "district", feature.boundary_kind
-    assert_equal "Bratislava", feature.municipality_name
-    assert_equal true, feature.municipality_active
-    assert_equal @stare_mesto.name, feature.municipality_district_name
-    assert_predicate feature, :matched?
-    assert_equal "Polygon", JSON.parse(feature.geojson)["type"]
+    assert_equal "FeatureCollection", collection["type"]
+    feature = collection["features"].sole
+    assert_equal "Feature", feature["type"]
+    assert_equal "Polygon", feature["geometry"]["type"]
+    assert_equal({
+      "id" => @stare_mesto_boundary.id,
+      "kind" => "district",
+      "municipality_id" => @bratislava.id,
+      "municipality_name" => "Bratislava",
+      "municipality_active" => true,
+      "municipality_district_id" => @stare_mesto.id,
+      "municipality_district_name" => @stare_mesto.name,
+      "matched" => true
+    }, feature["properties"])
+  end
+
+  test "map feature collection of no boundaries has no features" do
+    assert_equal [], JSON.parse(MunicipalityBoundary::AdminFilter.new(kinds: []).map_feature_collection(zoom: 12))["features"]
   end
 
   test "map features are simplified more when zoomed out" do
     detailed = create_municipality_boundary_with_wkt("POLYGON((17 48, 17.0001 48.05, 17 48.1, 17.1 48.1, 17.1 48, 17 48))")
     filter = MunicipalityBoundary::AdminFilter.new(kinds: [ "municipality" ], matched: [ "unmatched" ])
 
-    points = ->(zoom) { JSON.parse(filter.map_features(zoom: zoom).find { it.id == detailed.id }.geojson)["coordinates"].first.size }
+    points = ->(zoom) do
+      feature = JSON.parse(filter.map_feature_collection(zoom: zoom))["features"].find { it["properties"]["id"] == detailed.id }
+      feature["geometry"]["coordinates"].first.size
+    end
 
     assert_equal 6, points.call(19)
     assert_equal 5, points.call(5)

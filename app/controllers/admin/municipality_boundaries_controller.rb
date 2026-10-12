@@ -10,7 +10,7 @@ class Admin::MunicipalityBoundariesController < ApplicationController
         @municipalities = Municipality.with_boundaries.alphabetical
         @districts_by_municipality_id = MunicipalityDistrict.with_boundaries.alphabetical.group_by(&:municipality_id)
       end
-      format.json { @boundaries = @filter.map_features(zoom: params[:z]) }
+      format.json { render json: @filter.map_feature_collection(zoom: params[:z]) }
     end
   end
 
