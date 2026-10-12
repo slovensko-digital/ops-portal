@@ -1,9 +1,6 @@
 import {Controller} from "@hotwired/stimulus"
 import L from 'leaflet';
 
-const escape = text => Object.assign(document.createElement('div'), {textContent: text}).innerHTML;
-const cssColor = name => getComputedStyle(document.documentElement).getPropertyValue(`--color-${name}`).trim();
-
 // Connects to data-controller="municipality-boundaries-map"
 export default class extends Controller {
     static targets = ["map", "filter", "activeGroup", "tree", "panel", "detail"]
@@ -150,8 +147,9 @@ export default class extends Controller {
         this.layers[kind] ??= L.geoJSON(null, {
             pane: kind,
             style: feature => {
-                const color = cssColor(feature.properties.matched ? kind : 'unmatched');
-                const style = {color, weight: 1.5, fillColor: color, fillOpacity: 0.1, className: `boundary-${feature.properties.id}`};
+                // the colors come from the boundary-<kind> and unmatched-boundary classes in the layout
+                const className = `boundary-${feature.properties.id} boundary-${kind}${feature.properties.matched ? '' : ' unmatched-boundary'}`;
+                const style = {weight: 1.5, fillOpacity: 0.1, className};
                 return this.isSelected(feature) ? {...style, weight: 4, fillOpacity: 0.45} : style;
             },
             onEachFeature: (feature, layer) => {
@@ -229,6 +227,7 @@ export default class extends Controller {
 
     tooltipContent(properties) {
         const name = properties.municipality_district_name || properties.municipality_name;
-        return name ? escape(name) : `Nespárovaná hranica #${properties.id}`;
+        // a text node, Leaflet would insert a string as HTML
+        return document.createTextNode(name || `Nespárovaná hranica #${properties.id}`);
     }
 }
