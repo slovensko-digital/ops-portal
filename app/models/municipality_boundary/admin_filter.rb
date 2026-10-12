@@ -47,14 +47,16 @@ class MunicipalityBoundary::AdminFilter
     scope.with_municipality_active(active.map { it == "true" })
   end
 
-  # A selected municipality shows its own boundary and all of its districts. Selecting some of its districts
-  # narrows the district layer down to those, while the municipality boundary stays visible.
+  # A selected municipality shows its own boundary and all of its districts, unmatched district boundaries included.
+  # Selecting some of its districts narrows the district layer down to those, while the municipality boundary
+  # stays visible.
   def by_selection(scope, kind)
     return scope if municipality_ids.empty? && municipality_district_ids.empty?
 
     if kind == "district"
       scope.where(municipality_district_id: municipality_district_ids)
         .or(scope.where(municipality_id: municipality_ids - municipality_ids_of_districts))
+        .or(scope.where(municipality_id: municipality_ids, municipality_district_id: nil))
     else
       scope.where(municipality_id: municipality_ids | municipality_ids_of_districts)
     end

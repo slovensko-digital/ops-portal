@@ -1,75 +1,75 @@
 require "test_helper"
 
 class MunicipalityBoundary::AdminFilterTest < ActiveSupport::TestCase
-  setup do
-    @bratislava = municipalities(:bratislava)
-    @bratislava.update!(active: true)
-    @trencin = municipalities(:trencin)
-    @trencin.update!(active: false)
-    @stare_mesto = municipality_districts(:stare_mesto_ba)
-    @other_district = MunicipalityDistrict.where(municipality: @bratislava).where.not(id: @stare_mesto.id).first
+  MUNICIPALITIES = %i[bratislava trencin banska_bystrica unmatched_municipality].freeze
+  DISTRICTS = %i[stare_mesto ruzinov karlova_ves bratislava_unmatched_district].freeze
 
-    @bratislava_boundary = create_municipality_boundary(municipality: @bratislava, center_lat: 48.15, center_lon: 17.1)
-    @trencin_boundary = create_municipality_boundary(municipality: @trencin, center_lat: 48.9, center_lon: 18.04)
-    @unmatched_municipality = create_municipality_boundary(municipality: nil, center_lat: 48.5, center_lon: 17.5)
-    @stare_mesto_boundary = create_municipality_boundary(municipality: @bratislava, district: @stare_mesto, center_lat: 48.15, center_lon: 17.1, size: 0.02)
-    @other_district_boundary = create_municipality_boundary(municipality: @bratislava, district: @other_district, center_lat: 48.2, center_lon: 17.2, size: 0.02)
-    # district boundaries are imported per municipality, so an unmatched one still has its municipality
-    @unmatched_district = create_municipality_boundary(municipality: @bratislava, center_lat: 48.1, center_lon: 17.15, size: 0.02, boundary_kind: "district")
+  setup do
+    municipalities(:trencin).update!(active: false)
   end
 
   test "keeps all options of a list that is left out and none of an empty one" do
-    assert_ids MunicipalityBoundary.all
-    assert_ids [], kinds: []
-    assert_ids [], matched: []
-    assert_ids [], kinds: [ "" ]
+    assert_boundaries MUNICIPALITIES + DISTRICTS
+    assert_boundaries [], kinds: []
+    assert_boundaries [], matched: []
+    assert_boundaries [], kinds: [ "" ]
   end
 
   test "filters by kind" do
-    assert_ids [ @bratislava_boundary, @trencin_boundary, @unmatched_municipality ], kinds: [ "municipality" ]
-    assert_ids [ @stare_mesto_boundary, @other_district_boundary, @unmatched_district ], kinds: [ "district" ]
-    assert_ids [], kinds: [ "unknown" ]
+    assert_boundaries MUNICIPALITIES, kinds: [ "municipality" ]
+    assert_boundaries DISTRICTS, kinds: [ "district" ]
+    assert_boundaries [], kinds: [ "unknown" ]
   end
 
   test "matches municipality boundaries by municipality and district boundaries by district" do
-    assert_ids [ @bratislava_boundary, @trencin_boundary, @stare_mesto_boundary, @other_district_boundary ], matched: [ "matched" ]
-    assert_ids [ @unmatched_municipality, @unmatched_district ], matched: [ "unmatched" ]
+    assert_boundaries %i[bratislava trencin banska_bystrica stare_mesto ruzinov karlova_ves], matched: [ "matched" ]
+    assert_boundaries %i[unmatched_municipality bratislava_unmatched_district], matched: [ "unmatched" ]
   end
 
   test "filters matched boundaries by the active flag of the municipality, district boundaries by their parent" do
-    assert_ids [ @bratislava_boundary, @stare_mesto_boundary, @other_district_boundary ], matched: [ "matched" ], active: [ "true" ]
-    assert_ids [ @trencin_boundary ], matched: [ "matched" ], active: [ "false" ]
-    assert_ids [], matched: [ "matched" ], active: []
+    assert_boundaries %i[bratislava banska_bystrica stare_mesto ruzinov karlova_ves], matched: [ "matched" ], active: [ "true" ]
+    assert_boundaries %i[trencin], matched: [ "matched" ], active: [ "false" ]
+    assert_boundaries [], matched: [ "matched" ], active: []
   end
 
   test "keeps unmatched boundaries regardless of the active flag" do
-    assert_ids [ @trencin_boundary, @unmatched_municipality, @unmatched_district ], active: [ "false" ]
-    assert_ids [ @unmatched_municipality, @unmatched_district ], active: []
+    assert_boundaries %i[trencin unmatched_municipality bratislava_unmatched_district], active: [ "false" ]
+    assert_boundaries %i[unmatched_municipality bratislava_unmatched_district], active: []
   end
 
   test "a selected municipality shows its boundary and all of its districts" do
-    assert_ids [ @bratislava_boundary, @stare_mesto_boundary, @other_district_boundary, @unmatched_district ], municipality_ids: [ @bratislava.id ]
+    assert_boundaries %i[bratislava stare_mesto ruzinov karlova_ves bratislava_unmatched_district],
+      municipality_ids: [ municipalities(:bratislava).id ]
+  end
+
+  test "a municipality selected with all of its districts, as the tree sends it, keeps its unmatched district boundaries" do
+    bratislava = municipalities(:bratislava)
+
+    assert_boundaries %i[bratislava stare_mesto ruzinov karlova_ves bratislava_unmatched_district],
+      municipality_ids: [ bratislava.id ], municipality_district_ids: bratislava.municipality_districts.ids
   end
 
   test "selected districts narrow the district layer and keep their municipality boundary" do
-    assert_ids [ @bratislava_boundary, @stare_mesto_boundary ], municipality_district_ids: [ @stare_mesto.id ]
-    assert_ids [ @bratislava_boundary, @trencin_boundary, @stare_mesto_boundary ],
-      municipality_ids: [ @bratislava.id, @trencin.id ], municipality_district_ids: [ @stare_mesto.id ]
+    stare_mesto = municipality_districts(:stare_mesto_ba)
+
+    assert_boundaries %i[bratislava stare_mesto], municipality_district_ids: [ stare_mesto.id ]
+    assert_boundaries %i[bratislava trencin stare_mesto],
+      municipality_ids: [ municipalities(:trencin).id ], municipality_district_ids: [ stare_mesto.id ]
   end
 
   test "filters by bbox" do
-    assert_ids [ @trencin_boundary ], bbox: "17.9,48.8,18.2,49.0"
+    assert_boundaries %i[trencin], bbox: "17.9,48.8,18.2,49.0"
   end
 
   test "ignores a bbox that is not 4 numbers" do
-    assert_ids MunicipalityBoundary.all, bbox: "17.9,48.8,18.2"
-    assert_ids MunicipalityBoundary.all, bbox: "17.9,48.8,18.2,49.0,1"
-    assert_ids MunicipalityBoundary.all, bbox: "17.9,48.8,18.2,north"
+    assert_boundaries MUNICIPALITIES + DISTRICTS, bbox: "17.9,48.8,18.2"
+    assert_boundaries MUNICIPALITIES + DISTRICTS, bbox: "17.9,48.8,18.2,49.0,1"
+    assert_boundaries MUNICIPALITIES + DISTRICTS, bbox: "17.9,48.8,18.2,north"
   end
 
   private
 
-  def assert_ids(expected, **options)
-    assert_equal expected.map(&:id).sort, MunicipalityBoundary::AdminFilter.new(**options).boundaries.ids.sort
+  def assert_boundaries(names, **options)
+    assert_equal names.map { municipality_boundaries(it).id }.sort, MunicipalityBoundary::AdminFilter.new(**options).boundaries.ids.sort
   end
 end

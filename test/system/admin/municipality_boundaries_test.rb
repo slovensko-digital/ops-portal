@@ -1,6 +1,11 @@
 require "application_system_test_case"
 
 class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
+  ALL_BOUNDARIES = %i[
+    bratislava trencin banska_bystrica unmatched_municipality
+    stare_mesto ruzinov karlova_ves bratislava_unmatched_district
+  ].freeze
+
   setup do
     @admin = users(:one)
     @original_admin_emails = ENV["ADMIN_EMAILS"]
@@ -12,14 +17,7 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
   end
 
   test "admin filters boundaries by layer, matching and municipality activity" do
-    bratislava = municipalities(:bratislava)
-    bratislava.update!(active: true)
-    trencin = municipalities(:trencin)
-    trencin.update!(active: false)
-    bratislava_boundary = create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
-    trencin_boundary = create_municipality_boundary(municipality: trencin, center_lat: 48.9, center_lon: 18.04)
-    unmatched = create_municipality_boundary(municipality: nil, center_lat: 48.5, center_lon: 17.5)
-    district = create_municipality_boundary(municipality: bratislava, district: municipality_districts(:stare_mesto_ba), center_lat: 48.22, center_lon: 17.17, size: 0.02)
+    municipalities(:trencin).update!(active: false)
     login_as(@admin)
 
     visit admin_municipality_boundaries_path
@@ -27,74 +25,64 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Hranice obcí a mestských častí"
     assert_no_selector "footer"
     %w[kinds_municipality kinds_district matched_matched matched_unmatched active_true active_false].each { assert_checked_field it }
-    assert_boundaries count: 4
+    assert_boundaries ALL_BOUNDARIES
 
-    find("path.boundary-#{bratislava_boundary.id}").hover
+    boundary_path(:trencin).hover
 
-    assert_selector ".leaflet-tooltip", text: "Bratislava"
-    assert_equal "4px", evaluate_script("getComputedStyle(document.querySelector('path.boundary-#{bratislava_boundary.id}')).strokeWidth")
+    assert_selector ".leaflet-tooltip", text: "Trenčín"
+    assert_equal "4px", evaluate_script("getComputedStyle(document.querySelector('path.boundary-#{municipality_boundaries(:trencin).id}')).strokeWidth")
 
     uncheck "active_false"
 
-    assert_no_selector "path.boundary-#{trencin_boundary.id}"
-    assert_selector "path.boundary-#{unmatched.id}"
-    assert_boundaries count: 3
+    assert_boundaries ALL_BOUNDARIES - %i[trencin]
 
     uncheck "matched_matched"
 
     assert_selector "fieldset[disabled]", text: "Aktivita obce"
-    assert_selector "path.boundary-#{unmatched.id}"
-    assert_boundaries count: 1
+    assert_boundaries %i[unmatched_municipality bratislava_unmatched_district]
 
     check "matched_matched"
     uncheck "matched_unmatched"
     uncheck "kinds_municipality"
 
     assert_no_selector "fieldset[disabled]"
-    assert_selector "path.boundary-#{district.id}"
-    assert_boundaries count: 1
+    assert_boundaries %i[stare_mesto ruzinov karlova_ves]
 
     uncheck "kinds_district"
 
-    assert_boundaries count: 0
+    assert_boundaries []
   end
 
   test "admin selects a municipality with its city districts in the tree" do
     bratislava = municipalities(:bratislava)
-    stare_mesto = municipality_districts(:stare_mesto_ba)
-    other_district = MunicipalityDistrict.where(municipality: bratislava).where.not(id: stare_mesto.id).first
-    create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
-    create_municipality_boundary(municipality: bratislava, district: stare_mesto, center_lat: 48.22, center_lon: 17.17, size: 0.02)
-    create_municipality_boundary(municipality: bratislava, district: other_district, center_lat: 48.1, center_lon: 17.05, size: 0.02)
-    trencin = municipalities(:trencin)
-    create_municipality_boundary(municipality: trencin, center_lat: 48.9, center_lon: 18.04)
+    ruzinov = municipality_districts(:Ružinov)
     login_as(@admin)
 
     visit admin_municipality_boundaries_path(kinds: [ "municipality" ])
 
-    assert_boundaries count: 2
+    assert_boundaries %i[bratislava trencin banska_bystrica unmatched_municipality]
 
     find("summary", text: "Obec: Všetky").click
     check "municipality_ids_#{bratislava.id}"
 
-    assert_checked_field "municipality_district_ids_#{stare_mesto.id}"
-    assert_checked_field "municipality_district_ids_#{other_district.id}"
+    bratislava.municipality_districts.where(id: MunicipalityBoundary.select(:municipality_district_id)).each do |district|
+      assert_checked_field "municipality_district_ids_#{district.id}"
+    end
     assert_checked_field "kinds_district"
     assert_selector "summary", text: "Obec: Bratislava"
-    assert_boundaries count: 3
+    assert_boundaries %i[bratislava stare_mesto ruzinov karlova_ves bratislava_unmatched_district]
 
-    uncheck "municipality_district_ids_#{other_district.id}"
+    uncheck "municipality_district_ids_#{ruzinov.id}"
 
-    assert_selector "summary", text: "Obec: #{stare_mesto.name}"
+    assert_selector "summary", text: "Obec: Karlova Ves, Staré Mesto"
     assert evaluate_script("document.getElementById('municipality_ids_#{bratislava.id}').indeterminate")
-    # Bratislava and its Staré Mesto district
-    assert_boundaries count: 2
+    assert_boundaries %i[bratislava stare_mesto karlova_ves]
 
     fill_in "Hľadať obec alebo mestskú časť", with: "trencin"
-    check trencin.name
+    check "Trenčín"
 
-    assert_selector "summary", text: "Obec: #{stare_mesto.name}, #{trencin.name}"
-    assert_boundaries count: 3
+    assert_selector "summary", text: "Obec: Karlova Ves, Staré Mesto, Trenčín"
+    assert_boundaries %i[bratislava stare_mesto karlova_ves trencin]
 
     find("h1").click
 
@@ -102,57 +90,52 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
   end
 
   test "admin selects a boundary by clicking on it and sees its details in the panel" do
-    bratislava = municipalities(:bratislava)
-    bratislava.update!(active: true)
+    banska_bystrica = municipalities(:banska_bystrica)
     trencin = municipalities(:trencin)
     trencin.update!(active: false)
-    bratislava_boundary = create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
-    trencin_boundary = create_municipality_boundary(municipality: trencin, center_lat: 48.9, center_lon: 18.04)
     login_as(@admin)
 
     visit admin_municipality_boundaries_path
 
     assert_no_selector "aside"
 
-    find("path.boundary-#{bratislava_boundary.id}").click
+    boundary_path(:banska_bystrica).click
 
-    assert_selector "path.boundary-#{bratislava_boundary.id}.selected-boundary"
+    assert_selected :banska_bystrica
     within "aside" do
-      assert_selector "h2", text: "Bratislava"
-      assert_details "Hranica", "ID" => bratislava_boundary.id, "Typ" => "Obec", "Spárovaná" => "áno"
-      assert_details "Obec", "ID" => bratislava.id, "Názov" => "Bratislava", "Aktívna" => "áno"
+      assert_selector "h2", text: banska_bystrica.name
+      assert_details "Hranica", "ID" => municipality_boundaries(:banska_bystrica).id, "Typ" => "Obec", "Spárovaná" => "áno"
+      assert_details "Obec", "ID" => banska_bystrica.id, "Názov" => banska_bystrica.name, "Aktívna" => "áno"
     end
 
-    find("path.boundary-#{trencin_boundary.id}").click
+    boundary_path(:trencin).click
 
-    assert_selector "path.boundary-#{trencin_boundary.id}.selected-boundary"
-    assert_selector "path.boundary-#{bratislava_boundary.id}:not(.selected-boundary)"
+    assert_selected :trencin
+    assert_not_selected :banska_bystrica
     within "aside" do
       assert_details "Obec", "ID" => trencin.id, "Názov" => trencin.name, "Aktívna" => "nie"
     end
 
-    find("path.boundary-#{trencin_boundary.id}").click
+    boundary_path(:trencin).click
 
-    assert_selector "path.boundary-#{trencin_boundary.id}:not(.selected-boundary)"
+    assert_not_selected :trencin
     assert_no_selector "aside"
 
-    find("path.boundary-#{bratislava_boundary.id}").click
-    assert_selector "aside h2", text: "Bratislava"
+    boundary_path(:banska_bystrica).click
+    assert_selector "aside h2", text: banska_bystrica.name
     find("body").send_keys(:escape)
 
     assert_no_selector "aside"
-    assert_selector "path.boundary-#{bratislava_boundary.id}:not(.selected-boundary)"
+    assert_not_selected :banska_bystrica
 
-    find("path.boundary-#{bratislava_boundary.id}").click
+    boundary_path(:banska_bystrica).click
     within("aside") { click_on "Zavrieť" }
 
     assert_no_selector "aside"
   end
 
   test "url reflects the filter and the selected boundary so it can be shared" do
-    bratislava = municipalities(:bratislava)
-    boundary = create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
-    create_municipality_boundary(municipality: bratislava, district: municipality_districts(:stare_mesto_ba), center_lat: 48.22, center_lon: 17.17, size: 0.02)
+    boundary = municipality_boundaries(:bratislava)
     login_as(@admin)
 
     visit admin_municipality_boundaries_path
@@ -162,7 +145,7 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
 
     assert_current_query "kinds" => [ "municipality" ], "matched" => [ "matched" ], "active" => %w[true false]
 
-    find("path.boundary-#{boundary.id}").click
+    boundary_path(:bratislava).click
 
     assert_selector "aside h2", text: "Bratislava"
     assert_current_query "kinds" => [ "municipality" ], "matched" => [ "matched" ], "active" => %w[true false], "boundary" => boundary.id.to_s
@@ -172,7 +155,7 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     visit shared_url
 
     assert_selector "aside h2", text: "Bratislava"
-    assert_selector "path.boundary-#{boundary.id}.selected-boundary"
+    assert_selected :bratislava
     assert_unchecked_field "kinds_district"
     assert_unchecked_field "matched_unmatched"
 
@@ -193,12 +176,26 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
 
   private
 
-  def assert_boundaries(count:)
-    if count.zero?
+  # exactly these boundary fixtures are drawn on the map
+  def assert_boundaries(names)
+    names.each { assert_selector "path.boundary-#{municipality_boundaries(it).id}" }
+    if names.empty?
       assert_no_selector ".leaflet-map-pane path.leaflet-interactive"
     else
-      assert_selector ".leaflet-map-pane path.leaflet-interactive", count: count
+      assert_selector ".leaflet-map-pane path.leaflet-interactive", count: names.size
     end
+  end
+
+  def boundary_path(name)
+    find("path.boundary-#{municipality_boundaries(name).id}")
+  end
+
+  def assert_selected(name)
+    assert_selector "path.boundary-#{municipality_boundaries(name).id}.selected-boundary"
+  end
+
+  def assert_not_selected(name)
+    assert_selector "path.boundary-#{municipality_boundaries(name).id}:not(.selected-boundary)"
   end
 
   def assert_current_query(expected)
