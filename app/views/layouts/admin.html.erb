@@ -14,7 +14,8 @@
       * { box-sizing: border-box; }
       html, body { height: 100%; margin: 0; }
       body { display: flex; flex-direction: column; font-family: system-ui, sans-serif; font-size: 14px; color: #222; background: #fff; }
-      .admin-header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 12px 16px; border-bottom: 1px solid #ddd; }
+      /* above the map, whose controls use z-index 1000, so the filter dropdowns are not covered by them */
+      .admin-header { position: relative; z-index: 1001; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #ddd; }
       .admin-header h1 { margin: 0; font-size: 18px; }
       .admin-filter { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 20px; margin: 0; }
       .admin-filter label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
