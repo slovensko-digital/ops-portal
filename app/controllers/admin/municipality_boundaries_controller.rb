@@ -1,4 +1,3 @@
-# Access is restricted to admins by the GoodJobAdmin route constraint.
 class Admin::MunicipalityBoundariesController < ApplicationController
   layout "admin_map"
 
@@ -21,8 +20,6 @@ class Admin::MunicipalityBoundariesController < ApplicationController
 
   private
 
-  # An option list missing from the params keeps all options, an empty one ("kinds[]=") keeps none,
-  # so a shared link shows the same map.
   def filter_params
     {
       kinds: params[:kinds],
