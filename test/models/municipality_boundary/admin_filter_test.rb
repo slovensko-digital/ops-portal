@@ -61,6 +61,12 @@ class MunicipalityBoundary::AdminFilterTest < ActiveSupport::TestCase
     assert_ids [ @trencin_boundary ], bbox: "17.9,48.8,18.2,49.0"
   end
 
+  test "ignores a bbox that is not 4 numbers" do
+    assert_ids MunicipalityBoundary.all, bbox: "17.9,48.8,18.2"
+    assert_ids MunicipalityBoundary.all, bbox: "17.9,48.8,18.2,49.0,1"
+    assert_ids MunicipalityBoundary.all, bbox: "17.9,48.8,18.2,north"
+  end
+
   test "map features carry the names and flags shown on the map and the outline as GeoJSON" do
     feature = MunicipalityBoundary::AdminFilter.new(municipality_district_ids: [ @stare_mesto.id ], kinds: [ "district" ])
       .map_features(zoom: 12).sole

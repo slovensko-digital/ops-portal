@@ -12,7 +12,7 @@ class MunicipalityBoundary::AdminFilter
     @active = options(active, ACTIVE)
     @municipality_ids = Array(municipality_ids).compact_blank.map(&:to_i)
     @municipality_district_ids = Array(municipality_district_ids).compact_blank.map(&:to_i)
-    @bbox = bbox.to_s.split(",").map(&:to_f) if bbox.present?
+    @bbox = parse_bbox(bbox)
   end
 
   # The active flag only applies to matched boundaries, unmatched ones have no municipality to check.
@@ -44,6 +44,12 @@ class MunicipalityBoundary::AdminFilter
 
   def options(values, all)
     values.nil? ? all : Array(values).compact_blank & all
+  end
+
+  # a bbox that is not 4 numbers is ignored
+  def parse_bbox(bbox)
+    coordinates = bbox.to_s.split(",").map { Float(it, exception: false) }
+    coordinates if coordinates.size == 4 && coordinates.all?
   end
 
   def base
