@@ -84,13 +84,15 @@ class MunicipalityBoundary::AdminFilter
   def by_selection(scope, kind)
     return scope if municipality_ids.empty? && municipality_district_ids.empty?
 
-    municipality_ids_of_districts = MunicipalityDistrict.where(id: municipality_district_ids).distinct.pluck(:municipality_id)
-
     if kind == "district"
       scope.where(municipality_district_id: municipality_district_ids)
         .or(scope.where(municipality_id: municipality_ids - municipality_ids_of_districts))
     else
       scope.where(municipality_id: municipality_ids | municipality_ids_of_districts)
     end
+  end
+
+  def municipality_ids_of_districts
+    @municipality_ids_of_districts ||= MunicipalityDistrict.where(id: municipality_district_ids).distinct.pluck(:municipality_id)
   end
 end
