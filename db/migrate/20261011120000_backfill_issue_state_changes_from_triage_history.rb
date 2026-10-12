@@ -1,13 +1,16 @@
+
 class BackfillIssueStateChangesFromTriageHistory < ActiveRecord::Migration[8.1]
   TRIAGE_STATE_ATTRIBUTE = "ops_state"
 
   def up
     issues = Issue.where.not(triage_external_id: nil)
-    say_with_time "Backfilling state changes for #{issues.count} issues with triage tickets" do
+                  .or(Issue.where.not(resolution_external_id: nil))
+
+    say_with_time "Backfilling state changes for #{issues.count} issues with tickets" do
       issues.find_each do |issue|
         backfill_issue(issue)
       rescue StandardError => e
-        say "  issue ##{issue.id} (triage ticket #{issue.triage_external_id}): skipped (#{e.class}: #{e.message})", true
+        say "  issue ##{issue.id}: skipped (#{e.class}: #{e.message})", true
       end
     end
   end
@@ -18,42 +21,66 @@ class BackfillIssueStateChangesFromTriageHistory < ActiveRecord::Migration[8.1]
 
   private
 
+  def ticket_ids(issue)
+    [issue.triage_external_id, issue.resolution_external_id].compact.uniq
+  end
+
   def backfilled?(issue)
-    Issues::StateChange.where(triage_external_id: issue.triage_external_id).exists?
+    Issues::StateChange.where(triage_external_id: ticket_ids(issue)).exists?
   end
 
   def backfill_issue(issue)
     return if backfilled?(issue)
 
-    history = TriageZammadEnvironment.client.get_ticket_history(issue.triage_external_id)
-    return say("  issue ##{issue.id}: triage ticket #{issue.triage_external_id} not found, skipped", true) if history.nil?
+    transitions = ticket_ids(issue).flat_map do |ticket_id|
+      history = TriageZammadEnvironment.client.get_ticket_history(ticket_id)
 
-    transitions = state_transitions(history)
+      if history.nil?
+        say "  issue ##{issue.id}: ticket #{ticket_id} not found, skipped", true
+        return
+      end
+
+      state_transitions(history)
+    end
+
+    transitions.sort_by! { |entry| entry[:created_at] || issue.created_at }
+
+    initial_state = transitions.first&.dig(:previous_state) || issue.state
 
     entries = []
-    initial_state = transitions.first&.dig(:previous_state) || issue.state
-    entries << { previous_state: nil, new_state: initial_state, created_at: issue.created_at } if initial_state
+    if initial_state
+      entries << {
+        previous_state: nil,
+        new_state: initial_state,
+        created_at: issue.created_at
+      }
+    end
+
     entries.concat(transitions)
 
     if entries.empty?
-      say "  issue ##{issue.id}: no mappable state history in triage, skipped", true
+      say "  issue ##{issue.id}: no mappable state history, skipped", true
       return
     end
 
     last_new_state = transitions.last&.dig(:new_state)
     if last_new_state && issue.state_id && last_new_state.id != issue.state_id
-      say "  issue ##{issue.id}: portal state (#{issue.state.key}) differs from last triage state (#{last_new_state.key}), backfilling triage history only", true
+      say "  issue ##{issue.id}: portal state (#{issue.state.key}) differs from last Zammad state (#{last_new_state.key}), backfilling Zammad history only", true
     end
 
-    insert_state_changes!(issue, entries)
-    say "  issue ##{issue.id}: backfilled #{entries.size} state change(s) from triage ticket #{issue.triage_external_id}", true
+    Issues::StateChange.transaction do
+      insert_state_changes!(issue, entries)
+    end
+
+    say "  issue ##{issue.id}: backfilled #{entries.size} state change(s) from tickets #{ticket_ids(issue).join(', ')}", true
   end
 
   def state_transitions(history)
     history
-      .select { |entry| entry["history_type"] == "updated" && entry["history_object"] == "Ticket" && entry["history_attribute"] == TRIAGE_STATE_ATTRIBUTE }
+      .select { |entry| entry["type"] == "updated" && entry["object"] == "Ticket" && entry["attribute"] == TRIAGE_STATE_ATTRIBUTE }
       .filter_map do |entry|
       new_state = find_state(entry["value_to"])
+
       if new_state.nil?
         say "    unmappable triage state #{entry["value_to"].inspect}, entry skipped", true
         next
@@ -103,7 +130,6 @@ class BackfillIssueStateChangesFromTriageHistory < ActiveRecord::Migration[8.1]
           previous_state_id: entry[:previous_state]&.id,
           new_state_id: entry[:new_state].id,
           uuid: SecureRandom.uuid,
-          triage_external_id: issue.triage_external_id,
           created_at: entry[:created_at] || now,
           updated_at: now
         }
