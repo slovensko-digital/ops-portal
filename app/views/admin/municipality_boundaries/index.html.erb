@@ -1,0 +1,29 @@
+<% content_for(:title, "Hranice obcí") %>
+
+<div data-controller="municipality-boundaries-map"
+     data-municipality-boundaries-map-url-value="<%= admin_municipality_boundaries_path(format: :json) %>"
+     data-municipality-boundaries-map-detail-url-value="<%= admin_municipality_boundary_path(":id") %>"
+     data-action="keydown.esc@window->municipality-boundaries-map#unselect"
+     style="display: contents;">
+  <header class="admin-header">
+    <h1>Hranice obcí a mestských častí</h1>
+
+    <%= form_with url: admin_municipality_boundaries_path, method: :get, class: "admin-filter",
+                  data: { municipality_boundaries_map_target: "filter", action: "change->municipality-boundaries-map#filter submit->municipality-boundaries-map#filter:prevent click@window->municipality-boundaries-map#closeTree" } do %>
+      <%= render "boundary_tree", boundaries: @boundaries %>
+
+      <%= render "municipality_tree", municipalities: @municipalities, districts_by_municipality_id: @districts_by_municipality_id,
+                                      municipality_ids: @municipality_ids, municipality_district_ids: @municipality_district_ids %>
+
+    <% end %>
+  </header>
+
+  <div class="admin-body">
+    <main class="admin-main" data-municipality-boundaries-map-target="map"></main>
+
+    <aside class="admin-panel" hidden data-municipality-boundaries-map-target="panel">
+      <button type="button" class="admin-panel-close" aria-label="Zavrieť" title="Zavrieť" data-action="municipality-boundaries-map#unselect">&times;</button>
+      <%= turbo_frame_tag "boundary_detail", data: { municipality_boundaries_map_target: "detail" } %>
+    </aside>
+  </div>
+</div>

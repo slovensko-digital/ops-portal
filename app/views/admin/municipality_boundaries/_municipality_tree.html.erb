@@ -1,0 +1,40 @@
+<% selected_labels = municipalities.select { municipality_ids.include?(it.id) }.map(&:name) +
+                     districts_by_municipality_id.values.flatten.select { municipality_district_ids.include?(it.id) }.map(&:name) %>
+
+<details class="tree-select" data-municipality-boundaries-map-target="tree">
+  <summary>
+    Obec:
+    <span data-tree-summary="Všetky"><%= selected_labels.any? ? selected_labels.join(", ") : "Všetky" %></span>
+  </summary>
+
+  <div class="tree-select-panel" data-controller="autocomplete" data-autocomplete-none-class="none">
+    <%= search_field_tag nil, nil, placeholder: "Hľadať obec alebo mestskú časť", autocomplete: "off",
+                         aria: { label: "Hľadať obec" },
+                         data: { autocomplete_target: "input", action: "input->autocomplete#filter keydown.enter->autocomplete#enter" } %>
+
+    <ul data-autocomplete-target="list">
+      <% municipalities.each do |municipality| %>
+        <li data-autocomplete-target="item">
+          <label>
+            <%= check_box_tag "municipality_ids[]", municipality.id, municipality_ids.include?(municipality.id), id: "municipality_ids_#{municipality.id}" %>
+            <span><%= municipality.name %></span>
+            <% unless municipality.active %><small>(neaktívna)</small><% end %>
+          </label>
+
+          <% if (districts = districts_by_municipality_id[municipality.id]) %>
+            <ul>
+              <% districts.each do |district| %>
+                <li>
+                  <label>
+                    <%= check_box_tag "municipality_district_ids[]", district.id, municipality_district_ids.include?(district.id), id: "municipality_district_ids_#{district.id}" %>
+                    <span><%= district.name %></span>
+                  </label>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</details>
