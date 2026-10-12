@@ -7,7 +7,6 @@ class CreateIssuesStateChanges < ActiveRecord::Migration[8.1]
 
       t.boolean :hidden, default: false, null: false
       t.uuid :uuid, null: false
-      t.integer :triage_external_id
 
       t.timestamps
     end

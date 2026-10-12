@@ -977,7 +977,6 @@ CREATE TABLE public.issues_state_changes (
     new_state_id bigint NOT NULL,
     hidden boolean DEFAULT false NOT NULL,
     uuid uuid NOT NULL,
-    triage_external_id integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
