@@ -4,7 +4,7 @@ class Admin::MunicipalityBoundariesController < ApplicationController
   MATCHED_OPTIONS = { "matched" => "Spárované", "unmatched" => "Nespárované" }.freeze
   ACTIVE_OPTIONS = { "true" => "Aktívne", "false" => "Neaktívne" }.freeze
 
-  layout "admin"
+  layout "admin_map"
 
   def index
     respond_to do |format|
