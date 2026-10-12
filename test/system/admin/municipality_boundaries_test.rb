@@ -169,7 +169,62 @@ class Admin::MunicipalityBoundariesTest < ApplicationSystemTestCase
     end
   end
 
+  test "url reflects the filter and the selected boundary so it can be shared" do
+    bratislava = municipalities(:bratislava)
+    boundary = create_municipality_boundary(municipality: bratislava, center_lat: 48.15, center_lon: 17.1)
+    create_municipality_boundary(municipality: bratislava, district: municipality_districts(:stare_mesto_ba), center_lat: 48.22, center_lon: 17.17, size: 0.02)
+    login_as(@admin)
+
+    visit admin_municipality_boundaries_path
+
+    find("summary", text: "Hranice: Obce").click
+    check "boundaries_district"
+    uncheck "boundaries_municipality_unmatched"
+
+    assert_current_query(
+      "boundaries" => %w[municipality:active municipality:inactive district:active district:inactive district:unmatched]
+    )
+
+    find("h1").click
+    find("path.boundary-#{boundary.id}").click
+
+    assert_selector "aside h2", text: "Bratislava"
+    assert_current_query(
+      "boundaries" => %w[municipality:active municipality:inactive district:active district:inactive district:unmatched],
+      "boundary" => boundary.id.to_s
+    )
+
+    shared_url = current_url
+    visit "about:blank"
+    visit shared_url
+
+    assert_selector "aside h2", text: "Bratislava"
+    assert_selector "path.boundary-#{boundary.id}[stroke-width='4']"
+    assert_selector "summary", text: "Hranice: Obce › Spárované, Mestské časti"
+
+    find("body").send_keys(:escape)
+
+    assert_no_selector "aside"
+    assert_current_query(
+      "boundaries" => %w[municipality:active municipality:inactive district:active district:inactive district:unmatched]
+    )
+  end
+
+  test "shared url keeps an empty boundary selection" do
+    create_municipality_boundary(municipality: municipalities(:bratislava), center_lat: 48.15, center_lon: 17.1)
+    login_as(@admin)
+
+    visit admin_municipality_boundaries_path(boundaries: [ "" ])
+
+    assert_selector "summary", text: "Hranice: Žiadne"
+    assert_boundaries count: 0
+  end
+
   private
+
+  def assert_current_query(expected)
+    assert_equal expected, Rack::Utils.parse_nested_query(URI.parse(current_url).query).transform_keys { it.delete_suffix("[]") }
+  end
 
   def assert_boundaries(count:)
     if count.zero?

@@ -10,8 +10,10 @@ class Admin::MunicipalityBoundariesController < ApplicationController
   def index
     respond_to do |format|
       format.html do
-        # "kind:status" pairs, e.g. "municipality:active"; all municipality boundaries by default
-        @boundaries = Array(params[:boundaries]).presence || STATUSES.keys.map { "municipality:#{it}" }
+        # "kind:status" pairs, e.g. "municipality:active"; all municipality boundaries by default.
+        # An empty "boundaries[]=" means nothing is selected and is kept so a shared link shows the same map.
+        @boundaries = params.key?(:boundaries) ? Array(params[:boundaries]).compact_blank : STATUSES.keys.map { "municipality:#{it}" }
+        @selected_boundary = selected_boundary
         @municipality_ids = Array(params[:municipality_ids]).compact_blank.map(&:to_i)
         @municipality_district_ids = Array(params[:municipality_district_ids]).compact_blank.map(&:to_i)
         @municipalities = municipalities_with_boundaries
@@ -26,6 +28,15 @@ class Admin::MunicipalityBoundariesController < ApplicationController
   end
 
   private
+
+  def selected_boundary
+    id, kind, min_lon, min_lat, max_lon, max_lat = MunicipalityBoundary.where(id: params[:boundary]).pick(
+      :id, :boundary_kind, Arel.sql("ST_XMin(boundary)"), Arel.sql("ST_YMin(boundary)"), Arel.sql("ST_XMax(boundary)"), Arel.sql("ST_YMax(boundary)")
+    )
+    return {} unless id
+
+    { id: id, kind: kind, bounds: [ [ min_lat, min_lon ], [ max_lat, max_lon ] ] }
+  end
 
   def municipalities_with_boundaries
     Municipality

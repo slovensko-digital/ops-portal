@@ -7,11 +7,11 @@ const cssColor = name => getComputedStyle(document.documentElement).getPropertyV
 // Connects to data-controller="municipality-boundaries-map"
 export default class extends Controller {
     static targets = ["map", "filter", "tree", "panel", "detail"]
-    static values = {url: String, detailUrl: String}
+    static values = {url: String, detailUrl: String, selected: Object}
 
     connect() {
         this.map = L.map(this.mapTarget, {maxZoom: 19});
-        this.map.fitBounds([[47.483, 15.781], [50.032, 22.813]]);
+        this.map.fitBounds(this.selectedValue.bounds || [[47.483, 15.781], [50.032, 22.813]]);
 
         L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap',
@@ -23,9 +23,14 @@ export default class extends Controller {
         this.treeTargets.forEach(tree => this.updateTreeSummary(tree));
         this.layers = {};
         this.selected = null;
+        // a shared link with a selected boundary opens its detail, the map is already zoomed to it
+        if (this.selectedValue.id) {
+            this.selected = {kind: this.selectedValue.kind, id: this.selectedValue.id};
+            this.openDetail(this.selected.id);
+        }
         this.map.on('click', () => this.unselect());
         this.map.on('moveend', () => this.load());
-        this.load({fitToSelection: true});
+        this.load({fitToSelection: !this.selected});
     }
 
     disconnect() {
@@ -39,7 +44,22 @@ export default class extends Controller {
         if (event.target.dataset.treeParent) this.childCheckboxes(event.target).forEach(child => child.checked = event.target.checked);
         this.syncTreeParents();
         this.treeTargets.forEach(tree => this.updateTreeSummary(tree));
+        this.updateUrl();
         this.load({fitToSelection: true});
+    }
+
+    // keeps the address bar in sync with the filter and the selected boundary, so the page can be shared
+    updateUrl() {
+        const params = new URLSearchParams();
+        for (const [name, value] of new FormData(this.filterTarget)) {
+            if (value !== '') params.append(name, value);
+        }
+        if (!params.has('boundaries[]')) params.append('boundaries[]', '');
+        if (this.selected) params.set('boundary', this.selected.id);
+
+        const url = new URL(window.location.href);
+        url.search = params.toString();
+        Turbo.navigator.history.replace(url);
     }
 
     closeTree(event) {
@@ -180,7 +200,12 @@ export default class extends Controller {
         this.layers[properties.kind].resetStyle(layer);
         layer.bringToFront();
 
-        this.detailTarget.src = this.detailUrlValue.replace(':id', properties.id);
+        this.openDetail(properties.id);
+        this.updateUrl();
+    }
+
+    openDetail(id) {
+        this.detailTarget.src = this.detailUrlValue.replace(':id', id);
         this.togglePanel(true);
     }
 
@@ -194,6 +219,7 @@ export default class extends Controller {
         this.detailTarget.removeAttribute('src');
         this.detailTarget.replaceChildren();
         this.togglePanel(false);
+        this.updateUrl();
     }
 
     togglePanel(open) {
