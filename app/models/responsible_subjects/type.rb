@@ -5,7 +5,7 @@
 #
 #  id         :bigint           not null, primary key
 #  legacy_id  :integer
-#  active     :boolean
+#  active     :boolean          default(FALSE), not null
 #  name       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
