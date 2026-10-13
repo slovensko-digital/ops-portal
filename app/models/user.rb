@@ -30,7 +30,6 @@
 #  login                            :string
 #  newsletter_accepted              :boolean          default(FALSE), not null
 #  onboarded                        :boolean          default(FALSE)
-#  organization                     :boolean
 #  password_hash                    :string
 #  phone                            :string
 #  phone_verification_attempts      :integer          default(0), not null
@@ -197,7 +196,6 @@ class User < ApplicationRecord
       phone: nil,
       password_hash: RodauthApp.rodauth.allocate.password_hash(SecureRandom.hex(16)),
       about: nil,
-      organization: nil,
       signature: nil,
       resident: nil,
       sex: nil,

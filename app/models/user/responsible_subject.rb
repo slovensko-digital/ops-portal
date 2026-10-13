@@ -30,7 +30,6 @@
 #  login                            :string
 #  newsletter_accepted              :boolean          default(FALSE), not null
 #  onboarded                        :boolean          default(FALSE)
-#  organization                     :boolean
 #  password_hash                    :string
 #  phone                            :string
 #  phone_verification_attempts      :integer          default(0), not null

@@ -1932,7 +1932,6 @@ CREATE TABLE public.users (
     phone character varying,
     password_hash character varying,
     about character varying,
-    organization boolean,
     "timestamp" timestamp(6) without time zone,
     anonymous boolean DEFAULT false,
     active boolean,
@@ -1973,6 +1972,7 @@ CREATE TABLE public.users (
     imported_at timestamp(6) without time zone,
     responsible_subject_id bigint,
     type character varying,
+    organization boolean,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 
