@@ -299,7 +299,7 @@ class ZammadApiClient
     ticket.subcategory = issue.subcategory&.name
     ticket.subtype = issue.subtype&.name
     ticket.likes_count = issue.likes_count
-    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } } || {}
+    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.subject_name, value: s.id } } || {}
 
     ticket.save
 

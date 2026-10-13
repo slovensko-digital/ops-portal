@@ -578,7 +578,7 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     stub_zammad(:put, "tickets/42", fixture: "zammad/ticket_resolution")
     issue = issues(:one)
     issue.municipality_district = municipality_districts(:stare_mesto_ba)
-    issue.responsible_subject = responsible_subjects(:one)
+    issue.responsible_subject = responsible_subjects(:two)
 
     @client.update_ticket_from_issue!(42, issue)
 
@@ -588,7 +588,7 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       "address_municipality" => "Bratislava::Staré Mesto",
       "category" => "Zeleň a životné prostredie",
       "subcategory" => "Strom",
-      "responsible_subject" => rs_value(responsible_subjects(:one)).stringify_keys
+      "responsible_subject" => { "label" => "BVS", "value" => responsible_subjects(:two).id }
     )
     assert_not_requested :post, zammad_url("ticket_articles"), query: hash_including({})
   end
