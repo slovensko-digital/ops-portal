@@ -350,7 +350,7 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     stub_ticket(responsible_subject: rs_value(responsible_subjects(:one)))
     stub_zammad(:put, "tickets/42", fixture: "zammad/ticket_resolution")
 
-    @client.sync_previous_responsible_subject!(42, rs_value(responsible_subjects(:two)))
+    @client.sync_previous_responsible_subject!(42, responsible_subjects(:two))
 
     assert_requested :put, zammad_url("tickets/42"), query: hash_including({}),
       body: { "previous_responsible_subject" => rs_value(responsible_subjects(:two)).stringify_keys }
@@ -359,7 +359,7 @@ class ZammadApiClientTest < ActiveSupport::TestCase
   test "sync_previous_responsible_subject! skips the current responsible subject" do
     stub_ticket(responsible_subject: rs_value(responsible_subjects(:one)))
 
-    @client.sync_previous_responsible_subject!(42, rs_value(responsible_subjects(:one)))
+    @client.sync_previous_responsible_subject!(42, responsible_subjects(:one))
 
     assert_not_requested :put, zammad_url("tickets/42"), query: hash_including({})
   end
