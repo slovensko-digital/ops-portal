@@ -569,6 +569,66 @@ class ZammadApiClient
     @client.group.all.page(1, 500) { }
   end
 
+  def find_group_by_name(name)
+    get_groups.find { |group| group.name == name }
+  end
+
+  def create_group!(name, email_address_id:)
+    @client.group.create(
+      name: name,
+      email_address_id: email_address_id,
+      follow_up_possible: "yes",
+      follow_up_assignment: true,
+      active: true
+    ).id
+  end
+
+  def find_email_address(email)
+    raw_api_request(:get, "email_addresses").find { |address| address["email"].casecmp?(email) }
+  end
+
+  def find_role_by_name(name)
+    raw_api_request(:get, "roles").find { |role| role["name"] == name }
+  end
+
+  def add_group_to_role!(role_name, group_id)
+    role = find_role_by_name(role_name)
+    raise "Can't find triage zammad role: #{role_name}" unless role
+
+    raw_api_request(:put, "roles/#{role["id"]}", { group_ids: role["group_ids"].merge(group_id.to_s => [ "full" ]) })
+  end
+
+  def find_organization_by_name(name)
+    @client.organization.search(query: name).page(1, 100) { }.find { |organization| organization.name == name }
+  end
+
+  def create_organization!(name)
+    @client.organization.create(name: name, shared: false, domain_assignment: false, vip: false, active: true).id
+  end
+
+  def find_user_by_email(email)
+    @client.user.search(query: email).page(1, 100) { }.find { |user| user.email.to_s.casecmp?(email) }
+  end
+
+  def create_organization_customer!(email:, firstname:, lastname:, organization:)
+    @client.user.create(
+      firstname: firstname,
+      lastname: lastname,
+      login: email,
+      email: email,
+      organization: organization,
+      roles: [ "Customer" ]
+    ).id
+  end
+
+  def get_triggers
+    raw_api_request(:get, "triggers")
+  end
+
+  def create_trigger!(attributes)
+    raw_api_request(:post, "triggers", attributes)["id"]
+  end
+
   def find_ticket_responsible_subject(ticket_id)
     @client.ticket.find(ticket_id).responsible_subject
   end

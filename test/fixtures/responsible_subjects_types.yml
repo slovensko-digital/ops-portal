@@ -4,3 +4,6 @@ _fixture:
 
 one:
   name: Mestská časť
+
+city:
+  name: Mesto
