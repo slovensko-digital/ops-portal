@@ -153,6 +153,16 @@ class Issues::Draft < ApplicationRecord
     save(context: :suggestions_step)
   end
 
+  # TODO: placeholder until duplicates are identified by AI evaluation
+  def potential_duplicates
+    scope = Issue
+      .publicly_visible
+      .within_distance_from_point(latitude, longitude, 500)
+      .where(category: category, subcategory: subcategory)
+    scope = scope.where(subtype: subtype) if subtype.present?
+    scope
+  end
+
   def confirmable?
     checks.all? { |check| check["action"] == "confirm" }
   end
@@ -174,13 +184,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def no_duplicates_nearby
-    nearby_issues = Issue
-      .publicly_visible
-      .within_distance_from_point(latitude, longitude, 500)
-      .where(category: category, subcategory: subcategory)
-    nearby_issues = nearby_issues.where(subtype: subtype) if subtype.present?
-
-    errors.add(:base, :duplicates_nearby) if nearby_issues.any?
+    errors.add(:base, :duplicates_nearby) if potential_duplicates.exists?
   end
 
   def checks_passed

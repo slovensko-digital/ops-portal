@@ -5,15 +5,17 @@
 
   <% if @draft.municipality_errors? %>
     <%= render partial: 'issues/drafts/unsupported_municipality' %>
-  <% elsif @draft.errors.added?(:base, :duplicates_nearby)  %>
+  <% elsif @draft.errors.added?(:base, :duplicates_nearby) %>
     <div class="report-summary-block-con">
-      <div class="report-warning">
-        <div class="title">Skontrolujte podobné podnety nablízku</div>
+      <div class="report-warning report-duplicates-notice">
         <div class="description">
-          <p>V blízkosti podnetu sa už nachádzajú podnety z&nbsp;rovnakej kategórie. Skontrolujte, prosím, či nenahlasujete rovnaký podnet.</p>
-          <p><strong>K tomuto neodoslanému podnetu sa môžete neskôr jednoducho vrátiť.</strong></p>
+          <p>V blízkosti podnetu sa už nachádzajú duplicitné podnety z&nbsp;rovnakej kategórie.</p>
         </div>
-        <%= button_to "Zobraziť podobné podnety", issues_draft_duplicates_path(@draft), method: :patch, class: "button" %>
+        <div class="report-duplicates-check">
+          <%= link_to "Skontroluj duplicitný podnet", issues_draft_duplicates_path(@draft), class: "button" %>
+          <div class="report-duplicates-hint">Váš podnet sa tak vybaví rýchlejšie</div>
+        </div>
+        <%= button_to "Registrovať ako nový podnet", issues_draft_checks_path(@draft, ignore_duplicates: 1), class: "button button-transparent" %>
       </div>
     </div>
   <% elsif @draft.errors[:checks].any? %>

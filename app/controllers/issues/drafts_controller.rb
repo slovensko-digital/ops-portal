@@ -50,12 +50,6 @@ class Issues::DraftsController < ApplicationController
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
   end
 
-  def duplicates
-    @draft.update(duplicates_shown: true)
-
-    redirect_to issues_path(pin: "#{@draft.latitude},#{@draft.longitude}", kategoria: @draft.category&.name, podkategoria: @draft.subcategory&.name, typ: @draft.subtype&.name)
-  end
-
   def thanks
   end
 

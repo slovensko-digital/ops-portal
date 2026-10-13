@@ -1381,6 +1381,38 @@ section.report .report-warning .button:hover
 section.report .report-warning .button {
   background: variables.$yellow;
 }
+section.report .report-duplicates-notice .button {
+  width: 100%;
+}
+section.report .report-duplicates-check {
+  display: flex;
+  flex-direction: column;
+  gap: 12px 0;
+}
+section.report .report-duplicates-hint {
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$extrabold;
+}
+
+.draft-pending-banner {
+  align-items: center;
+  background: variables.$pink;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 30px;
+  justify-content: space-between;
+  padding: 20px 16px;
+  position: sticky;
+}
+.draft-pending-banner .draft-pending-banner-text {
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$medium;
+}
 
 
 section.report .report-summary-edit-pictures {

@@ -15,6 +15,7 @@ class Issues::Drafts::ChecksController < ApplicationController
   end
 
   def create
+    @draft.update!(duplicates_shown: true) if params[:ignore_duplicates].present?
     Issues::Draft::GenerateChecksJob.perform_now(@draft) if @draft.checks.nil?
     Issues::Draft::FetchAddressDetailsJob.perform_now(@draft) if @draft.address_data.nil?
     if @draft.valid?(:checks_step)

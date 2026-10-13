@@ -1,0 +1,24 @@
+<% content_for(:title, "Podobné alebo duplicitné dopyty") %>
+
+<section class="podnety">
+  <h1>Podobné alebo duplicitné dopyty</h1>
+
+  <% if @issues.any? %>
+    <div class="podnet-block-con">
+      <%= render partial: "issues/issue", collection: @issues %>
+    </div>
+  <% else %>
+    <section class="search-result-blank">
+      <h1>Nenašli sme žiadne podobné dopyty</h1>
+
+      <figure class="empty-box">
+        <%= image_tag "krabica.png", alt: "" %>
+      </figure>
+    </section>
+  <% end %>
+</section>
+
+<div class="draft-pending-banner">
+  <div class="draft-pending-banner-text">Máte rozpracovaný podnet. Môžete ho dokončiť tu.</div>
+  <%= link_to "Zobraziť podnet", issues_draft_summary_path(@draft), class: "button" %>
+</div>
