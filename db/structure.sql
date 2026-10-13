@@ -1943,7 +1943,6 @@ CREATE TABLE public.users (
     signature character varying,
     city_id integer,
     street_id bigint,
-    resident boolean,
     sex integer,
     birth date,
     fcm_token character varying,
@@ -1973,6 +1972,7 @@ CREATE TABLE public.users (
     imported_at timestamp(6) without time zone,
     responsible_subject_id bigint,
     type character varying,
+    resident boolean,
     CONSTRAINT valid_email CHECK ((email OPERATOR(public.~) '^[^,;@ 
 ]+@[^,@; 
 ]+\.[^,@; 

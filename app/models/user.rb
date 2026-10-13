@@ -37,7 +37,6 @@
 #  phone_verification_code          :string
 #  phone_verification_code_attempts :integer          default(0), not null
 #  phone_verified                   :boolean          default(FALSE), not null
-#  resident                         :boolean
 #  sex                              :integer
 #  signature                        :string
 #  stats_comments_count             :integer          default(0)
@@ -199,7 +198,6 @@ class User < ApplicationRecord
       about: nil,
       organization: nil,
       signature: nil,
-      resident: nil,
       sex: nil,
       birth: nil,
       anonymous: true
