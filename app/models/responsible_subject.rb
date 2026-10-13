@@ -13,7 +13,7 @@
 #  code                         :string
 #  email                        :string
 #  name                         :string
-#  pro                          :boolean
+#  pro                          :boolean          default(FALSE), not null
 #  scope                        :integer
 #  subject_name                 :string
 #  created_at                   :datetime         not null

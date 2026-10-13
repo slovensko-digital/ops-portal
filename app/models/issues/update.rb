@@ -9,12 +9,12 @@
 #  external_id         :string
 #  legacy_id           :integer
 #  triage_external_id  :integer
-#  confirmed           :boolean          default(FALSE)
+#  confirmed           :boolean          default(FALSE), not null
 #  email               :string
-#  hidden              :boolean          default(FALSE)
+#  hidden              :boolean          default(FALSE), not null
 #  ip                  :inet
 #  name                :string
-#  published           :boolean
+#  published           :boolean          default(FALSE), not null
 #  resolves_issue      :boolean          default(FALSE), not null
 #  text                :string
 #  uuid                :uuid

@@ -11,7 +11,7 @@
 #  name                     :string
 #  place_identifier         :string
 #  tested                   :boolean
-#  whitelisted              :boolean          default(FALSE)
+#  whitelisted              :boolean          default(FALSE), not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #
