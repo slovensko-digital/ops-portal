@@ -1932,7 +1932,6 @@ CREATE TABLE public.users (
     phone character varying,
     password_hash character varying,
     about character varying,
-    organization boolean,
     "timestamp" timestamp(6) without time zone,
     anonymous boolean DEFAULT false NOT NULL,
     active boolean,
@@ -4429,6 +4428,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261013100200'),
 ('20261013100100'),
 ('20261013100000'),
 ('20261012100100'),
