@@ -9,11 +9,11 @@
 #  municipality_district_id     :bigint
 #  municipality_id              :bigint
 #  responsible_subjects_type_id :bigint           not null
-#  active                       :boolean
+#  active                       :boolean          default(TRUE), not null
 #  code                         :string
 #  email                        :string
 #  name                         :string
-#  pro                          :boolean
+#  pro                          :boolean          default(FALSE), not null
 #  scope                        :integer
 #  subject_name                 :string
 #  created_at                   :datetime         not null

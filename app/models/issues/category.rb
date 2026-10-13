@@ -6,7 +6,7 @@
 #  legacy_id          :integer
 #  triage_external_id :integer
 #  alias              :string
-#  catch_all          :boolean          default(FALSE)
+#  catch_all          :boolean          default(FALSE), not null
 #  description        :string
 #  description_hu     :string
 #  name               :string

@@ -532,7 +532,6 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       "group" => "Dobrovoľníci::Bratislava",
       "owner" => "agent@example.org",
       "customer_id" => 1,
-      "ops_state" => "waiting",
       "issue_resolved" => "yes",
       "portal_url" => "#{Rails.application.routes.url_helpers.issue_url(issues(:two))}#komentar_#{update.id}",
       "article" => hash_including(
@@ -541,6 +540,18 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       )
     )
     assert_requested link.with(body: hash_including(link_object_target_value: 3, link_object_source_number: update.ticket_number))
+  end
+
+  test "create_ticket_from_issue_update! closes the ticket as accepted when the issue author resolves the issue" do
+    update = build_issue_update(resolves_issue: true, author: issues(:two).author)
+    stub_zammad(:get, "tickets/3", fixture: "zammad/ticket_resolution", overrides: { id: 3 })
+    stub_zammad(:post, "tickets", status: 201, body: { id: 700 })
+    stub_ticket_number(700, update.ticket_number)
+    stub_zammad(:post, "links/add", body: {})
+
+    @client.create_ticket_from_issue_update!(update)
+
+    assert_requested :post, zammad_url("tickets"), query: hash_including({}), body: hash_including("ops_state" => "accepted", "state" => "closed")
   end
 
   test "create_ticket_from_issue_update! creates the Zammad customer for an author without one" do
@@ -555,7 +566,8 @@ class ZammadApiClientTest < ActiveSupport::TestCase
 
     assert_equal 56, users(:two).reload.external_id
     assert_requested :post, zammad_url("tickets"), query: hash_including({}), body: hash_including(
-      "title" => "Aktualizácia podnetu Issue from Bratislava", "issue_resolved" => "no", "customer_id" => 56
+      "title" => "Aktualizácia podnetu Issue from Bratislava", "issue_resolved" => "no", "customer_id" => 56,
+      "ops_state" => "waiting", "state" => "new"
     )
   end
 
@@ -581,6 +593,17 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_not_requested :post, zammad_url("ticket_articles"), query: hash_including({})
   end
 
+  test "update_ticket_from_issue! clears the responsible subject when the issue has none" do
+    stub_ticket(responsible_subject: rs_value(responsible_subjects(:one)))
+    stub_zammad(:put, "tickets/42", fixture: "zammad/ticket_resolution")
+    issue = issues(:one)
+    issue.responsible_subject = nil
+
+    @client.update_ticket_from_issue!(42, issue)
+
+    assert_requested :put, zammad_url("tickets/42"), query: hash_including({}), body: hash_including("responsible_subject" => {})
+  end
+
   test "update_ticket_from_issue! syncs attachments when asked" do
     stub_ticket
     stub_zammad(:put, "tickets/42", fixture: "zammad/ticket_resolution")
@@ -601,6 +624,15 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     @client.update_ticket!(42, { "investment" => "yes" })
 
     assert_requested :put, zammad_url("tickets/42"), query: hash_including({}), body: { "investment" => "yes" }
+  end
+
+  test "update_ticket! sends the state" do
+    stub_ticket
+    stub_zammad(:put, "tickets/42", fixture: "zammad/ticket_resolution")
+
+    @client.update_ticket!(42, { "state" => "closed" })
+
+    assert_requested :put, zammad_url("tickets/42"), query: hash_including({}), body: { "state" => "closed" }
   end
 
   test "close_ticket! closes the ticket" do
