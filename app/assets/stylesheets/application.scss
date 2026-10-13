@@ -460,7 +460,8 @@ header nav a.login .logged {
   display: none;
   @include mixins.transition(all);
 }
-header nav a.add-button {
+header nav a.add-button,
+header nav button.add-button {
   align-items: center;
   background: variables.$red;
   color: variables.$white;
@@ -475,8 +476,13 @@ header nav a.add-button {
   @include mixins.rounded(19px);
   @include mixins.transition(all);
 }
-header nav a.add-button:hover {
+header nav a.add-button:hover,
+header nav button.add-button:hover {
   background: variables.$black;
+}
+header nav button.add-button {
+  border: none;
+  cursor: pointer;
 }
 header nav a.menu-button {
   cursor: pointer;

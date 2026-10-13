@@ -7,5 +7,7 @@ class Issues::Drafts::DuplicatesController < ApplicationController
       .order_by_distance_from_point(@draft.latitude, @draft.longitude)
       .includes(:state, :municipality, :municipality_district)
       .with_attached_photos
+
+    @header_finish_draft = @draft
   end
 end
