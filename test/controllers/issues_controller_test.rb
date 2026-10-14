@@ -103,11 +103,33 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_select "button.button-filter .filter-count", text: "3"
   end
 
-  test "index renders load-more trigger with classic pagination" do
+  test "index renders load-more trigger without pagination for a single page" do
     get issues_url
 
     assert_response :success
     assert_select "div#load-more-trigger", 1
+    assert_select "div#load-more-trigger div[data-load-more-target='pagination']", 0
+  end
+
+  test "index renders load-more button and classic pagination with multiple pages" do
+    state = Issues::State.find_by(key: "in_progress") || issues_states(:in_progress)
+
+    25.times do |i|
+      Issue.create!(
+        title: "Paginated test issue #{i}",
+        description: "Test description with enough characters to pass validation",
+        municipality: Municipality.first,
+        state: state,
+        category: Issues::Category.first,
+        author: users(:one)
+      )
+    end
+
+    get issues_url
+
+    assert_response :success
+    assert_select "div#load-more-trigger a.button", text: "Načítať ďalšie podnety"
+    assert_select "div#load-more-trigger div[data-load-more-target='pagination']", 1
     assert_select "div#load-more-trigger nav.pagination", 1
   end
 
