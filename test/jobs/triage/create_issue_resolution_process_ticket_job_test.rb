@@ -113,4 +113,32 @@ class Triage::CreateIssueResolutionProcessTicketJobTest < ActiveJob::TestCase
 
     assert_equal @issue.resolution_external_id, @issue.reload.resolution_external_id
   end
+
+  test "recovers resolution ticket ID when zammad rejects its number with a generic error" do
+    existing_ticket = OpenStruct.new(id: 77, number: @issue_number)
+    search_queries = []
+    search_stub = Object.new
+    search_stub.define_singleton_method(:search) { |query:| search_queries << query; [ existing_ticket ] }
+    inner_client = Object.new
+    inner_client.define_singleton_method(:ticket) { search_stub }
+
+    client_stub = Object.new
+    client_stub.define_singleton_method(:create_ticket_from_issue!) do |*, **|
+      raise RuntimeError, "Can't save object (ZammadAPI::Resources::Ticket): Error ID UHsZyX7A: Please contact your administrator."
+    end
+    client_stub.define_singleton_method(:client) { inner_client }
+    client_stub.define_singleton_method(:link_tickets!) { |**| }
+    client_stub.define_singleton_method(:create_system_note!) { |*, **| 1 }
+    client_stub.define_singleton_method(:close_ticket!) { |*| }
+
+    Triage::CreateIssueResolutionProcessTicketJob.new.perform(
+      @issue,
+      triage_group: "TestGroup",
+      triage_owner_id: nil,
+      triage_zammad_client: client_stub
+    )
+
+    assert_equal 77, @issue.reload.resolution_external_id
+    assert_equal [ @issue_number ], search_queries
+  end
 end
