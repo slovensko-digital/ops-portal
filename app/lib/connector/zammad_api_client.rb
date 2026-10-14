@@ -579,9 +579,9 @@ module Connector
       zammad_identifier
     end
 
-    def find_zammad_user(query)
-      # searches user by email, firstname, lastname and login
-      @client.user.search(query: query).first
+    def find_existing_zammad_user(login_or_email)
+      # the search is fuzzy, so pick the user that owns the login or email
+      @client.user.search(query: login_or_email).find { |u| [ u.login, u.email ].any? { |value| value&.casecmp?(login_or_email) } }
     end
 
     def find_or_create_user!(user_params)
@@ -589,9 +589,9 @@ module Connector
         zammad_user = @client.user.create(user_params)
         zammad_user
       rescue RuntimeError => e
-        raise e unless e.message.include? "is already used for another user."
+        raise e unless ::ZammadApiClient::DUPLICATE_USER_ERRORS.any? { |message| e.message.include?(message) }
 
-        zammad_user = find_zammad_user(user_params[:email] || user_params[:login])
+        zammad_user = find_existing_zammad_user(user_params[:email] || user_params[:login])
         raise "Can't find nor create zammad user with email: #{user_params[:email]}" unless zammad_user
         zammad_user
       end
