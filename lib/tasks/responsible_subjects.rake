@@ -27,7 +27,8 @@ namespace :responsible_subjects do
                                      permissions admin.group, admin.organization, admin.role, admin.trigger,
                                      admin.user and ticket.agent. The portal's TRIAGE_ZAMMAD_API_TOKEN cannot
                                      manage roles, organizations and triggers. Create it in Triage under
-                                     Profile > Token Access and pass it only for the run, e.g.
+                                     Profile > Token Access. Deployed apps get it as a Kamal secret, locally
+                                     pass it for the run, e.g.
                                      TRIAGE_ZAMMAD_ADMIN_API_TOKEN=... bin/rails responsible_subjects:activate_basic ...
 
     First validates everything and stops without changing anything when:
