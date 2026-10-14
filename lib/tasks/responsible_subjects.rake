@@ -7,17 +7,17 @@ namespace :responsible_subjects do
         BOUNDARY_ID=1273 \\
         NAME="Nižná" \\
         USERS="starosta@nizna.sk, jan.novak@nizna.sk, podatelna@nizna.sk" \\
-        TRIAGE_ZAMMAD_AGENT_ID=42 \\
+        TRIAGE_ZAMMAD_AGENT_EMAIL=katarina.biackova@odkazprestarostu.sk \\
         DRY_RUN=1
 
     Arguments:
       BOUNDARY_ID             id of the municipality boundary (not a district), see /admin/municipality_boundaries
       NAME                    name of the municipality and its responsible subject, e.g. Nižná
-      USERS                   emails of people who reply to issues and log in to the portal on behalf of the
-                              responsible subject, comma separated, the first one is the responsible subject's
-                              email and gets notified about the municipality's tickets
-      TRIAGE_ZAMMAD_AGENT_ID  Triage Zammad user id of the agent (volunteer) who reviews, accepts and rejects
-                              incoming issues from the municipality
+      USERS                   emails of people who log in to the portal on behalf of the responsible subject,
+                              comma separated, the first one is the responsible subject's email and is notified
+                              about the municipality's tickets, the others reply to issues
+      TRIAGE_ZAMMAD_AGENT_EMAIL  email of the Triage Zammad agent (volunteer) who reviews, accepts and rejects
+                                 incoming issues from the municipality
       DRY_RUN=1               only validate, change nothing
 
     First validates everything and stops without changing anything when:
@@ -37,9 +37,11 @@ namespace :responsible_subjects do
               Portal Tech Account role, the agent gets full access to it,
               trigger "700 - Priradenie podnetu skupine NAME <agent>" assigning new portal tickets from NAME
               to the group, the agent and the responsible subject,
-              organization NAME with a user for every one of USERS, role Customer, the first one also
-              Externý zodpovedný subjekt (meno.priezvisko@... is Meno Priezvisko, otherwise the first name is
-              the part before @ and the last name is NAME)
+              organization NAME with a user for the first of USERS with role Externý zodpovedný subjekt
+              (Triage notifies the organization's users with this role) and for each of the other USERS
+              with role Customer
+              (meno.priezvisko@... is Meno Priezvisko, otherwise the first name is the part before @ and the
+              last name is NAME)
       Portal  a responsible subject user for every one of USERS, then activates the municipality and the
               responsible subject
 
@@ -49,7 +51,7 @@ namespace :responsible_subjects do
 
   desc "Activate a new BASIC municipality in the portal and Triage, run without arguments for help"
   task activate_basic: :environment do
-    required = %w[BOUNDARY_ID NAME USERS TRIAGE_ZAMMAD_AGENT_ID]
+    required = %w[BOUNDARY_ID NAME USERS TRIAGE_ZAMMAD_AGENT_EMAIL]
     if ENV["HELP"].present? || required.all? { ENV[_1].blank? }
       puts ACTIVATE_BASIC_HELP
       next
@@ -59,7 +61,7 @@ namespace :responsible_subjects do
       boundary_id: ENV["BOUNDARY_ID"],
       name: ENV["NAME"],
       user_emails: ENV["USERS"],
-      triage_agent_id: ENV["TRIAGE_ZAMMAD_AGENT_ID"],
+      triage_agent_email: ENV["TRIAGE_ZAMMAD_AGENT_EMAIL"],
       log: ->(message) { puts message }
     )
 
@@ -72,7 +74,7 @@ namespace :responsible_subjects do
     puts <<~SUMMARY
       Municipality boundary #{activation.boundary.id} -> municipality and responsible subject #{activation.name}
       Responsible subject email: #{activation.email}
-      Triage agent: #{activation.triage_agent_id}, trigger: #{activation.trigger_name}
+      Triage agent: #{activation.triage_agent_email} (#{activation.agent.id}), trigger: #{activation.trigger_name}
       Users:
       #{activation.user_emails.map { |email| "  #{email} (#{activation.names_from_email(email).values.join(" ")}), #{activation.roles_for(email).join(", ")}" }.join("\n")}
     SUMMARY

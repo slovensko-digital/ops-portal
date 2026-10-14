@@ -610,14 +610,9 @@ class ZammadApiClient
     @client.user.search(query: email).page(1, 100) { }.find { |user| user.email.to_s.casecmp?(email) }
   end
 
-  def create_organization_customer!(email:, firstname:, lastname:, organization:, roles: [ "Customer" ])
+  def create_user!(email:, firstname:, lastname:, roles:, organization: nil)
     @client.user.create(
-      firstname: firstname,
-      lastname: lastname,
-      login: email,
-      email: email,
-      organization: organization,
-      roles: roles
+      { firstname: firstname, lastname: lastname, login: email, email: email, organization: organization, roles: roles }.compact
     ).id
   end
 

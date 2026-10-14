@@ -928,10 +928,10 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal 77, @client.find_user_by_email("jan.novak@nizna.sk").id
   end
 
-  test "create_organization_customer! creates a customer in the organization" do
+  test "create_user! creates a user with the roles in the organization" do
     stub_zammad(:post, "users", status: 201, body: { id: 60 })
 
-    assert_equal 60, @client.create_organization_customer!(email: "jan.novak@nizna.sk", firstname: "Jan", lastname: "Novak", organization: "Nižná")
+    assert_equal 60, @client.create_user!(email: "jan.novak@nizna.sk", firstname: "Jan", lastname: "Novak", organization: "Nižná", roles: [ "Customer" ])
 
     assert_requested :post, zammad_url("users"), query: hash_including({}), body: {
       "firstname" => "Jan", "lastname" => "Novak", "login" => "jan.novak@nizna.sk", "email" => "jan.novak@nizna.sk",
@@ -939,13 +939,15 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     }
   end
 
-  test "create_organization_customer! assigns the given roles" do
+  test "create_user! leaves the organization out when there is none" do
     stub_zammad(:post, "users", status: 201, body: { id: 59 })
 
-    @client.create_organization_customer!(email: "starosta@nizna.sk", firstname: "starosta", lastname: "Nižná", organization: "Nižná",
-      roles: [ "Customer", "Externý zodpovedný subjekt" ])
+    @client.create_user!(email: "starosta@nizna.sk", firstname: "starosta", lastname: "Nižná", roles: [ "Externý zodpovedný subjekt" ])
 
-    assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including("roles" => [ "Customer", "Externý zodpovedný subjekt" ])
+    assert_requested :post, zammad_url("users"), query: hash_including({}), body: {
+      "firstname" => "starosta", "lastname" => "Nižná", "login" => "starosta@nizna.sk", "email" => "starosta@nizna.sk",
+      "roles" => [ "Externý zodpovedný subjekt" ]
+    }
   end
 
   test "create_trigger! returns the id of the new trigger" do

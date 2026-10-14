@@ -50,7 +50,7 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     )
     assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including(
       "email" => "starosta@nizna.sk", "firstname" => "starosta", "lastname" => "Nižná", "organization" => "Nižná",
-      "roles" => [ "Customer", "Externý zodpovedný subjekt" ]
+      "roles" => [ "Externý zodpovedný subjekt" ]
     )
     assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including(
       "email" => "jan.novak@nizna.sk", "firstname" => "Jan", "lastname" => "Novak", "organization" => "Nižná", "roles" => [ "Customer" ]
@@ -104,8 +104,13 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
 
   test "validate! rejects a user that already exists in Triage" do
     stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_organization_member", email: "jan.novak@nizna.sk") ])
+      .with(query: hash_including("query" => "jan.novak@nizna.sk"))
 
     assert_invalid "Triage user jan.novak@nizna.sk already exists (77, organization: \"MÚ Staré Mesto\")"
+  end
+
+  test "validate! rejects a user who is already a responsible subject user in the portal" do
+    assert_invalid "Portal user nitra@mesto.sk is already a responsible subject user", user_emails: "nitra@mesto.sk, jan.novak@nizna.sk"
   end
 
   test "validate! rejects missing Triage roles" do
@@ -115,9 +120,14 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
   end
 
   test "validate! rejects a Triage user that is not an agent" do
-    stub_zammad(:get, "users/77", fixture: "zammad/user_organization_member")
+    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_organization_member") ])
+      .with(query: hash_including("query" => "referent@staremesto.sk"))
 
-    assert_invalid "Triage user 77 (Ján Referent) is not an agent", triage_agent_id: "77"
+    assert_invalid "Triage user referent@staremesto.sk (Ján Referent) is not an agent", triage_agent_email: "referent@staremesto.sk"
+  end
+
+  test "validate! rejects an agent email that is not in Triage" do
+    assert_invalid "Triage agent \"nobody@odkazprestarostu.sk\" does not exist", triage_agent_email: "nobody@odkazprestarostu.sk"
   end
 
   test "call changes nothing when invalid" do
@@ -143,7 +153,7 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
       boundary_id: municipality_boundaries(:unmatched_municipality).id,
       name: "Nižná",
       user_emails: "starosta@nizna.sk, jan.novak@nizna.sk, podatelna@nizna.sk",
-      triage_agent_id: "3",
+      triage_agent_email: "agent@example.org",
       client: @client,
       **overrides
     )
@@ -167,6 +177,7 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     stub_zammad(:get, "organizations/search", body: [])
     stub_zammad(:get, "triggers", body: [])
     stub_zammad(:get, "users/search", body: [])
+    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_agent") ]).with(query: hash_including("query" => "agent@example.org"))
   end
 
   def stub_creation
