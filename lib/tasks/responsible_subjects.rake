@@ -7,7 +7,7 @@ namespace :responsible_subjects do
         BOUNDARY_ID=1273 \\
         NAME="Nižná" \\
         DISTRICT="Žilinský kraj" \\
-        USERS="starosta@nizna.sk, jan.novak@nizna.sk, podatelna@nizna.sk" \\
+        USERS="podatelna@nizna.sk, starosta@nizna.sk, jan.novak@nizna.sk" \\
         TRIAGE_ZAMMAD_AGENT_EMAIL=jozef.mak@odkazprestarostu.sk \\
         DRY_RUN=1
 
