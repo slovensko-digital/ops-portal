@@ -10,6 +10,7 @@ end
 if Rails.env.development?
   require_relative "seeds/ai_prompts"
   require_relative "seeds/cms_pages"
+  require_relative "seeds/districts"
   require_relative "seeds/municipalities"
   require_relative "seeds/responsible_subjects"
   require_relative "seeds/responsible_subjects_categories"
