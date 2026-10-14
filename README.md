@@ -27,9 +27,6 @@ cd ../ops-triage-zammad && cp .env.sample .env && docker compose up -d --build
 # Portal, the Triage token and webhook secret in .env.sample already match the Triage ones
 cd ../ops-portal && cp .env.sample .env
 docker compose up -d && bin/setup --skip-server
-
-# push the seeded waiting issues to Triage, then start the portal
-bin/rails triage:dev:sync
 bin/dev
 ```
 
@@ -40,21 +37,16 @@ Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the po
 so `bin/dev` has to be running for Triage changes to reach the portal.
 
 Click-through:
-1. Create an issue in the portal, or use one pushed by `triage:dev:sync`.
+1. Create an issue in the portal (seeded issues are not in the local Triage).
 2. The ticket shows up in Triage (if not, check `/admin/good_job`).
 3. Work the ticket in Triage: change the state, add a public comment, change the responsible subject.
 4. The issue changes in the portal.
-
-`triage:dev:sync` pushes issues in the "Čakajúci" state that are not in Triage yet, with their
-authors and comments. It is safe to run again, and after either side was reset it links issues and
-users to the tickets that already exist. Seeded issues in later states only have placeholder
-resolution ids, so pick waiting or newly created issues for the click-through.
 
 Keep both sides in sync: reset them together. A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on webhooks only when seeding.
 
 ```
 cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
-cd ../ops-portal && bin/rails db:seed:replant && bin/rails triage:dev:sync
+cd ../ops-portal && bin/rails db:seed:replant
 ```
 
 ## Testing
