@@ -28,6 +28,7 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
           responsible_subject: rs,
           status: :verified,
           onboarded: true,
+          active: true,
           password: SecureRandom.hex(32),
           phone_verified: true
         )

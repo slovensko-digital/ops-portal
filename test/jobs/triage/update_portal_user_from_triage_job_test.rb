@@ -23,6 +23,7 @@ class Triage::UpdatePortalUserFromTriageJobTest < ActiveJob::TestCase
     assert user.verified?
     assert user.onboarded?
     assert user.phone_verified?
+    assert user.active?
   end
 
   test "existing citizen with the same email is converted to a responsible subject" do
