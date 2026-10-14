@@ -6,6 +6,7 @@ namespace :responsible_subjects do
       bin/rails responsible_subjects:activate_basic \\
         BOUNDARY_ID=1273 \\
         NAME="Nižná" \\
+        DISTRICT="Žilinský kraj" \\
         USERS="starosta@nizna.sk, jan.novak@nizna.sk, podatelna@nizna.sk" \\
         TRIAGE_ZAMMAD_AGENT_EMAIL=katarina.biackova@odkazprestarostu.sk \\
         DRY_RUN=1
@@ -13,6 +14,7 @@ namespace :responsible_subjects do
     Arguments:
       BOUNDARY_ID             id of the municipality boundary (not a district), see /admin/municipality_boundaries
       NAME                    name of the municipality and its responsible subject, e.g. Nižná
+      DISTRICT                name of the district (kraj) of the municipality, e.g. Žilinský kraj
       USERS                   emails of people who log in to the portal on behalf of the responsible subject,
                               comma separated, the first one is the responsible subject's email and is notified
                               about the municipality's tickets, the others reply to issues
@@ -26,11 +28,12 @@ namespace :responsible_subjects do
         archived issues that need Triage in import mode to restore, this task does not handle it),
       - a group, organization or 700 trigger for NAME exists in Triage,
       - any of USERS exists in Triage, or is a responsible subject user in the portal,
+      - the district does not exist,
       - the agent does not exist or is not an agent, an email address is invalid,
       - a Triage role the task assigns does not exist.
 
     Then creates:
-      Portal  municipality NAME at the boundary (inactive), responsible subject NAME of type Mesto with the
+      Portal  municipality NAME in DISTRICT at the boundary (inactive), responsible subject NAME of type Mesto with the
               first of USERS as its email (inactive)
       Triage  the responsible subject's user with role Zodpovedný Subjekt (its external_id),
               group NAME for the agent, sending from podnety@triaz.odkazprestarostu.sk and accessible to the
@@ -51,7 +54,7 @@ namespace :responsible_subjects do
 
   desc "Activate a new BASIC municipality in the portal and Triage, run without arguments for help"
   task activate_basic: :environment do
-    required = %w[BOUNDARY_ID NAME USERS TRIAGE_ZAMMAD_AGENT_EMAIL]
+    required = %w[BOUNDARY_ID NAME DISTRICT USERS TRIAGE_ZAMMAD_AGENT_EMAIL]
     if ENV["HELP"].present? || required.all? { ENV[_1].blank? }
       puts ACTIVATE_BASIC_HELP
       next
@@ -60,6 +63,7 @@ namespace :responsible_subjects do
     activation = ResponsibleSubjects::BasicActivation.new(
       boundary_id: ENV["BOUNDARY_ID"],
       name: ENV["NAME"],
+      district_name: ENV["DISTRICT"],
       user_emails: ENV["USERS"],
       triage_agent_email: ENV["TRIAGE_ZAMMAD_AGENT_EMAIL"],
       log: ->(message) { puts message }
@@ -72,7 +76,7 @@ namespace :responsible_subjects do
     end
 
     puts <<~SUMMARY
-      Municipality boundary #{activation.boundary.id} -> municipality and responsible subject #{activation.name}
+      Municipality boundary #{activation.boundary.id} -> municipality and responsible subject #{activation.name}, #{activation.district.name}
       Responsible subject email: #{activation.email}
       Triage agent: #{activation.triage_agent_email} (#{activation.agent.id}), trigger: #{activation.trigger_name}
       Users:

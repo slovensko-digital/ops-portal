@@ -2,7 +2,7 @@
 #
 # validate! checks everything up front and raises Invalid with all problems found, nothing is created
 # when anything is wrong. call then creates, in order:
-#   - portal: the municipality at the boundary and its responsible subject, both inactive, the responsible
+#   - portal: the municipality at the boundary in its district (kraj) and its responsible subject, both inactive, the responsible
 #     subject's email is the first user's,
 #   - Triage: the responsible subject user, a group for the agent and an organization for the users, both
 #     named after the municipality, the 700 trigger assigning portal tickets from the municipality to the agent,
@@ -23,11 +23,12 @@ class ResponsibleSubjects::BasicActivation
   EXTERNAL_RESPONSIBLE_SUBJECT_ROLE = "Externý zodpovedný subjekt"
   TRIGGER_NAME_PREFIX = "700 - Priradenie podnetu skupine"
 
-  attr_reader :name, :user_emails, :triage_agent_email
+  attr_reader :name, :district_name, :user_emails, :triage_agent_email
 
-  def initialize(boundary_id:, name:, user_emails:, triage_agent_email:, client: TriageZammadEnvironment.client, log: ->(_message) { })
+  def initialize(boundary_id:, name:, district_name:, user_emails:, triage_agent_email:, client: TriageZammadEnvironment.client, log: ->(_message) { })
     @boundary_id = boundary_id
     @name = name.to_s.strip
+    @district_name = district_name.to_s.strip
     @user_emails = Array(user_emails).flat_map { _1.to_s.split(",") }.map(&:strip).compact_blank
     @triage_agent_email = triage_agent_email.to_s.strip
     @client = client
@@ -76,6 +77,10 @@ class ResponsibleSubjects::BasicActivation
 
   def boundary
     @boundary ||= MunicipalityBoundary.find_by(id: @boundary_id)
+  end
+
+  def district
+    @district ||= District.where("lower(name) = lower(?)", district_name).first if district_name.present?
   end
 
   def agent
@@ -130,6 +135,7 @@ class ResponsibleSubjects::BasicActivation
       errors << "Responsible subject #{name} already exists" if ResponsibleSubject.exists?(subject_name: name)
     end
     errors << "Responsible subject type #{RESPONSIBLE_SUBJECT_TYPE} does not exist" unless responsible_subjects_type
+    errors << "District #{district_name.inspect} does not exist, use one of: #{District.order(:name).pluck(:name).join(", ")}" unless district
 
     user_emails.each do |user_email|
       user = User.find_by(email: user_email)
@@ -172,7 +178,7 @@ class ResponsibleSubjects::BasicActivation
   def create_portal_records
     ActiveRecord::Base.transaction do
       latitude, longitude = point_on_boundary
-      municipality = Municipality.create!(name: name, latitude: latitude, longitude: longitude, active: false)
+      municipality = Municipality.create!(name: name, district: district, latitude: latitude, longitude: longitude, active: false)
       boundary.update!(municipality: municipality)
 
       responsible_subject = ResponsibleSubject.create!(

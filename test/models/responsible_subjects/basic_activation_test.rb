@@ -16,6 +16,7 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
 
     municipality = responsible_subject.municipality
     assert_equal "Nižná", municipality.name
+    assert_equal districts(:za_kraj), municipality.district
     assert_predicate municipality, :active?
     assert_equal municipality, municipality_boundaries(:unmatched_municipality).reload.municipality
     assert MunicipalityBoundary.containing_point(municipality.latitude, municipality.longitude).exists?(municipality_boundaries(:unmatched_municipality).id)
@@ -77,6 +78,11 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
   test "validate! rejects a municipality or responsible subject that already exists in the portal" do
     assert_invalid "Municipality Vinodol already exists", name: "Vinodol"
     assert_invalid "Responsible subject MÚ Staré Mesto already exists", name: "MÚ Staré Mesto"
+  end
+
+  test "validate! rejects a district that does not exist" do
+    assert_invalid "District \"Liptovský kraj\" does not exist, use one of: Banskobystrický kraj", district_name: "Liptovský kraj"
+    assert_invalid "District \"\" does not exist", district_name: ""
   end
 
   test "validate! rejects invalid and duplicate emails" do
@@ -152,6 +158,7 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     ResponsibleSubjects::BasicActivation.new(
       boundary_id: municipality_boundaries(:unmatched_municipality).id,
       name: "Nižná",
+      district_name: "žilinský kraj",
       user_emails: "starosta@nizna.sk, jan.novak@nizna.sk, podatelna@nizna.sk",
       triage_agent_email: "agent@example.org",
       client: @client,
