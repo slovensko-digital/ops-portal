@@ -224,7 +224,7 @@ class ResponsibleSubjects::BasicActivation
     }
   end
 
-  # trigger names end with the agent's name, so "... Nižná Myšľa Katarína Biačková" cannot be told from
+  # trigger names end with the agent's name, so "... Nižná Myšľa Jozef Mak" cannot be told from
   # a Nižná trigger by its name, its condition on the municipality can
   def trigger_for_municipality?(trigger)
     (agent.present? && trigger["name"] == trigger_name) ||

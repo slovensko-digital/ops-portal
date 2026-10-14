@@ -8,7 +8,7 @@ namespace :responsible_subjects do
         NAME="Nižná" \\
         DISTRICT="Žilinský kraj" \\
         USERS="starosta@nizna.sk, jan.novak@nizna.sk, podatelna@nizna.sk" \\
-        TRIAGE_ZAMMAD_AGENT_EMAIL=katarina.biackova@odkazprestarostu.sk \\
+        TRIAGE_ZAMMAD_AGENT_EMAIL=jozef.mak@odkazprestarostu.sk \\
         DRY_RUN=1
 
     Arguments:
