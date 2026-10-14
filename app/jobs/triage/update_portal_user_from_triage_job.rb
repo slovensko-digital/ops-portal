@@ -18,6 +18,7 @@ class Triage::UpdatePortalUserFromTriageJob < ApplicationJob
           lastname: triage_user.lastname,
           email: triage_user.email,
           responsible_subject: rs,
+          active: true,
         )
       else
         User::ResponsibleSubject.create!(

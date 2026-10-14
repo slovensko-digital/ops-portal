@@ -37,6 +37,7 @@ class Triage::UpdatePortalUserFromTriageJobTest < ActiveJob::TestCase
     assert_kind_of User::ResponsibleSubject, user
     assert_equal responsible_subjects(:one), user.responsible_subject
     assert_equal "Anna", user.firstname
+    assert user.active?
   end
 
   test "responsible subject user without organization becomes a citizen" do
