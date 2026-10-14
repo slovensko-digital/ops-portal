@@ -873,6 +873,91 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_requested groups.with(query: hash_including("per_page" => "500"))
   end
 
+  test "find_group_by_name returns the group with exactly that name" do
+    stub_zammad(:get, "groups", body: [ { id: 1, name: "Nižná Myšľa" }, { id: 2, name: "Nižná" } ])
+
+    assert_equal 2, @client.find_group_by_name("Nižná").id
+    assert_nil @client.find_group_by_name("Vyšná")
+  end
+
+  test "create_group! creates an active group sending from the email address" do
+    stub_zammad(:post, "groups", status: 201, body: { id: 9, name: "Nižná" })
+
+    assert_equal 9, @client.create_group!("Nižná", email_address_id: 1)
+
+    assert_requested :post, zammad_url("groups"), query: hash_including({}), body: {
+      "name" => "Nižná", "email_address_id" => 1, "follow_up_possible" => "yes", "follow_up_assignment" => true, "active" => true
+    }
+  end
+
+  test "find_email_address ignores the case of the email" do
+    stub_zammad(:get, "email_addresses", body: [ { id: 1, email: "Podnety@triaz.odkazprestarostu.sk" } ])
+
+    assert_equal 1, @client.find_email_address("podnety@triaz.odkazprestarostu.sk")["id"]
+    assert_nil @client.find_email_address("info@triaz.odkazprestarostu.sk")
+  end
+
+  test "add_group_to_role! grants full access to the group and keeps existing groups" do
+    stub_zammad(:get, "roles", body: [ { id: 8, name: "Portal Tech Account", group_ids: { "1" => [ "full" ], "2" => [ "read" ] } } ])
+    stub_zammad(:put, "roles/8", body: { id: 8 })
+
+    @client.add_group_to_role!("Portal Tech Account", 9)
+
+    assert_requested :put, zammad_url("roles/8"), body: { "group_ids" => { "1" => [ "full" ], "2" => [ "read" ], "9" => [ "full" ] } }
+  end
+
+  test "add_group_to_role! raises when the role does not exist" do
+    stub_zammad(:get, "roles", body: [])
+
+    assert_raises(RuntimeError, match: /Can't find triage zammad role: Portal Tech Account/) { @client.add_group_to_role!("Portal Tech Account", 9) }
+  end
+
+  test "find_organization_by_name returns the organization with exactly that name" do
+    search = stub_zammad(:get, "organizations/search", body: [ { id: 4, name: "Nižná Myšľa" }, { id: 5, name: "Nižná" } ])
+
+    assert_equal 5, @client.find_organization_by_name("Nižná").id
+    assert_requested search.with(query: hash_including("query" => "Nižná", "per_page" => "100"))
+  end
+
+  test "find_user_by_email returns the user with exactly that email ignoring its case" do
+    stub_zammad(:get, "users/search", body: [
+      zammad_fixture("zammad/user_agent", email: "jan.novak@nizna.sk.example"),
+      zammad_fixture("zammad/user_organization_member", email: "Jan.Novak@nizna.sk")
+    ])
+
+    assert_equal 77, @client.find_user_by_email("jan.novak@nizna.sk").id
+  end
+
+  test "create_user! creates a user with the roles in the organization" do
+    stub_zammad(:post, "users", status: 201, body: { id: 60 })
+
+    assert_equal 60, @client.create_user!(email: "jan.novak@nizna.sk", firstname: "Jan", lastname: "Novak", organization: "Nižná", roles: [ "Customer" ])
+
+    assert_requested :post, zammad_url("users"), query: hash_including({}), body: {
+      "firstname" => "Jan", "lastname" => "Novak", "login" => "jan.novak@nizna.sk", "email" => "jan.novak@nizna.sk",
+      "organization" => "Nižná", "roles" => [ "Customer" ]
+    }
+  end
+
+  test "create_user! leaves the organization out when there is none" do
+    stub_zammad(:post, "users", status: 201, body: { id: 59 })
+
+    @client.create_user!(email: "starosta@nizna.sk", firstname: "starosta", lastname: "Nižná", roles: [ "Externý zodpovedný subjekt" ])
+
+    assert_requested :post, zammad_url("users"), query: hash_including({}), body: {
+      "firstname" => "starosta", "lastname" => "Nižná", "login" => "starosta@nizna.sk", "email" => "starosta@nizna.sk",
+      "roles" => [ "Externý zodpovedný subjekt" ]
+    }
+  end
+
+  test "create_trigger! returns the id of the new trigger" do
+    stub_zammad(:post, "triggers", status: 201, body: { id: 70 })
+
+    assert_equal 70, @client.create_trigger!(name: "700 - Priradenie podnetu skupine Nižná")
+
+    assert_requested :post, zammad_url("triggers"), body: { "name" => "700 - Priradenie podnetu skupine Nižná" }
+  end
+
   private
 
   def build_issue_update(resolves_issue:, author: users(:one))
