@@ -25,7 +25,7 @@ class ResponsibleSubjects::BasicActivation
 
   attr_reader :name, :district_name, :user_emails, :triage_agent_email
 
-  def initialize(boundary_id:, name:, district_name:, user_emails:, triage_agent_email:, client: TriageZammadEnvironment.client, log: ->(_message) { })
+  def initialize(boundary_id:, name:, district_name:, user_emails:, triage_agent_email:, client:, log: ->(_message) { })
     @boundary_id = boundary_id
     @name = name.to_s.strip
     @district_name = district_name.to_s.strip

@@ -22,6 +22,14 @@ namespace :responsible_subjects do
                                  incoming issues from the municipality
       DRY_RUN=1               only validate, change nothing
 
+    Environment:
+      TRIAGE_ZAMMAD_ADMIN_API_TOKEN  required, a Triage Zammad API token of an admin, with at least the
+                                     permissions admin.group, admin.organization, admin.role, admin.trigger,
+                                     admin.user and ticket.agent. The portal's TRIAGE_ZAMMAD_API_TOKEN cannot
+                                     manage roles, organizations and triggers. Create it in Triage under
+                                     Profile > Token Access and pass it only for the run, e.g.
+                                     TRIAGE_ZAMMAD_ADMIN_API_TOKEN=... bin/rails responsible_subjects:activate_basic ...
+
     First validates everything and stops without changing anything when:
       - the boundary does not exist, is a district or already belongs to a municipality,
       - a municipality or responsible subject named NAME exists in the portal (a hidden municipality has
@@ -60,12 +68,16 @@ namespace :responsible_subjects do
       next
     end
 
+    admin_token = ENV["TRIAGE_ZAMMAD_ADMIN_API_TOKEN"]
+    abort "TRIAGE_ZAMMAD_ADMIN_API_TOKEN is missing, run without arguments for help" if admin_token.blank?
+
     activation = ResponsibleSubjects::BasicActivation.new(
       boundary_id: ENV["BOUNDARY_ID"],
       name: ENV["NAME"],
       district_name: ENV["DISTRICT"],
       user_emails: ENV["USERS"],
       triage_agent_email: ENV["TRIAGE_ZAMMAD_AGENT_EMAIL"],
+      client: ZammadApiClient.new(url: ENV.fetch("TRIAGE_ZAMMAD_URL"), http_token: admin_token),
       log: ->(message) { puts message }
     )
 
