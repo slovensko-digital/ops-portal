@@ -32,6 +32,9 @@ docker compose up -d && bin/setup --skip-server
 # push the seeded waiting issues to Triage, then start the portal
 bin/rails triage:dev:sync
 bin/dev
+
+# with the portal running: let Triage send emails (to Mailpit) to the portal's responsible subjects
+cd ../ops-triage-zammad && docker compose exec zammad-railsserver bundle exec rails r /opt/ops-dev/setup_mail.rb
 ```
 
 Every day: `docker compose up -d` in `ops-triage-zammad`, `bin/dev` here.
@@ -44,7 +47,9 @@ Click-through:
 1. Create an issue in the portal, or use one pushed by `triage:dev:sync`.
 2. The ticket shows up in Triage (if not, check `/admin/good_job`).
 3. Work the ticket in Triage: change the state, add a public comment, change the responsible subject.
-4. The issue changes in the portal. Emails Triage sent are in Mailpit.
+4. The issue changes in the portal. Emails Triage sent are in Mailpit, e.g. the one to
+   `rs-<id>@responsible-subject.example` after a responsible subject is set on a resolution ticket.
+   Emails the portal sends are at http://localhost:3000/letter_opener.
 
 `triage:dev:sync` pushes issues in the "Čakajúci" state that are not in Triage yet, with their
 authors and comments. It is safe to run again, and after either side was reset it links issues and
