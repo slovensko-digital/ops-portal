@@ -1,16 +1,16 @@
 [
-  "Mestská časť",
-  "Mesto",
-  "Iný subjekt"
-].each do |name|
-  ResponsibleSubjects::Type.find_or_initialize_by(name: name).tap do |t|
-    t.active = true
-  end.save!
+  { id: 1, legacy_id: 1, name: "Mestská časť" },
+  { id: 2, legacy_id: 2, name: "Mesto" },
+  { id: 3, legacy_id: 3, name: "Iný subjekt" }
+].each do |data|
+  ResponsibleSubjects::Type.find_or_initialize_by(id: data[:id]).update!(legacy_id: data[:legacy_id], name: data[:name], active: true)
 end
 
-city_district = ResponsibleSubjects::Type.find_by!(name: "Mestská časť")
-city = ResponsibleSubjects::Type.find_by!(name: "Mesto")
-other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
+ResponsibleSubjects::Type.connection.reset_pk_sequence!(ResponsibleSubjects::Type.table_name)
+
+city_district = ResponsibleSubjects::Type.find(1)
+city = ResponsibleSubjects::Type.find(2)
+other = ResponsibleSubjects::Type.find(3)
 
 [
   { type: city_district, subject_name: "MÚ Nové Mesto" },
