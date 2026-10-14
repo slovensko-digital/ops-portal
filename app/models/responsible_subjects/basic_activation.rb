@@ -2,13 +2,13 @@
 #
 # validate! checks everything up front and raises Invalid with all problems found, nothing is created
 # when anything is wrong. call then creates, in order:
-#   - portal: the municipality at the boundary and its responsible subject, both inactive,
-#   - Triage: a group and an organization named after the municipality,
-#     the 700 trigger assigning portal tickets from the municipality to the agent,
+#   - portal: the municipality at the boundary and its responsible subject, both inactive, the responsible
+#     subject's email is the first user's,
+#   - Triage: the responsible subject user, a group for the agent and an organization for the users, both
+#     named after the municipality, the 700 trigger assigning portal tickets from the municipality to the agent,
 #   - Triage: customers of the organization, each also created as User::ResponsibleSubject in the portal,
+#     the first one also gets notified about the municipality's tickets as the external responsible subject,
 #   - portal: activates the municipality and the responsible subject.
-# Triage finds the responsible subject through the portal API, and the sync jobs create its Triage user
-# when it first needs one.
 # Triage changes cannot be rolled back, a failure in the middle leaves the steps already done in place.
 class ResponsibleSubjects::BasicActivation
   class Invalid < StandardError; end
@@ -17,15 +17,16 @@ class ResponsibleSubjects::BasicActivation
   GROUP_EMAIL_ADDRESS = "podnety@triaz.odkazprestarostu.sk"
   PORTAL_TECH_ACCOUNT_ROLE = "Portal Tech Account"
   AGENT_ROLE = "Agent"
+  CUSTOMER_ROLE = "Customer"
+  EXTERNAL_RESPONSIBLE_SUBJECT_ROLE = "Externý zodpovedný subjekt"
   TRIGGER_NAME_PREFIX = "700 - Priradenie podnetu skupine"
 
-  attr_reader :name, :email, :user_emails, :triage_agent_id
+  attr_reader :name, :user_emails, :triage_agent_id
 
-  def initialize(boundary_id:, name:, email:, user_emails:, triage_agent_id:, client: TriageZammadEnvironment.client, log: ->(_message) { })
+  def initialize(boundary_id:, name:, user_emails:, triage_agent_id:, client: TriageZammadEnvironment.client, log: ->(_message) { })
     @boundary_id = boundary_id
     @name = name.to_s.strip
-    @email = split_emails(email).join(", ")
-    @user_emails = split_emails(user_emails)
+    @user_emails = Array(user_emails).flat_map { _1.to_s.split(",") }.map(&:strip).compact_blank
     @triage_agent_id = triage_agent_id.to_s.strip
     @client = client
     @log = log
@@ -40,6 +41,9 @@ class ResponsibleSubjects::BasicActivation
     validate!
 
     municipality, responsible_subject = create_portal_records
+    responsible_subject.update!(external_id: @client.create_responsible_subject!(responsible_subject))
+    @log.call("Triage: responsible subject user #{responsible_subject.external_id}")
+
     group_id = @client.create_group!(name, email_address_id: @client.find_email_address(GROUP_EMAIL_ADDRESS)["id"])
     @client.add_group_to_role!(PORTAL_TECH_ACCOUNT_ROLE, group_id)
     @log.call("Triage: group #{group_id}, accessible to role #{PORTAL_TECH_ACCOUNT_ROLE}")
@@ -53,9 +57,10 @@ class ResponsibleSubjects::BasicActivation
     @log.call("Triage: trigger #{trigger_name}")
 
     user_emails.each do |user_email|
-      user_id = @client.create_organization_customer!(email: user_email, organization: name, **names_from_email(user_email))
+      roles = roles_for(user_email)
+      user_id = @client.create_organization_customer!(email: user_email, organization: name, roles: roles, **names_from_email(user_email))
       Triage::UpdatePortalUserFromTriageJob.perform_now(user_id, triage_zammad_client: @client)
-      @log.call("Triage and portal: user #{user_email} (#{user_id})")
+      @log.call("Triage and portal: user #{user_email} (#{user_id}), #{roles.join(", ")}")
     end
 
     ActiveRecord::Base.transaction do
@@ -75,6 +80,16 @@ class ResponsibleSubjects::BasicActivation
     @agent ||= @client.find_user(triage_agent_id) if triage_agent_id.match?(/\A\d+\z/)
   end
 
+  # the responsible subject's email, the first user
+  def email
+    user_emails.first
+  end
+
+  # the first user is also notified about the municipality's tickets
+  def roles_for(user_email)
+    user_email == email ? [ CUSTOMER_ROLE, EXTERNAL_RESPONSIBLE_SUBJECT_ROLE ] : [ CUSTOMER_ROLE ]
+  end
+
   def trigger_name
     "#{TRIGGER_NAME_PREFIX} #{name} #{agent_name}"
   end
@@ -92,9 +107,8 @@ class ResponsibleSubjects::BasicActivation
   def portal_errors
     errors = []
     errors << "NAME is missing" if name.blank?
-    errors << "EMAIL is missing" if email.blank?
     errors << "USERS is missing" if user_emails.empty?
-    (split_emails(email) + user_emails).reject { |address| address.match?(URI::MailTo::EMAIL_REGEXP) }.each do |address|
+    user_emails.reject { |address| address.match?(URI::MailTo::EMAIL_REGEXP) }.each do |address|
       errors << "#{address} is not a valid email address"
     end
     errors << "USERS contains duplicate emails" if user_emails.map(&:downcase).uniq.size < user_emails.size
@@ -134,7 +148,9 @@ class ResponsibleSubjects::BasicActivation
     end
 
     errors << "Triage email address #{GROUP_EMAIL_ADDRESS} does not exist" unless @client.find_email_address(GROUP_EMAIL_ADDRESS)
-    errors << "Triage role #{PORTAL_TECH_ACCOUNT_ROLE} does not exist" unless @client.find_role_by_name(PORTAL_TECH_ACCOUNT_ROLE)
+    [ PORTAL_TECH_ACCOUNT_ROLE, CUSTOMER_ROLE, EXTERNAL_RESPONSIBLE_SUBJECT_ROLE ].each do |role|
+      errors << "Triage role #{role} does not exist" unless @client.find_role_by_name(role)
+    end
 
     if name.present?
       errors << "Triage group #{name} already exists" if @client.find_group_by_name(name)
@@ -214,9 +230,5 @@ class ResponsibleSubjects::BasicActivation
 
   def responsible_subjects_type
     @responsible_subjects_type ||= ResponsibleSubjects::Type.find_by(name: RESPONSIBLE_SUBJECT_TYPE)
-  end
-
-  def split_emails(value)
-    Array(value).flat_map { _1.to_s.split(",") }.map(&:strip).compact_blank
   end
 end

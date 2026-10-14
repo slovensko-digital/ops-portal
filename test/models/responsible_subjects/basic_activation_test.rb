@@ -21,11 +21,14 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     assert MunicipalityBoundary.containing_point(municipality.latitude, municipality.longitude).exists?(municipality_boundaries(:unmatched_municipality).id)
 
     assert_equal "Nižná", responsible_subject.subject_name
-    assert_equal "starosta@nizna.sk, prednosta@nizna.sk", responsible_subject.email
+    assert_equal "starosta@nizna.sk", responsible_subject.email
     assert_equal responsible_subjects_types(:city), responsible_subject.responsible_subjects_type
     assert_predicate responsible_subject, :active?
     assert_not responsible_subject.pro
-    assert_nil responsible_subject.external_id
+    assert_equal "58", responsible_subject.external_id
+    assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including(
+      "firstname" => "Nižná", "login" => "ops-rs-#{responsible_subject.id}", "roles" => [ "Zodpovedný Subjekt" ]
+    )
 
     assert_requested :post, zammad_url("groups"), query: hash_including({}),
       body: hash_including("name" => "Nižná", "email_address_id" => 1)
@@ -46,14 +49,19 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
       }
     )
     assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including(
+      "email" => "starosta@nizna.sk", "firstname" => "starosta", "lastname" => "Nižná", "organization" => "Nižná",
+      "roles" => [ "Customer", "Externý zodpovedný subjekt" ]
+    )
+    assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including(
       "email" => "jan.novak@nizna.sk", "firstname" => "Jan", "lastname" => "Novak", "organization" => "Nižná", "roles" => [ "Customer" ]
     )
     assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including(
-      "email" => "podatelna@nizna.sk", "firstname" => "podatelna", "lastname" => "Nižná", "organization" => "Nižná"
+      "email" => "podatelna@nizna.sk", "firstname" => "podatelna", "lastname" => "Nižná", "organization" => "Nižná",
+      "roles" => [ "Customer" ]
     )
 
     users = User::ResponsibleSubject.where(responsible_subject: responsible_subject).order(:external_id)
-    assert_equal [ [ 60, "jan.novak@nizna.sk" ], [ 61, "podatelna@nizna.sk" ] ], users.pluck(:external_id, :email)
+    assert_equal [ [ 59, "starosta@nizna.sk" ], [ 60, "jan.novak@nizna.sk" ], [ 61, "podatelna@nizna.sk" ] ], users.pluck(:external_id, :email)
   end
 
   test "validate! passes for a new municipality" do
@@ -72,7 +80,7 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
   end
 
   test "validate! rejects invalid and duplicate emails" do
-    assert_invalid "starosta@ is not a valid email address", email: "starosta@"
+    assert_invalid "starosta@ is not a valid email address", user_emails: "starosta@, jan.novak@nizna.sk"
     assert_invalid "USERS contains duplicate emails", user_emails: "jan.novak@nizna.sk, Jan.Novak@nizna.sk"
   end
 
@@ -98,6 +106,12 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_organization_member", email: "jan.novak@nizna.sk") ])
 
     assert_invalid "Triage user jan.novak@nizna.sk already exists (77, organization: \"MÚ Staré Mesto\")"
+  end
+
+  test "validate! rejects missing Triage roles" do
+    stub_zammad(:get, "roles", body: [ { id: 8, name: "Portal Tech Account", group_ids: {} } ])
+
+    assert_invalid "Triage role Externý zodpovedný subjekt does not exist"
   end
 
   test "validate! rejects a Triage user that is not an agent" do
@@ -128,8 +142,7 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     ResponsibleSubjects::BasicActivation.new(
       boundary_id: municipality_boundaries(:unmatched_municipality).id,
       name: "Nižná",
-      email: "starosta@nizna.sk, prednosta@nizna.sk",
-      user_emails: "jan.novak@nizna.sk, podatelna@nizna.sk",
+      user_emails: "starosta@nizna.sk, jan.novak@nizna.sk, podatelna@nizna.sk",
       triage_agent_id: "3",
       client: @client,
       **overrides
@@ -145,7 +158,11 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
   def stub_triage
     stub_zammad(:get, "users/3", fixture: "zammad/user_agent")
     stub_zammad(:get, "email_addresses", body: [ { id: 1, email: "podnety@triaz.odkazprestarostu.sk" } ])
-    stub_zammad(:get, "roles", body: [ { id: 8, name: "Portal Tech Account", group_ids: { "1" => [ "full" ] } } ])
+    stub_zammad(:get, "roles", body: [
+      { id: 8, name: "Portal Tech Account", group_ids: { "1" => [ "full" ] } },
+      { id: 3, name: "Customer", group_ids: {} },
+      { id: 7, name: "Externý zodpovedný subjekt", group_ids: {} }
+    ])
     stub_zammad(:get, "groups", body: [ { id: 1, name: "Incoming" } ])
     stub_zammad(:get, "organizations/search", body: [])
     stub_zammad(:get, "triggers", body: [])
@@ -153,13 +170,14 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
   end
 
   def stub_creation
+    stub_zammad(:post, "users", status: 201, body: { id: 58 }).with(body: hash_including("roles" => [ "Zodpovedný Subjekt" ]))
     stub_zammad(:post, "groups", status: 201, body: { id: 9, name: "Nižná" })
     stub_zammad(:put, "roles/8", body: { id: 8 })
     stub_zammad(:post, "organizations", status: 201, body: { id: 5, name: "Nižná" })
     stub_zammad(:put, "users/3", fixture: "zammad/user_agent")
     stub_zammad(:post, "triggers", status: 201, body: { id: 70 })
 
-    { 60 => "jan.novak@nizna.sk", 61 => "podatelna@nizna.sk" }.each do |id, email|
+    { 59 => "starosta@nizna.sk", 60 => "jan.novak@nizna.sk", 61 => "podatelna@nizna.sk" }.each do |id, email|
       stub_zammad(:post, "users", status: 201, body: { id: id }).with(body: hash_including("email" => email))
       stub_zammad(:get, "users/#{id}", fixture: "zammad/user_organization_member",
         overrides: { id: id, login: email, email: email, organization: "Nižná" })

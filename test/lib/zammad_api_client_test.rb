@@ -939,6 +939,15 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     }
   end
 
+  test "create_organization_customer! assigns the given roles" do
+    stub_zammad(:post, "users", status: 201, body: { id: 59 })
+
+    @client.create_organization_customer!(email: "starosta@nizna.sk", firstname: "starosta", lastname: "Nižná", organization: "Nižná",
+      roles: [ "Customer", "Externý zodpovedný subjekt" ])
+
+    assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including("roles" => [ "Customer", "Externý zodpovedný subjekt" ])
+  end
+
   test "create_trigger! returns the id of the new trigger" do
     stub_zammad(:post, "triggers", status: 201, body: { id: 70 })
 
