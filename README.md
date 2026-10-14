@@ -8,6 +8,47 @@ Install this before running `bundle`:
 - `brew install vips`
 
 
+## Local Triage
+
+Run the portal together with a local Triage to click through the whole flow. Clone
+[ops-triage-zammad](https://github.com/slovensko-digital/ops-triage-zammad) next to this repo.
+
+| What | URL |
+|---|---|
+| Portal | http://localhost:3000 (GoodJob: `/admin/good_job`) |
+| Triage | http://localhost:8080, `example@example.org` / `PASSword123` |
+
+First time:
+
+```
+# Triage, the first start takes a few minutes (zammad-init)
+cd ../ops-triage-zammad && cp .env.sample .env && docker compose up -d --build
+
+# Portal, the Triage token and webhook secret in .env.sample already match the Triage ones
+cd ../ops-portal && cp .env.sample .env
+docker compose up -d && bin/setup --skip-server
+bin/dev
+```
+
+Every day: `docker compose up -d` in `ops-triage-zammad`, `bin/dev` here.
+
+Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the portal at
+`host.docker.internal:3000` (webhooks signed with `WEBHOOK_SECRET`, responsible subject search),
+so `bin/dev` has to be running for Triage changes to reach the portal.
+
+Click-through:
+1. Create an issue in the portal (seeded issues are not in the local Triage).
+2. The ticket shows up in Triage (if not, check `/admin/good_job`).
+3. Work the ticket in Triage: change the state, add a public comment, change the responsible subject.
+4. The issue changes in the portal.
+
+Keep both sides in sync: reset them together. A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on webhooks only when seeding.
+
+```
+cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
+cd ../ops-portal && bin/rails db:seed:replant
+```
+
 ## Testing
 
 Run `bin/rails test:all`. See [docs/TESTING.md](docs/TESTING.md) for what to test at which level.
