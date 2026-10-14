@@ -157,10 +157,25 @@ class Issues::Draft < ApplicationRecord
   def potential_duplicates
     scope = Issue
       .publicly_visible
+      .accepting_updates
       .within_distance_from_point(latitude, longitude, 500)
       .where(category: category, subcategory: subcategory)
     scope = scope.where(subtype: subtype) if subtype.present?
     scope
+  end
+
+  def submit_as_update_of(issue, text:, attachments:)
+    update = Issues::Update.new(text: text, attachments: attachments, author: author, published: true)
+    update.build_activity(issue: issue, type: Issues::UpdateActivity)
+
+    transaction do
+      next unless update.save
+
+      author.subscribe_to(issue) unless author.subscribed_to?(issue)
+      destroy!
+    end
+
+    update
   end
 
   def confirmable?

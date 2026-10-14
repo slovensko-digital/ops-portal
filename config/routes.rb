@@ -65,7 +65,7 @@ Rails.application.routes.draw do
           post :confirm
         end
         resource :summary
-        resources :duplicates, only: :index
+        resources :duplicates, only: [ :index, :show, :update ]
         resource :category
         resource :subcategory
         resource :subtype
