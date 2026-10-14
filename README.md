@@ -17,12 +17,14 @@ Run the portal together with a local Triage to click through the whole flow. Clo
 |---|---|
 | Portal | http://localhost:3000 (GoodJob: `/admin/good_job`) |
 | Triage | http://localhost:8080, `example@example.org` / `PASSword123` |
+| Triage emails | http://localhost:8025 (Mailpit), every email Triage sends, e.g. trigger emails to responsible subjects |
+| Portal emails | http://localhost:3000/letter_opener |
 
 First time:
 
 ```
 # Triage, the first start takes a few minutes (zammad-init)
-cd ../ops-triage-zammad && cp .env.sample .env && docker compose up -d --build
+cd ../ops-triage-zammad && docker compose up -d --build
 
 # Portal, the Triage token and webhook secret in .env.sample already match the Triage ones
 cd ../ops-portal && cp .env.sample .env
@@ -40,7 +42,7 @@ Click-through:
 1. Create an issue in the portal (seeded issues are not in the local Triage).
 2. The ticket shows up in Triage (if not, check `/admin/good_job`).
 3. Work the ticket in Triage: change the state, add a public comment, change the responsible subject.
-4. The issue changes in the portal.
+4. The issue changes in the portal. Emails from Triage (e.g. to the new responsible subject) are in Mailpit.
 
 Keep both sides in sync: reset them together. A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on webhooks only when seeding.
 
