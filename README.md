@@ -1,5 +1,12 @@
 # README
 
+## How it works
+
+[docs/flows/](docs/flows/README.md) maps what users can do and how data syncs between the
+portal, Triage and Backoffice: the issue lifecycle, which action triggers what, emails,
+scheduled jobs, test coverage per flow, and [known problems](docs/flows/findings.md).
+Update the matching file there when you change a flow.
+
 ## Install on Mac
 
 Install this before running `bundle`:
@@ -51,11 +58,17 @@ cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
 cd ../ops-portal && bin/rails db:seed:replant
 ```
 
+To run a Backoffice next to them, see [docs/flows/07](docs/flows/07-backoffice-connector.md#running-it-locally).
+
 ## Testing
 
 Run `bin/rails test:all`. See [docs/TESTING.md](docs/TESTING.md) for what to test at which level.
 
 ## Connect new Backoffice instance
+
+What the connection does is described in [docs/flows/07](docs/flows/07-backoffice-connector.md).
+The snippet below looks up the responsible subject by `name`, which is not set for ones created by
+`responsible_subjects:activate_basic` (finding M17 in [docs/flows/findings.md](docs/flows/findings.md)).
 
 Tip: Use [CyberChef](https://gchq.github.io/CyberChef/#recipe=Pseudo-Random_Number_Generator(32,'Raw')To_Base62('0-9A-Za-z')) to generate secrets.
 
