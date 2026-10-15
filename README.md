@@ -2,9 +2,9 @@
 
 ## How it works
 
-[docs/flows/](docs/flows/README.md) maps what users can do and how data syncs between the
+[docs/how-it-works/](docs/how-it-works/README.md) maps what users can do and how data syncs between the
 portal, Triage and Backoffice: the issue lifecycle, which action triggers what, emails,
-scheduled jobs, test coverage per flow, and [known problems](docs/flows/findings.md).
+scheduled jobs, test coverage per flow, and [known problems](docs/how-it-works/findings.md).
 Update the matching file there when you change a flow.
 
 ## Install on Mac
@@ -94,9 +94,9 @@ Run `bin/rails test:all`. See [docs/TESTING.md](docs/TESTING.md) for what to tes
 
 ## Connect new Backoffice instance
 
-What the connection does is described in [docs/flows/07](docs/flows/07-backoffice-connector.md).
+What the connection does is described in [docs/how-it-works/07](docs/how-it-works/07-backoffice-connector.md).
 The snippet below looks up the responsible subject by `name`, which is not set for ones created by
-`responsible_subjects:activate_basic` (finding M17 in [docs/flows/findings.md](docs/flows/findings.md)).
+`responsible_subjects:activate_basic` (finding M17 in [docs/how-it-works/findings.md](docs/how-it-works/findings.md)).
 
 Tip: Use [CyberChef](https://gchq.github.io/CyberChef/#recipe=Pseudo-Random_Number_Generator(32,'Raw')To_Base62('0-9A-Za-z')) to generate secrets.
 

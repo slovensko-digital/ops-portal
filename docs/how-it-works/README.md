@@ -1,4 +1,4 @@
-# Flows: what the system does and why
+# How it works: what the system does and why
 
 This folder maps every user flow and every sync between the three apps:
 

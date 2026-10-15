@@ -10,6 +10,6 @@
 
 <!-- Screenshots, a demo video, or a link to one, showing the change in action. Write "Not applicable" for changes with nothing to show (e.g. refactors, CI, docs). -->
 
-## Flow docs
+## How it works docs
 
-- [ ] `docs/flows/` is updated, or this PR changes no flow (job, webhook, Triage or Backoffice trigger, issue state, email, scheduled job)
+- [ ] `docs/how-it-works/` is updated, or this PR changes no flow (job, webhook, Triage or Backoffice trigger, issue state, email, scheduled job)

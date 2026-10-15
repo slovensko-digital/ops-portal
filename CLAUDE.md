@@ -6,9 +6,9 @@ Before writing or changing tests read `docs/TESTING.md`. It defines which
 level (system, integration, model, job, mailer) each kind of code is tested at
 and what a test should assert.
 
-## Flow docs
+## How it works docs
 
-`docs/flows/` describes every flow between the portal, Triage and Backoffice.
+`docs/how-it-works/` describes every flow between the portal, Triage and Backoffice.
 When you change a flow, update the matching file in the same PR:
 
 | Code | Doc |
@@ -24,7 +24,7 @@ When you change a flow, update the matching file in the same PR:
 | `config/recurring.yml` | 10 |
 
 A new flow, email or scheduled job gets a row in the doc and in
-`docs/flows/coverage.md`. When you fix a finding, delete its row from
-`docs/flows/findings.md`. Flow changes made in `ops-triage-zammad` or
+`docs/how-it-works/coverage.md`. When you fix a finding, delete its row from
+`docs/how-it-works/findings.md`. Flow changes made in `ops-triage-zammad` or
 `ops-backoffice-saas` (triggers, core workflows, schedulers, patches) are
 documented here too.
