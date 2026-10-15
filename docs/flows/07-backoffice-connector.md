@@ -5,28 +5,6 @@ locally, and Rajec connected as a PRO municipality (tenant 3). Steps marked
 **(observed)** were reproduced; the rest is from code. All Connector jobs
 except the subtask job have **no tests**.
 
-## Running it locally
-
-1. `docker compose up -d --build` in `ops-backoffice-saas` (port 8081). Two
-   Zammads need about 3 GB of Docker memory.
-2. Override `.env.sample` in a local `.env`:
-   - `OPS_PORTAL_URL=http://host.docker.internal:3000`. The sample has
-     `https`, and the RS autocomplete can't reach the plain-HTTP dev portal.
-   - `OPS_RESPONSIBLE_SUBJECT`/`_ID` must match the portal RS. The sample says
-     "MÚ Staré Mesto"/`1`, but in the portal seeds Staré Mesto is RS `9` and
-     `1` is "MÚ Nové Mesto".
-   - `WEBHOOK_TENANT_ID` must equal the portal `Connector::Tenant` id.
-3. Run the README `connect_backoffice` snippet. It finds the RS with
-   `ResponsibleSubject.find_by!(name:)`, which raises for every RS made by
-   `activate_basic`: those have only `subject_name`, and `name` is nil. Use
-   `find_by!(subject_name:)`.
-4. Open Backoffice on `http://127.0.0.1:8081`, not `localhost:8081`. Cookies
-   ignore ports, so Triage on `localhost:8080` and Backoffice on
-   `localhost:8081` overwrite each other's session. Triage logged out after
-   the first Backoffice login.
-5. Changing the env needs `docker compose up -d --force-recreate`, so init
-   re-seeds the webhooks with the new tenant id.
-
 ## Observed end to end (OPS-300305)
 
 | Step | What happened | Jobs |

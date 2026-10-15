@@ -56,7 +56,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | triage admin: 7xx rules for RS / owner | 700 created by code; 750 hand-made | rule order is by name |
 | triage → portal: RS change / assignment | RS yes; owner/group **not mirrored** in the portal | |
 | portal → backoffice: RS change / assignment | RS via Triage → Connector; owner/group: no | Backoffice → Triage → portal hand-off observed (M7, L13) |
-| triage → backoffice | yes (observed), through the portal Connector | see [07](07-backoffice-connector.md#running-it-locally) for the local setup; cover the hand-off and the "PRO without Client" failure (M19) |
+| triage → backoffice | yes (observed), through the portal Connector | cover the hand-off and the "PRO without Client" failure (M19) |
 | what Triage sets on a praise | answered in [05](05-praise.md#what-triage-sets-on-a-praise) | |
 | sub-issues in a Zammad text field | Backoffice only, see [07](07-backoffice-connector.md#subtasks-podúlohy) | |
 

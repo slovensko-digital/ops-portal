@@ -61,7 +61,7 @@ Fix each one in its own PR and delete its row here when it lands.
 | L9 | Triage: dead core workflow (`portal_issue_resolved_verification`); triggers reference non-existent `address_municipality_district`. Backoffice: core workflow sets `ticket.investment` (should be `ops_investment`); `origin=subtask` isn't a select option; two core workflows share priority 120 | `triage.rake:873-891`; `backoffice.rake:847,360` |
 | L10 | Seed data typo "nefunknčné" shown to users in the wizard | categories seed |
 | L11 | Backoffice `API_TOKEN` applied only when `User.count <= 3`, so a rotation silently does nothing | `backoffice.rake:306` |
-| L12 | Local dev: the Backoffice `.env.sample` has `OPS_PORTAL_URL=https://…` (RS autocomplete fails against the HTTP portal) and RS id `1`, while portal seeds have Staré Mesto as `9`. Triage and Backoffice on `localhost:8080`/`:8081` share cookies and log each other out; use `127.0.0.1:8081` | `ops-backoffice-saas/.env.sample` |
+| L12 | Local dev: the Backoffice `.env.sample` has `OPS_PORTAL_URL=https://…` (RS autocomplete fails against the HTTP portal) and RS id `1`, while portal seeds have Staré Mesto as `9`. Triage and Backoffice on `localhost:8080`/`:8081` share cookies and log each other out (workaround in the README "Local Backoffice") | `ops-backoffice-saas/.env.sample` |
 | L13 | The RS value is an integer when the portal or 700 rules write it (`30`) and a string when it comes from Backoffice (`"20"`, observed on R-300305). Triggers that compare `{label, value}` (800 "Iný subjekt" = `"410"`, Backoffice "different RS" core workflow) may match one form only | Triage 800 triggers; `backoffice.rake:578-583` |
 
 ## Corrections to assumptions

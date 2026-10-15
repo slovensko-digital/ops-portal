@@ -2,18 +2,17 @@
 
 This folder maps every user flow and every sync between the three apps:
 
-| App | Repo | Local URL |
-|---|---|---|
-| **Portal**: citizens, municipality users, the OPS API and the Connector | `ops-portal` | http://localhost:3000 |
-| **Triage** (Zammad): volunteers review and route issues | `ops-triage-zammad` | http://localhost:8080 |
-| **Backoffice** (Zammad, one per PRO municipality): municipality staff | `ops-backoffice-saas` | http://localhost:8081 |
+| App | Repo |
+|---|---|
+| **Portal**: citizens, municipality users, the OPS API and the Connector | `ops-portal` |
+| **Triage** (Zammad): volunteers review and route issues | `ops-triage-zammad` |
+| **Backoffice** (Zammad, one per PRO municipality): municipality staff | `ops-backoffice-saas` |
 
 Use it to know what exists today, which parts have no tests, which edge
 cases are open, and what could be simpler. Every claim points to code
 (`file:line`). Claims marked **(observed)** were also clicked through on the
 local stack (portal + Triage + Backoffice, with Rajec connected as a PRO
-municipality) on 2026-10-15. How to run all three together is in
-[07](07-backoffice-connector.md#running-it-locally).
+municipality) on 2026-10-15.
 
 ## Files
 

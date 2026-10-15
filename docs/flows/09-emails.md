@@ -1,8 +1,5 @@
 # 09 Emails
 
-Locally, portal emails go to http://localhost:3000/letter_opener and Triage
-emails go to Mailpit http://localhost:8025.
-
 ## Portal → citizens (`NotificationMailer`)
 
 Recipients are active `IssueSubscription`s with `email_notifiable`. Subject:
