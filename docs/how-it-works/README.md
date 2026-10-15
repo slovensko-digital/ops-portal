@@ -18,6 +18,7 @@ municipality) on 2026-10-15.
 
 | File | What it covers |
 |---|---|
+| [glossary.md](glossary.md) | **Read first.** Terms used in these docs, the apps and Zammad (RS, `ops_state`, doplnenie, 700 rule…) |
 | [01-overview.md](01-overview.md) | System map, actors, ticket kinds (T/R/U), basic vs PRO |
 | [02-issue-lifecycle.md](02-issue-lifecycle.md) | Issue states, the Triage `ops_state` and who moves the issue between them |
 | [03-submission-and-triage.md](03-submission-and-triage.md) | Citizen wizard, Triage routing (700 rules), volunteer: accept, reject, request supplement, duplicate |
@@ -28,7 +29,6 @@ municipality) on 2026-10-15.
 | [08-onboarding.md](08-onboarding.md) | `responsible_subjects:activate_basic`, connecting a Backoffice, users and roles in Triage |
 | [09-emails.md](09-emails.md) | Every email (portal and Zammad): trigger, recipient, links |
 | [10-scheduled.md](10-scheduled.md) | Cron (GoodJob) and Zammad schedulers |
-| [glossary.md](glossary.md) | Terms used in these docs, the apps and Zammad (RS, `ops_state`, doplnenie, 700 rule…) |
 | [coverage.md](coverage.md) | Flow × test matrix, gaps, and the planned integration scenarios |
 | [findings.md](findings.md) | Broken flows, unhandled cases, races, simplification candidates, ranked |
 
