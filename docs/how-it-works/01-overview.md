@@ -102,15 +102,3 @@ One portal issue maps to up to three Zammad tickets:
 | Gets new issues by | Triage trigger email to org members with role "Externý zodpovedný subjekt" | Connector creates an `OPS-xxxx` ticket in Backoffice |
 | Replies by | Portal (`/dopyty/:id/odpovede`) or replying to the email | Public note in Backoffice |
 | Set up by | `bin/rails responsible_subjects:activate_basic` | Deploy Backoffice + `connect_backoffice` console snippet (README) |
-
-## Glossary
-
-| Term | Meaning |
-|---|---|
-| RS | Responsible subject (zodpovedný subjekt): municipality, district, or other organization |
-| `ops_state` | Triage ticket attribute holding the portal state key (`waiting`, `sent_to_responsible`…) |
-| Doplnenie | Supplement: volunteer asks the author for more info (`waiting_for_author`) |
-| Pochvala | Praise |
-| Podúlohy | Subtasks inside Backoffice |
-| `[[ops portal]]`, `[[pre zodpovedny subjekt]]` | Tags in Triage article bodies that decide where a comment goes ([06](06-comments-likes-routing.md)) |
-| 700 rule | Triage trigger `700 - Priradenie podnetu skupine <Obec> <Agent>` that routes a new ticket to a municipality group, owner and RS |
