@@ -18,10 +18,10 @@ Each finding also has a **category**, so you can see what kind of problem it is:
 | UX gap | It works, but users get stuck, confused or too many emails. | H3, M1, M2, M3, M20 |
 | Inconsistency | The same thing is spelled, typed or named differently in different places. | M8, L10, L13 |
 | Security | Hardening: authentication, authorization, signatures, unsafe endpoints. | L3, L4, L5, L6, L7 |
-| Dead code | Unreachable or unused code, or code that references something that no longer exists. | L2, L8, L9 |
-| Setup | Docs, samples or config that don't match the code. | M17, L12 |
 
 Fix each one in its own PR. When it lands, delete its row and its id in the category table. A new finding gets a category from the table; add a category only when none fits.
+
+Dead code and setup problems (docs and sample configs that don't match the code) are tracked as issues in the private `slovensko-digital/ops` repo, not here.
 
 ## High: users or municipalities are affected today
 
@@ -56,27 +56,22 @@ Fix each one in its own PR. When it lands, delete its row and its id in the cate
 | M14 | Unhandled case | Subtask parser splits on `<br>` only. The desktop editor emits `<br>` and `&nbsp;-` after a mention, which parses fine (observed). `<div>`/`<p>` lines (other editors), `&nbsp;` before the date, and trailing text silently drop subtasks or dates. | Observed + regex probed | `connector/subtask_parser.rb` |
 | M15 | Failure recovery | `activate_basic` has no Triage rollback. A failure midway leaves a partial setup, and a re-run fails validation. | Code | `basic_activation.rb:43-76` |
 | M16 | Unhandled case | `SyncIssueToTriageJob` maps process type by **Slovak state name**. A first sync of `waiting_for_author` / `resolved_private` / `archived` raises `KeyError`, and `Zamietnutý` maps to resolution. Only bulk import or recovery hits this. | Code | `sync_issue_to_triage_job.rb:121-133` |
-| M17 | Setup | The README `connect_backoffice` snippet uses `ResponsibleSubject.find_by!(name:)`, which raises for every RS made by `activate_basic` (only `subject_name` is set). Basic → PRO upgrades fail at step one. | Observed | `README.md` "Connect new Backoffice instance" |
 | M18 | Logic flaw | **A PRO RS that keeps its Externý email users gets everything twice.** It gets the Triage email *and* the Backoffice ticket on accept, and an email about **its own** Backoffice comment (trigger 200 "komentáre z portálu"). Nothing turns the email channel off when a municipality becomes PRO. | Observed (`podatelna@rajec.sk`) | Triage triggers 200; `connect_backoffice` |
 | M19 | Unhandled case | A `pro: true` RS without a `Client` raises "No clients found" in every PRO job (issue, update, activity). They retry until discarded, so the issue never reaches anyone digitally. All seeded RS are `pro: true`, but only two have clients. | Observed (hand-off to Trnava) | `send_new_issue_from_triage_to_backoffice_job.rb:6`, `process_new_activity_from_triage_job.rb` |
 | M20 | UX gap | `::po` in Backoffice matches two text modules, and the highlighted default is "Verejný komentár" (`[[ops portal]]`), not "Vytvorenie podúloh". Enter inserts the wrong tag. | Observed | `backoffice.rake:495-502` text-module keywords |
 
-## Low: hygiene, dead code, security hardening
+## Low: hygiene, security hardening
 
 | # | Category | Finding | Where |
 |---|---|---|---|
 | L1 | Unhandled case | `ChecksController#confirm` renders nothing when not confirmable; no double-submit lock on confirm | `drafts/checks_controller.rb` |
-| L2 | Dead code | `Connector::WebhooksController` uses `render text:` (invalid); `Backoffice::WebhooksController#set_tenant` guard is dead | controllers |
 | L3 | Security | Unsubscribe GET endpoints mutate state (link prefetchers) | `subscriptions_controller.rb`, `global_subscriptions_controller.rb` |
 | L4 | Security | JWT `jti` replay not enforced; JWT sent in query string; Connector `v1,` HMAC keyed with a public key; no webhook timestamp tolerance | `api_token_authenticator.rb:28`, `connector/webhooks_controller.rb:48-51` |
 | L5 | Security | Unauthenticated `/api/v1/issues/search`, `/api/v1/responsible_subjects`, anonymous `/uploads` | routes |
 | L6 | Security | `AvatarsController` lacks `require_user`; `/profil/overene` has no action | controllers |
 | L7 | Security | Comment/update controllers use `require_user` instead of `require_full_access_user`; updates on triage issues allowed server-side | `issues_user_comments_controller.rb:3`, `issues_updates_controller.rb:3` |
-| L8 | Dead code | `AUTO_SYNC_LEGACY_USERS=ON` replaces all crons and points at a missing class; several legacy import jobs reference missing classes | `config/application.rb:53-60`, `app/jobs/import/*` |
-| L9 | Dead code | Triage: dead core workflow (`portal_issue_resolved_verification`); triggers reference non-existent `address_municipality_district`. Backoffice: core workflow sets `ticket.investment` (should be `ops_investment`); `origin=subtask` isn't a select option; two core workflows share priority 120 | `triage.rake:873-891`; `backoffice.rake:847,360` |
 | L10 | Inconsistency | Seed data typo "nefunknčné" shown to users in the wizard | categories seed |
 | L11 | Logic flaw | Backoffice `API_TOKEN` applied only when `User.count <= 3`, so a rotation silently does nothing | `backoffice.rake:306` |
-| L12 | Setup | Local dev: the Backoffice `.env.sample` has `OPS_PORTAL_URL=https://…` (RS autocomplete fails against the HTTP portal) and RS id `1`, while portal seeds have Staré Mesto as `9`. Triage and Backoffice on `localhost:8080`/`:8081` share cookies and log each other out (workaround in the README "Local Backoffice") | `ops-backoffice-saas/.env.sample` |
 | L13 | Inconsistency | The RS value is an integer when the portal or 700 rules write it (`30`) and a string when it comes from Backoffice (`"20"`, observed on R-300305). Triggers that compare `{label, value}` (800 "Iný subjekt" = `"410"`, Backoffice "different RS" core workflow) may match one form only | Triage 800 triggers; `backoffice.rake:578-583` |
 
 ## Corrections to assumptions

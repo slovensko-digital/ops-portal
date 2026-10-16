@@ -96,7 +96,7 @@ Run `bin/rails test:all`. See [docs/TESTING.md](docs/TESTING.md) for what to tes
 
 What the connection does is described in [docs/how-it-works/07](docs/how-it-works/07-backoffice-connector.md).
 The snippet below looks up the responsible subject by `name`, which is not set for ones created by
-`responsible_subjects:activate_basic` (finding M17 in [docs/how-it-works/findings.md](docs/how-it-works/findings.md)).
+`responsible_subjects:activate_basic`. For those, change `find_by!(name:)` to `find_by!(subject_name:)`.
 
 Tip: Use [CyberChef](https://gchq.github.io/CyberChef/#recipe=Pseudo-Random_Number_Generator(32,'Raw')To_Base62('0-9A-Za-z')) to generate secrets.
 
