@@ -39,6 +39,13 @@ class NotificationMailerTest < ActionMailer::TestCase
     assert_includes mail.body.encoded, "bol zverejnený a odoslaný zodpovedným pracovníkom"
   end
 
+  test "footer names Slovensko.Digital as the project owner" do
+    mail = NotificationMailer.with(subscription: @author_subscription).issue_accepted
+    assert_includes mail.body.encoded, "Odkaz pre starostu je projektom občianskeho združenia"
+    assert_includes mail.body.encoded, "https://slovensko.digital/"
+    assert_not_includes mail.body.encoded, "governance.sk"
+  end
+
   test "praise_accepted" do
     mail = NotificationMailer.with(subscription: issue_subscriptions(:praise)).praise_accepted
     assert_includes mail.body.encoded, "bola schválená a preposlaná príslušným adresátom"
