@@ -66,7 +66,6 @@ on an integer and may never fire (verify).
 - The author is subscribed on submit.
 - "Sledovať podnet" / "Zrušiť sledovanie" toggles `IssueSubscription`.
 - Duplicates copy subscribers to the parent.
-- Email unsubscribe links are GET requests that change state
-  (`/subscriptions/unsubscribe/:token` destroys the subscription;
-  `/global_subscriptions/unsubscribe/:token` turns off all mails). Mail
-  scanners that prefetch links can trigger them.
+- Email unsubscribe links: `/subscriptions/unsubscribe/:token` destroys the
+  subscription, `/global_subscriptions/unsubscribe/:token` turns off all
+  mails.

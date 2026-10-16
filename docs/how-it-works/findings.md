@@ -17,11 +17,10 @@ Each finding also has a **category**, so you can see what kind of problem it is:
 | Missing flow | A step users or the team expect doesn't exist. | H4, M6, M7, M10 |
 | UX gap | It works, but users get stuck, confused or too many emails. | H3, M1, M2, M3, M20 |
 | Inconsistency | The same thing is spelled, typed or named differently in different places. | M8, L10, L13 |
-| Security | Hardening: authentication, authorization, signatures, unsafe endpoints. | L3, L4, L5, L6, L7 |
 
 Fix each one in its own PR. When it lands, delete its row and its id in the category table. A new finding gets a category from the table; add a category only when none fits.
 
-Dead code and setup problems (docs and sample configs that don't match the code) are tracked as issues in the private `slovensko-digital/ops` repo, not here.
+Dead code, setup problems (docs and sample configs that don't match the code) and security findings are tracked as issues in the private `slovensko-digital/ops` repo, not here.
 
 ## High: users or municipalities are affected today
 
@@ -60,16 +59,11 @@ Dead code and setup problems (docs and sample configs that don't match the code)
 | M19 | Unhandled case | A `pro: true` RS without a `Client` raises "No clients found" in every PRO job (issue, update, activity). They retry until discarded, so the issue never reaches anyone digitally. All seeded RS are `pro: true`, but only two have clients. | Observed (hand-off to Trnava) | `send_new_issue_from_triage_to_backoffice_job.rb:6`, `process_new_activity_from_triage_job.rb` |
 | M20 | UX gap | `::po` in Backoffice matches two text modules, and the highlighted default is "Verejný komentár" (`[[ops portal]]`), not "Vytvorenie podúloh". Enter inserts the wrong tag. | Observed | `backoffice.rake:495-502` text-module keywords |
 
-## Low: hygiene, security hardening
+## Low: hygiene
 
 | # | Category | Finding | Where |
 |---|---|---|---|
 | L1 | Unhandled case | `ChecksController#confirm` renders nothing when not confirmable; no double-submit lock on confirm | `drafts/checks_controller.rb` |
-| L3 | Security | Unsubscribe GET endpoints mutate state (link prefetchers) | `subscriptions_controller.rb`, `global_subscriptions_controller.rb` |
-| L4 | Security | JWT `jti` replay not enforced; JWT sent in query string; Connector `v1,` HMAC keyed with a public key; no webhook timestamp tolerance | `api_token_authenticator.rb:28`, `connector/webhooks_controller.rb:48-51` |
-| L5 | Security | Unauthenticated `/api/v1/issues/search`, `/api/v1/responsible_subjects`, anonymous `/uploads` | routes |
-| L6 | Security | `AvatarsController` lacks `require_user`; `/profil/overene` has no action | controllers |
-| L7 | Security | Comment/update controllers use `require_user` instead of `require_full_access_user`; updates on triage issues allowed server-side | `issues_user_comments_controller.rb:3`, `issues_updates_controller.rb:3` |
 | L10 | Inconsistency | Seed data typo "nefunknčné" shown to users in the wizard | categories seed |
 | L11 | Logic flaw | Backoffice `API_TOKEN` applied only when `User.count <= 3`, so a rotation silently does nothing | `backoffice.rake:306` |
 | L13 | Inconsistency | The RS value is an integer when the portal or 700 rules write it (`30`) and a string when it comes from Backoffice (`"20"`, observed on R-300305). Triggers that compare `{label, value}` (800 "Iný subjekt" = `"410"`, Backoffice "different RS" core workflow) may match one form only | Triage 800 triggers; `backoffice.rake:578-583` |
