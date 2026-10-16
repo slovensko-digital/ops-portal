@@ -102,3 +102,11 @@ One portal issue maps to up to three Zammad tickets:
 | Gets new issues by | Triage trigger email to org members with role "Externý zodpovedný subjekt" | Connector creates an `OPS-xxxx` ticket in Backoffice |
 | Replies by | Portal (`/dopyty/:id/odpovede`) or replying to the email | Public note in Backoffice |
 | Set up by | `bin/rails responsible_subjects:activate_basic` | Deploy Backoffice + `connect_backoffice` console snippet (README) |
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1327](https://github.com/slovensko-digital/ops/issues/1327) | [System map](#system-map) | Sync jobs give up after ~6 minutes, nothing re-syncs |

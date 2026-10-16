@@ -4,7 +4,7 @@
 
 [docs/how-it-works/](docs/how-it-works/README.md) maps what users can do and how data syncs between the
 portal, Triage and Backoffice: the issue lifecycle, which action triggers what, emails,
-scheduled jobs, test coverage per flow, and [known problems](docs/how-it-works/findings.md).
+scheduled jobs, test coverage per flow, and the open issues that affect each flow.
 Update the matching file there when you change a flow.
 
 ## Install on Mac

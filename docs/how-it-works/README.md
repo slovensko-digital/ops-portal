@@ -30,7 +30,6 @@ municipality) on 2026-10-15.
 | [09-emails.md](09-emails.md) | Every email (portal and Zammad): trigger, recipient, links |
 | [10-scheduled.md](10-scheduled.md) | Cron (GoodJob) and Zammad schedulers |
 | [coverage.md](coverage.md) | Flow × test matrix, gaps, and the planned integration scenarios |
-| [findings.md](findings.md) | Broken flows, unhandled cases, races, simplification candidates, ranked |
 
 Diagrams are Mermaid, so GitHub renders them inline.
 
@@ -41,5 +40,8 @@ Diagrams are Mermaid, so GitHub renders them inline.
 - The Triage trigger table in [03](03-submission-and-triage.md) and
   [09](09-emails.md) comes from the running config. To refresh it:
   `curl -H "Authorization: Token token=$TRIAGE_ZAMMAD_ADMIN_API_TOKEN" localhost:8080/api/v1/triggers`.
-- When a finding is fixed, delete it from [findings.md](findings.md) in the
-  same PR.
+- Known problems are GitHub issues in the private `slovensko-digital/ops`
+  repo, collected in the epic
+  [ops#1349](https://github.com/slovensko-digital/ops/issues/1349). Each doc
+  file lists the ones that touch it under **Open issues**. The PR that fixes
+  one updates the affected section (diagram, flow) and removes its row.

@@ -69,3 +69,13 @@ on an integer and may never fire (verify).
 - Email unsubscribe links: `/subscriptions/unsubscribe/:token` destroys the
   subscription, `/global_subscriptions/unsubscribe/:token` turns off all
   mails.
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1329](https://github.com/slovensko-digital/ops/issues/1329) | [Triage R-ticket article routing (tags)](#triage-r-ticket-article-routing-tags) | The default Triage note is internal |
+| [ops#1331](https://github.com/slovensko-digital/ops/issues/1331) | [Editing window](#editing-window) | The 5-minute edit window delays Triage; RS comment mails miss later edits |
+| [ops#1336](https://github.com/slovensko-digital/ops/issues/1336) | [Likes](#likes) | Likes are never pushed to Triage / Backoffice |

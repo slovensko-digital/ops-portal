@@ -25,14 +25,14 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Request supplement → author replies → `waiting` | [03](03-submission-and-triage.md#2a-request-supplement-doplnenie-observed) | Triage side untested; portal pieces tested separately | 🟡 | end to end; trigger 148 |
 | Reject, duplicate | [03](03-submission-and-triage.md) | job tests | 🟡 | duplicate no-parent / missing-parent branches |
 | RS comment / mark resolved | [04](04-resolution.md) | `system/issues/responsible_subject_comments_test.rb` (7) | ✅ | — |
-| RS reassign / refer | [04](04-resolution.md) | `system/issues/responsible_subject_changes_test.rb` (4) | 🟡 | the Triage echo (finding H2) |
+| RS reassign / refer | [04](04-resolution.md) | `system/issues/responsible_subject_changes_test.rb` (4) | 🟡 | the Triage echo ([ops#1321](https://github.com/slovensko-digital/ops/issues/1321)) |
 | force_rs_login | [04](04-resolution.md#force_rs_login-edge-cases-observed) | `system/issues/force_rs_login_test.rb` | 🟡 | logged-in citizen case |
 | Verification / update | [04](04-resolution.md#4-verification--update-u-ticket) | `system/issues/updates_test.rb` (6), job tests | 🟡 | rejection after publish |
 | Praise | [05](05-praise.md) | `system/praises_test.rb` (2), model + client tests | 🟡 | praise callbacks; no RS |
 | Likes, votes | [06](06-comments-likes-routing.md#likes) | `system/issue_likes_test.rb`, `system/issues/activity_votes_test.rb` | 🟡 | `activity_vote_test.rb` empty |
 | Subscriptions / unsubscribe | [06](06-comments-likes-routing.md#subscriptions) | system + controller tests | ✅ | — |
 | Emails (portal) | [09](09-emails.md) | `mailers/notification_mailer_test.rb` (14), notification job tests | ✅ | `RodauthMailer` only indirectly |
-| OPS API | [07](07-backoffice-connector.md) | `controllers/api/v1/*` (29) | 🟡 | falsy update (M12), client without RS |
+| OPS API | [07](07-backoffice-connector.md) | `controllers/api/v1/*` (29) | 🟡 | falsy update ([ops#1338](https://github.com/slovensko-digital/ops/issues/1338)), client without RS |
 | Connector inbound webhooks | [07](07-backoffice-connector.md) | controller tests (25) | ✅ | — |
 | Connector jobs (Triage → Backoffice, Backoffice → Triage) | [07](07-backoffice-connector.md) | — | ❌ | **all of them**: 17-25% lines; `SendNewActivityToTriageFromBackofficeJob` and `Connector::OpsApiClient` 0% |
 | Subtasks | [07](07-backoffice-connector.md#subtasks-podúlohy) | `lib/connector/subtask_parser_test.rb` (16), job test (7) | 🟡 | `<div>`/`<p>` lines |
@@ -45,18 +45,18 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 
 | Scenario | Exists today? | Notes for the test |
 |---|---|---|
-| portal → triage: submit | yes (observed) | assert T-ticket fields, group `Incoming` and then the 700 routing; also a municipality **without** a rule (H1) |
+| portal → triage: submit | yes (observed) | assert T-ticket fields, group `Incoming` and then the 700 routing; also a municipality **without** a rule ([ops#1320](https://github.com/slovensko-digital/ops/issues/1320)) |
 | portal → triage: comment | yes (observed) | 5-minute window: freeze time or set `COMMENT_EDITING_WINDOW_SECONDS=0` |
-| portal → triage: like / dislike | **no sync** (M10) | an issue like only reaches Triage on another sync; an activity dislike never does. Decide the intended behaviour first |
-| portal → triage: supplement a rejected issue | **no flow** (H4) | only `waiting_for_author` → author reply → `waiting` exists (trigger 148) |
+| portal → triage: like / dislike | **no sync** ([ops#1336](https://github.com/slovensko-digital/ops/issues/1336)) | an issue like only reaches Triage on another sync; an activity dislike never does. Decide the intended behaviour first |
+| portal → triage: supplement a rejected issue | **no flow** ([ops#1323](https://github.com/slovensko-digital/ops/issues/1323)) | only `waiting_for_author` → author reply → `waiting` exists (trigger 148) |
 | triage: volunteer rejects | yes | system note + `issue_rejected` mail; T not closed |
-| triage: volunteer requests supplement | yes (observed) | expect 2 emails today (M1) |
+| triage: volunteer requests supplement | yes (observed) | expect 2 emails today ([ops#1328](https://github.com/slovensko-digital/ops/issues/1328)) |
 | triage: volunteer accepts (+ RS before) | yes (observed) | RS + "Finálny text" required; R created, T closed, RS email, `issue_accepted` |
 | triage admin: onboard municipality | yes (`activate_basic`) | only non-existing municipalities |
 | triage admin: 7xx rules for RS / owner | 700 created by code; 750 hand-made | rule order is by name |
 | triage → portal: RS change / assignment | RS yes; owner/group **not mirrored** in the portal | |
-| portal → backoffice: RS change / assignment | RS via Triage → Connector; owner/group: no | Backoffice → Triage → portal hand-off observed (M7, L13) |
-| triage → backoffice | yes (observed), through the portal Connector | cover the hand-off and the "PRO without Client" failure (M19) |
+| portal → backoffice: RS change / assignment | RS via Triage → Connector; owner/group: no | Backoffice → Triage → portal hand-off observed ([ops#1333](https://github.com/slovensko-digital/ops/issues/1333), [ops#1348](https://github.com/slovensko-digital/ops/issues/1348)) |
+| triage → backoffice | yes (observed), through the portal Connector | cover the hand-off and the "PRO without Client" failure ([ops#1344](https://github.com/slovensko-digital/ops/issues/1344)) |
 | what Triage sets on a praise | answered in [05](05-praise.md#what-triage-sets-on-a-praise) | |
 | sub-issues in a Zammad text field | Backoffice only, see [07](07-backoffice-connector.md#subtasks-podúlohy) | |
 
@@ -69,5 +69,5 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 3. One end-to-end **contract test per Triage trigger the portal depends on**
    (148, 150/151, 200 portal/PRO, 700). Today a trigger edit in the Zammad UI
    can silently break the portal.
-4. The echo/dedupe cases: H2 and the comment races.
-5. Retry exhaustion (H7, H8): a test that a discarded sync job is detectable and recoverable.
+4. The echo/dedupe cases: [ops#1321](https://github.com/slovensko-digital/ops/issues/1321) and the comment races.
+5. Retry exhaustion ([ops#1326](https://github.com/slovensko-digital/ops/issues/1326), [ops#1327](https://github.com/slovensko-digital/ops/issues/1327)): a test that a discarded sync job is detectable and recoverable.

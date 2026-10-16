@@ -87,3 +87,12 @@ sequenceDiagram
 
 Code: `app/jobs/triage/create_issue_resolution_process_ticket_job.rb`,
 `app/models/issue.rb:185-193`.
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1325](https://github.com/slovensko-digital/ops/issues/1325) | [States](#states) | Lost-update race between portal and Triage state |
+| [ops#1342](https://github.com/slovensko-digital/ops/issues/1342) | [Process switch](#process-switch) | `SyncIssueToTriageJob` maps process type by Slovak state name |

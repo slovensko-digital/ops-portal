@@ -24,7 +24,8 @@ When you change a flow, update the matching file in the same PR:
 | `config/recurring.yml` | 10 |
 
 A new flow, email or scheduled job gets a row in the doc and in
-`docs/how-it-works/coverage.md`. When you fix a finding, delete its row from
-`docs/how-it-works/findings.md`. Flow changes made in `ops-triage-zammad` or
+`docs/how-it-works/coverage.md`. When you fix a problem listed under
+**Open issues** in a doc file, update the affected section (diagrams, flow)
+and remove its row in the same PR. Flow changes made in `ops-triage-zammad` or
 `ops-backoffice-saas` (triggers, core workflows, schedulers, patches) are
 documented here too.

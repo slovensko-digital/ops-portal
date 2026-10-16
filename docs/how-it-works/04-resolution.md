@@ -126,3 +126,15 @@ and the RS gets an email. A later RS reply flips it to `in_progress`
 
 Only a volunteer closes (`closed`), or the Zammad state is set to closed. The
 portal has no cron for this.
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1321](https://github.com/slovensko-digital/ops/issues/1321) | [2. RS actions in the portal](#2-rs-actions-in-the-portal) | An RS reassign / refer appears twice on the portal and mails the wrong email; no own email for an RS change |
+| [ops#1332](https://github.com/slovensko-digital/ops/issues/1332) | [force_rs_login edge cases (observed)](#force_rs_login-edge-cases-observed) | `force_rs_login` with a logged-in citizen; session flag never cleared |
+| [ops#1334](https://github.com/slovensko-digital/ops/issues/1334) | [3. Volunteer actions on the R-ticket](#3-volunteer-actions-on-the-r-ticket) | Tag-driven states never reach Backoffice; tag typo |
+| [ops#1335](https://github.com/slovensko-digital/ops/issues/1335) | [4. Verification / update (U-ticket)](#4-verification--update-u-ticket) | A citizen update is public and mailed before approval |
+| [ops#1337](https://github.com/slovensko-digital/ops/issues/1337) | [1. Basic RS: email, then the portal (observed)](#1-basic-rs-email-then-the-portal-observed) | Postmaster filter misses ticket ids < 10000 and > 999999 |

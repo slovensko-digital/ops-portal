@@ -75,3 +75,11 @@ Core workflow in Triage: `issue_type` and `portal_public` are read-only.
 - The T-ticket is never closed automatically after a decision.
 - A praise set to `sent_to_responsible` (via API; the UI doesn't offer it)
   would stay there forever.
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1324](https://github.com/slovensko-digital/ops/issues/1324) | [Edge cases](#edge-cases) | A praise or ticket without an RS fails silently |

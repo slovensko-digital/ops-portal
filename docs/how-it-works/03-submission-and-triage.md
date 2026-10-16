@@ -82,6 +82,10 @@ workflow, `ops_state` offers **(observed)**:
 The owner can't be changed once set, except by Admin and "Administrátor
 dobrovoľníkov" (core workflows 185/190).
 
+Triage has no subtasks. The `::po` → `[[podulohy]]` / `@@user … - date`
+syntax works only in a municipality's Backoffice, see
+[07](07-backoffice-connector.md#subtasks-podúlohy).
+
 ### 2a. Request supplement (doplnenie) (observed)
 
 ```mermaid
@@ -181,3 +185,17 @@ internal note "Text podnetu bol upravený…". No test covers this.
 Zammad triggers run in name order. Changes a trigger makes don't fire
 other triggers (`ticket_trigger_recursive` is false), which is why
 148/150/151 carry their own webhook actions.
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1320](https://github.com/slovensko-digital/ops/issues/1320) | [Stuck in Incoming](#stuck-in-incoming) | A ticket from a municipality without a 700 rule stays in `Incoming` forever |
+| [ops#1322](https://github.com/slovensko-digital/ops/issues/1322) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | The duplicate check in the wizard is a dead end |
+| [ops#1323](https://github.com/slovensko-digital/ops/issues/1323) | [2c. Reject](#2c-reject) | A rejected issue can't be supplemented |
+| [ops#1328](https://github.com/slovensko-digital/ops/issues/1328) | [2a. Request supplement (doplnenie) (observed)](#2a-request-supplement-doplnenie-observed) | Request supplement sends the author two emails |
+| [ops#1330](https://github.com/slovensko-digital/ops/issues/1330) | [2b. Accept (observed)](#2b-accept-observed) | The supplement has to be copied into "Finálny text" by hand; accept overwrites the citizen's text |
+| [ops#1345](https://github.com/slovensko-digital/ops/issues/1345) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | `ChecksController#confirm` renders nothing; no double-submit lock |
+| [ops#1346](https://github.com/slovensko-digital/ops/issues/1346) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | Typo "nefunknčné" in a subtype shown in the wizard |

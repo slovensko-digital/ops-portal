@@ -10,7 +10,7 @@ except the subtask job have **no tests**.
 | Step | What happened | Jobs |
 |---|---|---|
 | Citizen submits in Rajec while Triage is down | `SyncIssueToTriageJob` failed (connection refused) and retried; the T-ticket appeared on attempt 4, about 3.5 min later | `SyncIssueToTriageJob` ×4 |
-| Volunteer accepts | R-300305 → PRO webhook → Backoffice ticket `OPS-300305` in group Incoming, no owner. `ops_responsible_subject_changed_at` empty (finding M12). `podatelna@rajec.sk` **also** got the basic RS email, because Rajec still has its Externý email user | `SendNewIssueFromTriageToBackofficeJob` → `FireWebhookJob` → `CreateNewBackofficeIssueFromTriageJob` |
+| Volunteer accepts | R-300305 → PRO webhook → Backoffice ticket `OPS-300305` in group Incoming, no owner. `ops_responsible_subject_changed_at` empty ([ops#1338](https://github.com/slovensko-digital/ops/issues/1338)). `podatelna@rajec.sk` **also** got the basic RS email, because Rajec still has its Externý email user | `SendNewIssueFromTriageToBackofficeJob` → `FireWebhookJob` → `CreateNewBackofficeIssueFromTriageJob` |
 | Staff posts a public note | Triage note as `ops-rs-30` → trigger 150 `in_progress` → portal `ResponsibleSubjectComment` + mail → Backoffice state updated to "V riešení" once (no loop). `podatelna@rajec.sk` got an email about its own comment | `ProcessNewBackofficeArticleJob` → `SendNewActivityToTriageFromBackofficeJob` → … → `UpdateBackofficeIssueFromTriageJob` |
 | Staff hands off to Trnava | Triage R: RS Trnava, `previous_responsible_subject` Rajec, `sent_to_responsible`; portal followed. Backoffice ticket → pending close +5 days. The RS value from Backoffice is stored as the string `"20"`; the portal and 700 rules write integers | `UpdateTriageIssueFromBackofficeJob` → `SyncTicketUpdateFromTriageJob` → `SyncPreviousResponsibleSubjectJob` |
 | …new RS is `pro` but has no `Client` | both PRO jobs raise "No clients found for responsible subject: Trnava" and retry until discarded | `SendNewIssue(Update)FromTriageToBackofficeJob` |
@@ -86,7 +86,9 @@ If someone edits the "NEMENIŤ" triggers in the Zammad UI (which loses
 
 ## Subtasks (podúlohy)
 
-Backoffice only. Write a note (internal is fine):
+Backoffice only. Triage has no subtasks: `::po`, `[[podulohy]]` and
+`@@user … - date` mean nothing there, and a volunteer who writes them gets a
+plain note. In Backoffice, write a note (internal is fine):
 
 ```
 ::po            ← text module "OPS - Vytvorenie podúloh" inserts [[podulohy]]
@@ -155,3 +157,20 @@ blank origin.
   crash (5 retries) on Backoffice tickets the Connector didn't create:
   manual tickets, subtasks, and the seeded sample ticket.
 - Backoffice owner, group or internal state never reach Triage or the portal.
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1326](https://github.com/slovensko-digital/ops/issues/1326) | [Subtasks (podúlohy)](#subtasks-podúlohy) | Backoffice subtasks are lost after a deploy |
+| [ops#1327](https://github.com/slovensko-digital/ops/issues/1327) | [Observed end to end (OPS-300305)](#observed-end-to-end-ops-300305) | Sync jobs give up after ~6 minutes, nothing re-syncs |
+| [ops#1333](https://github.com/slovensko-digital/ops/issues/1333) | [Known gaps](#known-gaps) | A hand-off away from a PRO RS doesn't reach the old Backoffice |
+| [ops#1333](https://github.com/slovensko-digital/ops/issues/1333) | [Triage → Backoffice](#triage--backoffice) | A hand-off away from a PRO RS doesn't reach the old Backoffice |
+| [ops#1338](https://github.com/slovensko-digital/ops/issues/1338) | [Known gaps](#known-gaps) | OPS API: missing fields in `show`, crashes on unknown category / client without RS, double render |
+| [ops#1339](https://github.com/slovensko-digital/ops/issues/1339) | [Backoffice → Triage / portal](#backoffice--triage--portal) | Connector jobs crash on Backoffice tickets the Connector didn't create |
+| [ops#1340](https://github.com/slovensko-digital/ops/issues/1340) | [Subtasks (podúlohy)](#subtasks-podúlohy) | Subtask authoring is fragile (`::po` text module, parser) |
+| [ops#1343](https://github.com/slovensko-digital/ops/issues/1343) | [Observed end to end (OPS-300305)](#observed-end-to-end-ops-300305) | A PRO RS with Externý email users gets everything twice |
+| [ops#1344](https://github.com/slovensko-digital/ops/issues/1344) | [Wiring](#wiring) | A PRO RS without a `Client` breaks every PRO job |
+| [ops#1348](https://github.com/slovensko-digital/ops/issues/1348) | [Observed end to end (OPS-300305)](#observed-end-to-end-ops-300305) | RS value is an integer or a string depending on who wrote it |

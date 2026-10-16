@@ -70,3 +70,13 @@ the Triage database.
 | User added to an organization named like an RS | Triage → `user.updated` | portal user becomes or is created as `User::ResponsibleSubject` (verified, onboarded, random password, magic-link login only) |
 | User removed from that organization | Triage → `user.updated` | back to `User::Citizen` |
 | RS renamed | — | `subject_name` is the join key to the Triage organization and the `responsible_subject` label. A rename breaks the email recipients and the RS user mapping |
+
+## Open issues
+
+Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.
+
+| Issue | Section | Problem |
+|---|---|---|
+| [ops#1341](https://github.com/slovensko-digital/ops/issues/1341) | [Basic municipality: `responsible_subjects:activate_basic`](#basic-municipality-responsible_subjectsactivate_basic) | `activate_basic` has no Triage rollback |
+| [ops#1343](https://github.com/slovensko-digital/ops/issues/1343) | [PRO municipality: Backoffice](#pro-municipality-backoffice) | A PRO RS with Externý email users gets everything twice |
+| [ops#1347](https://github.com/slovensko-digital/ops/issues/1347) | [PRO municipality: Backoffice](#pro-municipality-backoffice) | Backoffice `API_TOKEN` rotation is ignored after the first deploy |
