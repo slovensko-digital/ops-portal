@@ -1,42 +1,19 @@
-
-class BackfillIssueStateChangesFromTriageHistory < ActiveRecord::Migration[8.1]
+class Triage::BackfillIssueStateChangesJob < ApplicationJob
   TRIAGE_STATE_ATTRIBUTE = "ops_state"
 
-  def up
-    issues = Issue.where.not(triage_external_id: nil)
-                  .or(Issue.where.not(resolution_external_id: nil))
-
-    say_with_time "Backfilling state changes for #{issues.count} issues with tickets" do
-      issues.find_each do |issue|
-        backfill_issue(issue)
-      rescue StandardError => e
-        say "  issue ##{issue.id}: skipped (#{e.class}: #{e.message})", true
-      end
+  def perform(issue, triage_zammad_client: TriageZammadEnvironment.client)
+    ticket_ids = [ issue.triage_external_id, issue.resolution_external_id ].compact.uniq
+    if ticket_ids.empty?
+      Rails.logger.info("BackfillIssueStateChanges: issue ##{issue.id} has no triage ticket, skipped")
+      return
     end
-  end
-
-  def down
-    Issues::StateChange.where.not(triage_external_id: nil).find_each(&:destroy!)
-  end
-
-  private
-
-  def ticket_ids(issue)
-    [ issue.triage_external_id, issue.resolution_external_id ].compact.uniq
-  end
-
-  def backfilled?(issue)
-    Issues::StateChange.where(triage_external_id: ticket_ids(issue)).exists?
-  end
-
-  def backfill_issue(issue)
     return if backfilled?(issue)
 
-    transitions = ticket_ids(issue).flat_map do |ticket_id|
-      history = TriageZammadEnvironment.client.get_ticket_history(ticket_id)
+    transitions = ticket_ids.flat_map do |ticket_id|
+      history = triage_zammad_client.get_ticket_history(ticket_id)
 
       if history.nil?
-        say "  issue ##{issue.id}: ticket #{ticket_id} not found, skipped", true
+        Rails.logger.info("BackfillIssueStateChanges: ticket #{ticket_id} (issue ##{issue.id}) not found, skipped")
         return
       end
 
@@ -59,20 +36,30 @@ class BackfillIssueStateChangesFromTriageHistory < ActiveRecord::Migration[8.1]
     entries.concat(transitions)
 
     if entries.empty?
-      say "  issue ##{issue.id}: no mappable state history, skipped", true
+      Rails.logger.info("BackfillIssueStateChanges: issue ##{issue.id} has no mappable state history, skipped")
       return
     end
 
     last_new_state = transitions.last&.dig(:new_state)
     if last_new_state && issue.state_id && last_new_state.id != issue.state_id
-      say "  issue ##{issue.id}: portal state (#{issue.state.key}) differs from last Zammad state (#{last_new_state.key}), backfilling Zammad history only", true
+      Rails.logger.info("BackfillIssueStateChanges: issue ##{issue.id} portal state (#{issue.state.key}) differs from last Zammad state (#{last_new_state.key}), backfilling Zammad history only")
     end
 
-    Issues::StateChange.transaction do
-      insert_state_changes!(issue, entries)
+    issue.with_lock do
+      return if backfilled?(issue)
+
+      Issues::StateChange.transaction do
+        insert_state_changes!(issue, entries)
+      end
     end
 
-    say "  issue ##{issue.id}: backfilled #{entries.size} state change(s) from tickets #{ticket_ids(issue).join(', ')}", true
+    Rails.logger.info("BackfillIssueStateChanges: issue ##{issue.id} backfilled #{entries.size} state change(s) from tickets #{ticket_ids.join(", ")}")
+  end
+
+  private
+
+  def backfilled?(issue)
+    issue.activities.exists?(type: "Issues::StateChangeActivity")
   end
 
   def state_transitions(history)
@@ -82,7 +69,7 @@ class BackfillIssueStateChangesFromTriageHistory < ActiveRecord::Migration[8.1]
       new_state = find_state(entry["value_to"])
 
       if new_state.nil?
-        say "    unmappable triage state #{entry["value_to"].inspect}, entry skipped", true
+        Rails.logger.info("BackfillIssueStateChanges: unmappable triage state #{entry["value_to"].inspect}, entry skipped")
         next
       end
 
