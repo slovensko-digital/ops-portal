@@ -958,6 +958,32 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_requested :post, zammad_url("triggers"), body: { "name" => "700 - Priradenie podnetu skupine Nižná" }
   end
 
+  test "get_ticket_history requests the ticket_history endpoint and returns entries oldest first" do
+    entries = [
+      { "type" => "updated", "object" => "Ticket", "attribute" => "ops_state",
+        "value_from" => "in_progress", "value_to" => "resolved", "created_at" => "2024-06-02T10:00:00.000Z" },
+      { "type" => "updated", "object" => "Ticket", "attribute" => "ops_state",
+        "value_from" => "waiting", "value_to" => "in_progress", "created_at" => "2024-06-01T10:00:00.000Z" }
+    ]
+    stub_zammad(:get, "ticket_history/42", body: { "history" => entries, "assets" => {} })
+
+    history = @client.get_ticket_history(42)
+
+    assert_equal %w[waiting in_progress], history.map { |entry| entry["value_from"] }
+  end
+
+  test "get_ticket_history returns nil when the ticket does not exist" do
+    stub_zammad(:get, "ticket_history/42", status: 404, body: zammad_not_found("Ticket"))
+
+    assert_nil @client.get_ticket_history(42)
+  end
+
+  test "get_ticket_history re-raises non-404 errors" do
+    stub_zammad(:get, "ticket_history/42", status: 500, body: { error: "Internal Server Error" })
+
+    assert_raises(RuntimeError) { @client.get_ticket_history(42) }
+  end
+
   private
 
   def build_issue_update(resolves_issue:, author: users(:one))
@@ -1012,36 +1038,5 @@ class ZammadApiClientTest < ActiveSupport::TestCase
 
   def rs_value(responsible_subject)
     { label: responsible_subject.subject_name, value: responsible_subject.id }
-  end
-
-  test "get_ticket_history requests the ticket_history endpoint and returns entries oldest first" do
-    entries = [
-      { "history_type" => "updated", "history_object" => "Ticket", "history_attribute" => "ops_state",
-        "value_from" => "in_progress", "value_to" => "resolved", "created_at" => "2024-06-02T10:00:00.000Z" },
-      { "history_type" => "updated", "history_object" => "Ticket", "history_attribute" => "ops_state",
-        "value_from" => "waiting", "value_to" => "in_progress", "created_at" => "2024-06-01T10:00:00.000Z" }
-    ]
-
-    @subject.stub :raw_api_request, ->(method, endpoint, *) {
-      assert_equal :get, method
-      assert_equal "ticket_history/42", endpoint
-      { "history" => entries, "assets" => {} }
-    } do
-      history = @subject.get_ticket_history(42)
-
-      assert_equal %w[waiting in_progress], history.map { |entry| entry["value_from"] }
-    end
-  end
-
-  test "get_ticket_history returns nil when the ticket does not exist" do
-    @subject.stub :raw_api_request, ->(*) { raise RuntimeError, "Request failed with status 404" } do
-      assert_nil @subject.get_ticket_history(42)
-    end
-  end
-
-  test "get_ticket_history re-raises non-404 errors" do
-    @subject.stub :raw_api_request, ->(*) { raise RuntimeError, "Request failed with status 500" } do
-      assert_raises(RuntimeError) { @subject.get_ticket_history(42) }
-    end
   end
 end
