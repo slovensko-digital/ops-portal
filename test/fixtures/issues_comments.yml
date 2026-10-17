@@ -5,7 +5,6 @@ _fixture:
 one_comment1:
   type: Issues::UserComment
   user_author: one
-  text: test comment
   ai_evaluation: {}
   activity: issue_one_activity_comment1
 
