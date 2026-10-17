@@ -5,7 +5,7 @@ class Issues::ModerateCommentJobTest < ActiveJob::TestCase
   include RequestHelper
 
   setup do
-    @comment = issues_comments(:one_comment1)
+    @comment = issues_comments(:one_comment2)
 
     @comment.update!(hidden: false, ai_evaluation: {})
 

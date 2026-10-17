@@ -8,6 +8,13 @@ one_comment1:
   ai_evaluation: {}
   activity: issue_one_activity_comment1
 
+one_comment2:
+  type: Issues::UserComment
+  user_author: one
+  text: test comment
+  ai_evaluation: {}
+  activity: issue_one_activity_comment2
+
 two_comment1:
   type: Issues::UserComment
   user_author: one
