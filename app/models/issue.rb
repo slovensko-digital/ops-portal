@@ -29,7 +29,7 @@
 #  anonymous                           :boolean
 #  comments_count                      :integer          default(0), not null
 #  description                         :string           not null
-#  discussion_closed                   :boolean          default(FALSE)
+#  discussion_closed                   :boolean          default(FALSE), not null
 #  fulltext_extra                      :string
 #  issue_type                          :integer          default(1)
 #  latitude                            :float

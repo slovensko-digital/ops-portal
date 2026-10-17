@@ -37,6 +37,7 @@ DEV_SEED_MUNICIPALITIES = [
 DEV_SEED_MUNICIPALITIES.each do |data|
   municipality = Municipality.find_or_initialize_by(name: data[:name])
   municipality.assign_attributes(
+    district: District.find_by!(name: data[:region]),
     latitude: data[:latitude],
     longitude: data[:longitude],
     population: data[:population],

@@ -5,9 +5,9 @@
 #  id              :bigint           not null, primary key
 #  legacy_id       :integer
 #  municipality_id :bigint           not null
-#  active          :boolean          default(FALSE)
+#  active          :boolean          default(FALSE), not null
 #  aliases         :string           default([]), not null, is an Array
-#  archived        :boolean          default(FALSE)
+#  archived        :boolean          default(FALSE), not null
 #  description     :string
 #  genitiv         :string
 #  logo            :string
@@ -24,4 +24,6 @@ class MunicipalityDistrict < ApplicationRecord
 
   scope :archived, -> { where(archived: true) }
   scope :active, -> { where(active: true) }
+  scope :with_boundaries, -> { where(id: MunicipalityBoundary.select(:municipality_district_id)) }
+  scope :alphabetical, -> { order(Arel.sql("municipality_districts.name COLLATE unicode")) }
 end

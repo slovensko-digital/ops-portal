@@ -7,7 +7,7 @@ class Api::V1::Issues::ActivitiesControllerTest < ActionDispatch::IntegrationTes
   include TriageHelper
 
   ACTIVITY_SCHEMA = {
-    triage_identifier: Integer, activity_type: String, author: [ Hash, NilClass ], content_type: String, body: String,
+    triage_identifier: Integer, activity_type: String, uuid: String, author: [ Hash, NilClass ], content_type: String, body: String,
     created_at: String, updated_at: String,
     attachments: [ { triage_identifier: Integer, filename: String, content_type: String, data64: String } ]
   }.freeze
@@ -24,7 +24,8 @@ class Api::V1::Issues::ActivitiesControllerTest < ActionDispatch::IntegrationTes
   test "show returns an activity of the issue" do
     zammad = Minitest::Mock.new
     zammad.expect :get_ticket, @ticket, [ "601" ]
-    zammad.expect :get_article, triage_article(article_type: :agent_backoffice_comment, body: "Odpoveď", attachments: [ triage_attachment ]), [ "601", "7" ], responsible_subject: @responsible_subject
+    article = triage_article(article_type: :agent_backoffice_comment, body: "Odpoveď", attachments: [ triage_attachment ])
+    zammad.expect :get_article, article, [ "601", "7" ], responsible_subject: @responsible_subject
 
     with_zammad_client(zammad) do
       get api_v1_issue_activity_url(601, 7), headers: api_headers(@token)
@@ -35,6 +36,7 @@ class Api::V1::Issues::ActivitiesControllerTest < ActionDispatch::IntegrationTes
     assert_json_schema ACTIVITY_SCHEMA, response.parsed_body
     assert_equal "agent_backoffice_comment", response.parsed_body["activity_type"]
     assert_equal "Odpoveď", response.parsed_body["body"]
+    assert_equal article[:uuid], response.parsed_body["uuid"]
   end
 
   test "show of an activity the responsible subject may not see is not found" do

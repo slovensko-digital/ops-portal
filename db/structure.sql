@@ -383,7 +383,7 @@ CREATE TABLE public.connector_tenants (
     backoffice_api_token character varying,
     backoffice_webhook_secret character varying,
     receive_customer_activities boolean DEFAULT false NOT NULL,
-    migrate_legacy_labels boolean DEFAULT true,
+    migrate_legacy_labels boolean DEFAULT true NOT NULL,
     status integer DEFAULT 0 NOT NULL
 );
 
@@ -687,7 +687,7 @@ CREATE TABLE public.issues (
     address_suburb character varying,
     comments_count integer DEFAULT 0 NOT NULL,
     fulltext_extra character varying,
-    discussion_closed boolean DEFAULT false,
+    discussion_closed boolean DEFAULT false NOT NULL,
     archived_state_id bigint,
     last_activity_at timestamp(6) without time zone,
     resolution_started_at timestamp(6) without time zone,
@@ -773,7 +773,7 @@ CREATE TABLE public.issues_categories (
     alias character varying,
     description character varying,
     description_hu character varying,
-    catch_all boolean DEFAULT false,
+    catch_all boolean DEFAULT false NOT NULL,
     weight integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -819,7 +819,7 @@ CREATE TABLE public.issues_comments (
     user_author_id bigint,
     agent_author_id bigint,
     responsible_subject_author_id bigint,
-    hidden boolean DEFAULT false,
+    hidden boolean DEFAULT false NOT NULL,
     legacy_data jsonb,
     type character varying,
     imported_at timestamp(6) without time zone,
@@ -878,7 +878,7 @@ CREATE TABLE public.issues_drafts (
     subtype_id bigint,
     author_id bigint NOT NULL,
     address_region character varying,
-    latlon_from_exif boolean DEFAULT false,
+    latlon_from_exif boolean DEFAULT false NOT NULL,
     address_data jsonb,
     address_district character varying,
     submitted boolean DEFAULT false NOT NULL,
@@ -1090,7 +1090,7 @@ CREATE TABLE public.issues_updates (
     name character varying,
     email character varying,
     text character varying,
-    published boolean,
+    published boolean DEFAULT false NOT NULL,
     ip inet,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -1098,9 +1098,9 @@ CREATE TABLE public.issues_updates (
     triage_external_id integer,
     imported_at timestamp(6) without time zone,
     uuid uuid,
-    confirmed boolean DEFAULT false,
+    confirmed boolean DEFAULT false NOT NULL,
     external_id character varying,
-    hidden boolean DEFAULT false,
+    hidden boolean DEFAULT false NOT NULL,
     resolves_issue boolean DEFAULT false NOT NULL,
     verification_status integer DEFAULT 0 NOT NULL,
     last_edited_at timestamp(6) without time zone,
@@ -1353,12 +1353,12 @@ CREATE TABLE public.municipalities (
     sub character varying,
     email character varying,
     municipality_type integer,
-    has_municipality_districts boolean,
+    has_municipality_districts boolean DEFAULT false NOT NULL,
     handled_by integer,
     latitude double precision,
     longitude double precision,
     population integer,
-    active boolean,
+    active boolean DEFAULT false NOT NULL,
     category integer,
     languages character varying,
     logo character varying,
@@ -1367,7 +1367,7 @@ CREATE TABLE public.municipalities (
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     active_on_old_portal boolean DEFAULT false NOT NULL,
-    archived boolean DEFAULT false
+    archived boolean DEFAULT false NOT NULL
 );
 
 
@@ -1440,8 +1440,8 @@ CREATE TABLE public.municipality_districts (
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
-    archived boolean DEFAULT false,
-    active boolean DEFAULT false
+    archived boolean DEFAULT false NOT NULL,
+    active boolean DEFAULT false NOT NULL
 );
 
 
@@ -1480,7 +1480,7 @@ CREATE TABLE public.responsible_subjects (
     name character varying,
     code character varying,
     active boolean DEFAULT true NOT NULL,
-    pro boolean,
+    pro boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
@@ -1582,7 +1582,7 @@ ALTER SEQUENCE public.responsible_subjects_organization_units_id_seq OWNED BY pu
 CREATE TABLE public.responsible_subjects_types (
     id bigint NOT NULL,
     name character varying,
-    active boolean,
+    active boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer
@@ -1656,8 +1656,8 @@ CREATE TABLE public.responsible_subjects_users (
     photo character varying,
     deleted_at timestamp(6) without time zone,
     organization_unit_id bigint,
-    gdpr_accepted boolean,
-    tooltips boolean,
+    gdpr_accepted boolean DEFAULT false NOT NULL,
+    tooltips boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer
@@ -1708,7 +1708,7 @@ CREATE TABLE public.streets (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
-    whitelisted boolean DEFAULT false
+    whitelisted boolean DEFAULT false NOT NULL
 );
 
 
@@ -1927,20 +1927,19 @@ CREATE TABLE public.users (
     lastname character varying,
     external_id integer,
     uuid uuid DEFAULT gen_random_uuid() NOT NULL,
-    banned boolean DEFAULT false,
+    banned boolean DEFAULT false NOT NULL,
     login character varying,
     admin_name character varying,
     phone character varying,
     password_hash character varying,
     about character varying,
-    organization boolean,
     "timestamp" timestamp(6) without time zone,
-    anonymous boolean DEFAULT false,
+    anonymous boolean DEFAULT false NOT NULL,
     active boolean,
     municipality_id bigint,
-    created_from_app boolean DEFAULT false,
+    created_from_app boolean DEFAULT false NOT NULL,
     verification character varying,
-    verified boolean DEFAULT false,
+    verified boolean DEFAULT false NOT NULL,
     signature character varying,
     city_id integer,
     street_id bigint,
@@ -1950,14 +1949,14 @@ CREATE TABLE public.users (
     fcm_token character varying,
     gdpr_accepted boolean,
     exp integer,
-    email_notifiable boolean DEFAULT true,
+    email_notifiable boolean DEFAULT true NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     legacy_id integer,
     status integer DEFAULT 1 NOT NULL,
     display_name character varying,
-    gdpr_stats_accepted boolean DEFAULT false,
-    onboarded boolean DEFAULT false,
+    gdpr_stats_accepted boolean DEFAULT false NOT NULL,
+    onboarded boolean DEFAULT false NOT NULL,
     newsletter_accepted boolean DEFAULT false NOT NULL,
     phone_verified boolean DEFAULT false NOT NULL,
     phone_verification_attempts integer DEFAULT 0 NOT NULL,
@@ -4430,6 +4429,11 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261013100200'),
+('20261013100100'),
+('20261013100000'),
+('20261012100100'),
+('20261012100000'),
 ('20261003120000'),
 ('20261003115900'),
 ('20261003105314'),
