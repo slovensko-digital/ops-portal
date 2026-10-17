@@ -414,6 +414,25 @@ class Connector::ZammadApiClientTest < ActiveSupport::TestCase
     assert_requested :get, backoffice_url("users/search"), query: hash_including("query" => "referent@malacky.sk")
   end
 
+  test "create_or_find_agent reuses the user when Zammad rejects the taken login" do
+    stub_backoffice(:post, "users", status: 422, body: { error: "Invalid user login generation for login referent@malacky.sk!" })
+    stub_backoffice(:get, "users/search", body: [
+      zammad_fixture("zammad/backoffice_agent", id: 8, login: "stary.referent@malacky.sk", email: "stary.referent@malacky.sk"),
+      zammad_fixture("zammad/backoffice_agent")
+    ])
+
+    assert_equal 7, @client.create_or_find_agent(ResponsibleSubjects::User.new(name: "Ján Referent", email: "referent@malacky.sk"))
+  end
+
+  test "create_or_find_agent raises when the taken login cannot be found" do
+    stub_backoffice(:post, "users", status: 422, body: { error: "Invalid user login generation for login referent@malacky.sk!" })
+    stub_backoffice(:get, "users/search", body: [])
+
+    assert_raises(RuntimeError, match: /Can't find nor create zammad user/) do
+      @client.create_or_find_agent(ResponsibleSubjects::User.new(name: "Ján Referent", email: "referent@malacky.sk"))
+    end
+  end
+
   test "create_or_find_agent creates a deleted agent as inactive" do
     stub_backoffice(:post, "users", status: 201, body: { id: 7 })
 

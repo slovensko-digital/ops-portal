@@ -8,6 +8,8 @@ class ZammadApiClient
   DEFAULT_ORIGIN = "portal"
   DEFAULT_ARTICLE_CONTENT_TYPE = "text/html"
   USERS_PER_PAGE = 1000
+  # a taken email is reported by Zammad itself, a taken login by our User#check_login patch in Triage and backoffice
+  DUPLICATE_USER_ERRORS = [ "is already used for another user.", "Invalid user login generation for login" ]
   # TODO: consider seeding this value
   DEFAULT_OPS_ADMIN_USER = {
     firstname: "Dobrovoľník Odkazu pre starostu",
@@ -512,9 +514,9 @@ class ZammadApiClient
       )
       zammad_user.id
     rescue RuntimeError => e
-      raise e unless e.message.include? "is already used for another user."
+      raise e unless duplicate_user_error?(e)
 
-      result = find_zammad_user("ops-user-#{user.id}")
+      result = find_existing_zammad_user("ops-user-#{user.id}")
       raise "Can't find nor create triage zammad user with login: ops-user-#{user.id}" unless result
       result.id
     end
@@ -540,9 +542,9 @@ class ZammadApiClient
       )
       zammad_user.id
     rescue RuntimeError => e
-      raise e unless e.message.include? "is already used for another user."
+      raise e unless duplicate_user_error?(e)
 
-      result = find_zammad_user(user.email)
+      result = find_existing_zammad_user(user.email)
       raise "Can't find nor create triage zammad user with email: #{user.email}" unless result
       result.id
     end
@@ -557,9 +559,9 @@ class ZammadApiClient
       )
       zammad_user.id
     rescue RuntimeError => e
-      raise e unless e.message.include? "is already used for another user."
+      raise e unless duplicate_user_error?(e)
 
-      result = find_zammad_user(responsible_subject.subject_name)
+      result = find_existing_zammad_user("ops-rs-#{responsible_subject.id}")
       raise "Can't create triage zammad user for responsible subject: #{responsible_subject.subject_name}" unless result
       result.id
     end
@@ -688,6 +690,15 @@ class ZammadApiClient
   def find_zammad_user(query)
     # searches user by email, firstname, lastname and login
     @client.user.search(query: query).first
+  end
+
+  def find_existing_zammad_user(login_or_email)
+    # the search is fuzzy, so pick the user that owns the login or email
+    @client.user.search(query: login_or_email).find { |u| [ u.login, u.email ].any? { |value| value&.casecmp?(login_or_email) } }
+  end
+
+  def duplicate_user_error?(error)
+    DUPLICATE_USER_ERRORS.any? { |message| error.message.include?(message) }
   end
 
   def build_author_response(article_type, author)

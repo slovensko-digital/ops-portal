@@ -444,6 +444,27 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     )
   end
 
+  test "create_customer! returns the existing user when Zammad rejects the taken login" do
+    user = users(:one)
+    stub_zammad(:post, "users", status: 422, body: { error: "Invalid user login generation for login ops-user-#{user.id}!" })
+    stub_zammad(:get, "users/search", body: [
+      zammad_fixture("zammad/user_portal", id: 2, login: "ops-user-#{user.id}0"),
+      zammad_fixture("zammad/user_portal", id: 55, login: "ops-user-#{user.id}")
+    ])
+
+    assert_equal 55, @client.create_customer!(user)
+
+    assert_requested :get, zammad_url("users/search"), query: hash_including("query" => "ops-user-#{user.id}")
+  end
+
+  test "create_customer! raises when the taken login cannot be found" do
+    user = users(:one)
+    stub_zammad(:post, "users", status: 422, body: { error: "Invalid user login generation for login ops-user-#{user.id}!" })
+    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_portal", login: "ops-user-#{user.id}0") ])
+
+    assert_raises(RuntimeError, match: /Can't find nor create triage zammad user with login/) { @client.create_customer!(user) }
+  end
+
   # check_import_mode!
 
   test "check_import_mode! raises when import mode is off" do
@@ -835,11 +856,27 @@ class ZammadApiClientTest < ActiveSupport::TestCase
   test "create_agent! returns the existing user when the email belongs to a user with another login" do
     user = users(:one)
     stub_zammad(:post, "users", status: 422, body: { error: "Email address '#{user.email}' is already used for another user." })
-    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_agent") ])
+    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_agent", email: user.email) ])
 
     assert_equal 3, @client.create_agent!(user)
 
     assert_requested :get, zammad_url("users/search"), query: hash_including("query" => user.email)
+  end
+
+  test "create_agent! returns the existing user when Zammad rejects the taken login" do
+    user = users(:one)
+    stub_zammad(:post, "users", status: 422, body: { error: "Invalid user login generation for login #{user.email}!" })
+    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_agent", login: user.email, email: user.email) ])
+
+    assert_equal 3, @client.create_agent!(user)
+  end
+
+  test "create_agent! raises when the search finds only other users" do
+    user = users(:one)
+    stub_zammad(:post, "users", status: 422, body: { error: "Email address '#{user.email}' is already used for another user." })
+    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_agent") ])
+
+    assert_raises(RuntimeError, match: /Can't find nor create triage zammad user with email/) { @client.create_agent!(user) }
   end
 
   test "create_agent! raises when the taken email cannot be found" do
@@ -864,6 +901,24 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_requested :post, zammad_url("users"), query: hash_including({}), body: hash_including(
       "firstname" => "MÚ Staré Mesto", "login" => "ops-rs-#{responsible_subject.id}", "roles" => [ "Zodpovedný Subjekt" ]
     )
+  end
+
+  test "create_responsible_subject! returns the existing user when Zammad rejects the taken login" do
+    responsible_subject = responsible_subjects(:one)
+    stub_zammad(:post, "users", status: 422, body: { error: "Invalid user login generation for login ops-rs-#{responsible_subject.id}!" })
+    stub_zammad(:get, "users/search", body: [ zammad_fixture("zammad/user_responsible_subject", login: "ops-rs-#{responsible_subject.id}") ])
+
+    assert_equal 4242, @client.create_responsible_subject!(responsible_subject)
+
+    assert_requested :get, zammad_url("users/search"), query: hash_including("query" => "ops-rs-#{responsible_subject.id}")
+  end
+
+  test "create_responsible_subject! raises when the taken login cannot be found" do
+    responsible_subject = responsible_subjects(:one)
+    stub_zammad(:post, "users", status: 422, body: { error: "Invalid user login generation for login ops-rs-#{responsible_subject.id}!" })
+    stub_zammad(:get, "users/search", body: [])
+
+    assert_raises(RuntimeError, match: /Can't create triage zammad user for responsible subject/) { @client.create_responsible_subject!(responsible_subject) }
   end
 
   test "get_groups lists Zammad groups" do
