@@ -32,7 +32,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
 
     get relevant_issues_url
 
-    assert_redirected_to issues_url(obec: user.municipality.name)
+    assert_redirected_to issues_url(lokalita: [ user.municipalities.first!.name ])
   end
 
   test "should redirect anonymous user to all issues" do
@@ -41,11 +41,25 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url
   end
 
-  test "last visited municipality is remembered for relevant issues" do
-    get issues_url(obec: "Nitra", cast: "")
+  test "last visited lokalita is remembered for relevant issues" do
+    get issues_url(lokalita: [ "Nitra" ])
     get relevant_issues_url
 
-    assert_redirected_to issues_url(obec: "Nitra", cast: nil)
+    assert_redirected_to issues_url(lokalita: [ "Nitra" ])
+  end
+
+  test "legacy obec param is converted to lokalita and remembered" do
+    get issues_url(obec: "Nitra")
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ "Nitra" ])
+  end
+
+  test "legacy obec and cast params are converted to lokalita and remembered" do
+    get issues_url(obec: "Bratislava", cast: "Staré Mesto")
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ "Bratislava - Staré Mesto" ])
   end
 
   test "should ignore filter params of unexpected shape" do
@@ -97,7 +111,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "filter button shows the number of active filters" do
-    get issues_url(obec: [ "Bratislava", "Nitra" ], obdobie: "Tento rok")
+    get issues_url(lokalita: [ "Bratislava", "Nitra" ], obdobie: "Tento rok")
 
     assert_select "button.button-filter[aria-label=?]", "Filter, aktívne filtre: 3"
     assert_select "button.button-filter .filter-count", text: "3"
