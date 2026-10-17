@@ -1,0 +1,15 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\n  \"irrelevant\": 0.0,\n  \"vulgar\": 0.0,\n  \"insulting\": 0.9,\n  \"sarcastic\": 0.0,\n  \"political\": 0.0,\n  \"overall_score\": 0.92,\n  \"reason\": \"Komentár obsahuje priamu urážku úradníka.\"\n}"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP"
+    }
+  ]
+}
