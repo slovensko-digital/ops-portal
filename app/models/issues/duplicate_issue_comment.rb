@@ -14,7 +14,7 @@
 #  ai_evaluation                 :jsonb            not null
 #  author_email                  :string
 #  author_name                   :string
-#  hidden                        :boolean          default(FALSE)
+#  hidden                        :boolean          default(FALSE), not null
 #  ip                            :inet
 #  legacy_data                   :jsonb
 #  text                          :string
