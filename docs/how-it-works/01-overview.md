@@ -3,7 +3,7 @@
 ## System map
 
 ```mermaid
-flowchart LR
+flowchart TD
   citizen([Citizen])
   rsuser([Municipality user<br/>basic RS])
   vol([Volunteer<br/>Triage Agent])
@@ -12,8 +12,8 @@ flowchart LR
   subgraph Portal["ops-portal (Rails)"]
     web[Web UI<br/>/dopyty, /pochvaly, /profil]
     jobs[[GoodJob jobs]]
-    api[OPS API<br/>/api/v1]
     conn[Connector<br/>/connector/*]
+    api[OPS API<br/>/api/v1]
   end
 
   subgraph Triage["Triage Zammad"]
@@ -23,7 +23,7 @@ flowchart LR
     trig{{Triggers 100-900<br/>schedulers}}
   end
 
-  subgraph BO["Backoffice Zammad<br/>(one per PRO RS)"]
+  subgraph BO["Backoffice Zammad, one per PRO RS"]
     bt[OPS-xxxx ticket]
     sub[SUB-… subtasks]
   end
@@ -32,20 +32,32 @@ flowchart LR
 
   citizen --> web
   rsuser --> web
-  web --> jobs
-  jobs -- "REST, TRIAGE_ZAMMAD_API_TOKEN" --> Triage
-  Triage -- "webhooks /triage/webhooks/*<br/>X-Hub-Signature" --> jobs
   vol --> Triage
-  trig -- "RS emails, link ?force_rs_login" --> mail
-  jobs -- "citizen emails" --> mail
-  mail -.-> rsuser
-  jobs -- "signed webhook (ES256)<br/>to Client.url" --> conn
-  conn -- "JWT ES256" --> api
-  api -- "REST" --> Triage
-  conn -- "REST, tenant token" --> BO
-  BO -- "webhooks /connector/backoffice/webhook" --> conn
   staff --> BO
+  web --> jobs
+  jobs <-- REST / webhooks --> Triage
+  jobs -- webhook --> conn
+  conn -- JWT --> api
+  api -- REST --> Triage
+  conn <-- REST / webhooks --> BO
+  trig -- RS emails --> mail
+  jobs -- citizen emails --> mail
+  rsuser <-.- mail
 ```
+
+Connections:
+
+| From → To | How | Auth |
+|---|---|---|
+| Portal jobs → Triage | REST API | `TRIAGE_ZAMMAD_API_TOKEN` |
+| Triage → Portal jobs | webhooks `/triage/webhooks/*` | `X-Hub-Signature` |
+| Portal jobs → Connector | webhook to `Client.url` | signed, ES256 |
+| Connector → OPS API | REST `/api/v1` | JWT, ES256 |
+| OPS API → Triage | REST API | `TRIAGE_ZAMMAD_API_TOKEN` |
+| Connector → Backoffice | REST API | tenant token |
+| Backoffice → Connector | webhook `/connector/backoffice/webhook` | `X-Hub-Signature`, tenant secret |
+| Triage triggers → email | RS emails with a `?force_rs_login` link | — |
+| Portal jobs → email | citizen emails | — |
 
 Key points:
 
