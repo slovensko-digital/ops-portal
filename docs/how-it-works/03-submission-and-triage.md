@@ -68,8 +68,17 @@ PRO cities, is not visible from the repos.
 
 ## 2. Volunteer works the T-ticket
 
-The volunteer sees only tickets in their groups. In the triage core
-workflow, `ops_state` offers **(observed)**:
+The volunteer sees only tickets in their groups. The ticket has two state
+fields:
+
+- **Stav v Odkaze pre starostu** (`ops_state`) is the portal state. The
+  volunteer accepts, rejects or asks for a supplement here. Every change fires
+  the portal webhook.
+- **Stav** (Zammad `state_id`: new, open, closed…) is internal to Triage and
+  never reaches the portal. Leave it alone: closing T through it doesn't notify
+  the author or create the R-ticket. The process switch closes T after accept.
+
+In the triage core workflow, `ops_state` offers **(observed)**:
 
 | Option | Meaning | What follows |
 |---|---|---|

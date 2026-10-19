@@ -11,7 +11,6 @@
 #  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #  about                            :string
-#  active                           :boolean
 #  admin_name                       :string
 #  anonymous                        :boolean          default(FALSE), not null
 #  banned                           :boolean          default(FALSE), not null
@@ -48,8 +47,6 @@
 #  status                           :integer          default(1), not null
 #  timestamp                        :datetime
 #  uuid                             :uuid             not null
-#  verification                     :string
-#  verified                         :boolean          default(FALSE), not null
 #  imported_at                      :datetime
 #  phone_verification_attempted_at  :datetime
 #  created_at                       :datetime         not null

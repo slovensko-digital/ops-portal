@@ -1954,10 +1954,8 @@ CREATE TABLE public.users (
     about character varying,
     "timestamp" timestamp(6) without time zone,
     anonymous boolean DEFAULT false NOT NULL,
-    active boolean,
+    municipality_id bigint,
     created_from_app boolean DEFAULT false NOT NULL,
-    verification character varying,
-    verified boolean DEFAULT false NOT NULL,
     signature character varying,
     city_id integer,
     street_id bigint,
@@ -3811,6 +3809,13 @@ CREATE UNIQUE INDEX index_users_on_external_id ON public.users USING btree (exte
 --
 
 CREATE UNIQUE INDEX index_users_on_legacy_id ON public.users USING btree (legacy_id);
+
+
+--
+-- Name: index_users_on_municipality_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_municipality_id ON public.users USING btree (municipality_id);
 
 
 --
