@@ -3,7 +3,8 @@
 | Term | Meaning |
 |---|---|
 | RS | Responsible subject (zodpovedný subjekt): municipality, district, or other organization |
-| `ops_state` | Triage ticket attribute holding the portal state key (`waiting`, `sent_to_responsible`…) |
+| `ops_state` | Triage ticket attribute holding the portal state key (`waiting`, `sent_to_responsible`…). Labelled "Stav v Odkaze pre starostu" in Zammad |
+| Stav | Zammad's own ticket state (`state_id`: new, open, closed…). Internal to Triage, not synced to the portal. Not the field that accepts or rejects an issue, see `ops_state` |
 | Doplnenie | Supplement: volunteer asks the author for more info (`waiting_for_author`) |
 | Pochvala | Praise |
 | Podúlohy | Subtasks inside Backoffice, created from a note with `[[podulohy]]` and `@@user … - date` lines. Not available in Triage ([07](07-backoffice-connector.md#subtasks-podúlohy)) |
