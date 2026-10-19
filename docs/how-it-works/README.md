@@ -42,6 +42,8 @@ Diagrams are Mermaid, so GitHub renders them inline.
   `curl -H "Authorization: Token token=$TRIAGE_ZAMMAD_ADMIN_API_TOKEN" localhost:8080/api/v1/triggers`.
 - Known problems are GitHub issues in the private `slovensko-digital/ops`
   repo, collected in the epic
-  [ops#1349](https://github.com/slovensko-digital/ops/issues/1349). Each doc
+  [ops#1349](https://github.com/slovensko-digital/ops/issues/1349). User sync
+  between the portal and Triage has its own epic,
+  [ops#1350](https://github.com/slovensko-digital/ops/issues/1350). Each doc
   file lists the ones that touch it under **Open issues**. The PR that fixes
   one updates the affected section (diagram, flow) and removes its row.

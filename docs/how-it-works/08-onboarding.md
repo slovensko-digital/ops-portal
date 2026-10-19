@@ -60,6 +60,14 @@ the Triage database.
 
 ## Users across systems
 
+A user is created either in the portal (citizen registration) or in Triage
+(an agent adds them, e.g. when onboarding an RS). The portal sends a user to
+Triage on their first activity, and Triage sends changes back through the
+`user.updated` webhook → `Triage::UpdatePortalUserFromTriageJob`. There are no
+agreed rules for the resulting state of a user in both systems, so the table
+below describes what the code does today, gaps included. Deciding those rules
+is the epic [ops#1350](https://github.com/slovensko-digital/ops/issues/1350).
+
 | Event | Where it starts | Effect |
 |---|---|---|
 | Citizen registers (password / Google / Facebook) | Portal (Rodauth) | `User::Citizen`; email verify; onboarding; SMS phone verification (AWS) for full access |
