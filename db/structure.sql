@@ -2004,7 +2004,6 @@ CREATE TABLE public.users (
     about character varying,
     "timestamp" timestamp(6) without time zone,
     anonymous boolean DEFAULT false NOT NULL,
-    active boolean,
     municipality_id bigint,
     created_from_app boolean DEFAULT false NOT NULL,
     verification character varying,
@@ -4618,6 +4617,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261016100000'),
 ('20261013100200'),
 ('20261013100100'),
 ('20261013100000'),

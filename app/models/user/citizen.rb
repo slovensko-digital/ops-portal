@@ -11,7 +11,6 @@
 #  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #  about                            :string
-#  active                           :boolean
 #  admin_name                       :string
 #  anonymous                        :boolean          default(FALSE), not null
 #  banned                           :boolean          default(FALSE), not null
