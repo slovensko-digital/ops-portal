@@ -47,8 +47,6 @@
 #  status                           :integer          default(1), not null
 #  timestamp                        :datetime
 #  uuid                             :uuid             not null
-#  verification                     :string
-#  verified                         :boolean          default(FALSE), not null
 #  imported_at                      :datetime
 #  phone_verification_attempted_at  :datetime
 #  created_at                       :datetime         not null
