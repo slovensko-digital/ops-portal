@@ -33,29 +33,12 @@ Consequences:
 
 ## Comment moderation (AI)
 
-Every new `UserComment` (not legacy or imported ones) is checked by Gemini.
-`Issues::ModerateCommentJob` runs when the editing window closes, so it sees
-the final text.
+When the editing window closes, AI scores each new citizen comment
+(`UserComment`) for inappropriate content. If the score is at least
+`COMMENT_AUTO_HIDE_THRESHOLD` (default 0.9), the comment is hidden. The
+portal then shows "Tento komentár bol skrytý." in its place.
 
-1. The job sends the issue title, description and the comment text with the
-   `moderatecomments` prompt (CMS page `{prompt:moderatecomments}`, seeded from
-   `db/seeds/fixtures/ai_prompt_moderatecomments.md`).
-2. Gemini returns a 0.0-1.0 score per category (`irrelevant`, `vulgar`,
-   `insulting`, `sarcastic`, `political`), an `overall_score` and a `reason` in
-   Slovak. The whole answer is stored in `issues_comments.ai_evaluation`.
-3. If `overall_score >= COMMENT_AUTO_HIDE_THRESHOLD` (default 0.9) the comment
-   gets `hidden: true`.
-
-A hidden `UserComment` stays in the discussion as a grey placeholder
-"Tento komentár bol skrytý." with no text, attachments, votes or edit button.
-Triage gets the article as `Zmazaný komentár: <text>` if it is hidden before
-the sync. Nothing hides it in Triage or Backoffice afterwards.
-
-The moderation job and `SyncEditableActivityToTriageJob` are both scheduled
-for the end of the editing window, so their order is not guaranteed: a comment
-hidden a moment after the sync reaches Triage and subscribers' mail with its
-original text (verify). A Gemini error leaves the comment visible and
-`ai_evaluation` empty.
+Hiding happens only on the portal; Triage and Backoffice keep the comment.
 
 ## Triage R-ticket article routing (tags)
 
