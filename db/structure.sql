@@ -4271,6 +4271,14 @@ ALTER TABLE ONLY public.municipality_boundaries
 
 
 --
+-- Name: users fk_rails_af51c67270; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_rails_af51c67270 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
+
+
+--
 -- Name: responsible_subjects fk_rails_b01f09f6a3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4437,6 +4445,8 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261019100000'),
+('20261016100000'),
 ('20261013100200'),
 ('20261013100100'),
 ('20261013100000'),
