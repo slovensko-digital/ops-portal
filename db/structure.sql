@@ -3587,6 +3587,20 @@ CREATE INDEX index_municipalities_on_longitude ON public.municipalities USING bt
 
 
 --
+-- Name: index_municipalities_users_on_municipality_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipalities_users_on_municipality_id ON public.municipalities_users USING btree (municipality_id);
+
+
+--
+-- Name: index_municipalities_users_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipalities_users_on_user_id ON public.municipalities_users USING btree (user_id);
+
+
+--
 -- Name: index_municipality_boundaries_on_boundary; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3619,6 +3633,20 @@ CREATE UNIQUE INDEX index_municipality_districts_on_legacy_id ON public.municipa
 --
 
 CREATE INDEX index_municipality_districts_on_municipality_id ON public.municipality_districts USING btree (municipality_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_municipality_district_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipality_districts_users_on_municipality_district_id ON public.municipality_districts_users USING btree (municipality_district_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipality_districts_users_on_user_id ON public.municipality_districts_users USING btree (user_id);
 
 
 --
