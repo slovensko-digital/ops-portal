@@ -3,7 +3,8 @@ module Notifications
     def perform(issue, responsible_subject_id_change: [], notification_mailer: NotificationMailer)
       return unless responsible_subject_id_change.present?
 
-      previous_rs = ResponsibleSubject.find(responsible_subject_id_change.first)
+      previous_rs_id = responsible_subject_id_change.first
+      previous_rs = previous_rs_id.nil? ? nil : ResponsibleSubject.find(previous_rs_id)
 
       issue.subscriptions.active.each do |subscription|
         next unless subscription.subscriber.email_notifiable?

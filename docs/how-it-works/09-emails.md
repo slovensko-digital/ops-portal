@@ -14,7 +14,7 @@ Recipients are active `IssueSubscription`s with `email_notifiable`. Subject:
 | `issue_marked_as_duplicate` | → duplicate | all subscribers | `/dopyty/:id` (no link to the original) |
 | `issue_waiting_for_author` | → waiting_for_author | all (in practice the author) | `/dopyty/:id#new_issue_activity` |
 | `issue_in_progress` | → in_progress | all | `#new_issue_activity` |
-| `issue_responsible_subject_changed` | RS changed in an update that changed neither the state nor `resolution_external_id` (`PublishIssueResponsibleSubjectChangedJob`) | all | `#new_issue_activity` |
+| `issue_responsible_subject_changed` | RS changed or set for the first time (no "from" subject in the mail) in an update that changed neither the state nor `resolution_external_id` (`PublishIssueResponsibleSubjectChangedJob`) | all | `#new_issue_activity` |
 | `issue_resolved` | → resolved | all | issue + feedback (`/pochvaly/nova`) |
 | `issue_unresolved` | → unresolved | all | `#new_issue_activity` |
 | `issue_referred` | → referred | all | `#new_issue_activity` |
