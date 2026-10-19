@@ -38,6 +38,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Subtasks | [07](07-backoffice-connector.md#subtasks-podúlohy) | `lib/connector/subtask_parser_test.rb` (16), job test (7) | 🟡 | `<div>`/`<p>` lines |
 | Basic activation | [08](08-onboarding.md) | `models/responsible_subjects/basic_activation_test.rb` (14) | ✅ | rake wrapper; partial-failure re-run |
 | Citizen rename → Triage/Backoffice | [08](08-onboarding.md) | — | ❌ | 40-67% lines |
+| Triage user change → portal (`user.updated`) | [08](08-onboarding.md#users-across-systems) | `jobs/triage/update_portal_user_from_triage_job_test.rb` (6) | 🟡 | RS ban, deactivation, portal citizen → RS, match by email ([ops#1350](https://github.com/slovensko-digital/ops/issues/1350)) |
 | Scheduled (portal) | [10](10-scheduled.md) | — | ❌ | — |
 | Scheduled (Triage reminders, 15-day unresolved) | [10](10-scheduled.md) | — | ❌ | — |
 
