@@ -8,7 +8,6 @@ def seed_user(email:, firstname:, lastname:, municipality_name: nil, type: User:
     lastname: lastname,
     municipality: municipality_name && Municipality.find_by!(name: municipality_name),
     status: :verified,
-    verified: true,
     onboarded: true,
     gdpr_accepted: true,
     phone_verified: true,
