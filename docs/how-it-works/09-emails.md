@@ -13,6 +13,8 @@ Recipients are active `IssueSubscription`s with `email_notifiable`. Subject:
 | `issue_rejected` | → rejected | author | `/dopyty/:id`, `/pravidla` |
 | `issue_marked_as_duplicate` | → duplicate | all subscribers | `/dopyty/:id` (no link to the original) |
 | `issue_waiting_for_author` | → waiting_for_author | all (in practice the author) | `/dopyty/:id#new_issue_activity` |
+| `issue_in_progress` | → in_progress | all | `#new_issue_activity` |
+| `issue_responsible_subject_changed` | RS changed in an update that changed neither the state nor `resolution_external_id` (`PublishIssueResponsibleSubjectChangedJob`) | all | `#new_issue_activity` |
 | `issue_resolved` | → resolved | all | issue + feedback (`/pochvaly/nova`) |
 | `issue_unresolved` | → unresolved | all | `#new_issue_activity` |
 | `issue_referred` | → referred | all | `#new_issue_activity` |
@@ -20,8 +22,13 @@ Recipients are active `IssueSubscription`s with `email_notifiable`. Subject:
 | `new_issue_user_comment` | user / agent / private agent / duplicate comment, `Issues::Update` | all except the comment author; never for a praise | `#new_issue_activity` |
 | `new_issue_responsible_subject_comment` | RS comment | all except the author | `#komentar_<id>` |
 
-No mail: `sent_to_responsible`, `in_progress`, `marked_as_resolved`, RS
-reassign/refer, likes.
+No mail: `sent_to_responsible`, `marked_as_resolved`, likes. An RS change that
+comes with a state change sends only the state mail, if any. RS reassign in the
+portal sets the RS and `sent_to_responsible` in one update
+(`issues_responsible_subject_changes_controller.rb:29-32`), so reassigning an
+issue that is `in_progress` sends **no** mail. The RS mail goes out only when
+the issue was already `sent_to_responsible`. On accept, only `issue_accepted` is
+sent.
 
 **Observed:** request supplement sent the author **two** emails at once (new
 comment + waiting for author), with the same subject.

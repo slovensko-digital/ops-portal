@@ -21,6 +21,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Portal → Triage create | [03](03-submission-and-triage.md) | `jobs/sync_issue_to_triage_job_test.rb` (7) | 🟡 | `sync_issue_to_triage_job.rb` 69% lines, 26/70 branches |
 | Comment → Triage | [06](06-comments-likes-routing.md) | `jobs/sync_issue_activity_object_to_triage_job_test.rb` (4, updates only) | ❌ | **28.6% lines, 7/84 branches**: article creation, author creation, "already exists" recovery; `SyncEditableActivityToTriageJob` 43%, its test file is empty |
 | Triage → portal (state, comments, users) | [02](02-issue-lifecycle.md) | `jobs/triage/*` (all 17 jobs have tests) | ✅ | duplicate failure branches; attachment decode |
+| State / RS history in the timeline, backfill | [02](02-issue-lifecycle.md#state-and-rs-history-on-the-portal) | `jobs/triage/backfill_issue_history_job_test.rb` (6), `lib/zammad_api_client_test.rb` (`get_ticket_history`) | 🟡 | `Issue#track_state_change` / `#track_responsible_subject_change` callbacks; `PublishIssueResponsibleSubjectChangedJob`; the two partials |
 | Accept → R-ticket | [02](02-issue-lifecycle.md#process-switch) | `create_issue_resolution_process_ticket_job_test.rb` | ✅ | — |
 | Request supplement → author replies → `waiting` | [03](03-submission-and-triage.md#2a-request-supplement-doplnenie-observed) | Triage side untested; portal pieces tested separately | 🟡 | end to end; trigger 148 |
 | Reject, duplicate | [03](03-submission-and-triage.md) | job tests | 🟡 | duplicate no-parent / missing-parent branches |
