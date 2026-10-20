@@ -17,22 +17,15 @@ class Issues::ModerateCommentJob < ApplicationJob
   private
 
   def llm_evaluate_comment(comment)
-    prompt = <<~LLM
-      Issue
-
-      Title:
-      #{comment.issue.title}
-
-      Description:
-      #{comment.issue.description}
-
-      Comment to evaluate:
-      #{comment.text}
-    LLM
+    data = {
+      issue_title: comment.issue.title,
+      issue_description: comment.issue.description,
+      comment_text: comment.text
+    }.to_json
 
     Gemini.generate(
       system_prompt: Ai::Prompt.get("moderatecomments"),
-      messages: [ prompt ],
+      messages: [ data ],
       response_schema: {
         type: "OBJECT",
         properties: {
