@@ -109,7 +109,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def needs_editing?
-    checks.any? { |check| check["action"] == "back" }
+    checks.to_a.any? { |check| check["action"] == "back" }
   end
 
   def geo
@@ -154,7 +154,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def confirmable?
-    checks.all? { |check| check["action"] == "confirm" }
+    !checks.nil? && checks.all? { |check| check["action"] == "confirm" }
   end
 
   def municipality_errors?
@@ -184,7 +184,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def checks_passed
-    errors.add(:checks, :invalid) if checks.any?
+    errors.add(:checks, :invalid) if checks.nil? || checks.any?
   end
 
   def municipality_supported

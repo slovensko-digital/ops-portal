@@ -1,4 +1,6 @@
 class Gemini
+  class Error < StandardError; end
+
   def self.generate(messages:, system_prompt:, response_schema: nil)
     conn = Faraday.new(
       url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
@@ -31,10 +33,17 @@ class Gemini
     if res.status != 200
       Rails.logger.error(res.body.to_s)
       Rollbar.error(res.body.to_s)
+      raise Error, "Gemini API returned status #{res.status}"
     end
 
-    return [] unless res.body["candidates"]
-    JSON.parse(res.body["candidates"].first.dig("content", "parts").first["text"])
+    text = res.body.dig("candidates", 0, "content", "parts", 0, "text") if res.body.is_a?(Hash)
+    raise Error, "Gemini API returned no candidates" if text.blank?
+
+    begin
+      JSON.parse(text)
+    rescue JSON::ParserError => e
+      raise Error, "Gemini API returned invalid JSON: #{e.message}"
+    end
   end
 
   def self.build_message(thing)
