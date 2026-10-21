@@ -31,6 +31,15 @@ Consequences:
   internal/public toggle syncs (`UpdatePortalActivityFromTriageJob` sets
   `hidden`).
 
+## Comment moderation (AI)
+
+When the editing window closes, AI scores each new citizen comment
+(`UserComment`) for inappropriate content. If the score is at least
+`COMMENT_AUTO_HIDE_THRESHOLD` (default 0.9), the comment is hidden. The
+portal then shows "Tento komentár bol skrytý." in its place.
+
+Hiding happens only on the portal; Triage and Backoffice keep the comment.
+
 ## Triage R-ticket article routing (tags)
 
 | Article in Triage (R-ticket) | Portal | RS email (basic) | Backoffice (PRO) |
