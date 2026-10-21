@@ -10,7 +10,12 @@ class Issues::ModerateCommentJob < ApplicationJob
     threshold = ENV.fetch("COMMENT_AUTO_HIDE_THRESHOLD", 0.9).to_f
 
     comment.ai_evaluation = evaluation
+
+    # hidden is intentionally shared with triage: sync
+    # sets it from article.internal, so a triage update
+    # can unhide a comment that was hidden here.
     comment.hidden = true if score >= threshold
+
     comment.save!
   end
 
