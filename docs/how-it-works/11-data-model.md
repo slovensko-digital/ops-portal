@@ -27,24 +27,41 @@ apps match each other by **name**.
 
 Not related: `Cms::Category` is a Discourse category for CMS pages.
 
-### Two taxonomies in one table
+### Current and legacy categories
 
-- **Current** (`legacy_id: nil`, scope `non_legacy`): 18 categories. The
-  wizard and the AI suggestion prompt (`Ai::Prompt.generate_categories_table`)
-  only offer these.
-- **Legacy** (`legacy_id` set): the 8 old categories with their subtrees,
-  imported by the removed `Import::Issues::ImportCategoriesJob`.
-  `Issues::RemapIssueCategoryJob` moved imported issues to current categories
-  using the name table in `app/lib/category_mapper.rb` and kept the old ids in
-  `issue.legacy_data`.
-- Legacy categories also have `triage_external_id` (1-7): Triage stores old
-  categories by that number (`OPS_OLD_CATEGORIES_MAP` in
-  `ops-triage-zammad/zammad/lib/tasks/ops/triage.rake`), current ones by name.
+Before this portal there was an old system with its own categories. When its
+data was migrated, the old categories were copied into the same tables the
+portal uses. So `Issues::Category` (`issues_categories`) holds two unrelated
+sets of rows side by side. The same split applies to `Issues::Subcategory`
+and `Issues::Subtype`.
 
-No code creates or syncs current categories in production. The same tree is
-hard-coded in `ops-triage-zammad/.../triage.rake` (`OPS_CATEGORIES_MAP`) and
-`ops-backoffice-saas/.../backoffice.rake`. Changing a category means changing
-all three.
+| | Current | Legacy |
+|---|---|---|
+| Where from | Made for this portal | Copied from the old system by the removed `Import::Issues::ImportCategoriesJob` |
+| Top-level categories | 18 | 8 |
+| `legacy_id` | `nil` (scope `non_legacy`) | The row's id in the old system |
+| Used for | Everything new. The wizard and the AI suggestion prompt (`Ai::Prompt.generate_categories_table`) only offer these | History only |
+
+**Old issues were remapped.** Imported issues first pointed at legacy rows.
+`Issues::RemapIssueCategoryJob` then moved each one onto a current row, using
+the hand-written name table in `app/lib/category_mapper.rb` (e.g. old *Cesty a
+chodníky* → new *Komunikácie*). The old ids were kept in `issue.legacy_data`.
+So today an imported issue points at current rows, just like a new one.
+
+**Triage knows legacy categories by number.** Each legacy `Issues::Category`
+has a `triage_external_id` (1-7). Triage identifies old categories by that
+number (`OPS_OLD_CATEGORIES_MAP` in
+`ops-triage-zammad/zammad/lib/tasks/ops/triage.rake`) and current ones by name.
+
+**The current tree is typed out in three repos.** No code creates or syncs
+current categories in production. The same list is hard-coded in the portal,
+in `ops-triage-zammad/.../triage.rake` (`OPS_CATEGORIES_MAP`) and in
+`ops-backoffice-saas/.../backoffice.rake`. Renaming or adding a category means
+changing all three, otherwise the names stop matching.
+
+**Two names exist in both sets**: *Verejné služby* and *Verejný poriadok*.
+Code that finds a category by name without `non_legacy` can pick the legacy
+row (see [Open issues](#open-issues)).
 
 ### How it fits together
 
@@ -84,4 +101,4 @@ current row; its old ids sit in `legacy_data`.
 
 | Issue | Section | Summary |
 |---|---|---|
-| — | [Two taxonomies](#two-taxonomies-in-one-table) | *Verejné služby* and *Verejný poriadok* exist both as current and legacy rows. `Issues::Draft` (`draft.rb:148`) and `ZammadApiClient#build_issue_ticket_response` look categories up by name without `non_legacy`, so on production *Verejné služby* resolves to the legacy row (lower id) and new issues end up on it |
+| — | [Current and legacy categories](#current-and-legacy-categories) | *Verejné služby* and *Verejný poriadok* exist both as current and legacy rows. `Issues::Draft` (`draft.rb:148`) and `ZammadApiClient#build_issue_ticket_response` look categories up by name without `non_legacy`, so on production *Verejné služby* resolves to the legacy row (lower id) and new issues end up on it |
