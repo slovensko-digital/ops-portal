@@ -66,6 +66,18 @@ class Issues::SearchTest < ApplicationSystemTestCase
     assert_no_text @bratislava.title
   end
 
+  test "logged in user can show own and followed issues together" do
+    user = users(:legacy_citizen)
+    @bratislava.update_columns(author_id: user.id)
+    user.subscribe_to(issues(:legacy1))
+    login_as user
+
+    visit issues_path(zobrazit: [ "Moje dopyty", "Sledované dopyty" ])
+    assert_text @bratislava.title
+    assert_text issues(:legacy1).title
+    assert_no_text @nitra.title
+  end
+
   test "sorting by popularity puts the most liked issue first" do
     @nitra.update_columns(likes_count: 5)
 
