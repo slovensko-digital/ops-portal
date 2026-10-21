@@ -49,22 +49,25 @@ all three.
 ### How it fits together
 
 ```mermaid
-flowchart LR
-  subgraph current["Current taxonomy (legacy_id nil)"]
-    C1["Category<br/>Komunikácie"] --> S1["Subcategory<br/>cesta"] --> T1["Subtype<br/>výtlk"]
+flowchart TB
+  subgraph legacy["Legacy taxonomy (legacy_id set)"]
+    direction LR
+    C2["Category<br/>Cesty a chodníky<br/>legacy_id 16, triage_external_id 1"] --> S2["Subcategory<br/>cesta<br/>legacy_id 31"] --> T2["Subtype<br/>výtlk<br/>legacy_id 27"]
   end
 
-  subgraph legacy["Legacy taxonomy (legacy_id set)"]
-    C2["Category<br/>Cesty a chodníky<br/>legacy_id 16, triage_external_id 1"] --> S2["Subcategory<br/>cesta<br/>legacy_id 31"] --> T2["Subtype<br/>výtlk<br/>legacy_id 27"]
+  subgraph current["Current taxonomy (legacy_id nil)"]
+    direction LR
+    C1["Category<br/>Komunikácie"] --> S1["Subcategory<br/>cesta"] --> T1["Subtype<br/>výtlk"]
   end
 
   RSC["ResponsibleSubjects::Category<br/>Hlavné mesto SR Bratislava"] -.-> C2
   T2 -. "CategoryMapper<br/>(RemapIssueCategoryJob)" .-> T1
 
-  I["Issue<br/>'Výtlk na Obchodnej'"] -- "category_id<br/>subcategory_id<br/>subtype_id" --> T1
-  I -- "legacy_data<br/>legacy_*_id (imported issues)" -.-> T2
+  I["Issue<br/>'Výtlk na Obchodnej'"] -- "category_id, subcategory_id, subtype_id" --> current
+  I -. "legacy_data: legacy_*_id<br/>(imported issues)" .-> legacy
 
-  I <-- "names: category, subcategory, subtype<br/>(SyncIssueToTriageJob / UpdatePortalIssueFromTriageJob)" --> Z["Triage ticket<br/>Kategória: Komunikácie<br/>cesta / výtlk"]
+  I -- "names<br/>(SyncIssueToTriageJob)" --> Z["Triage ticket<br/>Kategória: Komunikácie<br/>cesta / výtlk"]
+  Z -- "names, looked up again<br/>(UpdatePortalIssueFromTriageJob)" --> I
   Z -- "ops_category, ops_subcategory<br/>(Connector)" --> B["Backoffice ticket"]
 ```
 
