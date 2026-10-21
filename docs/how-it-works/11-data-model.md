@@ -63,6 +63,13 @@ changing all three, otherwise the names stop matching.
 Code that finds a category by name without `non_legacy` can pick the legacy
 row (see [Open issues](#open-issues)).
 
+**Development seeds mirror production.** `db/seeds/categories.rb` creates both
+sets in production's order: 16 current categories, then the legacy tree (with
+`legacy_id`s, so `CategoryMapper` and legacy widget filters work), then
+*Ostatné* and *Verejné služby*, which were added after the import. Ids and
+the duplicate-name behaviour above therefore match production locally.
+`ResponsibleSubjects::Category` is not seeded, since nothing reads it.
+
 ### How it fits together
 
 ```mermaid
