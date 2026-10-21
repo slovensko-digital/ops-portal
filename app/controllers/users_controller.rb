@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: -> { render :not_found, status: :not_found }
 
   def show
-    @issues = @user.issues.publicly_visible.newest.page(params[:page]).per(8)
+    @issues = @user.issues.publicly_visible.newest.page(params[:page]).per(24)
   end
 
   private

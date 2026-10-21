@@ -51,12 +51,7 @@
     <%= turbo_frame_tag "profile-tabs", autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
       <div class="profile-suggestion-con">
         <% if @issues.length > 0 %>
-          <%= turbo_frame_tag "profile-list", target: :_top do %>
-            <div class="podnet-block-con">
-              <%= render partial: "issues/issue", collection: @issues %>
-            </div>
-          <% end %>
-          <%= ops_paginate(@issues) %>
+          <%= render "shared/load_more", issues: @issues %>
         <% else %>
           <%= turbo_frame_tag "profile-list" do %>
             <section class="search-result-blank">

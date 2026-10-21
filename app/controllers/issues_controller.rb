@@ -432,7 +432,7 @@ class IssuesController < ApplicationController
         )
       ],
 
-      per_page: 12
+      per_page: 24
     )
   end
 end
