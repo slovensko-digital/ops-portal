@@ -22,7 +22,41 @@
         89
       ],
       "note": "Safe: 'against' contains only column names defined by developer, 'unaccent_f' is a controlled function name. User input is sanitized via sanitize_terms() and passed as bind parameters."
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "a625c3ce749d7c643c314bbcfb1a64fe003f85b4d6bf978a7bb4128c4f32ccfe",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/issues/index.html.erb",
+      "line": 104,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(partial => (params[:tab] or \"list\"), {})",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "IssuesController",
+          "method": "index",
+          "line": 45,
+          "file": "app/controllers/issues_controller.rb",
+          "rendered": {
+            "name": "issues/index",
+            "file": "app/views/issues/index.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "issues/index"
+      },
+      "user_input": "params[:tab]",
+      "confidence": "High",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
     }
   ],
-  "brakeman_version": "8.0.4"
+  "brakeman_version": "8.0.5"
 }

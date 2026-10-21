@@ -1390,6 +1390,16 @@ ALTER SEQUENCE public.municipalities_id_seq OWNED BY public.municipalities.id;
 
 
 --
+-- Name: municipalities_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.municipalities_users (
+    municipality_id bigint,
+    user_id bigint
+);
+
+
+--
 -- Name: municipality_boundaries; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1461,6 +1471,16 @@ CREATE SEQUENCE public.municipality_districts_id_seq
 --
 
 ALTER SEQUENCE public.municipality_districts_id_seq OWNED BY public.municipality_districts.id;
+
+
+--
+-- Name: municipality_districts_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.municipality_districts_users (
+    municipality_district_id bigint,
+    user_id bigint
+);
 
 
 --
@@ -1934,7 +1954,6 @@ CREATE TABLE public.users (
     about character varying,
     "timestamp" timestamp(6) without time zone,
     anonymous boolean DEFAULT false NOT NULL,
-    municipality_id bigint,
     created_from_app boolean DEFAULT false NOT NULL,
     signature character varying,
     city_id integer,
@@ -3568,6 +3587,20 @@ CREATE INDEX index_municipalities_on_longitude ON public.municipalities USING bt
 
 
 --
+-- Name: index_municipalities_users_on_municipality_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipalities_users_on_municipality_id ON public.municipalities_users USING btree (municipality_id);
+
+
+--
+-- Name: index_municipalities_users_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipalities_users_on_user_id ON public.municipalities_users USING btree (user_id);
+
+
+--
 -- Name: index_municipality_boundaries_on_boundary; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3600,6 +3633,20 @@ CREATE UNIQUE INDEX index_municipality_districts_on_legacy_id ON public.municipa
 --
 
 CREATE INDEX index_municipality_districts_on_municipality_id ON public.municipality_districts USING btree (municipality_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_municipality_district_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipality_districts_users_on_municipality_district_id ON public.municipality_districts_users USING btree (municipality_district_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipality_districts_users_on_user_id ON public.municipality_districts_users USING btree (user_id);
 
 
 --
@@ -3789,13 +3836,6 @@ CREATE UNIQUE INDEX index_users_on_external_id ON public.users USING btree (exte
 --
 
 CREATE UNIQUE INDEX index_users_on_legacy_id ON public.users USING btree (legacy_id);
-
-
---
--- Name: index_users_on_municipality_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_users_on_municipality_id ON public.users USING btree (municipality_id);
 
 
 --
@@ -4251,14 +4291,6 @@ ALTER TABLE ONLY public.municipality_boundaries
 
 
 --
--- Name: users fk_rails_af51c67270; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT fk_rails_af51c67270 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
-
-
---
 -- Name: responsible_subjects fk_rails_b01f09f6a3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4435,6 +4467,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20261003120000'),
 ('20261003115900'),
 ('20261003105314'),
+('20260811144543'),
+('20260811132517'),
 ('20260705131733'),
 ('20260524143000'),
 ('20260524134500'),
