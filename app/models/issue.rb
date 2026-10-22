@@ -156,7 +156,7 @@ class Issue < ApplicationRecord
   end
 
   def editable?
-    state.key == "waiting"
+    state.key == "waiting" || state.key == "waiting_for_author"
   end
 
   def archived?
