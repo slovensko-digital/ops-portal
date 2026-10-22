@@ -24,6 +24,7 @@
 #  checks                  :jsonb
 #  description             :string
 #  duplicates_shown        :boolean          default(FALSE), not null
+#  last_duplicate_ids      :bigint           is an Array
 #  latitude                :float
 #  latlon_from_exif        :boolean          default(FALSE)
 #  longitude               :float
@@ -64,6 +65,9 @@ class Issues::Draft < ApplicationRecord
   validate :checks_passed, on: :checks_step
 
   before_save :reset_address_details, if: -> { will_save_change_to_latitude? || will_save_change_to_longitude? }
+  before_save :reset_duplicates, if: -> { will_save_change_to_latitude? || will_save_change_to_longitude? || will_save_change_to_category_id? }
+
+  DUPLICATES_DISTANCE = 500
 
   def confirm
     municipality, municipality_district = Municipality.find_by_coordinates(latitude, longitude, street: address_street)
@@ -153,15 +157,52 @@ class Issues::Draft < ApplicationRecord
     save(context: :suggestions_step)
   end
 
-  # TODO: placeholder until duplicates are identified by AI evaluation
-  def potential_duplicates
-    scope = Issue
+  def similar_around
+    Issue
       .publicly_visible
       .accepting_updates
-      .within_distance_from_point(latitude, longitude, 500)
-      .where(category: category, subcategory: subcategory)
-    scope = scope.where(subtype: subtype) if subtype.present?
-    scope
+      .where(id: ActiveStorage::Attachment.where(record_type: "Issue", name: "photos").select(:record_id))
+      .within_distance_from_point(latitude, longitude, DUPLICATES_DISTANCE)
+      .where(category: category)
+      .order_by_distance_from_point(latitude, longitude)
+      .limit(ENV.fetch("DRAFT_DUPLICATE_CANDIDATES_LIMIT", 20).to_i)
+  end
+
+  def last_duplicates
+    return Issue.none if last_duplicate_ids.blank?
+
+    Issue
+      .publicly_visible
+      .accepting_updates
+      .where(id: last_duplicate_ids.to_a)
+      .order_by_distance_from_point(latitude, longitude)
+      .limit(ENV.fetch("DRAFT_DUPLICATES_LIMIT", 5).to_i)
+  end
+
+  def detect_duplicates!
+    candidates = similar_around.with_attached_photos.to_a
+
+    self.last_duplicate_ids = if candidates.empty? || photos.empty?
+      []
+    elsif Rails.env.development? && ENV["GEMINI_API_KEY"].blank?
+      candidates.map(&:id) # lets the flow be clicked through locally without an AI key
+    else
+      candidates.map(&:id) & Array(ai_similar_issue_ids(candidates))
+    end
+
+    save!
+  rescue Ai::Prompt::PromptNotFoundException, Faraday::Error => e
+    Rollbar.error(e)
+    self.last_duplicate_ids = nil
+  end
+
+  def reset_duplicates
+    self.last_duplicate_ids = nil
+  end
+
+  def reset_duplicates!
+    reset_duplicates
+    save!
   end
 
   def submit_as_update_of(issue, text:, attachments:)
@@ -199,7 +240,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def no_duplicates_nearby
-    errors.add(:base, :duplicates_nearby) if potential_duplicates.exists?
+    errors.add(:base, :duplicates_nearby) if last_duplicates.exists?
   end
 
   def checks_passed
@@ -213,6 +254,17 @@ class Issues::Draft < ApplicationRecord
     errors.add(:base, :municipality_supported_on_old_portal) if active_municipality && active_municipality.active_on_old_portal?
     errors.add(:base, :municipality_unsupported) if active_municipality.nil? && municipality_district.nil?
     errors.add(:base, :municipality_district_unsupported) if active_municipality.nil? && municipality_district
+  end
+
+  def ai_similar_issue_ids(candidates)
+    messages = [ "Fotografie nového podnetu:", *photos ] +
+      candidates.flat_map { |issue| [ "Existujúci podnet ID #{issue.id}:", issue.photos.first ] }
+
+    Gemini.generate(
+      system_prompt: Ai::Prompt.get("findduplicates"),
+      messages: messages,
+      response_schema: { "type": "ARRAY", "items": { "type": "INTEGER" } }
+    )
   end
 
   def reset_address_details

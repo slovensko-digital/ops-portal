@@ -6,8 +6,7 @@ class Issues::Drafts::DuplicatesController < ApplicationController
   before_action :check_rate_limit, only: [ :show, :update ]
 
   def index
-    @issues = @draft.potential_duplicates
-      .order_by_distance_from_point(@draft.latitude, @draft.longitude)
+    @issues = @draft.last_duplicates
       .includes(:state, :municipality, :municipality_district)
       .with_attached_photos
 
@@ -33,7 +32,7 @@ class Issues::Drafts::DuplicatesController < ApplicationController
   private
 
   def set_issue
-    @issue = @draft.potential_duplicates.find(params[:id])
+    @issue = @draft.last_duplicates.find(params[:id])
   end
 
   def update_params

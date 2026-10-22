@@ -16,3 +16,10 @@ c.pages.find_or_initialize_by(tags: "{prompt:generatesuggestions}").tap do |page
   page.text = "-"
   page.raw = File.read(Rails.root + 'db/seeds/fixtures/ai_prompt_generatesuggestions.md')
 end.save!
+
+c.pages.find_or_initialize_by(tags: "{prompt:findduplicates}").tap do |page|
+  page.title = "Find Duplicates"
+  page.slug = "find-duplicates"
+  page.text = "-"
+  page.raw = File.read(Rails.root + 'db/seeds/fixtures/ai_prompt_findduplicates.md')
+end.save!

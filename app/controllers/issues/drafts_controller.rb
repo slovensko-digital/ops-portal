@@ -32,6 +32,7 @@ class Issues::DraftsController < ApplicationController
 
   def update
     @draft.photos.attach(draft_params[:photos])
+    @draft.reset_duplicates
     if @draft.save(context: :photos_step)
       redirect_to edit_issues_draft_path(@draft, next: params[:next])
     else
@@ -41,12 +42,14 @@ class Issues::DraftsController < ApplicationController
 
   def destroy_photo
     @draft.photos.find(params[:photo_id]).purge_later
+    @draft.reset_duplicates!
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
   end
 
   def rotate_photo
     blob = @draft.photos.find(params[:photo_id]).blob
     blob.update!(rotation: (blob.rotation - 90) % 360)
+    @draft.reset_duplicates!
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
   end
 
