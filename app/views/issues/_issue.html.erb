@@ -1,4 +1,4 @@
-<%= link_to issue_path(issue), class: "podnet-block" do %>
+<%= link_to local_assigns.fetch(:url) { issue_path(issue) }, class: "podnet-block", data: local_assigns[:link_data] do %>
   <div class="photo">
     <% if issue.respond_to?(:distance) %>
       <div class="distance"><%= number_to_human issue.distance.to_i, units: :distance, precision: 2, significant: true, format: "%n%u" %></div>

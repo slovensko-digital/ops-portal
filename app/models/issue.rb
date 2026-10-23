@@ -75,6 +75,7 @@ class Issue < ApplicationRecord
 
   has_many_attached :photos do |photo|
     photo.variant :full, resize_to_limit: [ 1280, 960 ]# , preprocessed: true
+    photo.variant :llm, resize_to_limit: [ 800, 600 ]
     photo.variant :normal, resize_to_fill: [ 800, 800 ]# , preprocessed: true
     photo.variant :small, resize_to_fill: [ 360, 360 ]# , preprocessed: true
     photo.variant :thumb, resize_to_fill: [ 160, 160 ]# , preprocessed: true
@@ -104,6 +105,13 @@ class Issue < ApplicationRecord
   scope :searchable, -> { publicly_visible.not_archived }
 
   scope :resolution_process, -> { where.not(resolution_external_id: nil) }
+
+  scope :discussion_open, -> do
+    not_archived
+      .where(discussion_closed: false)
+      .where.not(state: Issues::State.find_by!(key: "archived"))
+  end
+  scope :accepting_updates, -> { discussion_open.resolution_process }
 
   before_save :recalculate_computed_fields
   after_update :notify_subscribers
@@ -161,6 +169,14 @@ class Issue < ApplicationRecord
 
   def archived?
     state.key == "archived" || municipality&.archived? || responsible_subject&.archived?
+  end
+
+  def discussion_open?
+    !discussion_closed? && !archived?
+  end
+
+  def accepts_updates?
+    discussion_open? && resolution_process?
   end
 
   def resolved?
