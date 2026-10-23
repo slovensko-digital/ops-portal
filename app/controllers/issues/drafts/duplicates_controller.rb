@@ -1,7 +1,8 @@
 class Issues::Drafts::DuplicatesController < ApplicationController
+  include Issues::DraftScoped
+
   before_action :require_full_access_user
   before_action :ensure_citizen
-  include Issues::DraftScoped
   before_action :set_issue, only: [ :show, :update ]
   before_action :check_rate_limit, only: [ :show, :update ]
 
@@ -18,7 +19,7 @@ class Issues::Drafts::DuplicatesController < ApplicationController
   end
 
   def update
-    @update = @draft.submit_as_update_of(@issue, **update_params)
+    @update = @draft.submit_as_update_of(@issue, text: update_params[:text], attachments: update_params[:attachments].to_a)
 
     if @update.persisted?
       Issues::SyncEditableActivityToTriageJob.perform_later(@update, sync_job: SyncIssueActivityObjectToTriageJob)
@@ -36,7 +37,7 @@ class Issues::Drafts::DuplicatesController < ApplicationController
   end
 
   def update_params
-    params.expect(issues_update: [ :text, attachments: [] ]).to_h.symbolize_keys.reverse_merge(text: nil, attachments: [])
+    params.expect(issues_update: [ :text, attachments: [] ])
   end
 
   def check_rate_limit
