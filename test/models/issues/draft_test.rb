@@ -102,16 +102,30 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert_not draft.errors.added?(:base, :duplicates_nearby)
   end
 
-  test "stored duplicates are reset when the location or category changes" do
+  test "stored duplicates and the decision to ignore them are reset when the location or category changes" do
     draft = draft_near(issues(:sent_to_responsible))
-    draft.update!(last_duplicate_ids: [ issues(:sent_to_responsible).id ])
+    draft.save!
+    draft.update!(last_duplicate_ids: [ issues(:sent_to_responsible).id ], duplicates_shown: true)
 
     draft.update!(latitude: 48.1633)
     assert_nil draft.last_duplicate_ids
+    assert_not draft.duplicates_shown
 
-    draft.update!(last_duplicate_ids: [ issues(:sent_to_responsible).id ])
+    draft.update!(last_duplicate_ids: [ issues(:sent_to_responsible).id ], duplicates_shown: true)
     draft.update!(category: nil)
     assert_nil draft.last_duplicate_ids
+    assert_not draft.duplicates_shown
+  end
+
+  test "stored duplicates and the decision to ignore them survive changes unrelated to duplicates" do
+    draft = draft_near(issues(:sent_to_responsible))
+    draft.save!
+    draft.update!(last_duplicate_ids: [ issues(:sent_to_responsible).id ], duplicates_shown: true)
+
+    draft.update!(title: "Graffiti na skrini")
+
+    assert_equal [ issues(:sent_to_responsible).id ], draft.last_duplicate_ids
+    assert draft.duplicates_shown
   end
 
   test "similar_around ignores issues without a photo" do
@@ -122,13 +136,15 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert_not_includes draft.similar_around, issue
   end
 
-  test "reset_duplicates! clears the stored duplicates" do
+  test "reset_duplicates! clears the stored duplicates and the decision to ignore them" do
     draft = draft_near(issues(:sent_to_responsible))
-    draft.update!(last_duplicate_ids: [ issues(:sent_to_responsible).id ])
+    draft.save!
+    draft.update!(last_duplicate_ids: [ issues(:sent_to_responsible).id ], duplicates_shown: true)
 
     draft.reset_duplicates!
 
     assert_nil draft.reload.last_duplicate_ids
+    assert_not draft.duplicates_shown
   end
 
   test "detect_duplicates! stores the issues around whose photos Gemini marks as duplicates" do

@@ -198,6 +198,7 @@ class Issues::Draft < ApplicationRecord
 
   def reset_duplicates
     self.last_duplicate_ids = nil
+    self.duplicates_shown = false
   end
 
   def reset_duplicates!
