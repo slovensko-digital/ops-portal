@@ -26,7 +26,7 @@
 #  duplicates_shown        :boolean          default(FALSE), not null
 #  last_duplicate_ids      :bigint           is an Array
 #  latitude                :float
-#  latlon_from_exif        :boolean          default(FALSE)
+#  latlon_from_exif        :boolean          default(FALSE), not null
 #  longitude               :float
 #  picked_suggestion_index :integer
 #  submitted               :boolean          default(FALSE), not null

@@ -2,5 +2,17 @@
 _fixture:
   model_class: ResponsibleSubjects::Type
 
-one:
+city_district:
   name: Mestská časť
+  active: true
+  legacy_id: 1
+
+city:
+  name: Mesto
+  active: true
+  legacy_id: 2
+
+other:
+  name: Iný subjekt
+  active: true
+  legacy_id: 3

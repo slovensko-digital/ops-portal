@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "slovensko-digital": {
+      "source": {
+        "source": "github",
+        "repo": "slovensko-digital/skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "dev@slovensko-digital": true
+  }
+}

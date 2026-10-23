@@ -164,6 +164,10 @@ Rails.application.routes.draw do
 
   constraints(GoodJobAdmin) do
     mount GoodJob::Engine => "admin/good_job"
+
+    namespace :admin do
+      resources :municipality_boundaries, only: [ :index, :show ]
+    end
   end
 
   match "/404", to: "errors#render_404", via: :all

@@ -1,4 +1,5 @@
 # Loaded by annotaterb through `:require` in .annotaterb.yml.
+# Kept under lib/tasks so Rails does not autoload or eager load this extension.
 #
 # Overrides annotaterb's classified sort (id, columns, timestamps, foreign keys)
 # with our order:

@@ -8,12 +8,12 @@
 #  responsible_subject_id :bigint
 #  role_id                :bigint           not null
 #  email                  :string
-#  gdpr_accepted          :boolean
+#  gdpr_accepted          :boolean          default(FALSE), not null
 #  login                  :string
 #  name                   :string
 #  photo                  :string
 #  token                  :string
-#  tooltips               :boolean
+#  tooltips               :boolean          default(FALSE), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  deleted_at             :datetime

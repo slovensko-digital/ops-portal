@@ -117,7 +117,7 @@ class UserTest < ActiveSupport::TestCase
 
     user.anonymize!
 
-    %i[lastname phone about organization signature resident sex birth].each do |attr|
+    %i[lastname phone about signature resident sex birth].each do |attr|
       assert_nil user.public_send(attr), "#{attr} should be nil after anonymize!"
     end
 

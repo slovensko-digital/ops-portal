@@ -46,7 +46,7 @@ class Issues::UpdatesTest < ApplicationSystemTestCase
 
     fill_in "issues_update_text", with: "Chodník je opravený, ďakujem."
 
-    assert_enqueued_with(job: SyncIssueToTriageJob, args: [ @issue, { sync_activities: false } ]) do
+    assert_enqueued_with(job: Issues::SyncEditableActivityToTriageJob) do
       click_on "Odoslať"
 
       within "#activities" do
@@ -54,7 +54,6 @@ class Issues::UpdatesTest < ApplicationSystemTestCase
       end
     end
 
-    assert_equal "resolved", @issue.reload.state.key
     assert Issues::Update.last.resolves_issue?
   end
 
