@@ -46,10 +46,19 @@ Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the po
 so `bin/dev` has to be running for Triage changes to reach the portal.
 
 Only Bratislava (with its city parts) is seeded active. Banská Bystrica, Trnava, Nitra, Malacky and Pezinok
-and their responsible subjects are seeded inactive, so they can be activated the way production does it,
-in the portal and in Triage, with `responsible_subjects:activate_basic`
-([docs/how-it-works/08](docs/how-it-works/08-onboarding.md)). For it, `.env.sample` has the local Triage
-admin's `TRIAGE_ZAMMAD_ADMIN_API_TOKEN`, and `dobrovolnik@example.org` is the agent for `TRIAGE_ZAMMAD_AGENT_EMAIL`.
+and their responsible subjects are seeded inactive. Activate them the way production does it, in the portal
+and in Triage, with `responsible_subjects:activate_basic` ([docs/how-it-works/08](docs/how-it-works/08-onboarding.md)).
+`EXISTING_MUNICIPALITY=1` makes it use the seeded municipality instead of creating one. `.env.sample` has the
+local Triage admin's `TRIAGE_ZAMMAD_ADMIN_API_TOKEN`, and `dobrovolnik@example.org` is the volunteer:
+
+```bash
+bin/rails municipality_boundaries:import_all   # once after seeding, the activation needs the boundaries
+bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 NAME=Trnava \
+  USERS="podatelna@trnava.example.com, jan.novak@trnava.example.com" TRIAGE_ZAMMAD_AGENT_EMAIL=dobrovolnik@example.org
+```
+
+New issues in an activated municipality go to the volunteer's group in Triage. Its seeded issues stay only in
+the portal.
 
 Click-through:
 1. Create an issue in the portal (seeded issues are not in the local Triage).
@@ -57,7 +66,8 @@ Click-through:
 3. Work the ticket in Triage: change the state, add a public comment, change the responsible subject.
 4. The issue changes in the portal. Emails from Triage (e.g. to the new responsible subject) are in Mailpit.
 
-Keep both sides in sync: reset them together. A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on webhooks only when seeding.
+Keep both sides in sync: reset them together, then import the boundaries and activate the municipalities again.
+A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on webhooks only when seeding.
 
 ```
 cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
