@@ -29,13 +29,14 @@ Run the portal together with a local Triage to click through the whole flow. Clo
 
 First time:
 
-```
+```bash
 # Triage, the first start takes a few minutes (zammad-init)
 cd ../ops-triage-zammad && docker compose up -d --build
 
 # Portal, the Triage token and webhook secret in .env.sample already match the Triage ones
 cd ../ops-portal && cp .env.sample .env
 docker compose up -d && bin/setup --skip-server
+bin/activate-seeded-municipalities   # sets up the seeded municipalities in Triage, see below
 bin/dev
 ```
 
@@ -45,20 +46,21 @@ Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the po
 `host.docker.internal:3000` (webhooks signed with `WEBHOOK_SECRET`, responsible subject search),
 so `bin/dev` has to be running for Triage changes to reach the portal.
 
-Only Bratislava (with its city parts) is seeded active. Banská Bystrica, Trnava, Nitra, Malacky and Pezinok
-and their responsible subjects are seeded inactive. Activate them the way production does it, in the portal
-and in Triage, with `responsible_subjects:activate_basic` ([docs/how-it-works/08](docs/how-it-works/08-onboarding.md)).
-`EXISTING_MUNICIPALITY=1` makes it use the seeded municipality instead of creating one. `.env.sample` has the
-local Triage admin's `TRIAGE_ZAMMAD_ADMIN_API_TOKEN`, and `dobrovolnik@example.org` is the volunteer:
+`bin/setup` seeds the portal (`db:prepare` seeds a new database). Only Bratislava (with its city parts) is
+seeded active. Banská Bystrica, Trnava, Nitra, Malacky and Pezinok and their responsible subjects are seeded
+inactive. `bin/activate-seeded-municipalities` then runs, on the freshly seeded portal and a fresh Triage:
 
-```bash
-bin/rails municipality_boundaries:import_all   # once after seeding, the activation needs the boundaries
-bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 NAME=Trnava \
-  USERS="podatelna@trnava.example.com, jan.novak@trnava.example.com" TRIAGE_ZAMMAD_AGENT_EMAIL=dobrovolnik@example.org
-```
+1. a check that Triage is up, that `TRIAGE_ZAMMAD_ADMIN_API_TOKEN` (the local Triage admin's, in `.env.sample`)
+   works and that the portal has inactive municipalities. It asks for the token when it doesn't work.
+2. `bin/rails municipality_boundaries:import_all`, the activation finds the municipalities' boundaries by it.
+3. `bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 NAME=…` for every inactive
+   municipality, the way production onboards one ([docs/how-it-works/08](docs/how-it-works/08-onboarding.md)).
+   It creates the municipality's group, organization, 700 trigger and users
+   (`podatelna@<municipality>.example.com`, `jan.novak@<municipality>.example.com`) in Triage for the volunteer
+   `dobrovolnik@example.org`, then activates it.
 
-New issues in an activated municipality go to the volunteer's group in Triage. Its seeded issues stay only in
-the portal.
+New issues in an activated municipality go to the volunteer's group in Triage. The seeded issues stay only in
+the portal, the seeds don't send them to Triage.
 
 Click-through:
 1. Create an issue in the portal (seeded issues are not in the local Triage).
@@ -66,12 +68,12 @@ Click-through:
 3. Work the ticket in Triage: change the state, add a public comment, change the responsible subject.
 4. The issue changes in the portal. Emails from Triage (e.g. to the new responsible subject) are in Mailpit.
 
-Keep both sides in sync: reset them together, then import the boundaries and activate the municipalities again.
-A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on webhooks only when seeding.
+Keep both sides in sync: reset them together. A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on
+webhooks only when seeding.
 
-```
+```bash
 cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
-cd ../ops-portal && bin/rails db:seed:replant
+cd ../ops-portal && bin/rails db:seed:replant && bin/activate-seeded-municipalities
 ```
 
 ## Local Backoffice
