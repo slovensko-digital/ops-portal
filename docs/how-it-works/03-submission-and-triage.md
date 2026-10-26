@@ -55,13 +55,13 @@ matches, there is no fallback:
 - the ticket stays in group `Incoming` with no owner and no RS,
 - volunteers don't have `Incoming` access, so they can't see it
   **(observed: "You are not authorized to open this Tiket")**,
-- locally even `example@example.org` (Admin) lacks `Incoming` group access;
+- locally even `admin@example.org` (Admin) lacks `Incoming` group access;
   only the portal tech account has it,
 - the portal shows the issue as `waiting` to the author indefinitely, and no
   one is notified.
 
 This hits every active municipality without a 700 rule (locally:
-Bratislava, Trnava, Nitra, Banská Bystrica, Malacky, Pezinok), city parts
+Bratislava, the other seeded municipalities are inactive), city parts
 (`Mesto::Časť` tree values never equal `[Obec]`), and any typo or rename.
 Who watches `Incoming` in production, and which rules (e.g. 750) cover
 PRO cities, is not visible from the repos.

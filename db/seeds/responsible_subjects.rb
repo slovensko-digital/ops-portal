@@ -61,7 +61,10 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
     rs.municipality = municipality
     rs.municipality_district = municipality_district
     rs.email = "#{data[:subject_name].parameterize}@not-existing-domain.com"
-    rs.active = true
-    rs.pro = true
+    # the responsible subject of an inactive municipality waits for responsible_subjects:activate_basic,
+    # which activates it as BASIC
+    waiting_for_activation = municipality.present? && !municipality.active?
+    rs.active = !waiting_for_activation
+    rs.pro = !waiting_for_activation
   end.save!
 end

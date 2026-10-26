@@ -23,7 +23,7 @@ Run the portal together with a local Triage to click through the whole flow. Clo
 | What | URL |
 |---|---|
 | Portal | http://localhost:3000 (GoodJob: `/admin/good_job`) |
-| Triage | http://localhost:8080, `example@example.org` / `PASSword123` |
+| Triage | http://localhost:8080, `admin@example.org` / `PASSword123`, volunteer `dobrovolnik@example.org` / `PASSword123` |
 | Triage emails | http://localhost:8025 (Mailpit), every email Triage sends, e.g. trigger emails to responsible subjects |
 | Portal emails | http://localhost:3000/letter_opener |
 
@@ -44,6 +44,12 @@ Every day: `docker compose up -d` in `ops-triage-zammad`, `bin/dev` here.
 Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the portal at
 `host.docker.internal:3000` (webhooks signed with `WEBHOOK_SECRET`, responsible subject search),
 so `bin/dev` has to be running for Triage changes to reach the portal.
+
+Only Bratislava (with its city parts) is seeded active. Banská Bystrica, Trnava, Nitra, Malacky and Pezinok
+and their responsible subjects are seeded inactive, so they can be activated the way production does it,
+in the portal and in Triage, with `responsible_subjects:activate_basic`
+([docs/how-it-works/08](docs/how-it-works/08-onboarding.md)). For it, `.env.sample` has the local Triage
+admin's `TRIAGE_ZAMMAD_ADMIN_API_TOKEN`, and `dobrovolnik@example.org` is the agent for `TRIAGE_ZAMMAD_AGENT_EMAIL`.
 
 Click-through:
 1. Create an issue in the portal (seeded issues are not in the local Triage).
