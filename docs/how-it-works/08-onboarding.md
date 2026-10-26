@@ -59,6 +59,8 @@ the same. `BOUNDARY_ID` and `DISTRICT` default to the municipality's own. It
 refuses an active or archived municipality, a missing or active RS, and an
 RS that already has a Triage user. The municipality's seeded issues are not
 sent to Triage.
+`bin/activate-seeded-municipalities` runs it for every seeded inactive
+municipality, see "Local Triage" in the README.
 
 ## PRO municipality: Backoffice
 
