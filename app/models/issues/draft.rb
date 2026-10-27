@@ -166,7 +166,8 @@ class Issues::Draft < ApplicationRecord
   private
 
   def photos_allowed_content_type
-    errors.add(:photos, :invalid_content) if photos.any? { |file| !file.content_type.in?(UploadsController::ALLOWED_CONTENT_TYPES) }
+    errors.add(:photos, :invalid_content) if photos.any? { |file| !file.content_type.in?(UploadsController::ALLOWED_CONTENT_TYPES) } ||
+      !ImageFile.new_attachments_readable?(self, :photos)
   end
 
   def latlon_present

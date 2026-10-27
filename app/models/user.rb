@@ -217,7 +217,7 @@ class User < ApplicationRecord
   end
 
   def avatar_content_type_allowed
-    unless avatar.content_type.in?(ALLOWED_AVATAR_CONTENT_TYPES)
+    unless avatar.content_type.in?(ALLOWED_AVATAR_CONTENT_TYPES) && ImageFile.new_attachments_readable?(self, :avatar)
       errors.add(:avatar, :invalid_content_type)
     end
   end

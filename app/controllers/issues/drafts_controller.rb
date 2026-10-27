@@ -33,7 +33,14 @@ class Issues::DraftsController < ApplicationController
   end
 
   def update
-    @draft.photos.attach(draft_params[:photos])
+    photos = draft_params[:photos].to_a.compact_blank
+    # attach stores the files right away, before the photos_step validation could reject them
+    unless photos.all? { |photo| ImageFile.readable?(photo) }
+      @draft.errors.add(:photos, :invalid_content)
+      return render :new, status: :unprocessable_entity
+    end
+
+    @draft.photos.attach(photos)
     if @draft.save(context: :photos_step)
       redirect_to edit_issues_draft_path(@draft, next: params[:next])
     else

@@ -5,7 +5,7 @@ class UploadsController < ApplicationController
 
   def create
     new_blobs = params[:new_files].filter_map do |file|
-      next unless file.content_type.in?(ALLOWED_CONTENT_TYPES)
+      next unless file.content_type.in?(ALLOWED_CONTENT_TYPES) && ImageFile.readable?(file)
 
       file = convert_to_supported_format(file)
 

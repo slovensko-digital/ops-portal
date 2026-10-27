@@ -47,6 +47,10 @@ Consequences:
 On T-tickets every public agent article becomes `AgentPrivateComment`, and
 no tags are needed.
 
+Article attachments are copied to the portal comment. A file that looks like
+an image but vips can't read is stored as a plain file (link, no thumbnail)
+instead of being dropped (`Triage::CreateNewPortalActivityFromTriageJob`).
+
 The default note box in Triage is **internal** (observed). A volunteer who
 forgets to switch it to public writes something nobody but Triage sees.
 
