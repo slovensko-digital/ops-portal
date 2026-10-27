@@ -54,7 +54,8 @@ class Legacy::RedirectsController < ApplicationController
   end
 
   def show_user
-    user = User.find_by!(legacy_id: params[:legacy_id])
+    user = User.find_by(legacy_id: params[:legacy_id])
+    return render "errors/render_404", status: :not_found unless user
 
     redirect_to user_path(user)
   end
