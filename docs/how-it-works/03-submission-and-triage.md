@@ -4,11 +4,11 @@
 
 Preconditions: logged in, phone verified (`full_access?`), onboarded, under
 `USER_ISSUE_CREATION_MONTHLY_LIMIT` (default 10 per month)
-(`app/controllers/issues/drafts_controller.rb:2-4,64-66`).
+(`app/controllers/issues/drafts_controller.rb:4-6,66-68`).
 
 ```mermaid
 flowchart TD
-  A[/dopyty/novy-dopyt/podnet or /otazka/] --> B[Photos: POST novy-dopyt<br/>draft saved, GenerateSuggestionsJob - Gemini]
+  A[/dopyty/novy-dopyt/podnet or /otazka/] --> B[Photos: POST novy-dopyt<br/>HEIC/HEIF converted to JPEG,<br/>draft saved, GenerateSuggestionsJob - Gemini]
   B --> C[Geo: map / search / GPS / EXIF<br/>zoom must be > 14]
   C -->|FetchAddressDetailsJob - Nominatim| D[Suggestions: AI title + category,<br/>or own title]
   D --> E[Category → Subcategory → Subtype]
