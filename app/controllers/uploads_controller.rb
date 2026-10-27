@@ -41,7 +41,7 @@ class UploadsController < ApplicationController
   end
 
   def convert_to_jpg(file)
-    tempfile = ImageProcessing::MiniMagick
+    tempfile = ImageProcessing::Vips
                  .source(file)
                  .convert("jpg")
                  .call
