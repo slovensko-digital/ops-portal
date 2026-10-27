@@ -1,4 +1,6 @@
 class UploadsController < ApplicationController
+  include ConvertsHeicUploads
+
   ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic image/heif]
 
   def create
@@ -28,28 +30,5 @@ class UploadsController < ApplicationController
 
   def destroy
     @blobs = params[:blobs]
-  end
-
-  def convert_to_supported_format(file)
-    return file unless convert_to_jpg?(file)
-
-    convert_to_jpg(file)
-  end
-
-  def convert_to_jpg?(file)
-    file.content_type.match?(%r{image/(heic|heif)}i)
-  end
-
-  def convert_to_jpg(file)
-    tempfile = ImageProcessing::MiniMagick
-                 .source(file)
-                 .convert("jpg")
-                 .call
-
-    ActionDispatch::Http::UploadedFile.new(
-      tempfile: tempfile,
-      filename: "#{::File.basename(file.original_filename, '.*')}.jpg",
-      type: "image/jpeg"
-    )
   end
 end

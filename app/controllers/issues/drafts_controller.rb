@@ -1,4 +1,6 @@
 class Issues::DraftsController < ApplicationController
+  include ConvertsHeicUploads
+
   before_action :require_full_access_user
   before_action :ensure_user_onboarded
   before_action :check_rate_limit, only: [ :new, :new_question, :create ]
@@ -66,7 +68,9 @@ class Issues::DraftsController < ApplicationController
   end
 
   def draft_params
-    params.expect(issues_draft: [ :issue_type, { photos: [] } ])
+    params.expect(issues_draft: [ :issue_type, { photos: [] } ]).tap do |permitted|
+      permitted[:photos] = permitted[:photos]&.map { |photo| convert_to_supported_format(photo) }
+    end
   end
 
   def load_draft
