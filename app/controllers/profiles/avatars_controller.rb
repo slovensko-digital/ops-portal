@@ -11,6 +11,8 @@ class Profiles::AvatarsController < ApplicationController
   private
 
   def avatar_params
-    params.require(:user).permit(:avatar)
+    params.require(:user).permit(:avatar).tap do |permitted|
+      permitted[:avatar] = ImageUpload.normalize(permitted[:avatar]) if permitted[:avatar]
+    end
   end
 end

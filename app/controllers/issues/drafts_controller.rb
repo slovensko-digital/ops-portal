@@ -1,6 +1,4 @@
 class Issues::DraftsController < ApplicationController
-  include ConvertsHeicUploads
-
   before_action :require_full_access_user
   before_action :ensure_user_onboarded
   before_action :check_rate_limit, only: [ :new, :new_question, :create ]
@@ -33,17 +31,13 @@ class Issues::DraftsController < ApplicationController
   end
 
   def update
-    photos = draft_params[:photos].to_a.compact_blank
-    # attach stores the files right away, before the photos_step validation could reject them
-    unless photos.all? { |photo| ImageFile.readable?(photo) }
-      @draft.errors.add(:photos, :invalid_content)
-      return render :new, status: :unprocessable_entity
-    end
-
-    @draft.photos.attach(photos)
+    # assigned instead of attached: attach would store the files before validation could reject them
+    @draft.photos = @draft.photos.blobs + draft_params[:photos].to_a.compact_blank
     if @draft.save(context: :photos_step)
       redirect_to edit_issues_draft_path(@draft, next: params[:next])
     else
+      # drops the rejected files, which were never stored; the errors stay
+      @draft.reload
       render :new, status: :unprocessable_entity
     end
   end
@@ -76,7 +70,7 @@ class Issues::DraftsController < ApplicationController
 
   def draft_params
     params.expect(issues_draft: [ :issue_type, { photos: [] } ]).tap do |permitted|
-      permitted[:photos] = permitted[:photos]&.map { |photo| convert_to_supported_format(photo) }
+      permitted[:photos] = permitted[:photos]&.map { |photo| ImageUpload.normalize(photo) }
     end
   end
 

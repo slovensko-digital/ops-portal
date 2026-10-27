@@ -28,7 +28,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
         activity: issue.comment_activities.create!,
       )
       article[:attachments].each do |attachment|
-        comment.attachments.attach(attachable_from(attachment))
+        comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
       end
 
     when "portal_issue_resolution"
@@ -43,7 +43,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
           responsible_subject_author: article[:author]
         )
         article[:attachments].each do |attachment|
-          comment.attachments.attach(attachable_from(attachment))
+          comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
         end
       elsif [ :agent_portal_comment, :agent_portal_and_backoffice_comment ].include?(article[:article_type])
         comment = Issues::AgentComment.create!(
@@ -52,7 +52,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
           activity: issue.comment_activities.create!
         )
         article[:attachments].each do |attachment|
-          comment.attachments.attach(attachable_from(attachment))
+          comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
         end
       end
     when "portal_issue_verification"
@@ -60,22 +60,6 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
     else
       # TODO add support for other process types
       raise "Process type not yet supported: #{process_type}"
-    end
-  end
-
-  private
-
-  # An operator's file is never dropped. One that looks like an image but vips can't read
-  # is stored as a plain file, so the portal links to it instead of rendering a broken thumbnail.
-  def attachable_from(attachment)
-    io = StringIO.new(Base64.strict_decode64(attachment[:data64]))
-    content_type = Marcel::MimeType.for(io, name: attachment[:filename])
-    io.rewind
-
-    if ActiveStorage.variable_content_types.include?(content_type) && !ImageFile.readable?(io)
-      { io: io, filename: attachment[:filename], content_type: "application/octet-stream", identify: false }
-    else
-      { io: io, filename: attachment[:filename] }
     end
   end
 end

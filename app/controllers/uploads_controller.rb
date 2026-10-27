@@ -1,19 +1,10 @@
 class UploadsController < ApplicationController
-  include ConvertsHeicUploads
-
-  ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic image/heif]
-
   def create
     new_blobs = params[:new_files].filter_map do |file|
-      next unless file.content_type.in?(ALLOWED_CONTENT_TYPES) && ImageFile.readable?(file)
+      next unless ImageUpload.image?(file, file.original_filename)
 
-      file = convert_to_supported_format(file)
-
-      ActiveStorage::Blob.create_and_upload!(
-        io: file,
-        filename: file.original_filename,
-        content_type: file.content_type,
-      )
+      file = ImageUpload.normalize(file)
+      ActiveStorage::Blob.create_and_upload!(io: file, filename: file.original_filename)
     end
     old_blobs = params.fetch(:blobs, []).map { |signed_id| ActiveStorage::Blob.find_signed(signed_id) }
     @blobs = old_blobs + new_blobs
