@@ -43,7 +43,7 @@ Rails.application.routes.draw do
     resources :issues_responsible_subject_changes, path: "odstupenie", module: :issues
 
     resources :issues_updates, path: "aktualizacie", module: :issues, controller: "issues_updates"
-    get :geo, on: :collection
+    get :geo, on: :collection, defaults: { format: :json }
   end
 
 
