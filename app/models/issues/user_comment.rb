@@ -38,6 +38,12 @@ class Issues::UserComment < Issues::Comment
     user_author
   end
 
+  def triage_activity_body
+    return "Automaticky skrytý komentár: #{text}" if hidden && ai_evaluation.present?
+
+    super
+  end
+
   def visible?
     !hidden
   end

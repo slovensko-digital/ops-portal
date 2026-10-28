@@ -41,7 +41,7 @@ content. If the score is at least `COMMENT_AUTO_HIDE_THRESHOLD` (default
 skrytý." in its place.
 
 A hidden comment reaches Triage as an **internal** article with the body
-`Zmazaný komentár: …`, so it never reaches the RS email or Backoffice. A
+`Automaticky skrytý komentár: …`, so it never reaches the RS email or Backoffice. A
 volunteer who makes the article public unhides it on the portal
 (`UpdatePortalActivityFromTriageJob`).
 
