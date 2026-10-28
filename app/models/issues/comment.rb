@@ -50,6 +50,10 @@ class Issues::Comment < ApplicationRecord
     false
   end
 
+  def hidden_reason
+    nil
+  end
+
   def editable_by?(user)
     false
   end

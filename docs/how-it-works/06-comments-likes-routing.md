@@ -38,7 +38,8 @@ When the editing window closes, `SyncEditableActivityToTriageJob` runs
 then enqueues the Triage sync. AI scores the comment for inappropriate
 content. If the score is at least `COMMENT_AUTO_HIDE_THRESHOLD` (default
 0.9), the comment is hidden. The portal then shows "Tento komentár bol
-skrytý." in its place.
+skrytý." in its place, with "Dôvod: …" (the reason from the AI evaluation)
+on a separate line. A comment hidden in Triage shows no reason.
 
 A hidden comment reaches Triage as an **internal** article with the body
 `Automaticky skrytý komentár: …`, so it never reaches the RS email or Backoffice. A

@@ -6,20 +6,21 @@ class Issues::ModerateCommentJob < ApplicationJob
     Rollbar.error(error)
   end
 
+  def self.hide?(evaluation)
+    evaluation["overall_score"].to_f >= ENV.fetch("COMMENT_AUTO_HIDE_THRESHOLD", 0.9).to_f
+  end
+
   def perform(comment)
     return if comment.text.blank? || comment.ai_evaluation.present?
 
     evaluation = llm_evaluate_comment(comment)
     return unless evaluation.is_a?(Hash)
 
-    score = evaluation["overall_score"].to_f
-    threshold = ENV.fetch("COMMENT_AUTO_HIDE_THRESHOLD", 0.9).to_f
-
     comment.ai_evaluation = evaluation
 
     # hidden is shared with triage: the comment syncs as an internal
     # article and an agent can unhide it by making the article public
-    comment.hidden = true if score >= threshold
+    comment.hidden = true if self.class.hide?(evaluation)
 
     comment.save!
   end

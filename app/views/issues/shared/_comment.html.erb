@@ -12,7 +12,10 @@
     <div class="date"><%= l comment.created_at.to_date %></div>
     <% if comment.hidden? %>
       <div class="comment-hidden-notice">
-        Tento komentár bol skrytý.
+        <div>Tento komentár bol skrytý.</div>
+        <% if comment.hidden_reason %>
+          <div>Dôvod: <%= comment.hidden_reason %></div>
+        <% end %>
       </div>
     <% else %>
       <% if comment.text.present? %>

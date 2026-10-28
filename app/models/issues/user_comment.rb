@@ -39,9 +39,17 @@ class Issues::UserComment < Issues::Comment
   end
 
   def triage_activity_body
-    return "Automaticky skrytý komentár: #{text}" if hidden && ai_evaluation.present?
+    return "Automaticky skrytý komentár: #{text}" if auto_hidden?
 
     super
+  end
+
+  def auto_hidden?
+    hidden && ai_evaluation.present? && Issues::ModerateCommentJob.hide?(ai_evaluation)
+  end
+
+  def hidden_reason
+    ai_evaluation["reason"].presence if auto_hidden?
   end
 
   def visible?

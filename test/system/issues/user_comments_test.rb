@@ -44,4 +44,28 @@ class Issues::UserCommentsTest < ApplicationSystemTestCase
     assert_text "Diskusia k tomuto podnetu bola uzatvorená"
     assert_no_text "Pridať komentár"
   end
+
+  test "comment hidden by AI moderation shows the reason instead of its text" do
+    comment = issues_comments(:two_comment1)
+    comment.update!(text: "test comment", hidden: true, ai_evaluation: { "overall_score" => 0.95, "reason" => "Komentár obsahuje urážku." })
+
+    visit issue_path(comment.issue)
+
+    within "#komentar_#{comment.id}" do
+      assert_text "Tento komentár bol skrytý.\nDôvod: Komentár obsahuje urážku."
+      assert_no_text "test comment"
+    end
+  end
+
+  test "comment hidden in triage shows no reason" do
+    comment = issues_comments(:two_comment1)
+    comment.update!(text: "test comment", hidden: true, ai_evaluation: { "overall_score" => 0.1, "reason" => "Komentár je v poriadku." })
+
+    visit issue_path(comment.issue)
+
+    within "#komentar_#{comment.id}" do
+      assert_text "Tento komentár bol skrytý."
+      assert_no_text "Dôvod"
+    end
+  end
 end
