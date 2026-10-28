@@ -55,7 +55,7 @@
                 </svg>
               <% end %>
               <picture>
-                <% image = photo.content_type.in?(UploadsController::ALLOWED_CONTENT_TYPES) ? photo.variant(:square) : 'otazka-znacka.png' %>
+                <% image = photo.content_type.in?(ImageUpload::CONTENT_TYPES) ? photo.variant(:square) : 'otazka-znacka.png' %>
                 <%= image_tag image, alt: "Uploaded photo" %>
               </picture>
             </figure>

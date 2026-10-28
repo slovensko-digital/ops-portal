@@ -128,6 +128,10 @@ Rails.application.routes.draw do
 
   get "email-auth-request", to: "rodauth#email_auth_request", as: :email_auth_request
 
+  # We never use Active Storage direct uploads. The route trusts the client's content type,
+  # so it let anyone store arbitrary files as images in our bucket.
+  post "rails/active_storage/direct_uploads", to: ->(_env) { [ 404, {}, [] ] }
+
   # legacy urls redirects
   get "r/login", to:  redirect("/login")
   get "r/vsetky-podnety", to: redirect("/dopyty")

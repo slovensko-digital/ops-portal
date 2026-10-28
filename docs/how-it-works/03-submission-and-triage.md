@@ -8,7 +8,7 @@ Preconditions: logged in, phone verified (`full_access?`), onboarded, under
 
 ```mermaid
 flowchart TD
-  A[/dopyty/novy-dopyt/podnet or /otazka/] --> B[Photos: POST novy-dopyt<br/>HEIC/HEIF converted to JPEG,<br/>draft saved, GenerateSuggestionsJob - Gemini]
+  A[/dopyty/novy-dopyt/podnet or /otazka/] --> B[Photos: POST novy-dopyt<br/>HEIC/HEIF converted to JPEG,<br/>files vips can't read rejected,<br/>draft saved, GenerateSuggestionsJob - Gemini]
   B --> C[Geo: map / search / GPS / EXIF<br/>zoom must be > 14]
   C -->|FetchAddressDetailsJob - Nominatim| D[Suggestions: AI title + category,<br/>or own title]
   D --> E[Category → Subcategory → Subtype]
