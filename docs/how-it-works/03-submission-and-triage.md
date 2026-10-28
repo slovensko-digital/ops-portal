@@ -4,11 +4,11 @@
 
 Preconditions: logged in, phone verified (`full_access?`), onboarded, under
 `USER_ISSUE_CREATION_MONTHLY_LIMIT` (default 10 per month)
-(`app/controllers/issues/drafts_controller.rb:2-4,64-66`).
+(`app/controllers/issues/drafts_controller.rb:4-6,66-68`).
 
 ```mermaid
 flowchart TD
-  A[/dopyty/novy-dopyt/podnet or /otazka/] --> B[Photos: POST novy-dopyt<br/>draft saved, GenerateSuggestionsJob - Gemini]
+  A[/dopyty/novy-dopyt/podnet or /otazka/] --> B[Photos: POST novy-dopyt<br/>HEIC/HEIF converted to JPEG,<br/>files vips can't read rejected,<br/>draft saved, GenerateSuggestionsJob - Gemini]
   B --> C[Geo: map / search / GPS / EXIF<br/>zoom must be > 14]
   C -->|FetchAddressDetailsJob - Nominatim| D[Suggestions: AI title + category,<br/>or own title]
   D --> E[Category → Subcategory → Subtype]
@@ -55,13 +55,13 @@ matches, there is no fallback:
 - the ticket stays in group `Incoming` with no owner and no RS,
 - volunteers don't have `Incoming` access, so they can't see it
   **(observed: "You are not authorized to open this Tiket")**,
-- locally even `example@example.org` (Admin) lacks `Incoming` group access;
+- locally even `admin@example.org` (Admin) lacks `Incoming` group access;
   only the portal tech account has it,
 - the portal shows the issue as `waiting` to the author indefinitely, and no
   one is notified.
 
 This hits every active municipality without a 700 rule (locally:
-Bratislava, Trnava, Nitra, Banská Bystrica, Malacky, Pezinok), city parts
+Bratislava, the other seeded municipalities are inactive), city parts
 (`Mesto::Časť` tree values never equal `[Obec]`), and any typo or rename.
 Who watches `Incoming` in production, and which rules (e.g. 750) cover
 PRO cities, is not visible from the repos.

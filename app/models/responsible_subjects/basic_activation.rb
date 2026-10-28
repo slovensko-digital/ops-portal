@@ -12,6 +12,10 @@
 #     the others are customers replying to issues,
 #   - portal: activates the municipality and the responsible subject.
 # Triage changes cannot be rolled back, a failure in the middle leaves the steps already done in place.
+#
+# use_existing_municipality: true, for local development only, activates the inactive municipality and responsible
+# subject named NAME that the dev seeds create instead of creating them. The boundary and the district default to
+# the municipality's own. The municipality's issues stay only in the portal, they are not sent to Triage.
 class ResponsibleSubjects::BasicActivation
   class Invalid < StandardError; end
 
@@ -25,7 +29,8 @@ class ResponsibleSubjects::BasicActivation
 
   attr_reader :name, :district_name, :user_emails, :triage_agent_email
 
-  def initialize(boundary_id:, name:, district_name:, user_emails:, triage_agent_email:, client:, log: ->(_message) { })
+  def initialize(boundary_id:, name:, district_name:, user_emails:, triage_agent_email:, client:, use_existing_municipality: false, log: ->(_message) { })
+    @use_existing_municipality = use_existing_municipality
     @boundary_id = boundary_id
     @name = name.to_s.strip
     @district_name = district_name.to_s.strip
@@ -43,7 +48,7 @@ class ResponsibleSubjects::BasicActivation
   def call
     validate!
 
-    municipality, responsible_subject = create_portal_records
+    municipality, responsible_subject = @use_existing_municipality ? prepare_existing_portal_records : create_portal_records
     responsible_subject.update!(external_id: @client.create_responsible_subject!(responsible_subject))
     @log.call("Triage: responsible subject user #{responsible_subject.external_id}")
 
@@ -76,11 +81,19 @@ class ResponsibleSubjects::BasicActivation
   end
 
   def boundary
-    @boundary ||= MunicipalityBoundary.find_by(id: @boundary_id)
+    @boundary ||= if @boundary_id.blank? && @use_existing_municipality
+      MunicipalityBoundary.municipalities.find_by(municipality: existing_municipality) if existing_municipality
+    else
+      MunicipalityBoundary.find_by(id: @boundary_id)
+    end
   end
 
   def district
-    @district ||= District.where("lower(name) = lower(?)", district_name).first if district_name.present?
+    @district ||= if district_name.blank? && @use_existing_municipality
+      existing_municipality&.district
+    elsif district_name.present?
+      District.where("lower(name) = lower(?)", district_name).first
+    end
   end
 
   def agent
@@ -119,15 +132,19 @@ class ResponsibleSubjects::BasicActivation
     end
     errors << "USERS contains duplicate emails" if user_emails.map(&:downcase).uniq.size < user_emails.size
 
-    if boundary.nil?
+    if boundary.nil? && @boundary_id.blank? && @use_existing_municipality
+      errors << "Municipality #{name} has no boundary, run municipality_boundaries:import_all or pass BOUNDARY_ID" if existing_municipality
+    elsif boundary.nil?
       errors << "Municipality boundary #{@boundary_id.inspect} does not exist, find it in /admin/municipality_boundaries"
     elsif boundary.boundary_kind != "municipality"
       errors << "Municipality boundary #{boundary.id} is a #{boundary.boundary_kind}, only municipality boundaries are supported"
-    elsif boundary.municipality.present?
+    elsif boundary.municipality.present? && !(@use_existing_municipality && boundary.municipality == existing_municipality)
       errors << "Municipality boundary #{boundary.id} already belongs to municipality #{boundary.municipality.name} (#{boundary.municipality_id})"
     end
 
-    if name.present?
+    if name.present? && @use_existing_municipality
+      errors.concat(existing_municipality_errors)
+    elsif name.present?
       Municipality.where(name: name).find_each do |municipality|
         errors << "Municipality #{name} already exists (#{municipality.id}, active: #{municipality.active}, archived: #{municipality.archived}), " \
                   "activating it needs its archived issues restored, which this task does not do"
@@ -173,6 +190,44 @@ class ResponsibleSubjects::BasicActivation
     end
 
     errors
+  end
+
+  def existing_municipality_errors
+    return [ "Municipality #{name} does not exist, EXISTING_MUNICIPALITY activates only an existing one" ] unless existing_municipality
+
+    errors = []
+    errors << "Municipality #{name} is already active" if existing_municipality.active?
+    errors << "Municipality #{name} is archived" if existing_municipality.archived?
+    if district && existing_municipality.district != district
+      errors << "Municipality #{name} is in district #{existing_municipality.district&.name}, not #{district.name}"
+    end
+
+    if existing_responsible_subject.nil?
+      errors << "Responsible subject #{name} of municipality #{name} does not exist"
+    else
+      errors << "Responsible subject #{name} is already active" if existing_responsible_subject.active?
+      errors << "Responsible subject #{name} already has Triage user #{existing_responsible_subject.external_id}" if existing_responsible_subject.external_id.present?
+    end
+
+    errors
+  end
+
+  def existing_municipality
+    @existing_municipality ||= Municipality.find_by(name: name) if name.present?
+  end
+
+  def existing_responsible_subject
+    @existing_responsible_subject ||= ResponsibleSubject.find_by(subject_name: name, municipality: existing_municipality, municipality_district: nil) if existing_municipality
+  end
+
+  def prepare_existing_portal_records
+    ActiveRecord::Base.transaction do
+      boundary.update!(municipality: existing_municipality)
+      existing_responsible_subject.update!(email: email, pro: false)
+      @log.call("Portal: existing municipality #{existing_municipality.id} and responsible subject #{existing_responsible_subject.id}, both inactive")
+
+      [ existing_municipality, existing_responsible_subject ]
+    end
   end
 
   def create_portal_records

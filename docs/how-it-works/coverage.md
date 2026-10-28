@@ -54,7 +54,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | triage: volunteer rejects | yes | system note + `issue_rejected` mail; T not closed |
 | triage: volunteer requests supplement | yes (observed) | expect 2 emails today ([ops#1328](https://github.com/slovensko-digital/ops/issues/1328)) |
 | triage: volunteer accepts (+ RS before) | yes (observed) | RS + "Finálny text" required; R created, T closed, RS email, `issue_accepted` |
-| triage admin: onboard municipality | yes (`activate_basic`) | only non-existing municipalities |
+| triage admin: onboard municipality | yes (`activate_basic`) | only non-existing municipalities; locally the seeded inactive ones with `EXISTING_MUNICIPALITY=1` |
 | triage admin: 7xx rules for RS / owner | 700 created by code; 750 hand-made | rule order is by name |
 | triage → portal: RS change / assignment | RS yes; owner/group **not mirrored** in the portal | |
 | portal → backoffice: RS change / assignment | RS via Triage → Connector; owner/group: no | Backoffice → Triage → portal hand-off observed ([ops#1333](https://github.com/slovensko-digital/ops/issues/1333), [ops#1348](https://github.com/slovensko-digital/ops/issues/1348)) |

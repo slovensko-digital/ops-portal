@@ -43,7 +43,7 @@ Rails.application.routes.draw do
     resources :issues_responsible_subject_changes, path: "odstupenie", module: :issues
 
     resources :issues_updates, path: "aktualizacie", module: :issues, controller: "issues_updates"
-    get :geo, on: :collection
+    get :geo, on: :collection, defaults: { format: :json }
   end
 
 
@@ -127,6 +127,10 @@ Rails.application.routes.draw do
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   get "email-auth-request", to: "rodauth#email_auth_request", as: :email_auth_request
+
+  # We never use Active Storage direct uploads. The route trusts the client's content type,
+  # so it let anyone store arbitrary files as images in our bucket.
+  post "rails/active_storage/direct_uploads", to: ->(_env) { [ 404, {}, [] ] }
 
   # legacy urls redirects
   get "r/login", to:  redirect("/login")

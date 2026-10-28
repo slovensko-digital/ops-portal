@@ -144,6 +144,61 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     assert_not_requested :post, zammad_url("users"), query: hash_including({})
   end
 
+  test "call with use_existing_municipality activates the existing inactive municipality and responsible subject" do
+    municipality, existing = create_inactive_municipality
+    stub_creation
+
+    responsible_subject = nil
+    assert_no_difference -> { Municipality.count } => 0, -> { ResponsibleSubject.count } => 0 do
+      responsible_subject = build_activation(use_existing_municipality: true, boundary_id: nil, district_name: nil).call
+    end
+
+    assert_equal existing, responsible_subject
+    assert_predicate municipality.reload, :active?
+    assert_predicate responsible_subject, :active?
+    assert_not responsible_subject.pro
+    assert_equal "starosta@nizna.sk", responsible_subject.email
+    assert_equal "58", responsible_subject.external_id
+    assert_requested :post, zammad_url("groups"), query: hash_including({}), body: hash_including("name" => "Nižná")
+    assert_requested :post, zammad_url("triggers"), body: hash_including(
+      "perform" => hash_including("ticket.responsible_subject" => { "value" => { "value" => existing.id, "label" => "Nižná" } })
+    )
+    assert_equal 3, User::ResponsibleSubject.where(responsible_subject: responsible_subject).count
+  end
+
+  test "call with use_existing_municipality links a boundary without a municipality" do
+    municipality, = create_inactive_municipality
+    municipality_boundaries(:unmatched_municipality).update!(municipality: nil)
+    stub_creation
+
+    build_activation(use_existing_municipality: true).call
+
+    assert_equal municipality, municipality_boundaries(:unmatched_municipality).reload.municipality
+  end
+
+  test "validate! with use_existing_municipality rejects a missing or active municipality or responsible subject" do
+    assert_invalid "Municipality Nižná does not exist, EXISTING_MUNICIPALITY activates only an existing one", use_existing_municipality: true
+
+    municipality, responsible_subject = create_inactive_municipality
+    responsible_subject.update!(active: true, external_id: "58")
+    municipality.update!(active: true)
+    error = assert_raises(ResponsibleSubjects::BasicActivation::Invalid) { build_activation(use_existing_municipality: true).validate! }
+    assert_includes error.message, "Municipality Nižná is already active"
+    assert_includes error.message, "Responsible subject Nižná is already active"
+    assert_includes error.message, "Responsible subject Nižná already has Triage user 58"
+
+    responsible_subject.destroy!
+    assert_invalid "Responsible subject Nižná of municipality Nižná does not exist", use_existing_municipality: true
+  end
+
+  test "validate! with use_existing_municipality rejects a boundary of another municipality or another district" do
+    create_inactive_municipality
+
+    assert_invalid "already belongs to municipality Trenčín", use_existing_municipality: true, boundary_id: municipality_boundaries(:trencin).id
+    assert_invalid "Municipality Nižná is in district #{districts(:za_kraj).name}, not Banskobystrický kraj",
+      use_existing_municipality: true, district_name: "Banskobystrický kraj"
+  end
+
   test "names_from_email splits meno.priezvisko, otherwise uses the municipality name as the last name" do
     activation = build_activation
 
@@ -164,6 +219,17 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
       client: @client,
       **overrides
     )
+  end
+
+  # what the dev seeds create, the boundary already matched by municipality_boundaries:import_all
+  def create_inactive_municipality
+    municipality = Municipality.create!(name: "Nižná", district: districts(:za_kraj), latitude: 48.5, longitude: 17.5, active: false)
+    municipality_boundaries(:unmatched_municipality).update!(municipality: municipality)
+    responsible_subject = ResponsibleSubject.create!(
+      subject_name: "Nižná", email: "nizna@not-existing-domain.com", municipality: municipality,
+      responsible_subjects_type: responsible_subjects_types(:city), pro: true, active: false
+    )
+    [ municipality, responsible_subject ]
   end
 
   def assert_invalid(message, **overrides)

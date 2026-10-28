@@ -160,7 +160,7 @@ class Issue < ApplicationRecord
   end
 
   def editable?
-    state.key == "waiting"
+    state.key.in? %w[waiting waiting_for_author]
   end
 
   def archived?
