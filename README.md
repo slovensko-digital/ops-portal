@@ -7,25 +7,61 @@ portal, Triage and Backoffice: the issue lifecycle, which action triggers what, 
 scheduled jobs, test coverage per flow, and the open issues that affect each flow.
 Update the matching file there when you change a flow.
 
-## Install on Mac
+## Run the portal
 
-Install this before running `bundle`:
-- `brew install pkg-config`
-- `brew install libexif`
-- `brew install vips`
+Needs Ruby (`.ruby-version`) and Docker (Postgres with PostGIS runs in `docker-compose.yml`).
+On a Mac, install this before running `bundle`:
 
+```bash
+brew install pkg-config libexif vips
+```
+
+First time:
+
+```bash
+cp .env.sample .env
+docker compose up -d          # Postgres
+bin/setup                     # bundle, db:prepare (creates and seeds the database), then bin/dev
+```
+
+Every day: `docker compose up -d`, then `bin/dev` (Rails server and the Sass watcher, `Procfile.dev`).
+
+| What | URL |
+|---|---|
+| Portal | http://localhost:3000 |
+| Jobs | http://localhost:3000/admin/good_job |
+| Emails the portal sends | http://localhost:3000/letter_opener |
+
+Seeded users, all with the password `password`: `admin@example.com`, `jana@example.com`,
+`peter@example.com`, `anonym@example.com`, `novy@example.com` (phone not verified),
+`citizen1@example.com` … `citizen20@example.com` and the responsible subject's `stare-mesto@example.com`.
+
+Without a local Triage the portal runs, but the jobs that send issues to Triage fail. To click
+through the whole flow, set up [Local Triage](#local-triage).
+
+## Reset the dev data
+
+Portal only (no local Triage):
+
+```bash
+bin/rails db:seed:replant          # empties all tables and seeds again
+bin/setup --reset --skip-server    # or drops and recreates the database, e.g. after schema trouble
+```
+
+With a local Triage, always reset both together, see [Local Triage](#reset-portal-and-triage).
+Resetting only the portal leaves tickets, groups and triggers in Triage for issues and municipalities
+the portal no longer has, and `bin/activate-seeded-municipalities` expects a fresh Triage.
 
 ## Local Triage
 
 Run the portal together with a local Triage to click through the whole flow. Clone
-[ops-triage-zammad](https://github.com/slovensko-digital/ops-triage-zammad) next to this repo.
+[ops-triage-zammad](https://github.com/slovensko-digital/ops-triage-zammad) next to this repo
+(`../ops-triage-zammad`).
 
 | What | URL |
 |---|---|
-| Portal | http://localhost:3000 (GoodJob: `/admin/good_job`) |
 | Triage | http://localhost:8080, `admin@example.org` / `PASSword123`, volunteer `dobrovolnik@example.org` / `PASSword123` |
 | Triage emails | http://localhost:8025 (Mailpit), every email Triage sends, e.g. trigger emails to responsible subjects |
-| Portal emails | http://localhost:3000/letter_opener |
 
 First time:
 
@@ -40,7 +76,7 @@ bin/activate-seeded-municipalities   # sets up the seeded municipalities in Tria
 bin/dev
 ```
 
-Every day: `docker compose up -d` in `ops-triage-zammad`, `bin/dev` here.
+Every day: `docker compose up -d` in `ops-triage-zammad`, `docker compose up -d` and `bin/dev` here.
 
 Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the portal at
 `host.docker.internal:3000` (webhooks signed with `WEBHOOK_SECRET`, responsible subject search),
@@ -68,12 +104,18 @@ Click-through:
 3. Work the ticket in Triage: change the state, add a public comment, change the responsible subject.
 4. The issue changes in the portal. Emails from Triage (e.g. to the new responsible subject) are in Mailpit.
 
-Keep both sides in sync: reset them together. A reset also applies changed `WEBHOOK_SECRET`, Triage sets it on
-webhooks only when seeding.
+### Reset portal and Triage
+
+Stop `bin/dev` first, then wipe Triage (its volumes), reseed the portal and set up the municipalities again.
+Wait until Triage answers at http://localhost:8080 before `bin/activate-seeded-municipalities`, the fresh start runs
+`zammad-init` again and takes a few minutes. A reset also applies a changed `WEBHOOK_SECRET`, Triage sets
+it on webhooks only when seeding.
 
 ```bash
 cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
-cd ../ops-portal && bin/rails db:seed:replant && bin/activate-seeded-municipalities
+cd ../ops-portal && bin/rails db:seed:replant
+bin/activate-seeded-municipalities   # once Triage is up
+bin/dev
 ```
 
 ## Local Backoffice
