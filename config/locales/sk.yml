@@ -61,6 +61,16 @@ sk:
     messages:
       blank: "je povinná položka"
       accepted: "musíte súhlasiť"
+      outside_editing_window: "Komentár je možné upravovať len %{duration} od jeho vytvorenia."
+    editing_window:
+      minutes:
+        one: "1 minútu"
+        few: "%{count} minúty"
+        other: "%{count} minút"
+      seconds:
+        one: "1 sekundu"
+        few: "%{count} sekundy"
+        other: "%{count} sekúnd"
 
   activerecord:
     errors:
