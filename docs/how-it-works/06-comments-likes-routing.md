@@ -33,12 +33,20 @@ Consequences:
 
 ## Comment moderation (AI)
 
-When the editing window closes, AI scores each new citizen comment
-(`UserComment`) for inappropriate content. If the score is at least
-`COMMENT_AUTO_HIDE_THRESHOLD` (default 0.9), the comment is hidden. The
-portal then shows "Tento komentár bol skrytý." in its place.
+When the editing window closes, `SyncEditableActivityToTriageJob` runs
+`ModerateCommentJob` for each new citizen comment (`UserComment`) and only
+then enqueues the Triage sync. AI scores the comment for inappropriate
+content. If the score is at least `COMMENT_AUTO_HIDE_THRESHOLD` (default
+0.9), the comment is hidden. The portal then shows "Tento komentár bol
+skrytý." in its place.
 
-Hiding happens only on the portal; Triage and Backoffice keep the comment.
+A hidden comment reaches Triage as an **internal** article with the body
+`Zmazaný komentár: …`, so it never reaches the RS email or Backoffice. A
+volunteer who makes the article public unhides it on the portal
+(`UpdatePortalActivityFromTriageJob`).
+
+If Gemini fails, the moderation job is discarded (reported to Rollbar, no
+retry), the comment stays visible and the sync continues as usual.
 
 ## Triage R-ticket article routing (tags)
 

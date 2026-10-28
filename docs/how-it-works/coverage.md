@@ -29,7 +29,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | force_rs_login | [04](04-resolution.md#force_rs_login-edge-cases-observed) | `system/issues/force_rs_login_test.rb` | 🟡 | logged-in citizen case |
 | Verification / update | [04](04-resolution.md#4-verification--update-u-ticket) | `system/issues/updates_test.rb` (6), job tests | 🟡 | rejection after publish |
 | Praise | [05](05-praise.md) | `system/praises_test.rb` (2), model + client tests | 🟡 | praise callbacks; no RS |
-| Comment moderation (AI) | [06](06-comments-likes-routing.md#comment-moderation-ai) | `jobs/issues/moderate_comment_job_test.rb` (3) | 🟡 | scheduling on create, hidden comment rendering, race with the Triage sync |
+| Comment moderation (AI) | [06](06-comments-likes-routing.md#comment-moderation-ai) | `jobs/issues/moderate_comment_job_test.rb` (5), `jobs/issues/sync_editable_activity_to_triage_job_test.rb` (3) | 🟡 | hidden comment rendering |
 | Likes, votes | [06](06-comments-likes-routing.md#likes) | `system/issue_likes_test.rb`, `system/issues/activity_votes_test.rb` | 🟡 | `activity_vote_test.rb` empty |
 | Subscriptions / unsubscribe | [06](06-comments-likes-routing.md#subscriptions) | system + controller tests | ✅ | — |
 | Emails (portal) | [09](09-emails.md) | `mailers/notification_mailer_test.rb` (14), notification job tests | ✅ | `RodauthMailer` only indirectly |

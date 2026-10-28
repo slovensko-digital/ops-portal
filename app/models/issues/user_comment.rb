@@ -32,7 +32,6 @@ class Issues::UserComment < Issues::Comment
 
   include EditableWithinEditingWindow
 
-  after_create_commit :schedule_moderation, unless: -> { legacy_id.present? || imported_at.present? }
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
 
   def author

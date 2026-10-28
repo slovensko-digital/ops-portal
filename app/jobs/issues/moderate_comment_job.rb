@@ -1,19 +1,24 @@
 class Issues::ModerateCommentJob < ApplicationJob
   queue_as :default
 
+  # moderation is best effort, a failure leaves the comment visible
+  discard_on StandardError do |_job, error|
+    Rollbar.error(error)
+  end
+
   def perform(comment)
-    return if comment.text.blank?
+    return if comment.text.blank? || comment.ai_evaluation.present?
 
     evaluation = llm_evaluate_comment(comment)
+    return unless evaluation.is_a?(Hash)
 
     score = evaluation["overall_score"].to_f
     threshold = ENV.fetch("COMMENT_AUTO_HIDE_THRESHOLD", 0.9).to_f
 
     comment.ai_evaluation = evaluation
 
-    # hidden is intentionally shared with triage: sync
-    # sets it from article.internal, so a triage update
-    # can unhide a comment that was hidden here.
+    # hidden is shared with triage: the comment syncs as an internal
+    # article and an agent can unhide it by making the article public
     comment.hidden = true if score >= threshold
 
     comment.save!

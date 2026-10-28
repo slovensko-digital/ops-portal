@@ -396,6 +396,7 @@ class ZammadApiClient
       content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
       body: activity_object.triage_activity_body.presence || "(bez popisu)",
       type: DEFAULT_ARTICLE_TYPE,
+      internal: activity_object.try(:hidden) || false,
       attachments: activity_object.attachments.map do |attachment|
         {
           "filename" => attachment.filename,

@@ -80,12 +80,4 @@ class Issues::Comment < ApplicationRecord
   def notify_subscribers
     Notifications::PublishNewIssueCommentJob.perform_later(self)
   end
-
-  def schedule_moderation
-    if within_editing_window?
-      Issues::ModerateCommentJob.set(wait_until: editing_window_end).perform_later(self)
-    else
-      Issues::ModerateCommentJob.perform_later(self)
-    end
-  end
 end

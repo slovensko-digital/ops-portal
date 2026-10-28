@@ -668,8 +668,23 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       "content_type" => "text/html",
       "body" => "Stále to nie je opravené.",
       "type" => "web",
+      "internal" => false,
       "sender" => "Customer",
       "attachments" => [ hash_including("filename" => "avatar.png", "mime-type" => "image/png") ]
+    )
+  end
+
+  test "create_article! posts a hidden comment as an internal article" do
+    comment = issues_comments(:one_comment1)
+    comment.update!(text: "Urážlivý text.", hidden: true)
+    stub_ticket
+    stub_zammad(:post, "ticket_articles", status: 201, body: { id: 120 })
+
+    @client.create_article!(42, comment, sender: "Customer")
+
+    assert_requested :post, zammad_url("ticket_articles"), query: hash_including({}), body: hash_including(
+      "body" => "Zmazaný komentár: Urážlivý text.",
+      "internal" => true
     )
   end
 

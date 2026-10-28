@@ -54,5 +54,25 @@ class Issues::ModerateCommentJobTest < ActiveJob::TestCase
     @comment.reload
     assert_not @comment.hidden?
     assert_empty @comment.ai_evaluation
+    assert_no_enqueued_jobs only: Issues::ModerateCommentJob
+  end
+
+  test "is discarded without retry when the Gemini request raises" do
+    stub_request(:post, @gemini_url).to_timeout
+
+    assert_nothing_raised do
+      Issues::ModerateCommentJob.perform_now(@comment)
+    end
+
+    assert_not @comment.reload.hidden?
+    assert_no_enqueued_jobs only: Issues::ModerateCommentJob
+  end
+
+  test "skips a comment that was already evaluated" do
+    @comment.update!(ai_evaluation: { "overall_score" => 0.1 })
+
+    Issues::ModerateCommentJob.perform_now(@comment)
+
+    assert_not_requested :post, @gemini_url
   end
 end
