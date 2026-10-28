@@ -396,6 +396,9 @@ class ZammadApiClient
       content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
       body: activity_object.triage_activity_body.presence || "(bez popisu)",
       type: DEFAULT_ARTICLE_TYPE,
+      internal: activity_object.try(:hidden) || false,
+      # stored for a future Zammad UI patch, Zammad does not show it
+      preferences: { ai_evaluation: activity_object.try(:ai_evaluation).presence }.compact,
       attachments: activity_object.attachments.map do |attachment|
         {
           "filename" => attachment.filename,

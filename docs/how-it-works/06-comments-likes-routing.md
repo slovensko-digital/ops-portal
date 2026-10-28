@@ -31,6 +31,33 @@ Consequences:
   internal/public toggle syncs (`UpdatePortalActivityFromTriageJob` sets
   `hidden`).
 
+## Comment moderation (AI)
+
+When the editing window closes, `SyncEditableActivityToTriageJob` runs
+`ModerateCommentJob` for each new citizen comment (`UserComment`) and only
+then enqueues the Triage sync. AI scores the comment for inappropriate
+content. If the score is at least `COMMENT_AUTO_HIDE_THRESHOLD` (default
+0.9), the comment is hidden. The portal then shows "Tento komentár bol
+skrytý." in its place. On a separate line, "Dôvod: …" lists the
+categories that scored at least 0.5, using fixed labels
+(`UserComment::HIDDEN_REASON_LABELS`). The AI's free-text reason is not
+shown, because it can quote the offending words. The same applies to a
+comment a volunteer hides in Triage after the AI scored it below the auto
+hide threshold. A comment with no category at 0.5 or more shows no reason.
+
+A hidden comment reaches Triage as an **internal** article with the body
+`Automaticky skrytý komentár: …`, so it never reaches the RS email or Backoffice. A
+volunteer who makes the article public unhides it on the portal
+(`UpdatePortalActivityFromTriageJob`).
+
+Every moderated comment's article also carries the full evaluation in
+`preferences.ai_evaluation`. The Zammad UI doesn't show it; it is stored
+for a possible UI patch later. For reporting, use
+`issues_comments.ai_evaluation` in the portal DB.
+
+If Gemini fails, the moderation job is discarded (reported to Rollbar, no
+retry), the comment stays visible and the sync continues as usual.
+
 ## Triage R-ticket article routing (tags)
 
 | Article in Triage (R-ticket) | Portal | RS email (basic) | Backoffice (PRO) |
@@ -46,6 +73,10 @@ Consequences:
 
 On T-tickets every public agent article becomes `AgentPrivateComment`, and
 no tags are needed.
+
+Article attachments are copied to the portal comment. A file that looks like
+an image but vips can't read is stored as a plain file (link, no thumbnail)
+instead of being dropped (`ImageUpload.attachable`).
 
 The default note box in Triage is **internal** (observed). A volunteer who
 forgets to switch it to public writes something nobody but Triage sees.

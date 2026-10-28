@@ -39,13 +39,24 @@ class IssueTest < ActiveSupport::TestCase
     assert issue.viewable_by?(users(:two))
   end
 
-  test "only the author can edit and only while the issue is waiting" do
+  test "only the author can edit and only while the issue is waiting or waiting for author" do
     issue = issues(:one) # waiting, author users(:one)
-    assert issue.editable_by?(users(:one))
-    assert_not issue.editable_by?(users(:two))
 
-    issue.update_columns(state_id: issues_states(:in_progress).id)
-    assert_not issue.reload.editable_by?(users(:one))
+    %i[waiting waiting_for_author].each do |state_key|
+      issue.update_columns(state_id: issues_states(state_key).id)
+
+      assert issue.reload.editable?, "expected issue to be editable in #{state_key}"
+      assert issue.editable_by?(users(:one)), "expected author to be able to edit in #{state_key}"
+      assert_not issue.editable_by?(users(:two)), "expected non-author not to be able to edit in #{state_key}"
+    end
+
+    %i[in_progress sent_to_responsible referred unresolved rejected closed
+     marked_as_resolved resolved resolved_private duplicate archived].each do |state_key|
+      issue.update_columns(state_id: issues_states(state_key).id)
+
+      assert_not issue.reload.editable?, "expected issue not to be editable in #{state_key}"
+      assert_not issue.editable_by?(users(:one)), "expected author not to be able to edit in #{state_key}"
+    end
   end
 
   test "state predicates" do

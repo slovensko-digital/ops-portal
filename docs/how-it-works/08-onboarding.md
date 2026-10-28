@@ -48,6 +48,20 @@ What it doesn't handle:
   municipality name.
 - PRO setup.
 
+### Locally: `EXISTING_MUNICIPALITY=1`
+
+The dev seeds create Banská Bystrica, Trnava, Nitra, Malacky and Pezinok and
+their RS inactive. `EXISTING_MUNICIPALITY=1` (development only, the task
+aborts elsewhere) activates such a municipality instead of refusing it:
+step A reuses the municipality and the RS named NAME, links the boundary to
+it, and sets the RS email to the first of USERS and `pro` false. The rest is
+the same. `BOUNDARY_ID` and `DISTRICT` default to the municipality's own. It
+refuses an active or archived municipality, a missing or active RS, and an
+RS that already has a Triage user. The municipality's seeded issues are not
+sent to Triage.
+`bin/activate-seeded-municipalities` runs it for every seeded inactive
+municipality, see "Local Triage" in the README.
+
 ## PRO municipality: Backoffice
 
 Manual: deploy a Backoffice with env `WEBHOOK_TENANT_ID`,

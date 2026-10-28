@@ -2591,6 +2591,9 @@ section.podnet .podnet-discussion .duplicate {
 section.podnet .podnet-discussion .government {
   background: variables.$blue-light;
 }
+section.podnet .podnet-discussion .hidden-comment {
+  background: variables.$gray-light;
+}
 section.podnet .podnet-discussion .confirm-comment {
   background: variables.$green-light;
 }
@@ -2714,6 +2717,14 @@ section.podnet .podnet-discussion figure.small-picture .lens-image {
 section.podnet .podnet-discussion .comment-content {
   font-family: variables.$general;
   font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
+}
+section.podnet .podnet-discussion .comment-hidden-notice {
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-style: italic;
   font-weight: variables.$normal;
   line-height: variables.em(28,18);
 }

@@ -13,7 +13,6 @@ if Rails.env.development?
   require_relative "seeds/districts"
   require_relative "seeds/municipalities"
   require_relative "seeds/responsible_subjects"
-  require_relative "seeds/responsible_subjects_categories"
 
   webhook_url = "http://localhost:3000/connector/webhook"
   default_connector_zammad_api_token = "CsnpmnPAlMZCmbaClOoWE7QlFPgCsElVLsfgkJMZQfs"
