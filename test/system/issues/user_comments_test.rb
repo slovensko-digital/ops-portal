@@ -45,15 +45,19 @@ class Issues::UserCommentsTest < ApplicationSystemTestCase
     assert_no_text "Pridať komentár"
   end
 
-  test "comment hidden by AI moderation shows the reason instead of its text" do
+  test "comment hidden by AI moderation shows the flagged categories instead of its text" do
     comment = issues_comments(:two_comment1)
-    comment.update!(text: "test comment", hidden: true, ai_evaluation: { "overall_score" => 0.95, "reason" => "Komentár obsahuje urážku." })
+    comment.update!(text: "test comment", hidden: true, ai_evaluation: {
+      "overall_score" => 0.95, "vulgar" => 0.9, "insulting" => 0.8, "sarcastic" => 0.2,
+      "reason" => "Komentár obsahuje hrubé vyjadrenie \"trt makovy\"."
+    })
 
     visit issue_path(comment.issue)
 
     within "#komentar_#{comment.id}" do
-      assert_text "Tento komentár bol skrytý.\nDôvod: Komentár obsahuje urážku."
+      assert_text "Tento komentár bol skrytý.\nDôvod: vulgarizmy a urážky"
       assert_no_text "test comment"
+      assert_no_text "trt makovy"
     end
   end
 

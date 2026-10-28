@@ -32,6 +32,16 @@ class Issues::UserComment < Issues::Comment
 
   include EditableWithinEditingWindow
 
+  # fixed labels instead of the AI reason, which can quote the offending words
+  HIDDEN_REASON_LABELS = {
+    "irrelevant" => "obsah nesúvisiaci s podnetom",
+    "vulgar" => "vulgarizmy",
+    "insulting" => "urážky",
+    "sarcastic" => "sarkazmus",
+    "political" => "politická agitácia"
+  }.freeze
+  HIDDEN_REASON_MIN_SCORE = 0.5
+
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
 
   def author
@@ -49,7 +59,13 @@ class Issues::UserComment < Issues::Comment
   end
 
   def hidden_reason
-    ai_evaluation["reason"].presence if auto_hidden?
+    return unless auto_hidden?
+
+    HIDDEN_REASON_LABELS
+      .select { |category, _| ai_evaluation[category].to_f >= HIDDEN_REASON_MIN_SCORE }
+      .values
+      .to_sentence(words_connector: ", ", two_words_connector: " a ", last_word_connector: " a ")
+      .presence
   end
 
   def visible?
