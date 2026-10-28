@@ -702,6 +702,28 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     )
   end
 
+  test "create_article! stores the AI evaluation in the article preferences" do
+    comment = issues_comments(:one_comment1)
+    comment.update!(text: "Komentár.", ai_evaluation: { "overall_score" => 0.1, "reason" => "Komentár je v poriadku." })
+    stub_ticket
+    stub_zammad(:post, "ticket_articles", status: 201, body: { id: 120 })
+
+    @client.create_article!(42, comment, sender: "Customer")
+
+    assert_requested :post, zammad_url("ticket_articles"), query: hash_including({}), body: hash_including(
+      "preferences" => { "ai_evaluation" => { "overall_score" => 0.1, "reason" => "Komentár je v poriadku." } }
+    )
+  end
+
+  test "create_article! sends empty preferences without an AI evaluation" do
+    stub_ticket
+    stub_zammad(:post, "ticket_articles", status: 201, body: { id: 120 })
+
+    @client.create_article!(42, issues_comments(:one_comment1), sender: "Customer")
+
+    assert_requested :post, zammad_url("ticket_articles"), query: hash_including({}), body: hash_including("preferences" => {})
+  end
+
   test "create_article! uses a placeholder for an empty comment" do
     stub_ticket
     stub_zammad(:post, "ticket_articles", status: 201, body: { id: 120 })

@@ -46,6 +46,11 @@ A hidden comment reaches Triage as an **internal** article with the body
 volunteer who makes the article public unhides it on the portal
 (`UpdatePortalActivityFromTriageJob`).
 
+Every moderated comment's article also carries the full evaluation in
+`preferences.ai_evaluation`. The Zammad UI doesn't show it; it is stored
+for a possible UI patch later. For reporting, use
+`issues_comments.ai_evaluation` in the portal DB.
+
 If Gemini fails, the moderation job is discarded (reported to Rollbar, no
 retry), the comment stays visible and the sync continues as usual.
 
