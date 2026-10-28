@@ -1,8 +1,8 @@
 require "test_helper"
-require "test_helpers/issues/drafts_helper"
+require "test_helpers/request_helper"
 
 class Issues::Draft::GenerateChecksJobTest < ActiveJob::TestCase
-  include Issues::DraftsHelper
+  include RequestHelper
 
   setup do
     @draft = Issues::Draft.create!(

@@ -5,7 +5,7 @@
 #  id                       :bigint           not null, primary key
 #  municipality_district_id :bigint
 #  municipality_id          :bigint
-#  boundary                 :geometry(Geometr not null
+#  boundary                 :geometry         not null
 #  boundary_kind            :string           default("municipality"), not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
