@@ -63,8 +63,20 @@ class Issues::UserCommentTest < ActiveSupport::TestCase
     assert_nil @comment.hidden_reason
   end
 
-  test "hidden_reason is nil for a comment hidden in triage" do
-    @comment.update!(hidden: true, ai_evaluation: { "overall_score" => 0.1, "vulgar" => 0.6 })
+  test "hidden_reason lists the flagged categories for a comment hidden in triage below the auto hide threshold" do
+    @comment.update!(hidden: true, ai_evaluation: { "overall_score" => 0.8, "insulting" => 0.8 })
+
+    assert_equal "urážky", @comment.hidden_reason
+  end
+
+  test "hidden_reason is nil for a visible comment" do
+    @comment.update!(ai_evaluation: { "overall_score" => 0.8, "insulting" => 0.8 })
+
+    assert_nil @comment.hidden_reason
+  end
+
+  test "hidden_reason is nil for a hidden comment without an AI evaluation" do
+    @comment.update!(hidden: true)
 
     assert_nil @comment.hidden_reason
   end

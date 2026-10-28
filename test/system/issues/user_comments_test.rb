@@ -61,7 +61,19 @@ class Issues::UserCommentsTest < ApplicationSystemTestCase
     end
   end
 
-  test "comment hidden in triage shows no reason" do
+  test "comment hidden in triage shows the categories flagged by AI" do
+    comment = issues_comments(:two_comment1)
+    comment.update!(text: "test comment", hidden: true, ai_evaluation: { "overall_score" => 0.8, "insulting" => 0.8 })
+
+    visit issue_path(comment.issue)
+
+    within "#komentar_#{comment.id}" do
+      assert_text "Tento komentár bol skrytý.\nDôvod: urážky"
+      assert_no_text "test comment"
+    end
+  end
+
+  test "comment hidden in triage without flagged categories shows no reason" do
     comment = issues_comments(:two_comment1)
     comment.update!(text: "test comment", hidden: true, ai_evaluation: { "overall_score" => 0.1, "reason" => "Komentár je v poriadku." })
 

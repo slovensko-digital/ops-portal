@@ -58,8 +58,10 @@ class Issues::UserComment < Issues::Comment
     hidden && ai_evaluation.present? && Issues::ModerateCommentJob.hide?(ai_evaluation)
   end
 
+  # also for a comment hidden in triage, the score cutoff keeps
+  # categories the AI did not flag out of the reason
   def hidden_reason
-    return unless auto_hidden?
+    return unless hidden && ai_evaluation.present?
 
     HIDDEN_REASON_LABELS
       .select { |category, _| ai_evaluation[category].to_f >= HIDDEN_REASON_MIN_SCORE }
