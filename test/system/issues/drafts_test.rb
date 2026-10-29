@@ -6,17 +6,19 @@ class Issues::DraftsTest < ApplicationSystemTestCase
 
   setup do
     @user = users(:one)
+    @gemini_api_key = ENV["GEMINI_API_KEY"]
+    ENV["GEMINI_API_KEY"] = "test-key"
 
     stub_json_request(
       :post,
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=test-key",
       body: /checks prompt/,
       response: "webmock/gemini/checks-confirmable.json"
     )
 
     stub_json_request(
       :post,
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=test-key",
       body: /suggestions prompt/,
       response: "webmock/gemini/suggestions-graffiti.json"
     )
@@ -35,6 +37,7 @@ class Issues::DraftsTest < ApplicationSystemTestCase
   end
 
   teardown do
+    ENV["GEMINI_API_KEY"] = @gemini_api_key
     WebMock.reset!
   end
 
@@ -271,7 +274,7 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     issues(:sent_to_responsible).tap do |issue|
       issue.update_columns(latitude: 48.1632, longitude: 17.0494)
 
-      stub_request(:post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=")
+      stub_request(:post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=test-key")
         .with(body: /duplicates prompt/)
         .to_return(
           headers: { "Content-Type" => "application/json" },

@@ -3,6 +3,15 @@ require "test_helper"
 class Issues::DraftTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
 
+  setup do
+    @gemini_api_key = ENV["GEMINI_API_KEY"]
+    ENV["GEMINI_API_KEY"] = "test-key"
+  end
+
+  teardown do
+    ENV["GEMINI_API_KEY"] = @gemini_api_key
+  end
+
   test "load_geo_from_exif does not set coordinates when GPS contains NaN values" do
     user = users(:one)
     draft = Issues::Draft.create!(author: user)
@@ -206,15 +215,13 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert_not_requested :post, GEMINI_URL
   end
 
-  test "detect_duplicates! treats all issues around as duplicates in development without a Gemini key" do
-    issue = issues(:sent_to_responsible)
-    draft = draft_with_photo_near(issue)
+  test "detect_duplicates! does not detect duplicates without a Gemini key" do
+    draft = draft_with_photo_near(issues(:sent_to_responsible))
+    ENV["GEMINI_API_KEY"] = ""
 
-    Rails.stub(:env, ActiveSupport::EnvironmentInquirer.new("development")) do
-      draft.detect_duplicates!
-    end
+    draft.detect_duplicates!
 
-    assert_equal [ issue.id ], draft.reload.last_duplicate_ids
+    assert_equal [], draft.reload.last_duplicate_ids
     assert_not_requested :post, GEMINI_URL
   end
 
@@ -300,7 +307,7 @@ class Issues::DraftTest < ActiveSupport::TestCase
 
   private
 
-  GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="
+  GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=test-key"
 
   def draft_with_photo_near(issue, latitude_offset: 0)
     draft = draft_near(issue, latitude_offset: latitude_offset)

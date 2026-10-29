@@ -180,10 +180,8 @@ class Issues::Draft < ApplicationRecord
   def detect_duplicates!
     candidates = similar_around.with_attached_photos.to_a
 
-    self.last_duplicate_ids = if candidates.empty? || photos.empty?
+    self.last_duplicate_ids = if ENV["GEMINI_API_KEY"].blank? || candidates.empty? || photos.empty?
       []
-    elsif Rails.env.development? && ENV["GEMINI_API_KEY"].blank?
-      candidates.map(&:id) # lets the flow be clicked through locally without an AI key
     else
       candidate_ids = candidates.map(&:id)
       similar_issue_ids = Array(ai_similar_issue_ids(candidates))
