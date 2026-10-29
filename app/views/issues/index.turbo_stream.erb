@@ -3,5 +3,5 @@
 <% end %>
 
 <%= turbo_stream.update "load-more-trigger" do %>
-  <%= render "shared/load_more_trigger", issues: @search_results.hits %>
+  <%= render "shared/load_more_issues_trigger", issues: @search_results.hits %>
 <% end %>

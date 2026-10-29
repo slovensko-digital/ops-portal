@@ -51,7 +51,7 @@
     <%= turbo_frame_tag "profile-tabs", autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
       <div class="profile-suggestion-con">
         <% if @issues.length > 0 %>
-          <%= render "shared/load_more", issues: @issues %>
+          <%= render "shared/load_more_issues", issues: @issues %>
         <% else %>
           <%= turbo_frame_tag "profile-list" do %>
             <section class="search-result-blank">
