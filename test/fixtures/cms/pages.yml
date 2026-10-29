@@ -48,6 +48,14 @@ ai_generate_checks:
   raw: "checks prompt"
   tags: ["prompt:generatechecks"]
 
+ai_find_duplicates:
+  title: "AI Prompt: Find Duplicates"
+  slug: findduplicates
+  category_id: <%= ENV["CMS_AI_CATEGORY_ID"] %>
+  text: ""
+  raw: "duplicates prompt"
+  tags: ["prompt:findduplicates"]
+
 ai_moderate_comments:
   title: "AI Prompt: Moderate Comments"
   slug: moderatecomments

@@ -164,4 +164,25 @@ class IssueTest < ActiveSupport::TestCase
       praise.update!(state: issues_states(:resolved))
     end
   end
+
+  test "accepting_updates scope and accepts_updates? agree on which issues accept updates" do
+    cases = {
+      "resolution process with open discussion" => [ {}, true ],
+      "triage process" => [ { resolution_external_id: nil }, false ],
+      "discussion closed" => [ { discussion_closed: true }, false ],
+      "archived state" => [ { state_id: issues_states(:archived).id }, false ],
+      "archived municipality" => [ { municipality_id: municipalities(:Rajec).id }, false ],
+      "archived responsible subject" => [ { responsible_subject_id: responsible_subjects(:archived).id }, false ]
+    }
+    original = Issue.find(issues(:sent_to_responsible).id).attributes
+
+    cases.each do |name, (attributes, expected)|
+      issue = Issue.find(original["id"])
+      issue.update_columns(original.slice("resolution_external_id", "discussion_closed", "state_id", "municipality_id", "responsible_subject_id").merge(attributes.stringify_keys))
+      issue.reload
+
+      assert_equal expected, issue.accepts_updates?, "accepts_updates? for #{name}"
+      assert_equal expected, Issue.accepting_updates.exists?(issue.id), "accepting_updates for #{name}"
+    end
+  end
 end
