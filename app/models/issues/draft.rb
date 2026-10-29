@@ -67,8 +67,6 @@ class Issues::Draft < ApplicationRecord
   before_save :reset_address_details, if: -> { will_save_change_to_latitude? || will_save_change_to_longitude? }
   before_save :reset_duplicates, if: -> { will_save_change_to_latitude? || will_save_change_to_longitude? || will_save_change_to_category_id? }
 
-  DUPLICATES_DISTANCE = 500
-
   def confirm
     municipality, municipality_district = Municipality.find_by_coordinates(latitude, longitude, street: address_street)
 
@@ -162,7 +160,7 @@ class Issues::Draft < ApplicationRecord
       .publicly_visible
       .accepting_updates
       .where(id: ActiveStorage::Attachment.where(record_type: "Issue", name: "photos").select(:record_id))
-      .within_distance_from_point(latitude, longitude, DUPLICATES_DISTANCE)
+      .within_distance_from_point(latitude, longitude, ENV.fetch("DRAFT_DUPLICATES_DISTANCE", 500).to_i)
       .where(category: category)
       .order_by_distance_from_point(latitude, longitude)
       .limit(ENV.fetch("DRAFT_DUPLICATE_CANDIDATES_LIMIT", 20).to_i)

@@ -44,6 +44,16 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert_not_includes draft.similar_around, issues(:sent_to_responsible)
   end
 
+  test "similar_around uses the distance from DRAFT_DUPLICATES_DISTANCE" do
+    draft = draft_near(issues(:sent_to_responsible), latitude_offset: 0.001)
+    assert_includes draft.similar_around, issues(:sent_to_responsible)
+
+    ENV["DRAFT_DUPLICATES_DISTANCE"] = "50"
+    assert_not_includes draft.similar_around, issues(:sent_to_responsible)
+  ensure
+    ENV.delete("DRAFT_DUPLICATES_DISTANCE")
+  end
+
   test "similar_around ignores issues of another category" do
     issue = issues(:sent_to_responsible)
     draft = draft_near(issue)
