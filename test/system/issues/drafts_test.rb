@@ -1,8 +1,8 @@
 require "application_system_test_case"
-require "test_helpers/issues/drafts_helper"
+require "test_helpers/request_helper"
 
 class Issues::DraftsTest < ApplicationSystemTestCase
-  include Issues::DraftsHelper
+  include RequestHelper
 
   setup do
     @user = users(:one)
@@ -81,6 +81,31 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     click_on "Sledované podnety"
     assert_text "Legacy issue"
     assert_text "Graffiti"
+  end
+
+  test "photo that cannot be read is rejected" do
+    login_as(@user)
+
+    click_on "Nahlásiť podnet"
+
+    attach_file "issues_draft_photos", file_fixture("not-an-image.png").to_s, visible: false
+
+    assert_text "sú v nepodporovanom formáte."
+    assert_not ActiveStorage::Blob.exists?(filename: "not-an-image.png")
+  end
+
+  test "photo that cannot be read is rejected when added to an existing draft" do
+    login_as(@user)
+
+    click_on "Nahlásiť podnet"
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+    assert_text "Lokalita"
+
+    visit edit_issues_draft_path(@user.issues_drafts.last)
+    attach_file "issues_draft_photos", file_fixture("not-an-image.png").to_s, visible: false
+
+    assert_text "sú v nepodporovanom formáte."
+    assert_equal [ "graffiti-with-geo.jpg" ], @user.issues_drafts.last.photos.map { |photo| photo.filename.to_s }
   end
 
   test "issue creation on unsupported municipality" do

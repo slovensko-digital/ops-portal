@@ -110,14 +110,14 @@ class UserTest < ActiveSupport::TestCase
   test "should anonymize user" do
     user = users(:one)
 
-    user.avatar.attach(io: StringIO.new("fake image"), filename: "avatar.png", content_type: "image/png")
+    user.avatar.attach(io: file_fixture("avatar.png").open, filename: "avatar.png", content_type: "image/png")
     assert user.avatar.attached?, "Avatar should be attached before anonymize"
 
     old_password_hash = user.password_hash
 
     user.anonymize!
 
-    %i[lastname phone about organization signature resident sex birth].each do |attr|
+    %i[lastname phone about signature resident sex birth].each do |attr|
       assert_nil user.public_send(attr), "#{attr} should be nil after anonymize!"
     end
 
@@ -137,7 +137,7 @@ class UserTest < ActiveSupport::TestCase
     # Valid image types should be accepted
     valid_types = %w[image/jpeg image/png image/gif image/heic image/heif]
     valid_types.each do |content_type|
-      user.avatar.attach(io: StringIO.new("fake image"), filename: "avatar.jpg", content_type: content_type)
+      user.avatar.attach(io: file_fixture("avatar.png").open, filename: "avatar.jpg", content_type: content_type)
       assert user.valid?, "User should be valid with avatar content type #{content_type}"
       user.avatar.purge
     end
@@ -150,5 +150,14 @@ class UserTest < ActiveSupport::TestCase
       assert_includes user.errors[:avatar], "môže byť iba obrázok."
       user.avatar.purge
     end
+  end
+
+  test "should reject avatar that cannot be read as an image" do
+    user = users(:one)
+
+    user.avatar.attach(io: file_fixture("not-an-image.png").open, filename: "avatar.png", content_type: "image/png")
+
+    assert_not user.valid?
+    assert_includes user.errors[:avatar], "môže byť iba obrázok."
   end
 end

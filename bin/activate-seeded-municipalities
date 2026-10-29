@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+# Sets up the seeded inactive municipalities of a fresh local portal in the local Triage, the way production
+# onboards a municipality. Run it once, after bin/setup (its db:prepare seeds the database) or
+# bin/rails db:seed:replant, on a fresh Triage (see "Local Triage" in README.md):
+#
+#   1. checks that the local Triage is up and that TRIAGE_ZAMMAD_ADMIN_API_TOKEN works, asks for the
+#      token when it doesn't, and that the seeds left inactive municipalities, before anything is changed
+#      (Bratislava is seeded active, Banská Bystrica, Trnava, Nitra, Malacky and Pezinok inactive)
+#   2. bin/rails municipality_boundaries:import_all
+#      responsible_subjects:activate_basic finds a municipality's boundary by it
+#   3. bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 for every inactive municipality
+#      creates its Triage setup for the volunteer and activates it, see docs/how-it-works/08-onboarding.md
+#
+# Then start bin/dev. New issues in the activated municipalities go to the volunteer in Triage. The seeded
+# issues stay only in the portal, the seeds don't send them to Triage.
+require "bundler/setup"
+require "dotenv"
+require "io/console"
+require "net/http"
+
+APP_ROOT = File.expand_path("..", __dir__)
+# created by dev/setup_users.rb in ops-triage-zammad
+TRIAGE_AGENT_EMAIL = "dobrovolnik@example.org"
+
+def run!(*command)
+  puts "\n== #{command.join(" ")}"
+  system(*command, exception: true)
+end
+
+def triage_get(path, token)
+  uri = URI.join(ENV.fetch("TRIAGE_ZAMMAD_URL"), "api/v1/#{path}")
+  Net::HTTP.get_response(uri, "Authorization" => "Token token=#{token}")
+rescue SystemCallError, Net::OpenTimeout
+  abort "Triage is not running at #{ENV.fetch("TRIAGE_ZAMMAD_URL")}, start it: cd ../ops-triage-zammad && docker compose up -d"
+end
+
+def triage_accepts?(token)
+  !token.empty? && triage_get("users/me", token).is_a?(Net::HTTPSuccess)
+end
+
+def ask_for_token
+  abort "TRIAGE_ZAMMAD_ADMIN_API_TOKEN does not work, set it in .env" unless $stdin.tty?
+
+  print "Triage admin API token (ADMIN_API_TOKEN in ops-triage-zammad/.env.sample): "
+  token = $stdin.noecho(&:gets).to_s.strip
+  puts
+  token
+end
+
+$stdout.sync = true
+
+Dir.chdir APP_ROOT do
+  Dotenv.load
+
+  puts "== Checking the local Triage at #{ENV.fetch("TRIAGE_ZAMMAD_URL")}"
+  token = ENV["TRIAGE_ZAMMAD_ADMIN_API_TOKEN"].to_s
+  token = ask_for_token unless triage_accepts?(token)
+  abort "Triage rejects the token" unless triage_accepts?(token)
+  # the bin/rails commands below inherit it, it wins over .env
+  ENV["TRIAGE_ZAMMAD_ADMIN_API_TOKEN"] = token
+
+  unless triage_get("users/search?query=#{TRIAGE_AGENT_EMAIL}", token).body.include?(TRIAGE_AGENT_EMAIL)
+    abort "Triage has no volunteer #{TRIAGE_AGENT_EMAIL}, update ops-triage-zammad and run docker compose up -d there"
+  end
+
+  municipalities = IO.popen([ "bin/rails", "runner", <<~RUBY ], &:readlines).map { _1.chomp.split("\t") }
+    Municipality.where(active: false, archived: false).order(:name).each { puts [ _1.name, _1.name.parameterize ].join("\t") }
+  RUBY
+  abort "No inactive municipalities to activate, seed a fresh database first: bin/rails db:seed:replant" if municipalities.empty?
+
+  run! "bin/rails", "municipality_boundaries:import_all"
+
+  municipalities.each do |name, slug|
+    run! "bin/rails", "responsible_subjects:activate_basic", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
+      "USERS=podatelna@#{slug}.example.com,jan.novak@#{slug}.example.com", "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}"
+  end
+
+  puts "\n== Done, activated: #{municipalities.map(&:first).join(", ")}. Start bin/dev."
+end

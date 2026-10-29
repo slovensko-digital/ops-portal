@@ -299,7 +299,7 @@ class ZammadApiClient
     ticket.subcategory = issue.subcategory&.name
     ticket.subtype = issue.subtype&.name
     ticket.likes_count = issue.likes_count
-    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } } || {}
+    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.subject_name, value: s.id } } || {}
 
     ticket.save
 
@@ -396,6 +396,9 @@ class ZammadApiClient
       content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
       body: activity_object.triage_activity_body.presence || "(bez popisu)",
       type: DEFAULT_ARTICLE_TYPE,
+      internal: activity_object.try(:hidden) || false,
+      # stored for a future Zammad UI patch, Zammad does not show it
+      preferences: { ai_evaluation: activity_object.try(:ai_evaluation).presence }.compact,
       attachments: activity_object.attachments.map do |attachment|
         {
           "filename" => attachment.filename,
@@ -488,6 +491,7 @@ class ZammadApiClient
     rescue RuntimeError => e
       raise e unless e.message.include?("Couldn't find User with")
       Rails.logger.info("Couldn't find user with id: #{user_id}")
+      nil
     end
   end
 
@@ -568,6 +572,61 @@ class ZammadApiClient
     @client.group.all.page(1, 500) { }
   end
 
+  def find_group_by_name(name)
+    get_groups.find { |group| group.name == name }
+  end
+
+  def create_group!(name, email_address_id:)
+    @client.group.create(
+      name: name,
+      email_address_id: email_address_id,
+      follow_up_possible: "yes",
+      follow_up_assignment: true,
+      active: true
+    ).id
+  end
+
+  def find_email_address(email)
+    raw_api_request(:get, "email_addresses").find { |address| address["email"].casecmp?(email) }
+  end
+
+  def find_role_by_name(name)
+    raw_api_request(:get, "roles").find { |role| role["name"] == name }
+  end
+
+  def add_group_to_role!(role_name, group_id)
+    role = find_role_by_name(role_name)
+    raise "Can't find triage zammad role: #{role_name}" unless role
+
+    raw_api_request(:put, "roles/#{role["id"]}", { group_ids: role["group_ids"].merge(group_id.to_s => [ "full" ]) })
+  end
+
+  def find_organization_by_name(name)
+    @client.organization.search(query: name).page(1, 100) { }.find { |organization| organization.name == name }
+  end
+
+  def create_organization!(name)
+    @client.organization.create(name: name, shared: false, domain_assignment: false, vip: false, active: true).id
+  end
+
+  def find_user_by_email(email)
+    @client.user.search(query: email).page(1, 100) { }.find { |user| user.email.to_s.casecmp?(email) }
+  end
+
+  def create_user!(email:, firstname:, lastname:, roles:, organization: nil)
+    @client.user.create(
+      { firstname: firstname, lastname: lastname, login: email, email: email, organization: organization, roles: roles }.compact
+    ).id
+  end
+
+  def get_triggers
+    raw_api_request(:get, "triggers")
+  end
+
+  def create_trigger!(attributes)
+    raw_api_request(:post, "triggers", attributes)["id"]
+  end
+
   def find_ticket_responsible_subject(ticket_id)
     @client.ticket.find(ticket_id).responsible_subject
   end
@@ -634,7 +693,7 @@ class ZammadApiClient
     @client.user.search(query: query).first
   end
 
-  def build_author_response(article_type, author, zammad_api_client: TriageZammadEnvironment.client.client)
+  def build_author_response(article_type, author)
     return DEFAULT_OPS_ADMIN_USER if [ :agent_portal_comment, :agent_portal_and_backoffice_comment, :agent_backoffice_comment ].include?(article_type)
 
     return unless author
@@ -653,7 +712,7 @@ class ZammadApiClient
         }
       end
     elsif article_type == :responsible_subject_portal_and_backoffice_comment
-      responsible_subject = zammad_api_client.user.find(author.external_id)
+      responsible_subject = @client.user.find(author.external_id)
       if responsible_subject.nil?
         Rails.logger.warn("Responsible subject with id: #{author.external_id} not found in Triage Zammad")
         nil
@@ -793,7 +852,7 @@ class ZammadApiClient
     body.gsub(Regexp.union(tags), "").strip
   end
 
-  def get_article_type(article, process_type, zammad_api_client: @client)
+  def get_article_type(article, process_type)
     return if article.internal
     return :system_note if article.sender == "System"
 
@@ -806,7 +865,7 @@ class ZammadApiClient
     when "portal_issue_resolution"
       return :unknown_user_portal_comment if article.sender == "Customer" && article.origin_by_id == nil && article.created_by_id == ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID").to_i
 
-      article_author = zammad_api_client.user.find(article.origin_by_id || article.created_by_id)
+      article_author = @client.user.find(article.origin_by_id || article.created_by_id)
       return :user_portal_comment if article.sender == "Customer" && article_author&.origin == "portal"
 
       if article.sender == "Customer" && responsible_subject_article_author?(article_author)
@@ -841,12 +900,13 @@ class ZammadApiClient
   def automated_email?(article)
     return false unless article.type == "email"
 
-    preferences = article.respond_to?(:preferences) ? article.preferences : {}
-    auto_submitted = preferences&.[]("Auto-Submitted") || preferences&.[](:"Auto-Submitted")
-    return true if [ "auto-generated", "auto-replied" ].include?(auto_submitted.to_s.downcase)
+    # Zammad's Channel::Filter::AutoResponseCheck turns headers like Auto-Submitted into this flag;
+    # the zammad_api gem symbolizes the keys
+    preferences = article.preferences || {}
+    return true if preferences[:"is-auto-response"] == true
 
-    sender = article.respond_to?(:from) ? article.from.to_s : ""
-    subject = article.respond_to?(:subject) ? article.subject.to_s : ""
+    sender = article.from.to_s
+    subject = article.subject.to_s
 
     AUTOMATED_EMAIL_SENDER_PATTERNS.any? { |pattern| sender.match?(pattern) } ||
       AUTOMATED_EMAIL_SUBJECT_PATTERNS.any? { |pattern| subject.match?(pattern) }

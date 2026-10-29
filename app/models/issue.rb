@@ -29,7 +29,7 @@
 #  anonymous                           :boolean
 #  comments_count                      :integer          default(0), not null
 #  description                         :string           not null
-#  discussion_closed                   :boolean          default(FALSE)
+#  discussion_closed                   :boolean          default(FALSE), not null
 #  fulltext_extra                      :string
 #  issue_type                          :integer          default(1)
 #  latitude                            :float
@@ -115,10 +115,14 @@ class Issue < ApplicationRecord
   def visible_activity_objects
     activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
 
-    if triage_process?
-      activity_objects.select(&:triage_visible?)
-    else
-      activity_objects.select(&:visible?)
+    activity_objects.select do |activity|
+      if activity.is_a?(Issues::UserComment) && activity.hidden?
+        true
+      elsif triage_process?
+        activity.triage_visible?
+      else
+        activity.visible?
+      end
     end
   end
 
@@ -156,7 +160,7 @@ class Issue < ApplicationRecord
   end
 
   def editable?
-    state.key == "waiting"
+    state.key.in? %w[waiting waiting_for_author]
   end
 
   def archived?

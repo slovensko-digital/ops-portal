@@ -11,26 +11,24 @@
 #  responsible_subject_id           :bigint
 #  street_id                        :bigint
 #  about                            :string
-#  active                           :boolean
 #  admin_name                       :string
-#  anonymous                        :boolean          default(FALSE)
-#  banned                           :boolean          default(FALSE)
+#  anonymous                        :boolean          default(FALSE), not null
+#  banned                           :boolean          default(FALSE), not null
 #  birth                            :date
-#  created_from_app                 :boolean          default(FALSE)
+#  created_from_app                 :boolean          default(FALSE), not null
 #  display_name                     :string
 #  email                            :citext           not null
 #  email_global_unsubscribe_token   :string           not null
-#  email_notifiable                 :boolean          default(TRUE)
+#  email_notifiable                 :boolean          default(TRUE), not null
 #  exp                              :integer
 #  fcm_token                        :string
 #  firstname                        :string
 #  gdpr_accepted                    :boolean
-#  gdpr_stats_accepted              :boolean          default(FALSE)
+#  gdpr_stats_accepted              :boolean          default(FALSE), not null
 #  lastname                         :string
 #  login                            :string
 #  newsletter_accepted              :boolean          default(FALSE), not null
-#  onboarded                        :boolean          default(FALSE)
-#  organization                     :boolean
+#  onboarded                        :boolean          default(FALSE), not null
 #  password_hash                    :string
 #  phone                            :string
 #  phone_verification_attempts      :integer          default(0), not null
@@ -49,8 +47,6 @@
 #  status                           :integer          default(1), not null
 #  timestamp                        :datetime
 #  uuid                             :uuid             not null
-#  verification                     :string
-#  verified                         :boolean          default(FALSE)
 #  imported_at                      :datetime
 #  phone_verification_attempted_at  :datetime
 #  created_at                       :datetime         not null
@@ -58,8 +54,6 @@
 #
 class User < ApplicationRecord
   include Rodauth::Rails.model
-
-  ALLOWED_AVATAR_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic image/heif].freeze
 
   attr_accessor :phone_verification_number
 
@@ -99,7 +93,7 @@ class User < ApplicationRecord
   validates_confirmation_of :phone_verification_code, on: :phone_verification_code
   validates_presence_of :phone_verification_code_confirmation, on: :phone_verification_code
   validate :birth_year_within_range, if: :birth_year, on: [ :onboarding, :update ]
-  validate :avatar_content_type_allowed, if: -> { avatar.attached? && avatar.new_record? }
+  validates :avatar, image: { message: :invalid_content_type }, if: -> { avatar.attached? && avatar.new_record? }
 
   def name
     [ firstname, lastname ].compact.join(" ")
@@ -197,7 +191,6 @@ class User < ApplicationRecord
       phone: nil,
       password_hash: RodauthApp.rodauth.allocate.password_hash(SecureRandom.hex(16)),
       about: nil,
-      organization: nil,
       signature: nil,
       resident: nil,
       sex: nil,
@@ -218,12 +211,6 @@ class User < ApplicationRecord
   def birth_year_within_range
     unless birth_year.between?(Date.current.year - 120, Date.current.year)
       errors.add(:birth_year, I18n.t("activerecord.errors.models.user.attributes.birth_year.inclusion", min_year: Date.current.year - 120, max_year: Date.current.year))
-    end
-  end
-
-  def avatar_content_type_allowed
-    unless avatar.content_type.in?(ALLOWED_AVATAR_CONTENT_TYPES)
-      errors.add(:avatar, :invalid_content_type)
     end
   end
 end
