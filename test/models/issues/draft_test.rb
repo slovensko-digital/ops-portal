@@ -121,23 +121,13 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert_not draft.errors.added?(:base, :duplicates_nearby)
   end
 
-  test "checks_passed fails on generated checks and passes when there are none or they could not be generated" do
+  test "duplicates_nearby validation passes when duplicates could not be detected" do
     draft = draft_near(issues(:sent_to_responsible))
-    draft.last_duplicate_ids = []
+    draft.last_duplicate_ids = nil
 
-    draft.checks = [ { "title" => "Chýba popis", "info" => "-", "action" => "back" } ]
     draft.valid?(:checks_step)
-    assert draft.errors.added?(:checks, :invalid)
 
-    draft.checks = []
-    draft.valid?(:checks_step)
-    assert_not draft.errors.added?(:checks, :invalid)
-
-    draft.checks = nil
-    draft.valid?(:checks_step)
-    assert_not draft.errors.added?(:checks, :invalid)
-    assert draft.confirmable?
-    assert_not draft.needs_editing?
+    assert_not draft.errors.added?(:base, :duplicates_nearby)
   end
 
   test "stored duplicates and the decision to ignore them are reset when the location or category changes" do
@@ -305,11 +295,26 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert Issues::Draft.exists?(draft.id)
   end
 
+  test "checks step does not pass when checks were never computed" do
+    draft = Issues::Draft.create!(author: users(:one), duplicates_shown: true)
+    draft.checks = nil
+
+    assert_not draft.valid?(:checks_step)
+    assert draft.errors.added?(:checks, :invalid)
+  end
+
   test "checks step passes with an empty checks array" do
     draft = Issues::Draft.create!(author: users(:one), duplicates_shown: true)
     draft.checks = []
 
     assert draft.valid?(:checks_step)
+  end
+
+  test "not confirmable when checks were never computed" do
+    draft = Issues::Draft.create!(author: users(:one))
+    draft.checks = nil
+
+    assert_not draft.confirmable?
   end
 
   test "confirmable when all checks allow confirmation" do

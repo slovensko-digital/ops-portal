@@ -20,7 +20,9 @@ flowchart TD
   H2 -->|duplicates_shown = true,<br/>redirect to filtered list| H3[List page. User must go back via<br/>header 'Neodoslaný podnet' and submit again]
   H3 --> G
   H -->|AI checks failed| H4[Show checks, Upraviť or<br/>'Odoslať podnet aj tak' → checks/confirm]
-  H -->|ok, or AI checks not computed:<br/>Gemini error, checks skipped| I[Draft#confirm: Issue state waiting,<br/>subscribe author, SyncIssueToTriageJob]
+  H -->|AI checks not computed<br/>Gemini error, job retried| H5[Automatickú kontrolu sa nepodarilo<br/>vykonať, no checks/confirm]
+  H5 --> G
+  H -->|ok| I[Draft#confirm: Issue state waiting,<br/>subscribe author, SyncIssueToTriageJob]
   I --> J[/dopyty/novy-dopyt/dakujeme/]
 ```
 

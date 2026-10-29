@@ -219,7 +219,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def confirmable?
-    checks.to_a.all? { |check| check["action"] == "confirm" }
+    !checks.nil? && checks.all? { |check| check["action"] == "confirm" }
   end
 
   def municipality_errors?
@@ -239,8 +239,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def checks_passed
-    # checks stay nil when Gemini fails, the draft is then submitted unchecked
-    errors.add(:checks, :invalid) if checks.present?
+    errors.add(:checks, :invalid) if checks.nil? || checks.any?
   end
 
   def municipality_supported
