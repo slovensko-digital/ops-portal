@@ -113,7 +113,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def needs_editing?
-    checks.any? { |check| check["action"] == "back" }
+    checks.to_a.any? { |check| check["action"] == "back" }
   end
 
   def geo
@@ -187,11 +187,13 @@ class Issues::Draft < ApplicationRecord
     elsif Rails.env.development? && ENV["GEMINI_API_KEY"].blank?
       candidates.map(&:id) # lets the flow be clicked through locally without an AI key
     else
-      candidates.map(&:id) & Array(ai_similar_issue_ids(candidates))
+      candidate_ids = candidates.map(&:id)
+      similar_issue_ids = Array(ai_similar_issue_ids(candidates))
+      candidate_ids & similar_issue_ids
     end
 
     save!
-  rescue Ai::Prompt::PromptNotFoundException, Faraday::Error => e
+  rescue Ai::Prompt::PromptNotFoundException, Gemini::Error, Faraday::Error => e
     Rollbar.error(e)
     self.last_duplicate_ids = nil
   end
@@ -221,7 +223,7 @@ class Issues::Draft < ApplicationRecord
   end
 
   def confirmable?
-    checks.all? { |check| check["action"] == "confirm" }
+    checks.to_a.all? { |check| check["action"] == "confirm" }
   end
 
   def municipality_errors?
@@ -245,7 +247,8 @@ class Issues::Draft < ApplicationRecord
   end
 
   def checks_passed
-    errors.add(:checks, :invalid) if checks.any?
+    # checks stay nil when Gemini fails, the draft is then submitted unchecked
+    errors.add(:checks, :invalid) if checks.present?
   end
 
   def municipality_supported
@@ -264,7 +267,8 @@ class Issues::Draft < ApplicationRecord
     Gemini.generate(
       system_prompt: Ai::Prompt.get("findduplicates"),
       messages: messages,
-      response_schema: { "type": "ARRAY", "items": { "type": "INTEGER" } }
+      response_schema: { "type": "ARRAY", "items": { "type": "INTEGER" } },
+      raise_on_error: true
     )
   end
 

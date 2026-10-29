@@ -102,6 +102,25 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert_not draft.errors.added?(:base, :duplicates_nearby)
   end
 
+  test "checks_passed fails on generated checks and passes when there are none or they could not be generated" do
+    draft = draft_near(issues(:sent_to_responsible))
+    draft.last_duplicate_ids = []
+
+    draft.checks = [ { "title" => "Chýba popis", "info" => "-", "action" => "back" } ]
+    draft.valid?(:checks_step)
+    assert draft.errors.added?(:checks, :invalid)
+
+    draft.checks = []
+    draft.valid?(:checks_step)
+    assert_not draft.errors.added?(:checks, :invalid)
+
+    draft.checks = nil
+    draft.valid?(:checks_step)
+    assert_not draft.errors.added?(:checks, :invalid)
+    assert draft.confirmable?
+    assert_not draft.needs_editing?
+  end
+
   test "stored duplicates and the decision to ignore them are reset when the location or category changes" do
     draft = draft_near(issues(:sent_to_responsible))
     draft.save!
@@ -187,6 +206,19 @@ class Issues::DraftTest < ActiveSupport::TestCase
 
     assert_equal [ issue.id ], draft.reload.last_duplicate_ids
     assert_not_requested :post, GEMINI_URL
+  end
+
+  test "detect_duplicates! leaves duplicates undetected when Gemini answers with an error" do
+    draft = draft_with_photo_near(issues(:sent_to_responsible))
+    stub_request(:post, GEMINI_URL).to_return(
+      status: 404,
+      headers: { "Content-Type" => "application/json" },
+      body: { error: { code: 404, message: "Model not available", status: "NOT_FOUND" } }.to_json
+    )
+
+    draft.detect_duplicates!
+
+    assert_nil draft.reload.last_duplicate_ids
   end
 
   test "detect_duplicates! leaves duplicates undetected when Gemini cannot be reached" do
