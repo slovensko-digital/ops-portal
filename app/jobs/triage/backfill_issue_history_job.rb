@@ -1,4 +1,6 @@
 class Triage::BackfillIssueHistoryJob < ApplicationJob
+  queue_as :low_priority
+
   TRIAGE_STATE_ATTRIBUTE = "ops_state"
   TRIAGE_RESPONSIBLE_SUBJECT_ATTRIBUTE = "responsible_subject"
 
