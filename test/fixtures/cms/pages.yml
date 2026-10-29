@@ -55,3 +55,11 @@ ai_find_duplicates:
   text: ""
   raw: "duplicates prompt"
   tags: ["prompt:findduplicates"]
+
+ai_moderate_comments:
+  title: "AI Prompt: Moderate Comments"
+  slug: moderatecomments
+  category_id: <%= ENV["CMS_AI_CATEGORY_ID"] %>
+  text: ""
+  raw: "moderate comments prompt"
+  tags: ["prompt:moderatecomments"]

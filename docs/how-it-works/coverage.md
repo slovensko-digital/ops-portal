@@ -16,7 +16,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 |---|---|---|---|---|
 | Register / login / OAuth / magic link / ban | [08](08-onboarding.md) | `system/authorization_test.rb`, `controllers/rodauth_controller_test.rb` | 🟡 | password reset, login change, close account |
 | Phone verification | [08](08-onboarding.md) | `system/profiles/verifications_test.rb`, controller test | 🟡 | `check_code` success/fail; `SendVerificationCodeJob` test file is empty |
-| Submission wizard | [03](03-submission-and-triage.md) | `system/issues/drafts_test.rb` (3), `models/issues/draft_test.rb` | 🟡 | `drafts_controller.rb` 61% lines; duplicates step; question flow; Gemini/Nominatim jobs (empty test files); no assert that `SyncIssueToTriageJob` is enqueued |
+| Submission wizard | [03](03-submission-and-triage.md) | `system/issues/drafts_test.rb` (3), `models/issues/draft_test.rb`, `jobs/issues/draft/*` (Gemini) | 🟡 | `drafts_controller.rb` 61% lines; duplicates step; question flow; Nominatim job (empty test file); no assert that `SyncIssueToTriageJob` is enqueued |
 | Edit while waiting | [03](03-submission-and-triage.md#3-author-edits-while-waiting) | — | ❌ | whole flow |
 | Portal → Triage create | [03](03-submission-and-triage.md) | `jobs/sync_issue_to_triage_job_test.rb` (7) | 🟡 | `sync_issue_to_triage_job.rb` 69% lines, 26/70 branches |
 | Comment → Triage | [06](06-comments-likes-routing.md) | `jobs/sync_issue_activity_object_to_triage_job_test.rb` (4, updates only) | ❌ | **28.6% lines, 7/84 branches**: article creation, author creation, "already exists" recovery; `SyncEditableActivityToTriageJob` 43%, its test file is empty |
@@ -29,6 +29,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | force_rs_login | [04](04-resolution.md#force_rs_login-edge-cases-observed) | `system/issues/force_rs_login_test.rb` | 🟡 | logged-in citizen case |
 | Verification / update | [04](04-resolution.md#4-verification--update-u-ticket) | `system/issues/updates_test.rb` (6), job tests | 🟡 | rejection after publish |
 | Praise | [05](05-praise.md) | `system/praises_test.rb` (2), model + client tests | 🟡 | praise callbacks; no RS |
+| Comment moderation (AI) | [06](06-comments-likes-routing.md#comment-moderation-ai) | `jobs/issues/moderate_comment_job_test.rb` (5), `jobs/issues/sync_editable_activity_to_triage_job_test.rb` (3), `system/issues/user_comments_test.rb` (2) | ✅ | — |
 | Likes, votes | [06](06-comments-likes-routing.md#likes) | `system/issue_likes_test.rb`, `system/issues/activity_votes_test.rb` | 🟡 | `activity_vote_test.rb` empty |
 | Subscriptions / unsubscribe | [06](06-comments-likes-routing.md#subscriptions) | system + controller tests | ✅ | — |
 | Emails (portal) | [09](09-emails.md) | `mailers/notification_mailer_test.rb` (14), notification job tests | ✅ | `RodauthMailer` only indirectly |
@@ -53,7 +54,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | triage: volunteer rejects | yes | system note + `issue_rejected` mail; T not closed |
 | triage: volunteer requests supplement | yes (observed) | expect 2 emails today ([ops#1328](https://github.com/slovensko-digital/ops/issues/1328)) |
 | triage: volunteer accepts (+ RS before) | yes (observed) | RS + "Finálny text" required; R created, T closed, RS email, `issue_accepted` |
-| triage admin: onboard municipality | yes (`activate_basic`) | only non-existing municipalities |
+| triage admin: onboard municipality | yes (`activate_basic`) | only non-existing municipalities; locally the seeded inactive ones with `EXISTING_MUNICIPALITY=1` |
 | triage admin: 7xx rules for RS / owner | 700 created by code; 750 hand-made | rule order is by name |
 | triage → portal: RS change / assignment | RS yes; owner/group **not mirrored** in the portal | |
 | portal → backoffice: RS change / assignment | RS via Triage → Connector; owner/group: no | Backoffice → Triage → portal hand-off observed ([ops#1333](https://github.com/slovensko-digital/ops/issues/1333), [ops#1348](https://github.com/slovensko-digital/ops/issues/1348)) |

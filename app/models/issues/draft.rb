@@ -58,7 +58,7 @@ class Issues::Draft < ApplicationRecord
 
   validate :latlon_present, on: :geo_step
   validates_numericality_of :zoom, greater_than: 14, allow_nil: true, on: :geo_step
-  validate :photos_allowed_content_type, on: :photos_step
+  validates :photos, image: { message: :invalid_content }, on: :photos_step
 
   validate :no_duplicates_nearby, on: :checks_step, unless: :duplicates_shown?
   validate :municipality_supported, on: [ :suggestions_step, :details_step, :checks_step ]
@@ -230,10 +230,6 @@ class Issues::Draft < ApplicationRecord
 
   private
 
-  def photos_allowed_content_type
-    errors.add(:photos, :invalid_content) if photos.any? { |file| !file.content_type.in?(UploadsController::ALLOWED_CONTENT_TYPES) }
-  end
-
   def latlon_present
     errors.add(:base, :latlon_missing) if latitude.blank? || longitude.blank?
   end
@@ -263,8 +259,7 @@ class Issues::Draft < ApplicationRecord
     Gemini.generate(
       system_prompt: Ai::Prompt.get("findduplicates"),
       messages: messages,
-      response_schema: { "type": "ARRAY", "items": { "type": "INTEGER" } },
-      raise_on_error: true
+      response_schema: { "type": "ARRAY", "items": { "type": "INTEGER" } }
     )
   end
 

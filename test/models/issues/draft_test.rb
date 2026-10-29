@@ -305,6 +305,20 @@ class Issues::DraftTest < ActiveSupport::TestCase
     assert Issues::Draft.exists?(draft.id)
   end
 
+  test "checks step passes with an empty checks array" do
+    draft = Issues::Draft.create!(author: users(:one), duplicates_shown: true)
+    draft.checks = []
+
+    assert draft.valid?(:checks_step)
+  end
+
+  test "confirmable when all checks allow confirmation" do
+    draft = Issues::Draft.create!(author: users(:one))
+    draft.checks = [ { "action" => "confirm" } ]
+
+    assert draft.confirmable?
+  end
+
   private
 
   GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=test-key"

@@ -23,3 +23,10 @@ c.pages.find_or_initialize_by(tags: "{prompt:findduplicates}").tap do |page|
   page.text = "-"
   page.raw = File.read(Rails.root + 'db/seeds/fixtures/ai_prompt_findduplicates.md')
 end.save!
+
+c.pages.find_or_initialize_by(tags: "{prompt:moderatecomments}").tap do |page|
+  page.title = "Moderate Comments"
+  page.slug = "moderate-comments"
+  page.text = "-"
+  page.raw = File.read(Rails.root + 'db/seeds/fixtures/ai_prompt_moderatecomments.md')
+end.save!

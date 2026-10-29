@@ -31,4 +31,20 @@ class EditableWithinEditingWindowTest < ActiveSupport::TestCase
       assert_includes @update.errors[:base], "Komentár je možné upravovať len 5 minút od jeho vytvorenia."
     end
   end
+
+  test "the error message reflects the configured editing window" do
+    original_window = ENV["COMMENT_EDITING_WINDOW_SECONDS"]
+    @update.text = "Nový text"
+
+    travel 1.hour do
+      { "60" => "1 minútu", "120" => "2 minúty", "10" => "10 sekúnd", "1" => "1 sekundu" }.each do |seconds, duration|
+        ENV["COMMENT_EDITING_WINDOW_SECONDS"] = seconds
+
+        assert_not @update.valid?(:edit)
+        assert_includes @update.errors[:base], "Komentár je možné upravovať len #{duration} od jeho vytvorenia."
+      end
+    end
+  ensure
+    ENV["COMMENT_EDITING_WINDOW_SECONDS"] = original_window
+  end
 end
