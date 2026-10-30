@@ -15,12 +15,14 @@ class Api::V1::IssuesController < ApiController
     allowed_article_types = [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment ]
     allowed_article_types += [ :responsible_subject_portal_and_backoffice_comment ] unless params[:exclude_responsible_subject_articles] == "true"
     allowed_article_types += [ :unknown_user_portal_comment, :user_portal_comment, :agent_portal_comment ] if params[:include_customer_activities] == "true"
+    @attachment_urls = params[:attachment_urls] == "true"
 
     @issue = @zammad_client.get_ticket(
       params.require(:id),
       responsible_subject: @client.responsible_subject,
       allowed_article_types: allowed_article_types,
-      expand: params[:expand] != "false"
+      expand: params[:expand] != "false",
+      download_attachments: !@attachment_urls
     )
   end
 
@@ -46,7 +48,7 @@ class Api::V1::IssuesController < ApiController
   def set_issue
     return head :not_found unless @client.responsible_subject
 
-    @ticket = @zammad_client.get_ticket(params.require :id)
+    @ticket = @zammad_client.get_ticket(params.require(:id), download_attachments: false)
 
     return head :not_found unless @ticket
     head :not_found unless @client.responsible_subject.in?([ @ticket[:responsible_subject], @ticket[:previous_responsible_subject] ])

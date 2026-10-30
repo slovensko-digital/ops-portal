@@ -24,6 +24,8 @@ tags:
     description: Operations related to issues
   - name: Activities
     description: Operations related to activities (articles) within issues
+  - name: Attachments
+    description: Downloading attachment files through pre-signed links
   - name: Responsible Subjects
     description: Operations related to responsible subjects
 
@@ -138,6 +140,15 @@ paths:
           schema:
             type: boolean
             default: true
+        - name: attachment_urls
+          in: query
+          required: false
+          description: |
+            Return a signed `url` (valid 3 hours, no token needed) instead of `data64` for each attachment.
+            Use it when responses with embedded files are too large for the client.
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: Issue details retrieved successfully
@@ -233,6 +244,15 @@ paths:
           description: Activity identifier
           schema:
             type: string
+        - name: attachment_urls
+          in: query
+          required: false
+          description: |
+            Return a signed `url` (valid 3 hours, no token needed) instead of `data64` for each attachment.
+            Use it when responses with embedded files are too large for the client.
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: Activity details retrieved successfully
@@ -287,6 +307,67 @@ paths:
           description: Issue not found
         '401':
           description: Unauthorized - invalid or missing token
+
+  /api/v1/issues/{issue_id}/activities/{activity_id}/attachments/{id}:
+    get:
+      summary: Download an attachment through a pre-signed link
+      description: |
+        Returns the raw file of an attachment. This is a pre-signed link, do not build it yourself: call
+        `GET /api/v1/issues/{id}` or `GET /api/v1/issues/{issue_id}/activities/{id}` with `attachment_urls=true`
+        and use the `url` of the attachment as it is. It already contains all path ids and the `expires` and
+        `signature` query parameters.
+
+        The link is valid for 3 hours and needs no token, so the file can be downloaded by any HTTP client.
+        For a new link, fetch the issue or activity again.
+      operationId: downloadAttachment
+      tags:
+        - Attachments
+      security: []
+      parameters:
+        - name: issue_id
+          in: path
+          required: true
+          description: Issue identifier
+          schema:
+            type: string
+        - name: activity_id
+          in: path
+          required: true
+          description: Activity identifier
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: Attachment identifier
+          schema:
+            type: string
+        - name: expires
+          in: query
+          required: true
+          description: Unix time until which the link is valid. Part of the `url` returned with `attachment_urls=true`
+          schema:
+            type: integer
+        - name: signature
+          in: query
+          required: true
+          description: |
+            Signature of the path ids and `expires`, made by the portal. Part of the `url` returned with
+            `attachment_urls=true`, it cannot be created by the client
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The attachment file, with its own content type and file name in `Content-Disposition`
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Invalid or expired link
+        '404':
+          description: Attachment not found
 
   /api/v1/responsible_subjects:
     get:
@@ -755,7 +836,13 @@ components:
         data64:
           type: string
           format: byte
-          description: Base64 encoded file data
+          description: Base64 encoded file data, left out with `attachment_urls=true`
+        url:
+          type: string
+          format: uri
+          description: |
+            Signed link to download the file, valid 3 hours without a token. Only with `attachment_urls=true`,
+            then it replaces `data64`
 
     ResponsibleSubject:
       type: object

@@ -1,10 +1,12 @@
 require "test_helper"
 require "test_helpers/api_helper"
 require "test_helpers/triage_helper"
+require "test_helpers/zammad_helper"
 
 class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
   include ApiHelper
   include TriageHelper
+  include ZammadHelper
 
   ISSUE_SCHEMA = {
     triage_identifier: Integer, ops_issue_identifier: Integer, ops_state: String, title: String,
@@ -20,6 +22,10 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
       attachments: [ { triage_identifier: Integer, filename: String, content_type: String, data64: String } ]
     } ]
   }.freeze
+
+  ISSUE_WITH_URLS_SCHEMA = ISSUE_SCHEMA.deep_dup.tap do |schema|
+    schema[:activities].first[:attachments] = [ { triage_identifier: Integer, filename: String, content_type: String, url: String } ]
+  end.freeze
 
   setup do
     @client, @key = api_client_with_key
@@ -169,9 +175,10 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
   test "show returns the issue with its activities" do
     ticket = ticket_with_activities
     zammad = Minitest::Mock.new
-    zammad.expect :get_ticket, ticket, [ "601" ]
+    zammad.expect :get_ticket, ticket, [ "601" ], download_attachments: false
     zammad.expect :get_ticket, ticket, [ "601" ], responsible_subject: @responsible_subject,
-      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :responsible_subject_portal_and_backoffice_comment ], expand: true
+      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :responsible_subject_portal_and_backoffice_comment ], expand: true,
+      download_attachments: true
 
     with_zammad_client(zammad) do
       get api_v1_issue_url(601), headers: api_headers(@token)
@@ -189,9 +196,10 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
   test "show parameters widen or narrow the returned activity types" do
     ticket = ticket_with_activities
     zammad = Minitest::Mock.new
-    zammad.expect :get_ticket, ticket, [ "601" ]
+    zammad.expect :get_ticket, ticket, [ "601" ], download_attachments: false
     zammad.expect :get_ticket, ticket, [ "601" ], responsible_subject: @responsible_subject,
-      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :unknown_user_portal_comment, :user_portal_comment, :agent_portal_comment ], expand: false
+      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :unknown_user_portal_comment, :user_portal_comment, :agent_portal_comment ], expand: false,
+      download_attachments: true
 
     with_zammad_client(zammad) do
       get api_v1_issue_url(601, include_customer_activities: "true", exclude_responsible_subject_articles: "true", expand: "false"), headers: api_headers(@token)
@@ -201,10 +209,53 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_mock zammad
   end
 
+  test "show with attachment_urls links attachments instead of embedding them" do
+    ticket = ticket_with_activities
+    ticket[:activities].each { |activity| activity[:attachments].map! { it.except(:data64) } }
+    zammad = Minitest::Mock.new
+    zammad.expect :get_ticket, ticket, [ "601" ], download_attachments: false
+    zammad.expect :get_ticket, ticket, [ "601" ], responsible_subject: @responsible_subject,
+      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :responsible_subject_portal_and_backoffice_comment ], expand: true,
+      download_attachments: false
+    zammad.expect :download_attachment, { body: "image-bytes", content_type: "image/jpeg", content_disposition: "inline; filename=\"photo.jpg\"" }, [ "601", "1", "1" ]
+
+    with_zammad_client(zammad) do
+      get api_v1_issue_url(601, attachment_urls: "true"), headers: api_headers(@token)
+      assert_response :success
+      assert_json_schema ISSUE_WITH_URLS_SCHEMA, response.parsed_body
+
+      get response.parsed_body.dig("activities", 0, "attachments", 0, "url")
+    end
+
+    assert_response :success
+    assert_equal "image-bytes", response.body
+    assert_mock zammad
+  end
+
+  # a praise in triage, served through the real client: its first article has attachments 501 and 502
+  def with_triage_praise(&block)
+    stub_zammad(:get, "tickets/42", fixture: "zammad/ticket_resolution", overrides: {
+      issue_type: "praise", responsible_subject: { label: @responsible_subject.subject_name, value: @responsible_subject.id }
+    })
+    stub_zammad(:get, "ticket_articles/by_ticket/42", body: zammad_fixture("zammad/ticket_articles"))
+    stub_zammad(:get, "users/1", fixture: "zammad/user_portal")
+    with_zammad_client(ZammadApiClient.new(url: ENV.fetch("TRIAGE_ZAMMAD_URL"), http_token: "token"), &block)
+  end
+
+  test "show with attachment_urls does not download the attachments of a praise" do
+    with_triage_praise do
+      get api_v1_issue_url(42, attachment_urls: "true"), headers: api_headers(@token)
+    end
+
+    assert_response :success
+    assert_equal [ 501, 502 ], response.parsed_body.dig("activities", 0, "attachments").map { it["triage_identifier"] }
+    assert_not_requested :get, %r{ticket_attachment/}
+  end
+
   test "show of a ticket belonging to another responsible subject is not found" do
     ticket = triage_ticket(issues(:legacy1)) # responsible_subjects(:one)
     zammad = Minitest::Mock.new
-    zammad.expect :get_ticket, ticket, [ "3" ]
+    zammad.expect :get_ticket, ticket, [ "3" ], download_attachments: false
 
     with_zammad_client(zammad) do
       get api_v1_issue_url(3), headers: api_headers(@token)
@@ -215,7 +266,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
 
   test "show of an unknown ticket is not found" do
     zammad = Minitest::Mock.new
-    zammad.expect :get_ticket, nil, [ "999" ]
+    zammad.expect :get_ticket, nil, [ "999" ], download_attachments: false
 
     with_zammad_client(zammad) do
       get api_v1_issue_url(999), headers: api_headers(@token)
@@ -228,7 +279,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
 
   test "update forwards allowed attributes to the triage ticket" do
     zammad = Minitest::Mock.new
-    zammad.expect :get_ticket, triage_ticket(@issue), [ "601" ]
+    zammad.expect :get_ticket, triage_ticket(@issue), [ "601" ], download_attachments: false
     zammad.expect :update_ticket!, true, [ "601", ActionController::Parameters ]
 
     with_zammad_client(zammad) do
@@ -241,7 +292,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
 
   test "update without issue params is a bad request" do
     zammad = Minitest::Mock.new
-    zammad.expect :get_ticket, triage_ticket(@issue), [ "601" ]
+    zammad.expect :get_ticket, triage_ticket(@issue), [ "601" ], download_attachments: false
 
     with_zammad_client(zammad) do
       put api_v1_issue_url(601), params: {}, headers: api_headers(@token)
