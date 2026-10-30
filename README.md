@@ -94,6 +94,8 @@ inactive. `bin/activate-seeded-municipalities` then runs, on the freshly seeded 
    It creates the municipality's group, organization, 700 trigger and users
    (`podatelna@<municipality>.example.com`, `jan.novak@<municipality>.example.com`) in Triage for the volunteer
    `dobrovolnik@example.org`, then activates it.
+4. `bin/rails responsible_subjects:activate_pro` for the [local Backoffices](#local-backoffice) you pick, it asks:
+   Malacky (yes by default) and Trnava (no by default). Without a terminal it takes the defaults.
 
 New issues in an activated municipality go to the volunteer's group in Triage. The seeded issues stay only in
 the portal, the seeds don't send them to Triage.
@@ -113,53 +115,48 @@ it on webhooks only when seeding.
 
 ```bash
 cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
-cd ../ops-backoffice-saas && docker compose down -v && docker compose up -d   # with a local Backoffice
+cd ../ops-backoffice-saas && dev/compose malacky down -v   # with local Backoffices, also trnava
 cd ../ops-portal && bin/rails db:seed:replant
-bin/activate-seeded-municipalities   # once Triage is up
+bin/activate-seeded-municipalities   # once Triage is up, then dev/up the Backoffices it prints
 bin/dev
 ```
 
 ## Local Backoffice
 
-Run a Backoffice next to the portal and Triage to click through the PRO flow (a municipality with its own
-Backoffice). The seeds connect Malacky to it. Clone
+Run Backoffices next to the portal and Triage to click through the PRO flow (a municipality with its own
+Backoffice), and with two of them a hand-off from one PRO municipality to another. Clone
 [ops-backoffice-saas](https://github.com/slovensko-digital/ops-backoffice-saas) next to this repo
-(`../ops-backoffice-saas`). Two Zammads need about 3 GB of Docker memory.
+(`../ops-backoffice-saas`).
 
 | What | URL |
 |---|---|
-| Backoffice | http://127.0.0.1:8081, `example@example.org` / `PASSword123` |
-| Backoffice emails | http://localhost:8026 (Mailpit) |
+| Backoffice of Malacky | http://malacky.localhost:8081, `example@example.org` / `PASSword123`, emails in Mailpit http://localhost:8026 |
+| Backoffice of Trnava (optional) | http://trnava.localhost:8082, `example@example.org` / `PASSword123`, emails in Mailpit http://localhost:8027 |
 
-Use `127.0.0.1:8081`, not `localhost:8081`. Cookies ignore ports, so Triage on `localhost:8080`
-and Backoffice on `localhost:8081` overwrite each other's session and log each other out.
+Each Backoffice has a host name of its own. Cookies ignore ports, so on the same host name Triage and the
+Backoffices log each other out. Chrome and Firefox resolve `*.localhost` without any setup. Triage and two
+Backoffices need about 4.5 GB of Docker memory.
 
-First time, with [Local Triage](#local-triage) set up:
+First time, with [Local Triage](#local-triage) set up: `bin/activate-seeded-municipalities` asks which
+municipalities to activate as PRO, runs `responsible_subjects:activate_pro` for them and prints a command per
+Backoffice, e.g.:
 
 ```bash
-# Backoffice, settings come from its .env.sample, no .env needed
-cd ../ops-backoffice-saas && docker compose up -d --build
+cd ../ops-backoffice-saas && dev/up malacky 1 Malacky 22 1 local-dev-malacky-backoffice-api-token-not-a-secret local-dev-malacky-backoffice-webhook-secret-not-a-secret
 ```
 
-Every day: `docker compose up -d` in `ops-backoffice-saas` too.
+`dev/up` gets the ids and secrets the portal created, so start the Backoffice after the activation. Every day:
+`dev/compose malacky up -d` (and `trnava`) in `ops-backoffice-saas`.
 
-How Malacky is wired:
-- The dev seeds create Malacky's `Client` and `Connector::Tenant`, with the Backoffice URL `localhost:8081` and
-  the `API_TOKEN` / `WEBHOOK_SECRET` of the Backoffice `.env.sample`. The seeds reset the id sequences, so Malacky is
-  always responsible subject 22 and tenant 1, the Backoffice's `OPS_RESPONSIBLE_SUBJECT_ID` and `WEBHOOK_TENANT_ID`.
-- `bin/activate-seeded-municipalities` activates Malacky in Triage like the other municipalities, then makes it PRO.
-- The portal calls the Backoffice at `localhost:8081`, the Backoffice calls the portal at `host.docker.internal:3000`
-  (`/connector/backoffice/webhook`, responsible subject search).
+Who calls whom: the portal calls the Backoffice at `localhost:<port>`. The Backoffice calls the portal at
+`host.docker.internal:3000` (`/connector/backoffice/webhook`, responsible subject search).
 
 Click-through:
 1. Create an issue in Malacky in the portal.
-2. Accept the ticket in Triage as `dobrovolnik@example.org`, it shows up in the Backoffice in group Incoming.
+2. Accept the ticket in Triage as `dobrovolnik@example.org`, it shows up in the Backoffice of Malacky in group Incoming.
 3. In the Backoffice, post a public (not internal) note or change the OPS state, it reaches Triage and the portal.
-
-Malacky also has the Triage user `podatelna@malacky.example.com` with role Externý zodpovedný subjekt, so Triage
-emails it about Malacky's tickets as well ([ops#1343](https://github.com/slovensko-digital/ops/issues/1343)).
-
-To reset, wipe the Backoffice together with the portal and Triage, see [Reset portal and Triage](#reset-portal-and-triage).
+4. With Trnava: change the responsible subject to Trnava in the Backoffice of Malacky, the ticket shows up in the
+   Backoffice of Trnava.
 
 ## Testing
 
@@ -167,58 +164,13 @@ Run `bin/rails test:all`. See [docs/TESTING.md](docs/TESTING.md) for what to tes
 
 ## Connect new Backoffice instance
 
-What the connection does is described in [docs/how-it-works/07](docs/how-it-works/07-backoffice-connector.md).
-The snippet below looks up the responsible subject by `name`, which is not set for ones created by
-`responsible_subjects:activate_basic`. For those, change `find_by!(name:)` to `find_by!(subject_name:)`.
+What the connection does is described in [docs/how-it-works/07](docs/how-it-works/07-backoffice-connector.md),
+the onboarding in [docs/how-it-works/08](docs/how-it-works/08-onboarding.md). Activate the responsible subject as PRO
+first, then deploy the Backoffice with the environment the task prints at the end:
 
-Tip: Use [CyberChef](https://gchq.github.io/CyberChef/#recipe=Pseudo-Random_Number_Generator(32,'Raw')To_Base62('0-9A-Za-z')) to generate secrets.
-
-Example:
-
-```ruby
-new_backoffice_data = {
-  name: "Malacky",
-  url: "https://novy.odkazprestarostu.sk/connector/webhook",
-  connector_zammad_url: "https://malacky.odkazprestarostu.sk/",
-  receive_customer_activities: false,
-  connector_zammad_api_token: "tokenvalue",
-  connector_zammad_webhook_secret: "secretvalue"
-}
-
-def connect_backoffice(data)
-  responsible_subject = ResponsibleSubject.find_by!(name: data[:name])
-
-  raise "ResponsibleSubject already PRO" if responsible_subject.pro?
-
-  responsible_subject.update_columns(
-    subject_name: data[:name],
-    active: true,
-    pro: true
-  )
-
-  client = Client.find_or_create_by!(name: data[:name])
-  tenant = Connector::Tenant.find_or_create_by!(name: data[:name])
-
-  api_key = OpenSSL::PKey::EC.generate("prime256v1")
-  webhook_key = OpenSSL::PKey::EC.generate("prime256v1")
-
-  client.update_columns(
-    api_token_public_key: api_key.public_to_pem,
-    webhook_private_key: webhook_key.to_pem,
-    url: data[:url],
-    responsible_subject_id: responsible_subject.id
-  )
-
-  tenant.update_columns(
-    backoffice_api_token: data[:connector_zammad_api_token],
-    backoffice_webhook_secret: data[:connector_zammad_webhook_secret],
-    ops_api_token_private_key: api_key.to_pem,
-    ops_webhook_public_key: webhook_key.public_to_pem,
-    ops_api_subject_identifier: client.id,
-    backoffice_url: data[:connector_zammad_url],
-    receive_customer_activities: data[:receive_customer_activities]
-  )
-end
-
-connect_backoffice new_backoffice_data
+```bash
+bin/rails responsible_subjects:activate_pro NAME="Malacky" BACKOFFICE_URL=https://malacky.odkazprestarostu.sk/ DRY_RUN=1
 ```
+
+Run it without arguments for help. It generates `API_TOKEN` and `WEBHOOK_SECRET` unless you pass them. For a
+responsible subject activated as BASIC it asks to confirm the changes to its Triage setup first.

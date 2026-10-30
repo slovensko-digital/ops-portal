@@ -46,7 +46,7 @@ What it doesn't handle:
   manual.
 - City parts (`Mesto::Časť`). The 700 condition is an exact match on the
   municipality name.
-- PRO setup.
+- PRO setup, see [`activate_pro`](#pro-municipality-responsible_subjectsactivate_pro).
 
 ### Locally: `EXISTING_MUNICIPALITY=1`
 
@@ -60,19 +60,44 @@ refuses an active or archived municipality, a missing or active RS, and an
 RS that already has a Triage user. The municipality's seeded issues are not
 sent to Triage.
 `bin/activate-seeded-municipalities` runs it for every seeded inactive
-municipality, see "Local Triage" in the README. Then it sets `pro` true on
-Malacky, whose `Client` and `Connector::Tenant` the seeds create for the
-local Backoffice, see "Local Backoffice" in the README.
+municipality, see "Local Triage" in the README.
 
-## PRO municipality: Backoffice
+## PRO municipality: `responsible_subjects:activate_pro`
 
-Manual: deploy a Backoffice with env `WEBHOOK_TENANT_ID`,
-`OPS_RESPONSIBLE_SUBJECT(_ID)`, `API_TOKEN`, `WEBHOOK_SECRET`,
-`OPS_CONNECTOR_URL`, then run the `connect_backoffice` snippet from the
-README in a portal console. It sets `pro: true` and creates the `Client` and
-`Connector::Tenant`. Nothing creates a Triage routing rule for a PRO
-municipality. Routing them is the "750" admin-made rules, which live only in
-the Triage database.
+```
+bin/rails responsible_subjects:activate_pro NAME="Malacky" \
+  BACKOFFICE_URL=https://malacky.odkazprestarostu.sk/ DRY_RUN=1
+```
+
+`ResponsibleSubjects::ProActivation` works on an existing responsible
+subject only (found by `subject_name`), activated as BASIC or not at all.
+It validates first and lists the changes. When the responsible subject was
+activated as BASIC (its Triage organization exists), the task asks to
+confirm them (`YES=1` skips it). Then:
+
+1. Triage: keeps the responsible subject user (`ops-rs-<id>`, role
+   Zodpovedný Subjekt), group NAME and the 700 trigger, or creates the
+   missing ones as `activate_basic` does. Only then it needs
+   `TRIAGE_ZAMMAD_AGENT_EMAIL`.
+2. Triage: takes every user of organization NAME out of it, role Externý
+   zodpovedný subjekt becomes Customer, so Triage no longer emails them about
+   the municipality's tickets, then deletes the organization. When Zammad
+   refuses (tickets still belong to it), it logs that and goes on. The users
+   stay in Triage and in the portal (`User::ResponsibleSubject`), what should
+   happen to them is not decided yet.
+3. Portal: creates the `Client` and `Connector::Tenant` (`BACKOFFICE_URL`,
+   `CONNECTOR_WEBHOOK_URL`, generated keys, `API_TOKEN` and `WEBHOOK_SECRET`
+   generated unless passed), sets `active` and `pro` on the responsible subject
+   and `active` on its municipality.
+
+It prints the Backoffice's environment (`OPS_RESPONSIBLE_SUBJECT(_ID)`,
+`WEBHOOK_TENANT_ID`, `API_TOKEN`, `WEBHOOK_SECRET`, `OPS_CONNECTOR_URL`),
+deploy the Backoffice with it. Like `activate_basic`, Triage changes are not
+rolled back when a step fails.
+
+Locally `bin/activate-seeded-municipalities` runs it for Malacky and, if
+asked, Trnava, each with a Backoffice of `ops-backoffice-saas` `dev/up`, see
+"Local Backoffice" in the README.
 
 ## Users across systems
 

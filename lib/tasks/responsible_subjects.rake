@@ -115,4 +115,103 @@ namespace :responsible_subjects do
     activation.call
     puts "Done."
   end
+
+  ACTIVATE_PRO_HELP = <<~HELP.freeze
+    Activates an existing responsible subject as PRO, with its own Backoffice, in the portal and in Triage.
+
+    Usage:
+      bin/rails responsible_subjects:activate_pro \\
+        NAME="Malacky" \\
+        BACKOFFICE_URL=https://malacky.odkazprestarostu.sk/ \\
+        DRY_RUN=1
+
+    Arguments:
+      NAME                       subject name of the responsible subject, e.g. Malacky
+      BACKOFFICE_URL             URL of the Backoffice Zammad, the Connector calls its API
+      CONNECTOR_WEBHOOK_URL      the portal's Connector webhook, the portal sends the Backoffice's issues to it,
+                                 defaults to the CONNECTOR_WEBHOOK_URL of the environment
+      BACKOFFICE_API_TOKEN       the Backoffice's API_TOKEN, generated when empty
+      BACKOFFICE_WEBHOOK_SECRET  the Backoffice's WEBHOOK_SECRET, generated when empty
+      TRIAGE_ZAMMAD_AGENT_EMAIL  email of the Triage agent (volunteer) for the municipality's tickets, needed only when
+                                 its Triage group or 700 trigger is missing (it was not activated as BASIC)
+      RECEIVE_CUSTOMER_ACTIVITIES=1  the Backoffice also gets the comments of citizens
+      DRY_RUN=1                  only validate and list the changes, change nothing
+      YES=1                      do not ask to confirm the changes to an existing BASIC setup
+
+    Environment:
+      TRIAGE_ZAMMAD_ADMIN_API_TOKEN  required, see responsible_subjects:activate_basic
+
+    First validates everything and stops without changing anything when:
+      - the responsible subject does not exist, or already has a Client, or a Connector::Tenant named NAME exists,
+      - its municipality is inactive and has no boundary,
+      - the agent is needed and does not exist or is not an agent, a Triage role or email address is missing.
+
+    Then lists the changes. For a responsible subject activated as BASIC, it asks to confirm them first:
+      Triage  keeps the responsible subject user, group NAME and the 700 trigger, or creates the missing ones
+              (see responsible_subjects:activate_basic),
+              takes the users of organization NAME out of it, role Externý zodpovedný subjekt becomes Customer,
+              so Triage stops emailing them about the tickets, then deletes the organization. The users stay in
+              Triage and in the portal, what should happen to them is not decided yet.
+      Portal  the Client and Connector::Tenant of the Backoffice, then activates the responsible subject (and its
+              municipality) with pro true
+
+    Prints the environment of the Backoffice deployment at the end.
+
+    Triage changes cannot be rolled back. When a step fails, the steps printed before it are done and have to be
+    finished or removed by hand.
+  HELP
+
+  desc "Activate an existing responsible subject as PRO with its own Backoffice, run without arguments for help"
+  task activate_pro: :environment do
+    if ENV["HELP"].present? || %w[NAME BACKOFFICE_URL].all? { ENV[_1].blank? }
+      puts ACTIVATE_PRO_HELP
+      next
+    end
+
+    admin_token = ENV["TRIAGE_ZAMMAD_ADMIN_API_TOKEN"]
+    abort "TRIAGE_ZAMMAD_ADMIN_API_TOKEN is missing, run without arguments for help" if admin_token.blank?
+
+    activation = ResponsibleSubjects::ProActivation.new(
+      name: ENV["NAME"],
+      backoffice_url: ENV["BACKOFFICE_URL"],
+      connector_webhook_url: ENV["CONNECTOR_WEBHOOK_URL"],
+      backoffice_api_token: ENV["BACKOFFICE_API_TOKEN"].presence || SecureRandom.alphanumeric(43),
+      backoffice_webhook_secret: ENV["BACKOFFICE_WEBHOOK_SECRET"].presence || SecureRandom.alphanumeric(43),
+      triage_agent_email: ENV["TRIAGE_ZAMMAD_AGENT_EMAIL"],
+      receive_customer_activities: ENV["RECEIVE_CUSTOMER_ACTIVITIES"].present?,
+      client: ZammadApiClient.new(url: ENV.fetch("TRIAGE_ZAMMAD_URL"), http_token: admin_token),
+      log: ->(message) { puts message }
+    )
+
+    begin
+      activation.validate!
+    rescue ResponsibleSubjects::ProActivation::Invalid => e
+      abort "Nothing was changed:\n#{e.message.gsub(/^/, "  - ")}"
+    end
+
+    puts activation.plan.map { "  #{_1}" }
+
+    if ENV["DRY_RUN"].present?
+      puts "Valid, nothing was changed (DRY_RUN)."
+      next
+    end
+
+    if activation.existing_setup_changes.any? && ENV["YES"].blank?
+      abort "#{activation.name} was activated as BASIC, confirm the changes above with YES=1" unless $stdin.tty?
+
+      print "#{activation.name} was activated as BASIC, make the changes above? [y/N] "
+      abort "Nothing was changed." unless $stdin.gets.to_s.strip.casecmp?("y")
+    end
+
+    tenant = activation.call
+    puts <<~ENVIRONMENT
+      Done. The Backoffice's environment:
+        OPS_RESPONSIBLE_SUBJECT=#{activation.responsible_subject.subject_name}
+        OPS_RESPONSIBLE_SUBJECT_ID=#{activation.responsible_subject.id}
+        WEBHOOK_TENANT_ID=#{tenant.id}
+        API_TOKEN=#{tenant.backoffice_api_token}
+        WEBHOOK_SECRET=#{tenant.backoffice_webhook_secret}
+        OPS_CONNECTOR_URL=#{URI.join(activation.connector_webhook_url, "/")}
+    ENVIRONMENT
+  end
 end

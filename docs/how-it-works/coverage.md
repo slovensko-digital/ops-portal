@@ -38,6 +38,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Connector jobs (Triage → Backoffice, Backoffice → Triage) | [07](07-backoffice-connector.md) | — | ❌ | **all of them**: 17-25% lines; `SendNewActivityToTriageFromBackofficeJob` and `Connector::OpsApiClient` 0% |
 | Subtasks | [07](07-backoffice-connector.md#subtasks-podúlohy) | `lib/connector/subtask_parser_test.rb` (16), job test (7) | 🟡 | `<div>`/`<p>` lines |
 | Basic activation | [08](08-onboarding.md) | `models/responsible_subjects/basic_activation_test.rb` (14) | ✅ | rake wrapper; partial-failure re-run |
+| PRO activation | [08](08-onboarding.md#pro-municipality-responsible_subjectsactivate_pro) | `models/responsible_subjects/pro_activation_test.rb` (7) | ✅ | rake wrapper (confirmation prompt); partial-failure re-run |
 | Citizen rename → Triage/Backoffice | [08](08-onboarding.md) | — | ❌ | 40-67% lines |
 | Triage user change → portal (`user.updated`) | [08](08-onboarding.md#users-across-systems) | `jobs/triage/update_portal_user_from_triage_job_test.rb` (6) | 🟡 | RS ban, deactivation, portal citizen → RS, match by email ([ops#1350](https://github.com/slovensko-digital/ops/issues/1350)) |
 | Scheduled (portal) | [10](10-scheduled.md) | — | ❌ | — |
@@ -55,6 +56,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | triage: volunteer requests supplement | yes (observed) | expect 2 emails today ([ops#1328](https://github.com/slovensko-digital/ops/issues/1328)) |
 | triage: volunteer accepts (+ RS before) | yes (observed) | RS + "Finálny text" required; R created, T closed, RS email, `issue_accepted` |
 | triage admin: onboard municipality | yes (`activate_basic`) | only non-existing municipalities; locally the seeded inactive ones with `EXISTING_MUNICIPALITY=1` |
+| triage admin: activate PRO municipality | yes (`activate_pro`) | existing responsible subjects only; locally Malacky and Trnava with a local Backoffice each |
 | triage admin: 7xx rules for RS / owner | 700 created by code; 750 hand-made | rule order is by name |
 | triage → portal: RS change / assignment | RS yes; owner/group **not mirrored** in the portal | |
 | portal → backoffice: RS change / assignment | RS via Triage → Connector; owner/group: no | Backoffice → Triage → portal hand-off observed ([ops#1333](https://github.com/slovensko-digital/ops/issues/1333), [ops#1348](https://github.com/slovensko-digital/ops/issues/1348)) |
