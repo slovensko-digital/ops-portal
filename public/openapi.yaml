@@ -24,6 +24,10 @@ tags:
     description: Operations related to issues
   - name: Activities
     description: Operations related to activities (articles) within issues
+  - name: Attachments
+    description: |
+      Downloading attachment files through pre-signed links. Get a link as `url` of an attachment from
+      `GET /api/v1/issues/{id}` or `GET /api/v1/issues/{issue_id}/activities/{id}` with `attachment_urls=true`.
   - name: Responsible Subjects
     description: Operations related to responsible subjects
 
@@ -308,14 +312,18 @@ paths:
 
   /api/v1/issues/{issue_id}/activities/{activity_id}/attachments/{id}:
     get:
-      summary: Download an attachment
+      summary: Download an attachment through a pre-signed link
       description: |
-        Download the raw file of an activity attachment. Use the `url` returned for the attachment by
-        `GET /api/v1/issues/{id}` or `GET /api/v1/issues/{issue_id}/activities/{id}` with `attachment_urls=true`.
-        The link is signed and valid for 3 hours, no token is needed. Fetch the issue or activity again for a new link.
+        Returns the raw file of an attachment. This is a pre-signed link, do not build it yourself: call
+        `GET /api/v1/issues/{id}` or `GET /api/v1/issues/{issue_id}/activities/{id}` with `attachment_urls=true`
+        and use the `url` of the attachment as it is. It already contains all path ids and the `expires` and
+        `signature` query parameters.
+
+        The link is valid for 3 hours and needs no token, so the file can be downloaded by any HTTP client.
+        For a new link, fetch the issue or activity again.
       operationId: downloadAttachment
       tags:
-        - Activities
+        - Attachments
       security: []
       parameters:
         - name: issue_id
@@ -339,13 +347,15 @@ paths:
         - name: expires
           in: query
           required: true
-          description: Unix time until which the link is valid
+          description: Unix time until which the link is valid. Part of the `url` returned with `attachment_urls=true`
           schema:
             type: integer
         - name: signature
           in: query
           required: true
-          description: Signature of the link
+          description: |
+            Signature of the path ids and `expires`, made by the portal. Part of the `url` returned with
+            `attachment_urls=true`, it cannot be created by the client
           schema:
             type: string
       responses:
