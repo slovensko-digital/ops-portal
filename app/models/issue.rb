@@ -104,6 +104,13 @@ class Issue < ApplicationRecord
   scope :searchable, -> { publicly_visible.not_archived }
 
   scope :resolution_process, -> { where.not(resolution_external_id: nil) }
+  # whatever a responsible subject could have dealt with, public or not: the resolution process,
+  # archived legacy issues that passed triage in the old system and accepted praises, private ones too
+  scope :past_triage, -> do
+    resolution_process
+      .or(where(triage_external_id: nil, state: Issues::State.archived).where.not(archived_state: Issues::State.where(key: %w[waiting rejected duplicate])))
+      .or(praise.where(state: Issues::State.where(key: %w[resolved resolved_private])))
+  end
 
   before_save :recalculate_computed_fields
   after_update :notify_subscribers

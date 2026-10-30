@@ -3,9 +3,9 @@ class Api::V1::IssuesController < ApiController
   before_action :set_issue, only: [ :show, :update ]
 
   def index
-    responsible_subject = @client.responsible_subject
-    scope = responsible_subject.issues
-    scope = scope.resolution_process unless params[:all] == "true"
+    issues = @client.responsible_subject.issues
+    scope = issues.publicly_visible.where.not(state: Issues::State.archived)
+    scope = scope.or(issues.past_triage) if params[:all] == "true"
     scope = scope.where(state: Issues::State.where(key: params[:ops_state])) if params[:ops_state].present?
 
     @issues = scope
