@@ -24,7 +24,8 @@ except the subtask job have **no tests**.
   OPS API private key, and `ops_api_subject_identifier == client.id`.
 - `ResponsibleSubject#pro?` gates every Triage → Backoffice job.
 
-Setup: README "Connect new Backoffice instance".
+Setup: README "Connect new Backoffice instance". Locally the dev seeds
+connect Malacky, see README "Local Backoffice".
 
 ## Issue list (`GET /api/v1/issues`)
 

@@ -10,6 +10,7 @@
 #      responsible_subjects:activate_basic finds a municipality's boundary by it
 #   3. bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 for every inactive municipality
 #      creates its Triage setup for the volunteer and activates it, see docs/how-it-works/08-onboarding.md
+#   4. makes Malacky PRO, the seeds connect it to the local Backoffice (see "Local Backoffice" in README.md)
 #
 # Then start bin/dev. New issues in the activated municipalities go to the volunteer in Triage. The seeded
 # issues stay only in the portal, the seeds don't send them to Triage.
@@ -21,6 +22,8 @@ require "net/http"
 APP_ROOT = File.expand_path("..", __dir__)
 # created by dev/setup_users.rb in ops-triage-zammad
 TRIAGE_AGENT_EMAIL = "dobrovolnik@example.org"
+# its Client and Connector::Tenant are in the seeds
+PRO_MUNICIPALITY = "Malacky"
 
 def run!(*command)
   puts "\n== #{command.join(" ")}"
@@ -73,6 +76,16 @@ Dir.chdir APP_ROOT do
   municipalities.each do |name, slug|
     run! "bin/rails", "responsible_subjects:activate_basic", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
       "USERS=podatelna@#{slug}.example.com,jan.novak@#{slug}.example.com", "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}"
+  end
+
+  if municipalities.map(&:first).include?(PRO_MUNICIPALITY)
+    run! "bin/rails", "runner", <<~RUBY
+      responsible_subject = ResponsibleSubject.find_by!(subject_name: #{PRO_MUNICIPALITY.dump})
+      responsible_subject.update!(pro: true)
+      tenant = Connector::Tenant.find_by!(ops_api_subject_identifier: responsible_subject.clients.sole.id)
+      # the local Backoffice's OPS_RESPONSIBLE_SUBJECT_ID and WEBHOOK_TENANT_ID
+      puts "\#{responsible_subject.subject_name} is PRO: responsible subject \#{responsible_subject.id}, tenant \#{tenant.id}"
+    RUBY
   end
 
   puts "\n== Done, activated: #{municipalities.map(&:first).join(", ")}. Start bin/dev."

@@ -113,6 +113,7 @@ it on webhooks only when seeding.
 
 ```bash
 cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
+cd ../ops-backoffice-saas && docker compose down -v && docker compose up -d   # with a local Backoffice
 cd ../ops-portal && bin/rails db:seed:replant
 bin/activate-seeded-municipalities   # once Triage is up
 bin/dev
@@ -120,33 +121,45 @@ bin/dev
 
 ## Local Backoffice
 
-Run a Backoffice next to the portal and Triage to click through the PRO flow (a municipality
-with its own Backoffice). Clone [ops-backoffice-saas](https://github.com/slovensko-digital/ops-backoffice-saas)
-next to this repo. Two Zammads need about 3 GB of Docker memory.
+Run a Backoffice next to the portal and Triage to click through the PRO flow (a municipality with its own
+Backoffice). The seeds connect Malacky to it. Clone
+[ops-backoffice-saas](https://github.com/slovensko-digital/ops-backoffice-saas) next to this repo
+(`../ops-backoffice-saas`). Two Zammads need about 3 GB of Docker memory.
 
 | What | URL |
 |---|---|
 | Backoffice | http://127.0.0.1:8081, `example@example.org` / `PASSword123` |
+| Backoffice emails | http://localhost:8026 (Mailpit) |
 
 Use `127.0.0.1:8081`, not `localhost:8081`. Cookies ignore ports, so Triage on `localhost:8080`
 and Backoffice on `localhost:8081` overwrite each other's session and log each other out.
 
-1. Pick a portal responsible subject for the Backoffice, e.g. Rajec.
-2. Connect it in `bin/rails console` with the [snippet below](#connect-new-backoffice-instance), with
-   `url: "http://localhost:3000/connector/webhook"`, `connector_zammad_url: "http://localhost:8081/"`
-   and the `API_TOKEN` / `WEBHOOK_SECRET` from the Backoffice `.env`. For a responsible subject created
-   by `responsible_subjects:activate_basic`, change `find_by!(name:)` to `find_by!(subject_name:)`.
-3. In `ops-backoffice-saas`, copy `.env.sample` to `.env` and change:
-   - `OPS_PORTAL_URL=http://host.docker.internal:3000`, the sample's `https` doesn't reach the dev portal
-     (the responsible subject autocomplete fails)
-   - `OPS_RESPONSIBLE_SUBJECT` and `OPS_RESPONSIBLE_SUBJECT_ID` to the portal responsible subject's
-     name and id. The sample's `1` is "MÚ Nové Mesto" in the portal seeds, not Staré Mesto.
-   - `WEBHOOK_TENANT_ID` to the id of the `Connector::Tenant` the snippet created
-4. `docker compose up -d --build` in `ops-backoffice-saas`. After changing `.env`, run
-   `docker compose up -d --force-recreate`, so the init seeds the webhooks again with the new values.
+First time, with [Local Triage](#local-triage) set up:
 
-Click-through: create an issue in that municipality, accept it in Triage, and it shows up in the
-Backoffice. A public note from the Backoffice reaches Triage and the portal.
+```bash
+# Backoffice, settings come from its .env.sample, no .env needed
+cd ../ops-backoffice-saas && docker compose up -d --build
+```
+
+Every day: `docker compose up -d` in `ops-backoffice-saas` too.
+
+How Malacky is wired:
+- The dev seeds create Malacky's `Client` and `Connector::Tenant`, with the Backoffice URL `localhost:8081` and
+  the `API_TOKEN` / `WEBHOOK_SECRET` of the Backoffice `.env.sample`. The seeds reset the id sequences, so Malacky is
+  always responsible subject 22 and tenant 1, the Backoffice's `OPS_RESPONSIBLE_SUBJECT_ID` and `WEBHOOK_TENANT_ID`.
+- `bin/activate-seeded-municipalities` activates Malacky in Triage like the other municipalities, then makes it PRO.
+- The portal calls the Backoffice at `localhost:8081`, the Backoffice calls the portal at `host.docker.internal:3000`
+  (`/connector/backoffice/webhook`, responsible subject search).
+
+Click-through:
+1. Create an issue in Malacky in the portal.
+2. Accept the ticket in Triage as `dobrovolnik@example.org`, it shows up in the Backoffice in group Incoming.
+3. In the Backoffice, post a public (not internal) note or change the OPS state, it reaches Triage and the portal.
+
+Malacky also has the Triage user `podatelna@malacky.example.com` with role Externý zodpovedný subjekt, so Triage
+emails it about Malacky's tickets as well ([ops#1343](https://github.com/slovensko-digital/ops/issues/1343)).
+
+To reset, wipe the Backoffice together with the portal and Triage, see [Reset portal and Triage](#reset-portal-and-triage).
 
 ## Testing
 

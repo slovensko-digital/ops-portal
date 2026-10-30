@@ -60,7 +60,9 @@ refuses an active or archived municipality, a missing or active RS, and an
 RS that already has a Triage user. The municipality's seeded issues are not
 sent to Triage.
 `bin/activate-seeded-municipalities` runs it for every seeded inactive
-municipality, see "Local Triage" in the README.
+municipality, see "Local Triage" in the README. Then it sets `pro` true on
+Malacky, whose `Client` and `Connector::Tenant` the seeds create for the
+local Backoffice, see "Local Backoffice" in the README.
 
 ## PRO municipality: Backoffice
 
