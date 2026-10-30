@@ -67,7 +67,8 @@ class ResponsibleSubjects::BasicActivation
     user_emails.each do |user_email|
       roles = roles_for(user_email)
       user_id = @client.create_user!(email: user_email, organization: name, roles: roles, **names_from_email(user_email))
-      Triage::UpdatePortalUserFromTriageJob.perform_now(user_id, triage_zammad_client: @client)
+      # perform, not perform_now: its retry would enqueue the job with the client, which can't be serialized
+      Triage::UpdatePortalUserFromTriageJob.new.perform(user_id, triage_zammad_client: @client)
       @log.call("Triage and portal: user #{user_email} (#{user_id}), #{roles.join(", ")}")
     end
 
