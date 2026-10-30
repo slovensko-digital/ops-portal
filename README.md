@@ -130,8 +130,8 @@ Backoffice), and with two of them a hand-off from one PRO municipality to anothe
 
 | What | URL |
 |---|---|
-| Backoffice of Malacky | http://malacky.localhost:8081, `example@example.org` / `PASSword123`, emails in Mailpit http://localhost:8026 |
-| Backoffice of Trnava (optional) | http://trnava.localhost:8082, `example@example.org` / `PASSword123`, emails in Mailpit http://localhost:8027 |
+| Backoffice of Malacky | http://malacky.localhost:8081, `admin@example.org` / `PASSword123`, emails in Mailpit http://localhost:8026 |
+| Backoffice of Trnava (optional) | http://trnava.localhost:8082, `admin@example.org` / `PASSword123`, emails in Mailpit http://localhost:8027 |
 
 Each Backoffice has a host name of its own. Cookies ignore ports, so on the same host name Triage and the
 Backoffices log each other out. Chrome and Firefox resolve `*.localhost` without any setup. Triage and two
