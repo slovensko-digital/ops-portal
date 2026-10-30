@@ -25,9 +25,7 @@ tags:
   - name: Activities
     description: Operations related to activities (articles) within issues
   - name: Attachments
-    description: |
-      Downloading attachment files through pre-signed links. Get a link as `url` of an attachment from
-      `GET /api/v1/issues/{id}` or `GET /api/v1/issues/{issue_id}/activities/{id}` with `attachment_urls=true`.
+    description: Downloading attachment files through pre-signed links
   - name: Responsible Subjects
     description: Operations related to responsible subjects
 
