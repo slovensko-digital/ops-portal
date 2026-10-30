@@ -288,6 +288,61 @@ paths:
         '401':
           description: Unauthorized - invalid or missing token
 
+  /api/v1/issues/{issue_id}/activities/{activity_id}/attachments/{id}:
+    get:
+      summary: Download an attachment
+      description: |
+        Download the raw file of an activity attachment. Use the `url` returned for the attachment by
+        `GET /api/v1/issues/{id}` or `GET /api/v1/issues/{issue_id}/activities/{id}` with `attachment_urls=true`.
+        The link is signed and valid for 3 hours, no token is needed. Fetch the issue or activity again for a new link.
+      operationId: downloadAttachment
+      tags:
+        - Activities
+      security: []
+      parameters:
+        - name: issue_id
+          in: path
+          required: true
+          description: Issue identifier
+          schema:
+            type: string
+        - name: activity_id
+          in: path
+          required: true
+          description: Activity identifier
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: Attachment identifier
+          schema:
+            type: string
+        - name: expires
+          in: query
+          required: true
+          description: Unix time until which the link is valid
+          schema:
+            type: integer
+        - name: signature
+          in: query
+          required: true
+          description: Signature of the link
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The attachment file, with its own content type and file name in `Content-Disposition`
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Invalid or expired link
+        '404':
+          description: Attachment not found
+
   /api/v1/responsible_subjects:
     get:
       summary: List responsible subjects
