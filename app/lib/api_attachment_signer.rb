@@ -13,7 +13,7 @@ module ApiAttachmentSigner
   def valid?(issue_id, activity_id, attachment_id, expires:, signature:)
     expires = Integer(expires, exception: false) if expires.is_a?(String)
     return false unless expires.is_a?(Integer) && expires > Time.current.to_i
-    return false if signature.blank?
+    return false unless signature.is_a?(String) && signature.present?
 
     ActiveSupport::SecurityUtils.secure_compare(signature, signature(issue_id, activity_id, attachment_id, expires))
   end

@@ -24,7 +24,7 @@ class Api::V1::Issues::Activities::AttachmentsControllerTest < ActionDispatch::I
     assert_response :success
     assert_mock zammad
     assert_equal "image-bytes", response.body
-    assert_equal "image/jpeg", response.media_type
+    assert_equal "image/jpeg", response.headers["Content-Type"]
     assert_equal DISPOSITION, response.headers["Content-Disposition"]
   end
 
@@ -69,6 +69,14 @@ class Api::V1::Issues::Activities::AttachmentsControllerTest < ActionDispatch::I
     assert_response :forbidden
 
     get api_v1_issue_activity_attachment_url(601, 7, 501, expires: "zajtra", signature: "abc")
+    assert_response :forbidden
+  end
+
+  test "a link with a signature that is not a string is forbidden" do
+    params = ApiAttachmentSigner.url_params(601, 7, 501)
+
+    get api_v1_issue_activity_attachment_url(601, 7, 501, expires: params[:expires], signature: [ params[:signature] ])
+
     assert_response :forbidden
   end
 
