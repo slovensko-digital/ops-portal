@@ -31,7 +31,7 @@ paths:
   /api/v1/issues:
     get:
       summary: List issues
-      description: Retrieve a list of issues assigned to the responsible subject of the integration
+      description: Retrieve a list of issues assigned to the responsible subject of the integration that are public on the portal, except archived ones
       operationId: listIssues
       tags:
         - Issues
@@ -41,7 +41,7 @@ paths:
         - name: all
           in: query
           required: false
-          description: Return all issues (including old ones not available in API)
+          description: Also return issues that are not public, but the responsible subject could have dealt with - issues in resolution in any state, archived old ones (not available in API) that passed triage in the old system and accepted private praises. Issues still in triage or rejected there are never returned
           schema:
             type: boolean
         - name: ops_state
