@@ -34,7 +34,8 @@ class Api::V1::Issues::ActivitiesController < ApiController
   end
 
   def set_activity
-    @article = @zammad_client.get_article(params.require(:issue_id), params.require(:id), responsible_subject: @client.responsible_subject)
+    @attachment_urls = params[:attachment_urls] == "true"
+    @article = @zammad_client.get_article(params.require(:issue_id), params.require(:id), responsible_subject: @client.responsible_subject, download_attachments: !@attachment_urls)
 
     head :not_found unless @article
   end

@@ -138,6 +138,15 @@ paths:
           schema:
             type: boolean
             default: true
+        - name: attachment_urls
+          in: query
+          required: false
+          description: |
+            Return a signed `url` (valid 3 hours, no token needed) instead of `data64` for each attachment.
+            Use it when responses with embedded files are too large for the client.
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: Issue details retrieved successfully
@@ -233,6 +242,15 @@ paths:
           description: Activity identifier
           schema:
             type: string
+        - name: attachment_urls
+          in: query
+          required: false
+          description: |
+            Return a signed `url` (valid 3 hours, no token needed) instead of `data64` for each attachment.
+            Use it when responses with embedded files are too large for the client.
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: Activity details retrieved successfully
@@ -810,7 +828,13 @@ components:
         data64:
           type: string
           format: byte
-          description: Base64 encoded file data
+          description: Base64 encoded file data, left out with `attachment_urls=true`
+        url:
+          type: string
+          format: uri
+          description: |
+            Signed link to download the file, valid 3 hours without a token. Only with `attachment_urls=true`,
+            then it replaces `data64`
 
     ResponsibleSubject:
       type: object

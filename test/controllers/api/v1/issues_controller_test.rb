@@ -21,6 +21,10 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     } ]
   }.freeze
 
+  ISSUE_WITH_URLS_SCHEMA = ISSUE_SCHEMA.deep_dup.tap do |schema|
+    schema[:activities].first[:attachments] = [ { triage_identifier: Integer, filename: String, content_type: String, url: String } ]
+  end.freeze
+
   setup do
     @client, @key = api_client_with_key
     @responsible_subject = @client.responsible_subject
@@ -171,7 +175,8 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     zammad = Minitest::Mock.new
     zammad.expect :get_ticket, ticket, [ "601" ]
     zammad.expect :get_ticket, ticket, [ "601" ], responsible_subject: @responsible_subject,
-      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :responsible_subject_portal_and_backoffice_comment ], expand: true
+      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :responsible_subject_portal_and_backoffice_comment ], expand: true,
+      download_attachments: true
 
     with_zammad_client(zammad) do
       get api_v1_issue_url(601), headers: api_headers(@token)
@@ -191,13 +196,37 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     zammad = Minitest::Mock.new
     zammad.expect :get_ticket, ticket, [ "601" ]
     zammad.expect :get_ticket, ticket, [ "601" ], responsible_subject: @responsible_subject,
-      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :unknown_user_portal_comment, :user_portal_comment, :agent_portal_comment ], expand: false
+      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :unknown_user_portal_comment, :user_portal_comment, :agent_portal_comment ], expand: false,
+      download_attachments: true
 
     with_zammad_client(zammad) do
       get api_v1_issue_url(601, include_customer_activities: "true", exclude_responsible_subject_articles: "true", expand: "false"), headers: api_headers(@token)
     end
 
     assert_response :success
+    assert_mock zammad
+  end
+
+  test "show with attachment_urls links attachments instead of embedding them" do
+    ticket = ticket_with_activities
+    ticket[:activities].each { |activity| activity[:attachments].map! { it.except(:data64) } }
+    zammad = Minitest::Mock.new
+    zammad.expect :get_ticket, ticket, [ "601" ]
+    zammad.expect :get_ticket, ticket, [ "601" ], responsible_subject: @responsible_subject,
+      allowed_article_types: [ :agent_portal_and_backoffice_comment, :agent_backoffice_comment, :responsible_subject_portal_and_backoffice_comment ], expand: true,
+      download_attachments: false
+    zammad.expect :download_attachment, { body: "image-bytes", content_type: "image/jpeg", content_disposition: "inline; filename=\"photo.jpg\"" }, [ "601", "1", "1" ]
+
+    with_zammad_client(zammad) do
+      get api_v1_issue_url(601, attachment_urls: "true"), headers: api_headers(@token)
+      assert_response :success
+      assert_json_schema ISSUE_WITH_URLS_SCHEMA, response.parsed_body
+
+      get response.parsed_body.dig("activities", 0, "attachments", 0, "url")
+    end
+
+    assert_response :success
+    assert_equal "image-bytes", response.body
     assert_mock zammad
   end
 

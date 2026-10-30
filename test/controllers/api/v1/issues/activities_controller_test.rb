@@ -12,6 +12,10 @@ class Api::V1::Issues::ActivitiesControllerTest < ActionDispatch::IntegrationTes
     attachments: [ { triage_identifier: Integer, filename: String, content_type: String, data64: String } ]
   }.freeze
 
+  ACTIVITY_WITH_URLS_SCHEMA = ACTIVITY_SCHEMA.merge(
+    attachments: [ { triage_identifier: Integer, filename: String, content_type: String, url: String } ]
+  ).freeze
+
   setup do
     @client, @key = api_client_with_key
     @responsible_subject = @client.responsible_subject
@@ -25,7 +29,7 @@ class Api::V1::Issues::ActivitiesControllerTest < ActionDispatch::IntegrationTes
     zammad = Minitest::Mock.new
     zammad.expect :get_ticket, @ticket, [ "601" ]
     article = triage_article(article_type: :agent_backoffice_comment, body: "Odpoveď", attachments: [ triage_attachment ])
-    zammad.expect :get_article, article, [ "601", "7" ], responsible_subject: @responsible_subject
+    zammad.expect :get_article, article, [ "601", "7" ], responsible_subject: @responsible_subject, download_attachments: true
 
     with_zammad_client(zammad) do
       get api_v1_issue_activity_url(601, 7), headers: api_headers(@token)
@@ -39,10 +43,26 @@ class Api::V1::Issues::ActivitiesControllerTest < ActionDispatch::IntegrationTes
     assert_equal article[:uuid], response.parsed_body["uuid"]
   end
 
+  test "show with attachment_urls links attachments instead of embedding them" do
+    zammad = Minitest::Mock.new
+    zammad.expect :get_ticket, @ticket, [ "601" ]
+    article = triage_article(article_type: :agent_backoffice_comment, body: "Odpoveď", attachments: [ triage_attachment.except(:data64) ])
+    zammad.expect :get_article, article, [ "601", "7" ], responsible_subject: @responsible_subject, download_attachments: false
+
+    with_zammad_client(zammad) do
+      get api_v1_issue_activity_url(601, 7, attachment_urls: "true"), headers: api_headers(@token)
+    end
+
+    assert_response :success
+    assert_mock zammad
+    assert_json_schema ACTIVITY_WITH_URLS_SCHEMA, response.parsed_body
+    assert_match %r{/api/v1/issues/601/activities/1/attachments/1\?expires=\d+&signature=\h{64}\z}, response.parsed_body.dig("attachments", 0, "url")
+  end
+
   test "show of an activity the responsible subject may not see is not found" do
     zammad = Minitest::Mock.new
     zammad.expect :get_ticket, @ticket, [ "601" ]
-    zammad.expect :get_article, nil, [ "601", "7" ], responsible_subject: @responsible_subject
+    zammad.expect :get_article, nil, [ "601", "7" ], responsible_subject: @responsible_subject, download_attachments: true
 
     with_zammad_client(zammad) do
       get api_v1_issue_activity_url(601, 7), headers: api_headers(@token)
