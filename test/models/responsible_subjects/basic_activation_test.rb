@@ -65,6 +65,13 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
     assert_equal [ [ 59, "starosta@nizna.sk" ], [ 60, "jan.novak@nizna.sk" ], [ 61, "podatelna@nizna.sk" ] ], users.pluck(:external_id, :email)
   end
 
+  test "call fails with the Triage error when a user can't be read back" do
+    stub_creation
+    stub_zammad(:get, "users/59", status: 500, body: { error: "Internal Server Error" })
+
+    assert_raises(RuntimeError) { build_activation.call }
+  end
+
   test "validate! passes for a new municipality" do
     assert_nothing_raised { build_activation.validate! }
   end
