@@ -88,6 +88,35 @@ sequenceDiagram
 Code: `app/jobs/triage/create_issue_resolution_process_ticket_job.rb`,
 `app/models/issue.rb:185-193`.
 
+## State and RS history on the portal
+
+Every change to an issue's state or responsible subject shows up in the
+issue's *Aktivita* timeline, next to the comments. Two `after_update` callbacks
+on `Issue` (`track_state_change`, `track_responsible_subject_change`) record it
+no matter who made the change: Triage webhook, RS action in the portal,
+Backoffice, console.
+
+| Change | Activity → object | Partial |
+|---|---|---|
+| `state_id` | `Issues::StateChangeActivity` → `Issues::StateChange` (previous, new) | `issues/state_changes/_state_change` |
+| `responsible_subject_id` | `Issues::SystemResponsibleSubjectChangeActivity` → `Issues::SystemResponsibleSubjectChange` (previous, new, both optional) | `issues/system_responsible_subject_changes/_system_responsible_subject_change` |
+
+Both objects return `triage_visible? == false`, so they are never synced
+to Triage, which keeps its own ticket history. A state change to nothing
+(`state_id` set to nil) is not recorded. For the emails these changes send, see
+[09](09-emails.md).
+
+Issues created before this existed are filled in by
+`Triage::BackfillIssueHistoryJob` (`app/jobs/triage/backfill_issue_history_job.rb`).
+It reads the Zammad `ticket_history` of the T-ticket and the R-ticket, maps
+`ops_state` to `Issues::State` by key or name and `responsible_subject` to
+`ResponsibleSubject` by id, and bulk-inserts the entries with the original
+timestamps. It adds a first "nothing → initial value" entry dated at the issue's
+`created_at`. It does nothing for an issue that already has activities of that
+type. When the last value in Zammad differs from the portal's current value, it
+logs this and imports the Zammad history anyway. Nothing enqueues the job
+yet. It has to be run by hand.
+
 ## Open issues
 
 Known problems in this flow, tracked in the private `slovensko-digital/ops` repo. When one is fixed, update the section above in the same PR and remove its row.

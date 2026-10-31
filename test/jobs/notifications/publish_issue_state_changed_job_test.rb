@@ -24,6 +24,7 @@ module Notifications
     end
 
     {
+      in_progress: :issue_in_progress,
       unresolved: :issue_unresolved,
       referred: :issue_referred,
       closed: :issue_closed,
@@ -31,7 +32,7 @@ module Notifications
       waiting_for_author: :issue_waiting_for_author
     }.each do |state, mail_method|
       test "#{state} notifies all active subscribers with #{mail_method}" do
-        perform :in_progress, state
+        perform :waiting, state
 
         assert_enqueued_emails 2
         assert_enqueued_email_with NotificationMailer, mail_method, params: { subscription: @author_subscription }
@@ -47,7 +48,6 @@ module Notifications
     end
 
     test "states without a mail notify nobody" do
-      perform :waiting, :in_progress
       perform :waiting, :sent_to_responsible
 
       assert_no_enqueued_emails
