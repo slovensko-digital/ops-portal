@@ -26,6 +26,53 @@ except the subtask job have **no tests**.
 
 Setup: README "Connect new Backoffice instance".
 
+## Issue list (`GET /api/v1/issues`)
+
+The Connector doesn't call it. It lists the issues whose current RS is the
+client's (an issue handed off to another RS drops out) as
+`triage_identifier` (R-ticket, omitted without one), `ops_issue_identifier`
+and `ops_state`, optionally filtered by `ops_state`.
+
+| Param | Returns |
+|---|---|
+| none | issues public on the portal (`Issue.publicly_visible`), except `archived` ones |
+| `all=true` | the above plus `Issue.past_triage`: issues with an R-ticket in any state (rejected, duplicate, …, legacy ones too), archived legacy issues that passed triage in the old system, and accepted praises, private ones (`resolved_private`) too |
+
+Neither list has issues with a T-ticket but no R-ticket (still in triage, or
+rejected or duplicate there), praises not accepted, or new issues waiting for
+their first sync to Triage.
+
+Legacy issues posted before 2020 (or in an archived municipality or district)
+were imported with state `archived` and their old state in `archived_state`,
+and are never sent to Triage. `all=true` leaves out those whose
+`archived_state` is `waiting`, `rejected` (the old "Neprijatý") or
+`duplicate`, or missing: they never passed triage in the old system. The
+portal still shows all of them, because `archived` is a public state.
+
+## Attachments in the API (`attachment_urls`)
+
+`GET /api/v1/issues/:id` and `GET /api/v1/issues/:issue_id/activities/:id`
+return each attachment as base64 `data64`, which the portal first downloads
+from Triage. The Connector uses that. Some other integrators can't handle
+responses over 1 MB, so with `attachment_urls=true` the portal skips the
+downloads and returns a signed `url` instead of `data64`:
+
+`/api/v1/issues/:issue_id/activities/:activity_id/attachments/:id?expires=…&signature=…`
+
+- The ids are the Triage ticket, article and attachment ids, `expires` is unix
+  time 3 hours ahead, `signature` an HMAC-SHA256 of the ids and `expires`
+  (`ApiAttachmentSigner`). Changing any of them makes the link invalid.
+- The link needs no token: it was handed out by a request that passed the
+  usual access checks (the client's RS, or the previous one, and the article
+  visible to it). Download doesn't check them again, so a link stays valid for
+  its 3 hours even if the issue moves to another RS meanwhile.
+- Download is one call to Triage, `GET /api/v1/ticket_attachment/:ticket_id/:article_id/:id`,
+  which itself checks that the attachment belongs to the article and the
+  article to the ticket. The portal passes on the file with Triage's
+  `Content-Type` and `Content-Disposition`.
+- Invalid or expired link: 403. Triage refuses or doesn't know the file: 404.
+  For a new link, fetch the issue or activity again.
+
 ## Triage → Backoffice
 
 ```mermaid

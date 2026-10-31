@@ -113,6 +113,26 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal "Lavička na námestí má odlomené dosky a nedá sa na nej sedieť.", activities.first[:body]
   end
 
+  test "get_ticket without downloading attachments lists them without data" do
+    stub_ticket
+    stub_users
+
+    activities = @client.get_ticket(42, expand: true, download_attachments: false)[:activities]
+
+    assert_equal [ { triage_identifier: 501, filename: "lavicka.jpg", content_type: "image/jpeg" } ], activities.first[:attachments]
+    assert_not_requested :get, %r{ticket_attachment/}
+  end
+
+  test "get_ticket for a praise without downloading attachments lists them without data" do
+    stub_ticket(issue_type: "praise")
+
+    attachments = @client.get_ticket(42, download_attachments: false)[:activities].first[:attachments]
+
+    assert_equal [ 501, 502 ], attachments.map { it[:triage_identifier] }
+    assert attachments.none? { it.key?(:data64) }
+    assert_not_requested :get, %r{ticket_attachment/}
+  end
+
   test "get_ticket maps a verification ticket" do
     stub_ticket(process_type: "portal_issue_verification", issue_resolved: "yes")
 
@@ -135,6 +155,41 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     stub_ticket
 
     assert_nil @client.get_article(42, 999)
+  end
+
+  test "get_article without downloading attachments still leaves out html bodies" do
+    stub_ticket
+    stub_users
+
+    attachments = @client.get_article(42, 101, download_attachments: false)[:attachments]
+
+    assert_equal [ 501 ], attachments.map { it[:triage_identifier] }
+    assert_not_requested :get, %r{ticket_attachment/}
+  end
+
+  # download_attachment
+
+  test "download_attachment returns the file as triage serves it" do
+    disposition = "inline; filename=\"lavicka.jpg\"; filename*=UTF-8''lavi%C4%8Dka.jpg"
+    stub_zammad(:get, "ticket_attachment/42/101/501", body: "image-bytes",
+      headers: { "Content-Type" => "image/jpeg", "Content-Disposition" => disposition })
+
+    assert_equal({ body: "image-bytes", content_type: "image/jpeg", content_disposition: disposition },
+      @client.download_attachment(42, 101, 501))
+  end
+
+  test "download_attachment returns nil when triage refuses or does not know the file" do
+    stub_zammad(:get, "ticket_attachment/42/101/501", status: 403, body: { error: "The file does not belong to the specified article." })
+    stub_zammad(:get, "ticket_attachment/42/101/502", status: 404, body: zammad_not_found("Store"))
+
+    assert_nil @client.download_attachment(42, 101, 501)
+    assert_nil @client.download_attachment(42, 101, 502)
+  end
+
+  test "download_attachment raises other triage errors" do
+    stub_zammad(:get, "ticket_attachment/42/101/501", status: 500, body: { error: "Internal Server Error" })
+
+    assert_raises(RuntimeError) { @client.download_attachment(42, 101, 501) }
   end
 
   test "get_article strips triage tags from the body" do

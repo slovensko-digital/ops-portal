@@ -33,7 +33,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Likes, votes | [06](06-comments-likes-routing.md#likes) | `system/issue_likes_test.rb`, `system/issues/activity_votes_test.rb` | 🟡 | `activity_vote_test.rb` empty |
 | Subscriptions / unsubscribe | [06](06-comments-likes-routing.md#subscriptions) | system + controller tests | ✅ | — |
 | Emails (portal) | [09](09-emails.md) | `mailers/notification_mailer_test.rb` (14), notification job tests | ✅ | `RodauthMailer` only indirectly |
-| OPS API | [07](07-backoffice-connector.md) | `controllers/api/v1/*` (29) | 🟡 | falsy update ([ops#1338](https://github.com/slovensko-digital/ops/issues/1338)), client without RS |
+| OPS API | [07](07-backoffice-connector.md) | `controllers/api/v1/*` (46) | 🟡 | falsy update ([ops#1338](https://github.com/slovensko-digital/ops/issues/1338)), client without RS |
 | Connector inbound webhooks | [07](07-backoffice-connector.md) | controller tests (25) | ✅ | — |
 | Connector jobs (Triage → Backoffice, Backoffice → Triage) | [07](07-backoffice-connector.md) | — | ❌ | **all of them**: 17-25% lines; `SendNewActivityToTriageFromBackofficeJob` and `Connector::OpsApiClient` 0% |
 | Subtasks | [07](07-backoffice-connector.md#subtasks-podúlohy) | `lib/connector/subtask_parser_test.rb` (16), job test (7) | 🟡 | `<div>`/`<p>` lines |
