@@ -231,6 +231,9 @@ nav.pagination a.button-pagination:hover,
 nav.pagination a.button-pagination.active {
   background: variables.$blue;
 }
+nav.pagination a.button-pagination.is-loaded:not(.active) {
+  background: variables.$blue-light;
+}
 nav.pagination .dash {
   border-top: 1px solid variables.$black;
   height: 1px;

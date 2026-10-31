@@ -7,6 +7,7 @@ export default class extends Controller {
     connect() {
         this.loading = false;
         [this.firstPage, this.lastPage] = this.parsePageRange()
+        this.markLoadedPages()
 
         this.mutationObserver = new MutationObserver(() => this.triggerUpdated())
         this.mutationObserver.observe(this.triggerTarget, { childList: true })
@@ -52,6 +53,16 @@ export default class extends Controller {
 
     triggerUpdated() {
         this.setLoading(false)
+        this.markLoadedPages()
+    }
+
+    markLoadedPages() {
+        const nav = this.triggerTarget.querySelector("nav.pagination")
+        if (!nav) return
+        nav.querySelectorAll("a[href]").forEach((link) => {
+            const page = this.pageParam(new URL(link.getAttribute("href"), window.location.origin))
+            link.classList.toggle("is-loaded", page !== null && page >= this.firstPage && page <= this.lastPage)
+        })
     }
 
     setLoading(loading) {
