@@ -1,7 +1,7 @@
 <!-- Zoznam podnetov -->
 <% if @search_results.hits.length > 0 %>
   <div class="wrapper-list">
-    <%= render "shared/load_more_issues", issues: @search_results.hits %>
+    <%= render "shared/load_more_issues", issues: @search_results.hits, pagination: @search_results.pagination %>
   </div>
 <% else %>
   <section class="search-result-blank">

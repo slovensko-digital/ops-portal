@@ -7,7 +7,8 @@ class UsersController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: -> { render :not_found, status: :not_found }
 
   def show
-    @issues = @user.issues.publicly_visible.newest.page(params[:page]).per(ISSUES_PER_PAGE)
+    scope = @user.issues.publicly_visible.newest
+    @issues, @issue_pagination = PageRange.paginate(scope, params[:page], ISSUES_PER_PAGE)
   end
 
   private
