@@ -113,7 +113,7 @@ One portal issue maps to up to three Zammad tickets:
 | Works in | Portal (magic-link login) + email | Own Backoffice Zammad |
 | Gets new issues by | Triage trigger email to org members with role "Externý zodpovedný subjekt" | Connector creates an `OPS-xxxx` ticket in Backoffice |
 | Replies by | Portal (`/dopyty/:id/odpovede`) or replying to the email | Public note in Backoffice |
-| Set up by | `bin/rails responsible_subjects:activate_basic` | Deploy Backoffice + `connect_backoffice` console snippet (README) |
+| Set up by | `bin/rails responsible_subjects:activate_basic` | `bin/rails responsible_subjects:activate_pro`, then deploy the Backoffice |
 
 ## Open issues
 

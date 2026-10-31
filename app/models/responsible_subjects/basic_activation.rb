@@ -17,15 +17,13 @@
 # subject named NAME that the dev seeds create instead of creating them. The boundary and the district default to
 # the municipality's own. The municipality's issues stay only in the portal, they are not sent to Triage.
 class ResponsibleSubjects::BasicActivation
+  include ResponsibleSubjects::TriageSetup
+
   class Invalid < StandardError; end
 
   RESPONSIBLE_SUBJECT_TYPE = "Mesto"
-  GROUP_EMAIL_ADDRESS = "podnety@triaz.odkazprestarostu.sk"
-  PORTAL_TECH_ACCOUNT_ROLE = "Portal Tech Account"
-  AGENT_ROLE = "Agent"
   CUSTOMER_ROLE = "Customer"
   EXTERNAL_RESPONSIBLE_SUBJECT_ROLE = "Externý zodpovedný subjekt"
-  TRIGGER_NAME_PREFIX = "700 - Priradenie podnetu skupine"
 
   attr_reader :name, :district_name, :user_emails, :triage_agent_email
 
@@ -49,20 +47,10 @@ class ResponsibleSubjects::BasicActivation
     validate!
 
     municipality, responsible_subject = @use_existing_municipality ? prepare_existing_portal_records : create_portal_records
-    responsible_subject.update!(external_id: @client.create_responsible_subject!(responsible_subject))
-    @log.call("Triage: responsible subject user #{responsible_subject.external_id}")
-
-    group_id = @client.create_group!(name, email_address_id: @client.find_email_address(GROUP_EMAIL_ADDRESS)["id"])
-    @client.add_group_to_role!(PORTAL_TECH_ACCOUNT_ROLE, group_id)
-    @log.call("Triage: group #{group_id}, accessible to role #{PORTAL_TECH_ACCOUNT_ROLE}")
-
+    create_triage_responsible_subject!(responsible_subject)
+    group_id = create_group!
     @log.call("Triage: organization #{@client.create_organization!(name)}")
-
-    @client.add_user_to_group(agent.id, name)
-    @log.call("Triage: agent #{agent_name} added to the group")
-
-    @client.create_trigger!(trigger_attributes(group_id, responsible_subject))
-    @log.call("Triage: trigger #{trigger_name}")
+    create_trigger!(group_id, responsible_subject)
 
     user_emails.each do |user_email|
       roles = roles_for(user_email)
@@ -96,10 +84,6 @@ class ResponsibleSubjects::BasicActivation
     end
   end
 
-  def agent
-    @agent ||= @client.find_user_by_email(triage_agent_email) if triage_agent_email.present?
-  end
-
   # the responsible subject's email, the first user
   def email
     user_emails.first
@@ -107,10 +91,6 @@ class ResponsibleSubjects::BasicActivation
 
   def roles_for(user_email)
     user_email == email ? [ EXTERNAL_RESPONSIBLE_SUBJECT_ROLE ] : [ CUSTOMER_ROLE ]
-  end
-
-  def trigger_name
-    "#{TRIGGER_NAME_PREFIX} #{name} #{agent_name}"
   end
 
   # meno.priezvisko@obec.sk is Meno Priezvisko, any other address is <local part> <municipality name>
@@ -163,13 +143,7 @@ class ResponsibleSubjects::BasicActivation
   end
 
   def triage_errors
-    errors = []
-
-    if agent.nil?
-      errors << "Triage agent #{triage_agent_email.inspect} does not exist"
-    elsif !Array(agent.roles).include?(AGENT_ROLE)
-      errors << "Triage user #{triage_agent_email} (#{agent_name}) is not an agent"
-    end
+    errors = agent_errors
 
     errors << "Triage email address #{GROUP_EMAIL_ADDRESS} does not exist" unless @client.find_email_address(GROUP_EMAIL_ADDRESS)
     [ PORTAL_TECH_ACCOUNT_ROLE, CUSTOMER_ROLE, EXTERNAL_RESPONSIBLE_SUBJECT_ROLE ].each do |role|
@@ -179,7 +153,7 @@ class ResponsibleSubjects::BasicActivation
     if name.present?
       errors << "Triage group #{name} already exists" if @client.find_group_by_name(name)
       errors << "Triage organization #{name} already exists" if @client.find_organization_by_name(name)
-      @client.get_triggers.select { |trigger| trigger_for_municipality?(trigger) }.each do |trigger|
+      triggers_for_municipality.each do |trigger|
         errors << "Triage trigger #{trigger["name"].inspect} (#{trigger["id"]}) already exists"
       end
     end
@@ -254,40 +228,6 @@ class ResponsibleSubjects::BasicActivation
   def point_on_boundary
     MunicipalityBoundary.where(id: boundary.id)
       .pick(Arel.sql("ST_Y(ST_PointOnSurface(boundary))"), Arel.sql("ST_X(ST_PointOnSurface(boundary))"))
-  end
-
-  def trigger_attributes(group_id, responsible_subject)
-    {
-      name: trigger_name,
-      condition: {
-        "ticket.process_type" => { "operator" => "is", "value" => [ "portal_issue_verification", "portal_issue_triage" ] },
-        "ticket.origin" => { "operator" => "is", "value" => [ "portal" ] },
-        # Zammad matches the action only as a string, the trigger never fires with [ "create" ]
-        "ticket.action" => { "operator" => "is", "value" => "create" },
-        "ticket.address_municipality" => { "operator" => "is", "value" => [ name ] }
-      },
-      perform: {
-        "ticket.group_id" => { "value" => group_id },
-        "ticket.owner_id" => { "pre_condition" => "specific", "value" => agent.id },
-        "ticket.responsible_subject" => { "value" => { "value" => responsible_subject.id, "label" => name } }
-      },
-      disable_notification: true,
-      note: "#{TRIGGER_NAME_PREFIX} #{name}",
-      activator: "action",
-      execution_condition_mode: "selective",
-      active: true
-    }
-  end
-
-  # trigger names end with the agent's name, so "... Nižná Myšľa Jozef Mak" cannot be told from
-  # a Nižná trigger by its name, its condition on the municipality can
-  def trigger_for_municipality?(trigger)
-    (agent.present? && trigger["name"] == trigger_name) ||
-      Array(trigger.dig("condition", "ticket.address_municipality", "value")).include?(name)
-  end
-
-  def agent_name
-    [ agent.firstname, agent.lastname ].compact_blank.join(" ")
   end
 
   def responsible_subjects_type

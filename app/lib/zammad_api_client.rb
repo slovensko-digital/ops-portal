@@ -619,6 +619,19 @@ class ZammadApiClient
     @client.organization.create(name: name, shared: false, domain_assignment: false, vip: false, active: true).id
   end
 
+  def get_organization(organization_id)
+    raw_api_request(:get, "organizations/#{organization_id}")
+  end
+
+  # Zammad refuses while users or tickets still belong to the organization
+  def delete_organization!(organization_id)
+    raw_api_request(:delete, "organizations/#{organization_id}")
+  end
+
+  def update_user!(user_id, attributes)
+    raw_api_request(:put, "users/#{user_id}", attributes)
+  end
+
   def find_user_by_email(email)
     @client.user.search(query: email).page(1, 100) { }.find { |user| user.email.to_s.casecmp?(email) }
   end

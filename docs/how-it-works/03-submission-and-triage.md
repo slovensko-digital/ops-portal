@@ -188,7 +188,7 @@ internal note "Text podnetu bol upravený…". No test covers this.
 | 100 | Instruction notes (closed ticket commented, new praise) | `ops-triage-zammad/lib/tasks/ops/triage.rake` |
 | 148-151 | State flips on replies + webhooks those changes need | same |
 | 200 | Forwarding: RS emails, PRO webhooks, portal webhooks, tag-driven states | same |
-| 700 | Routing per basic municipality (created by `activate_basic`) | `app/models/responsible_subjects/basic_activation.rb:204-225` |
+| 700 | Routing per municipality (created by `activate_basic`, or `activate_pro` when missing) | `app/models/responsible_subjects/triage_setup.rb` (`trigger_attributes`) |
 | 750 (team convention) | Hand-made rules for RS / owner assignment | Only in the Triage DB |
 | 800 | Public / internal notes on RS changes, marked resolved, text edits | rake |
 | 900 | Timestamps `ops_state_changed_at`, `responsible_subject_changed_at` (set to now + 1 min) | rake |
