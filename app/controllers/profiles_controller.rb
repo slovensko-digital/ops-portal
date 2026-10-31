@@ -16,12 +16,13 @@ class ProfilesController < ApplicationController
 
   def show
     @tab = :my
-    @issues = current_user.issues.newest.page(params[:page]).per(8)
+    @issues, @issue_pagination = PageRange.paginate(current_user.issues.newest, params[:page], ISSUES_PER_PAGE)
   end
 
   def watched_issues
     @tab = :watched
-    @issues = current_user.watched_issues.currently_viewable_by(current_user).newest.page(params[:page]).per(8)
+    scope = current_user.watched_issues.currently_viewable_by(current_user).newest
+    @issues, @issue_pagination = PageRange.paginate(scope, params[:page], ISSUES_PER_PAGE)
     render :show
   end
 

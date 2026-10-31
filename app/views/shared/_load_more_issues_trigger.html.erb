@@ -1,0 +1,10 @@
+<%# locals: (pagination:) %>
+<% if pagination.next_page %>
+  <%= link_to "Načítať ďalšie podnety",
+              url_for(request.query_parameters.merge("page" => pagination.next_page)),
+              class: "button",
+              data: { action: "click->load-more#loadMore", load_more_target: "button" } %>
+<% end %>
+<div class="pagination-con">
+  <%= ops_paginate(pagination) %>
+</div>
