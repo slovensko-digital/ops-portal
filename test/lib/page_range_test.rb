@@ -2,22 +2,22 @@ require "test_helper"
 
 class PageRangeTest < ActiveSupport::TestCase
   test "parse plain page numbers" do
-    assert_equal [3, 3], PageRange.parse("3")
-    assert_equal [1, 1], PageRange.parse(nil)
-    assert_equal [1, 1], PageRange.parse("")
+    assert_equal [ 3, 3 ], PageRange.parse("3")
+    assert_equal [ 1, 1 ], PageRange.parse(nil)
+    assert_equal [ 1, 1 ], PageRange.parse("")
   end
 
   test "parse page ranges" do
-    assert_equal [1, 4], PageRange.parse("1-4")
-    assert_equal [2, 5], PageRange.parse("2-5")
+    assert_equal [ 1, 4 ], PageRange.parse("1-4")
+    assert_equal [ 2, 5 ], PageRange.parse("2-5")
   end
 
   test "parse clamps invalid values to the first page" do
-    assert_equal [1, 1], PageRange.parse("blabla")
-    assert_equal [1, 1], PageRange.parse("0")
-    assert_equal [1, 5], PageRange.parse("0-5")
-    assert_equal [5, 5], PageRange.parse("5-2")
-    assert_equal [1, 1], PageRange.parse("2-")
+    assert_equal [ 1, 1 ], PageRange.parse("blabla")
+    assert_equal [ 1, 1 ], PageRange.parse("0")
+    assert_equal [ 1, 5 ], PageRange.parse("0-5")
+    assert_equal [ 5, 5 ], PageRange.parse("5-2")
+    assert_equal [ 1, 1 ], PageRange.parse("2-")
   end
 
   test "paginate loads the whole range in one query" do

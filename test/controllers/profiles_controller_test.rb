@@ -36,6 +36,7 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
 
     count.times do |i|
       Issue.create!(
+        photos: [ active_storage_blobs(:issue_photo) ],
         title: "Profile range test issue #{i}",
         description: "Test description with enough characters to pass validation",
         municipality: Municipality.first,
