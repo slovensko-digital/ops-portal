@@ -122,6 +122,119 @@ class Triage::BackfillIssueHistoryJobTest < ActiveJob::TestCase
     assert_equal 1, rs_changes_for(issue).size
   end
 
+  test "runs on the low priority queue" do
+    assert_equal "low_priority", Triage::BackfillIssueHistoryJob.queue_name
+  end
+
+  test "backfills only the missing state prefix when live changes already exist" do
+    issue = issues(:two)
+    issue.update!(state: Issues::State.find_by!(key: "resolved"))
+
+    client = client_with(
+      2 => [
+        state_history_entry("waiting", "sent_to_responsible", "2024-11-06T10:00:00.000Z"),
+        state_history_entry("sent_to_responsible", "in_progress", "2024-11-06T11:00:00.000Z")
+      ],
+      3 => [ state_history_entry("in_progress", "rejected", "2024-11-07T10:00:00.000Z") ]
+    )
+
+    Triage::BackfillIssueHistoryJob.new.perform(issue, triage_zammad_client: client)
+
+    assert_equal [
+                   [ nil, "waiting" ],
+                   [ "waiting", "sent_to_responsible" ],
+                   [ "sent_to_responsible", "in_progress" ],
+                   [ "in_progress", "resolved" ]
+                 ], state_changes_for(issue).map { |c| [ c.previous_state&.key, c.new_state.key ] }
+    assert_mock client
+  end
+
+  test "skips state backfill when live history diverges from Zammad history" do
+    issue = issues(:two)
+    issue.update!(state: Issues::State.find_by!(key: "resolved"))
+
+    client = client_with(
+      2 => [ state_history_entry("waiting", "sent_to_responsible", "2024-11-06T10:00:00.000Z") ],
+      3 => []
+    )
+
+    Triage::BackfillIssueHistoryJob.new.perform(issue, triage_zammad_client: client)
+
+    assert_equal [ [ "in_progress", "resolved" ] ],
+                 state_changes_for(issue).map { |c| [ c.previous_state&.key, c.new_state.key ] }
+    assert_mock client
+  end
+
+  test "stays a no-op when live changes arrive after a backfill" do
+    issue = issues(:two)
+    history = {
+      2 => [ state_history_entry("waiting", "in_progress", "2024-11-06T10:00:00.000Z") ],
+      3 => []
+    }
+
+    Triage::BackfillIssueHistoryJob.new.perform(issue, triage_zammad_client: client_with(history))
+    assert_equal [
+                   [ nil, "waiting" ],
+                   [ "waiting", "in_progress" ]
+                 ], state_changes_for(issue).map { |c| [ c.previous_state&.key, c.new_state.key ] }
+
+    issue.update!(state: Issues::State.find_by!(key: "resolved"))
+
+    Triage::BackfillIssueHistoryJob.new.perform(issue, triage_zammad_client: client_with(history))
+    assert_equal [
+                   [ nil, "waiting" ],
+                   [ "waiting", "in_progress" ],
+                   [ "in_progress", "resolved" ]
+                 ], state_changes_for(issue).map { |c| [ c.previous_state&.key, c.new_state.key ] }
+  end
+
+  test "backfills only the missing responsible subject prefix up to the live anchor" do
+    one, two = responsible_subjects(:one), responsible_subjects(:two)
+    issue = issues(:two)
+    issue.update_columns(responsible_subject_id: one.id)
+    issue.reload
+    issue.update!(responsible_subject: two)
+
+    client = client_with(
+      2 => [
+        rs_history_entry(nil, one.id, "2024-11-05T10:00:00.000Z"),
+        rs_history_entry(one.id, two.id, "2024-11-05T11:00:00.000Z"),
+        rs_history_entry(two.id, one.id, "2024-11-05T12:00:00.000Z")
+      ],
+      3 => []
+    )
+
+    Triage::BackfillIssueHistoryJob.new.perform(issue, triage_zammad_client: client)
+
+    assert_equal [
+                   [ nil, one.id ],
+                   [ one.id, two.id ],
+                   [ two.id, one.id ],
+                   [ one.id, two.id ]
+                 ], rs_changes_for(issue).map { |c| [ c.previous_responsible_subject_id, c.new_responsible_subject_id ] }
+    assert_mock client
+  end
+
+  test "does not prepend Zammad history when live history starts unassigned" do
+    one, two = responsible_subjects(:one), responsible_subjects(:two)
+    issue = issues(:two)
+    issue.update!(responsible_subject: two)
+
+    client = client_with(
+      2 => [
+        rs_history_entry(nil, one.id, "2024-11-05T10:00:00.000Z"),
+        rs_history_entry(one.id, two.id, "2024-11-05T11:00:00.000Z")
+      ],
+      3 => []
+    )
+
+    Triage::BackfillIssueHistoryJob.new.perform(issue, triage_zammad_client: client)
+
+    assert_equal [ [ nil, two.id ] ],
+                 rs_changes_for(issue).map { |c| [ c.previous_responsible_subject_id, c.new_responsible_subject_id ] }
+    assert_mock client
+  end
+
   test "skips issues without any ticket" do
     issue = issues(:without_triage_external_id)
     client = Minitest::Mock.new
