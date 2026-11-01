@@ -75,7 +75,7 @@
 
       <div class="form-items-con">
         <div class="form-item-wrapper">
-          <%= f.label :preferred_places, "Preferované mestá alebo obce" %>
+          <%= f.label :preferred_places, "Preferované mestá alebo obce", for: "preferred_places" %>
 
           <%= f.hidden_field :municipality_ids, multiple: true, value: "" %>
           <%= f.hidden_field :municipality_district_ids, multiple: true, value: "" %>
@@ -85,7 +85,8 @@
                data-action="
                 focusin->toggle#show
                 input->autocomplete#filter
-                keydown.enter->autocomplete#enter">
+                keydown.enter->autocomplete#enter
+                click@window->preferred-places#close">
             <input
               type="text"
               class="form-input"

@@ -65,7 +65,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
   test "should ignore filter params of unexpected shape" do
     get "/dopyty?kategoria[foo]=bar&obec[foo]=bar&podkategoria[0][x]=y&q[a]=b"
     assert_response :success
-    assert_nil session[:last_municipality]
+    assert_nil session[:last_lokalita]
   end
 
   test "should not show resolved_private issues" do

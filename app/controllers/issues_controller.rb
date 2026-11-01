@@ -116,8 +116,6 @@ class IssuesController < ApplicationController
 
     if lokalita.present?
       session[:last_lokalita] = lokalita
-      session.delete(:last_municipality)
-      session.delete(:last_municipality_district)
     else
       session.delete(:last_lokalita)
     end
@@ -138,23 +136,7 @@ class IssuesController < ApplicationController
   end
 
   def last_lokalita
-    migrate_legacy_lokalita_session!
     Array(session[:last_lokalita]).compact_blank.presence
-  end
-
-  def migrate_legacy_lokalita_session!
-    return if session[:last_lokalita].present?
-    return unless session[:last_municipality].is_a?(String) && session[:last_municipality].present?
-
-    session[:last_lokalita] =
-      if session[:last_municipality_district].is_a?(String) && session[:last_municipality_district].present?
-        [ "#{session[:last_municipality]} - #{session[:last_municipality_district]}" ]
-      else
-        [ session[:last_municipality] ]
-      end
-
-    session.delete(:last_municipality)
-    session.delete(:last_municipality_district)
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -316,76 +298,7 @@ class IssuesController < ApplicationController
               value.to_s.split(" - ", 2).last
             end
           end,
-          items: ->(params) do
-            locations = Array(params[:lokalita]).compact_blank
-            positives = locations.reject { _1.start_with?("-") }
-            negatives = locations.select { _1.start_with?("-") }
-
-            Municipality.active
-                        .where(active_on_old_portal: false)
-                        .includes(:active_districts)
-                        .order(Arel.sql("name COLLATE unicode"))
-                        .flat_map do |municipality|
-              municipality_selected = positives.include?(municipality.name)
-
-              parent_values = locations.reject do |location|
-                location == municipality.name ||
-                  location.start_with?("#{municipality.name} - ") ||
-                  location.start_with?("-#{municipality.name} - ")
-              end
-
-              parent = {
-                label: municipality.name,
-                value: municipality.name,
-                level: 0,
-                selected: municipality_selected,
-                add_params: parent_values + [ municipality.name ],
-                remove_params: parent_values
-              }
-
-              children = municipality.active_districts.map do |district|
-                value = "#{municipality.name} - #{district.name}"
-                negative_value = "-#{value}"
-
-                selected =
-                  positives.include?(value) ||
-                  (municipality_selected && !negatives.include?(negative_value))
-
-                if municipality_selected
-                  if positives.include?(value)
-                    {
-                      label: district.name,
-                      value: value,
-                      level: 1,
-                      selected: selected,
-                      add_params: locations - [ negative_value ],
-                      remove_params: ((locations - [ value ]) + [ negative_value ]).uniq
-                    }
-                  else
-                    {
-                      label: district.name,
-                      value: value,
-                      level: 1,
-                      selected: selected,
-                      add_params: locations - [ negative_value ],
-                      remove_params: (locations + [ negative_value ]).uniq
-                    }
-                  end
-                else
-                  {
-                    label: district.name,
-                    value: value,
-                    level: 1,
-                    selected: selected,
-                    add_params: (locations + [ value ]).uniq,
-                    remove_params: locations - [ value ]
-                  }
-                end
-              end
-
-              [ parent, *children ]
-            end
-          end,
+          items: ->(params) { SearchEngine::LokalitaTree.new(params[:lokalita]).items },
           filter: ->(scope, params) { SearchEngine::Filters::Locality.new(params[:lokalita]).apply(scope) }
         ),
 
