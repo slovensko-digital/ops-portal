@@ -59,9 +59,9 @@ export default class extends Controller {
     markLoadedPages() {
         const nav = this.triggerTarget.querySelector("nav.pagination")
         if (!nav) return
-        nav.querySelectorAll("a[href]").forEach((link) => {
-            const page = this.pageParam(new URL(link.getAttribute("href"), window.location.origin))
-            link.classList.toggle("is-loaded", page !== null && page >= this.firstPage && page <= this.lastPage)
+        nav.querySelectorAll("a[href]:not(.button-arrow)").forEach((link) => {
+            const page = this.pageParam(new URL(link.getAttribute("href"), window.location.origin)) ?? 1
+            link.classList.toggle("is-loaded", page >= this.firstPage && page <= this.lastPage)
         })
     }
 
