@@ -24,6 +24,13 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select "div#load-more-trigger a.button[href*='page=2']", 1
   end
 
+  test "issues render inside a frame targeting top" do
+    get profile_url
+
+    assert_response :success
+    assert_select "turbo-frame#profile-list[target='_top'] div#issues-items a.podnet-block", minimum: 1
+  end
+
   private
 
   def login_user(user)
