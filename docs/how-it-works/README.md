@@ -29,6 +29,7 @@ municipality) on 2026-10-15.
 | [08-onboarding.md](08-onboarding.md) | `responsible_subjects:activate_basic`, connecting a Backoffice, users and roles in Triage |
 | [09-emails.md](09-emails.md) | Every email (portal and Zammad): trigger, recipient, links |
 | [10-scheduled.md](10-scheduled.md) | Cron (GoodJob) and Zammad schedulers |
+| [11-data-model.md](11-data-model.md) | Main models and how they relate. So far: categories (category → subcategory → subtype, legacy vs current, RS categories) |
 | [coverage.md](coverage.md) | Flow × test matrix, gaps, and the planned integration scenarios |
 
 Diagrams are Mermaid, so GitHub renders them inline.

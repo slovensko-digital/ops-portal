@@ -1,5 +1,4 @@
 require "application_system_test_case"
-require "test_helpers/issues/drafts_helper"
 
 class ProfilesTest < ApplicationSystemTestCase
   test "citizen user sees citizen profile" do

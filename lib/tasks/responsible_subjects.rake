@@ -21,14 +21,21 @@ namespace :responsible_subjects do
       TRIAGE_ZAMMAD_AGENT_EMAIL  email of the Triage Zammad agent (volunteer) who reviews, accepts and rejects
                                  incoming issues from the municipality
       DRY_RUN=1               only validate, change nothing
+      EXISTING_MUNICIPALITY=1 local development only: activates the inactive municipality and responsible subject
+                              named NAME, which the dev seeds create, instead of creating them. BOUNDARY_ID and
+                              DISTRICT default to the municipality's own. Its issues are not sent to Triage.
+                              E.g. after db:seed, municipality_boundaries:import_all and with the local Triage up:
+                                bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 NAME=Trnava \\
+                                  USERS="podatelna@trnava.example.com, jan.novak@trnava.example.com" \\
+                                  TRIAGE_ZAMMAD_AGENT_EMAIL=dobrovolnik@example.org
 
     Environment:
       TRIAGE_ZAMMAD_ADMIN_API_TOKEN  required, a Triage Zammad API token of an admin, with at least the
                                      permissions admin.group, admin.organization, admin.role, admin.trigger,
                                      admin.user and ticket.agent. The portal's TRIAGE_ZAMMAD_API_TOKEN cannot
                                      manage roles, organizations and triggers. Create it in Triage under
-                                     Profile > Token Access. Deployed apps get it as a Kamal secret, locally
-                                     pass it for the run, e.g.
+                                     Profile > Token Access. Deployed apps get it as a Kamal secret. Locally,
+                                     .env.sample has the local Triage admin's token, or pass it for the run, e.g.
                                      TRIAGE_ZAMMAD_ADMIN_API_TOKEN=... bin/rails responsible_subjects:activate_basic ...
 
     First validates everything and stops without changing anything when:
@@ -69,6 +76,9 @@ namespace :responsible_subjects do
       next
     end
 
+    use_existing_municipality = ENV["EXISTING_MUNICIPALITY"].present?
+    abort "EXISTING_MUNICIPALITY is for local development only" if use_existing_municipality && !Rails.env.development?
+
     admin_token = ENV["TRIAGE_ZAMMAD_ADMIN_API_TOKEN"]
     abort "TRIAGE_ZAMMAD_ADMIN_API_TOKEN is missing, run without arguments for help" if admin_token.blank?
 
@@ -79,6 +89,7 @@ namespace :responsible_subjects do
       user_emails: ENV["USERS"],
       triage_agent_email: ENV["TRIAGE_ZAMMAD_AGENT_EMAIL"],
       client: ZammadApiClient.new(url: ENV.fetch("TRIAGE_ZAMMAD_URL"), http_token: admin_token),
+      use_existing_municipality: use_existing_municipality,
       log: ->(message) { puts message }
     )
 

@@ -22,6 +22,7 @@ When you change a flow, update the matching file in the same PR:
 | `app/models/responsible_subjects/basic_activation.rb`, `lib/tasks/responsible_subjects.rake`, rodauth / profiles | 08 |
 | `app/mailers/*`, `app/views/*_mailer/*`, `app/jobs/notifications/*` | 09 |
 | `config/recurring.yml` | 10 |
+| `app/models/issues/{category,subcategory,subtype}.rb`, `app/models/responsible_subjects/category.rb`, `app/lib/category_mapper.rb`, `db/seeds/categories.rb` | 11 |
 
 A new flow, email or scheduled job gets a row in the doc and in
 `docs/how-it-works/coverage.md`. When you fix a problem listed under

@@ -93,4 +93,15 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_text "Profilová fotka môže byť iba obrázok."
     assert_not user.reload.avatar.attached?
   end
+
+  test "citizen user sees an error when the new profile picture cannot be read" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    page.attach_file("user[avatar]", file_fixture("not-an-image.png"), make_visible: true)
+
+    assert_text "Profilová fotka môže byť iba obrázok."
+    assert_not user.reload.avatar.attached?
+  end
 end

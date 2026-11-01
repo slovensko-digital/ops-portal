@@ -27,4 +27,33 @@ class Issues::DraftTest < ActiveSupport::TestCase
 
     exif_data_mock.verify
   end
+
+  test "checks step does not pass when checks were never computed" do
+    draft = Issues::Draft.create!(author: users(:one), duplicates_shown: true)
+    draft.checks = nil
+
+    assert_not draft.valid?(:checks_step)
+    assert draft.errors.added?(:checks, :invalid)
+  end
+
+  test "checks step passes with an empty checks array" do
+    draft = Issues::Draft.create!(author: users(:one), duplicates_shown: true)
+    draft.checks = []
+
+    assert draft.valid?(:checks_step)
+  end
+
+  test "not confirmable when checks were never computed" do
+    draft = Issues::Draft.create!(author: users(:one))
+    draft.checks = nil
+
+    assert_not draft.confirmable?
+  end
+
+  test "confirmable when all checks allow confirmation" do
+    draft = Issues::Draft.create!(author: users(:one))
+    draft.checks = [ { "action" => "confirm" } ]
+
+    assert draft.confirmable?
+  end
 end

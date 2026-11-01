@@ -96,6 +96,15 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_nil feature.dig("properties", "title")
   end
 
+  test "geo responds with GeoJSON to a browser-like request without a format" do
+    get geo_issues_url(bbox: "16.9,48.0,17.3,48.3", z: 12),
+      headers: { "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" }
+
+    assert_response :success
+    assert_equal "application/json", response.media_type
+    assert_equal "FeatureCollection", response.parsed_body["type"]
+  end
+
   test "filter button shows the number of active filters" do
     get issues_url(obec: [ "Bratislava", "Nitra" ], obdobie: "Tento rok")
 

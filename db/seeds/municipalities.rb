@@ -44,7 +44,9 @@ DEV_SEED_MUNICIPALITIES.each do |data|
     category: data[:category],
     municipality_type: data[:municipality_type],
     has_municipality_districts: data[:districts].present?,
-    active: true,
+    # the others wait inactive for responsible_subjects:activate_basic, which doesn't support
+    # Bratislava's city parts
+    active: data[:name] == "Bratislava",
     active_on_old_portal: false,
     archived: false,
     aliases: [ data[:name], data[:name].parameterize ]
