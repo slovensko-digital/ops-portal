@@ -51,7 +51,7 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
   rescue RuntimeError => e
     raise e unless /.*This object already exists/.match?(e.message) || /.*Can't save object \(ZammadAPI::Resources::Ticket\): Error ID.*/.match?(e.message)
 
-    search_result = client.client.ticket.search(query: "\"#{issue_update.ticket_number}\"").select { |r| r.number == issue_update.ticket_number }
+    search_result = client.client.ticket.search(query: issue_update.ticket_number).select { |r| r.number == issue_update.ticket_number }
 
     raise e if search_result.count == 0
     raise "Found multiple matches for ticket!" unless search_result.count == 1

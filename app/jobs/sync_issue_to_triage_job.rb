@@ -32,11 +32,13 @@ class SyncIssueToTriageJob < ApplicationJob
         issue.save!
 
       rescue RuntimeError => e
-        raise e unless /.*This object already exists/.match?(e.message)
+        # Zammad 7.2 reports a duplicate ticket number as a generic error, not as "This object already exists"
+        raise e unless /.*This object already exists/.match?(e.message) || /.*Can't save object \(ZammadAPI::Resources::Ticket\): Error ID.*/.match?(e.message)
 
         issue_number = generate_issue_number(issue, process_type: process_type)
 
-        search_result = client.client.ticket.search(query: "\"#{issue_number}\"").select { |r| r.number == issue_number }
+        # unquoted, a quoted query finds nothing without Elasticsearch
+        search_result = client.client.ticket.search(query: issue_number).select { |r| r.number == issue_number }
 
         raise e if search_result.count == 0
 
