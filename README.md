@@ -94,7 +94,9 @@ inactive. `bin/activate-seeded-municipalities` then runs, on the freshly seeded 
    It creates the municipality's group, organization, 700 trigger and users
    (`podatelna@<municipality>.example.com`, `jan.novak@<municipality>.example.com`) in Triage for the volunteer
    `dobrovolnik@example.org`, then activates it.
-4. `bin/rails responsible_subjects:activate_pro` for the [local Backoffices](#local-backoffice) you pick, it asks:
+4. full access to every Triage group for `admin@example.org`, so the admin sees and works all tickets too,
+   without logging in as the volunteer.
+5. `bin/rails responsible_subjects:activate_pro` for the [local Backoffices](#local-backoffice) you pick, it asks:
    Malacky (yes by default) and Trnava (no by default). Without a terminal it takes the defaults.
 
 New issues in an activated municipality go to the volunteer's group in Triage. The seeded issues stay only in
@@ -153,7 +155,7 @@ Who calls whom: the portal calls the Backoffice at `localhost:<port>`. The Backo
 
 Click-through:
 1. Create an issue in Malacky in the portal.
-2. Accept the ticket in Triage as `dobrovolnik@example.org`, it shows up in the Backoffice of Malacky in group Incoming.
+2. Accept the ticket in Triage (as `admin@example.org` or `dobrovolnik@example.org`), it shows up in the Backoffice of Malacky in group Incoming.
 3. In the Backoffice, post a public (not internal) note or change the OPS state, it reaches Triage and the portal.
 4. With Trnava: change the responsible subject to Trnava in the Backoffice of Malacky, the ticket shows up in the
    Backoffice of Trnava.

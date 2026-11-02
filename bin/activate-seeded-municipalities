@@ -10,7 +10,9 @@
 #      responsible_subjects:activate_basic finds a municipality's boundary by it
 #   3. bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 for every inactive municipality
 #      creates its Triage setup for the volunteer and activates it, see docs/how-it-works/08-onboarding.md
-#   4. bin/rails responsible_subjects:activate_pro for the local Backoffices you pick (Malacky by default, Trnava
+#   4. gives the Triage admin (the token's user) full access to every group, so they can open any ticket without
+#      logging in as the volunteer
+#   5. bin/rails responsible_subjects:activate_pro for the local Backoffices you pick (Malacky by default, Trnava
 #      optional), then prints the dev/up command that starts each of them in ../ops-backoffice-saas
 #
 # Then start bin/dev. New issues in the activated municipalities go to the volunteer in Triage. The seeded
@@ -18,6 +20,7 @@
 require "bundler/setup"
 require "dotenv"
 require "io/console"
+require "json"
 require "net/http"
 
 APP_ROOT = File.expand_path("..", __dir__)
@@ -39,6 +42,21 @@ def triage_get(path, token)
   Net::HTTP.get_response(uri, "Authorization" => "Token token=#{token}")
 rescue SystemCallError, Net::OpenTimeout
   abort "Triage is not running at #{ENV.fetch("TRIAGE_ZAMMAD_URL")}, start it: cd ../ops-triage-zammad && docker compose up -d"
+end
+
+def triage_put(path, token, body)
+  uri = URI.join(ENV.fetch("TRIAGE_ZAMMAD_URL"), "api/v1/#{path}")
+  request = Net::HTTP::Put.new(uri, "Authorization" => "Token token=#{token}", "Content-Type" => "application/json")
+  request.body = body.to_json
+  response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") { _1.request(request) }
+  abort "Triage rejected PUT #{path}: #{response.code} #{response.body}" unless response.is_a?(Net::HTTPSuccess)
+end
+
+def give_admin_all_groups(token)
+  admin = JSON.parse(triage_get("users/me", token).body)
+  group_ids = JSON.parse(triage_get("groups", token).body).to_h { [ _1["id"].to_s, [ "full" ] ] }
+  triage_put("users/#{admin["id"]}", token, group_ids: group_ids)
+  puts "\n== Triage admin #{admin["email"]} has full access to all #{group_ids.size} groups"
 end
 
 def triage_accepts?(token)
@@ -92,6 +110,8 @@ Dir.chdir APP_ROOT do
     run! "bin/rails", "responsible_subjects:activate_basic", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
       "USERS=podatelna@#{slug}.example.com,jan.novak@#{slug}.example.com", "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}"
   end
+
+  give_admin_all_groups(token)
 
   backoffices.each do |backoffice|
     run! "bin/rails", "responsible_subjects:activate_pro", "NAME=#{backoffice[:name]}", "YES=1",
