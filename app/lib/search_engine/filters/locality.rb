@@ -24,9 +24,12 @@ module SearchEngine
 
         if municipality_ids.any?
           condition = scope.where(municipality_id: municipality_ids)
-          condition = condition.where.not(
-            municipality_district_id: excluded_district_ids
-          ) if excluded_district_ids.any?
+
+          if excluded_district_ids.any?
+            without_district = condition.where(municipality_district_id: nil)
+            outside_excluded = condition.where.not(municipality_district_id: excluded_district_ids)
+            condition = without_district.or(outside_excluded)
+          end
 
           conditions << condition
         end
