@@ -47,7 +47,8 @@
 		gap: 0 20px;
 		
 	}
-	header nav a.add-button {
+	header nav a.add-button,
+	header nav button.add-button {
 		display: none;
 	}
 	header nav .nav-wrap-head a.menu-button-close {
@@ -87,7 +88,8 @@
 		max-width: 1600px;
 		width: 100%;
 	}
-	header nav .nav-con-main a {
+	header nav .nav-con-main a,
+	header nav .nav-con-main button.button-main {
 		background: variables.$black;
 		//border: 1px solid $black;
 		box-sizing: border-box;
@@ -100,12 +102,16 @@
 		
 		@include mixins.rounded(25px);
 	}
-	header nav .nav-con-main a.button-main {
+	header nav .nav-con-main a.button-main,
+	header nav .nav-con-main button.button-main {
 		background: variables.$red;
 		border: none;
 		box-sizing: border-box;
 		color: variables.$white;
 		padding: 14px 18px;
+	}
+	header nav .nav-con-main button.button-main {
+		cursor: pointer;
 	}
 	header nav .nav-wrap-main {
 	

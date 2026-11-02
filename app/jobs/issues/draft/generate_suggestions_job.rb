@@ -1,4 +1,6 @@
 class Issues::Draft::GenerateSuggestionsJob < ApplicationJob
+  discard_on Ai::Prompt::PromptNotFoundException
+
   queue_as :default
   queue_with_priority ASAP
 

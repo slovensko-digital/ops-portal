@@ -460,7 +460,8 @@ header nav a.login .logged {
   display: none;
   @include mixins.transition(all);
 }
-header nav a.add-button {
+header nav a.add-button,
+header nav button.add-button {
   align-items: center;
   background: variables.$red;
   color: variables.$white;
@@ -475,8 +476,13 @@ header nav a.add-button {
   @include mixins.rounded(19px);
   @include mixins.transition(all);
 }
-header nav a.add-button:hover {
+header nav a.add-button:hover,
+header nav button.add-button:hover {
   background: variables.$black;
+}
+header nav button.add-button {
+  border: none;
+  cursor: pointer;
 }
 header nav a.menu-button {
   cursor: pointer;
@@ -1380,6 +1386,75 @@ section.report .report-warning .button:hover
 }
 section.report .report-warning .button {
   background: variables.$yellow;
+}
+section.report .report-duplicates-notice .button {
+  width: 100%;
+}
+section.report .report-duplicates-check {
+  display: flex;
+  flex-direction: column;
+  gap: 12px 0;
+}
+section.report .report-duplicates-hint {
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$extrabold;
+}
+
+.draft-pending-banner {
+  align-items: center;
+  background: variables.$pink;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 30px;
+  justify-content: space-between;
+  padding: 20px 16px;
+  position: sticky;
+}
+.draft-pending-banner .draft-pending-banner-text {
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(20,16);
+  font-weight: variables.$medium;
+}
+
+body:has(dialog.duplicate-popup[open]) {
+  overflow: hidden;
+}
+dialog.duplicate-popup {
+  border: none;
+  box-sizing: border-box;
+  max-height: calc(100vh - 32px);
+  max-width: 720px;
+  padding: 24px 20px;
+  width: calc(100% - 32px);
+  @include mixins.rounded(25px);
+}
+dialog.duplicate-popup::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+.duplicate-popup .duplicate-popup-header {
+  align-items: center;
+  display: flex;
+  gap: 0 20px;
+  justify-content: space-between;
+}
+.duplicate-popup .duplicate-popup-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  fill: variables.$black;
+  height: 38px;
+  padding: 0;
+  width: 38px;
+}
+.duplicate-popup .duplicate-popup-issue {
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-weight: variables.$semibold;
 }
 
 
@@ -2535,7 +2610,8 @@ section.podnet .podnet-information .clipboard--supported:hover .clipboard-button
 }
 
 //Rotate button and close button
-section.podnet .podnet-discussion .add-comment-form figure {
+section.podnet .podnet-discussion .add-comment-form figure,
+.duplicate-popup .add-comment-form figure {
   height: 140px;
   width: 140px;
 }
@@ -2731,7 +2807,8 @@ section.podnet .podnet-discussion .comment-hidden-notice {
 section.podnet .podnet-discussion .add-comment-form-con {
 
 }
-section.podnet .podnet-discussion .add-comment-form {
+section.podnet .podnet-discussion .add-comment-form,
+.duplicate-popup .add-comment-form {
   background: variables.$white;
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
@@ -2743,23 +2820,27 @@ section.podnet .podnet-discussion .add-comment-form {
   //position: absolute;
   width: 100%;
 }
-section.podnet .podnet-discussion .add-comment-form .title {
+section.podnet .podnet-discussion .add-comment-form .title,
+.duplicate-popup .add-comment-form .title {
   font-family: variables.$general;
   font-size: variables.em(22,16);
   font-weight: variables.$semibold;
   line-height: variables.em(22,22);
 }
-section.podnet .podnet-discussion .add-comment-form .description {
+section.podnet .podnet-discussion .add-comment-form .description,
+.duplicate-popup .add-comment-form .description {
   font-family: variables.$general;
   font-size: variables.em(18,16);
   font-weight: variables.$normal;
   line-height: variables.em(28,18);
 }
-section.podnet .podnet-discussion .add-comment-form form {
+section.podnet .podnet-discussion .add-comment-form form,
+.duplicate-popup .add-comment-form form {
   display: grid;
   gap: 20px 0;
 }
-section.podnet .podnet-discussion .add-comment-form form textarea {
+section.podnet .podnet-discussion .add-comment-form form textarea,
+.duplicate-popup .add-comment-form form textarea {
   border: 1px solid variables.$black;
   box-sizing: border-box;
   display: block;
@@ -2773,10 +2854,12 @@ section.podnet .podnet-discussion .add-comment-form form textarea {
   width: 100%;
   @include mixins.rounded(10px);
 }
-section.podnet .podnet-discussion .add-comment-form form textarea::placeholder {
+section.podnet .podnet-discussion .add-comment-form form textarea::placeholder,
+.duplicate-popup .add-comment-form form textarea::placeholder {
   color: variables.$black-light;
 }
 section.podnet .podnet-discussion .add-comment-form .pictures-wrapper,
+.duplicate-popup .add-comment-form .pictures-wrapper,
 .uploads.pictures-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -2789,10 +2872,12 @@ section.podnet .podnet-discussion .add-comment-form .pictures-wrapper,
   gap: 30px;
   justify-content: space-between;
 }
-section.podnet .podnet-discussion .add-comment-form form .button {
+section.podnet .podnet-discussion .add-comment-form form .button,
+.duplicate-popup .add-comment-form form .button {
   width: 100%;
 }
-section.podnet .podnet-discussion .add-comment-form form .button-add-image svg {
+section.podnet .podnet-discussion .add-comment-form form .button-add-image svg,
+.duplicate-popup .add-comment-form form .button-add-image svg {
   width: 20px;
 }
 

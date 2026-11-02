@@ -33,6 +33,7 @@ class Issues::DraftsController < ApplicationController
   def update
     # assigned instead of attached: attach would store the files before validation could reject them
     @draft.photos = @draft.photos.blobs + draft_params[:photos].to_a.compact_blank
+    @draft.reset_duplicates
     if @draft.save(context: :photos_step)
       redirect_to edit_issues_draft_path(@draft, next: params[:next])
     else
@@ -44,19 +45,15 @@ class Issues::DraftsController < ApplicationController
 
   def destroy_photo
     @draft.photos.find(params[:photo_id]).purge_later
+    @draft.reset_duplicates!
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
   end
 
   def rotate_photo
     blob = @draft.photos.find(params[:photo_id]).blob
     blob.update!(rotation: (blob.rotation - 90) % 360)
+    @draft.reset_duplicates!
     redirect_to edit_issues_draft_path(@draft, next: params[:next])
-  end
-
-  def duplicates
-    @draft.update(duplicates_shown: true)
-
-    redirect_to issues_path(pin: "#{@draft.latitude},#{@draft.longitude}", kategoria: @draft.category&.name, podkategoria: @draft.subcategory&.name, typ: @draft.subtype&.name)
   end
 
   def thanks

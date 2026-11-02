@@ -103,16 +103,19 @@
 	section.podnet .add-buttons a.button-transparent {
 		order: 1;
 	}
-	section.podnet .podnet-discussion .add-comment-form form .buttons-wrapper {
+	section.podnet .podnet-discussion .add-comment-form form .buttons-wrapper,
+	.duplicate-popup .add-comment-form form .buttons-wrapper {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 30px;
 		justify-content: space-between;
 	}
-	section.podnet .podnet-discussion .add-comment-form form .button {
+	section.podnet .podnet-discussion .add-comment-form form .button,
+	.duplicate-popup .add-comment-form form .button {
 		width:fit-content !important;
 	}
-	section.podnet .podnet-discussion .add-comment-form form a.button-add-image svg {
+	section.podnet .podnet-discussion .add-comment-form form a.button-add-image svg,
+	.duplicate-popup .add-comment-form form a.button-add-image svg {
 		width: 20px;
 	}
 	section.podnet .podnet-discussion .comment .comment-header {

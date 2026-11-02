@@ -6,6 +6,7 @@ class GeminiTest < ActiveSupport::TestCase
   end
 
   teardown do
+    ENV.delete("GEMINI_MODEL")
     WebMock.reset!
   end
 
@@ -46,5 +47,27 @@ class GeminiTest < ActiveSupport::TestCase
     )
 
     assert_equal [], Gemini.generate(messages: [ "data" ], system_prompt: "prompt")
+  end
+
+  test "calls the default model unless GEMINI_MODEL is set" do
+    stub_model("gemini-2.5-flash")
+
+    assert_equal [ 1 ], Gemini.generate(messages: [ "data" ], system_prompt: "prompt")
+  end
+
+  test "calls the model from GEMINI_MODEL" do
+    ENV["GEMINI_MODEL"] = "gemini-3.8-flash"
+    stub_model("gemini-3.8-flash")
+
+    assert_equal [ 1 ], Gemini.generate(messages: [ "data" ], system_prompt: "prompt")
+  end
+
+  private
+
+  def stub_model(model)
+    stub_request(:post, %r{/v1beta/models/#{model}:generateContent}).to_return(
+      headers: { "Content-Type" => "application/json" },
+      body: { candidates: [ { content: { parts: [ { text: "[1]" } ] } } ] }.to_json
+    )
   end
 end
