@@ -21,6 +21,14 @@ class UploadsTest < ApplicationSystemTestCase
     assert_no_selector "figure.small-picture img", wait: 2
   end
 
+  test "files named as images that cannot be read are ignored" do
+    # uploaded together with a real photo, whose preview proves the request finished
+    attach_file "new_files[]", [ file_fixture("not-an-image.png").to_s, file_fixture("graffiti-with-geo.jpg").to_s ], visible: false
+
+    assert_selector "figure.small-picture img", count: 1
+    assert_not ActiveStorage::Blob.exists?(filename: "not-an-image.png")
+  end
+
   test "photo can be rotated before submitting" do
     attach_file "new_files[]", file_fixture("graffiti-with-geo.jpg").to_s, visible: false
     assert_selector "figure.small-picture img"

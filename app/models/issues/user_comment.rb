@@ -11,6 +11,7 @@
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
+#  ai_evaluation                 :jsonb            not null
 #  author_email                  :string
 #  author_name                   :string
 #  hidden                        :boolean          default(FALSE), not null
@@ -31,10 +32,42 @@ class Issues::UserComment < Issues::Comment
 
   include EditableWithinEditingWindow
 
+  # fixed labels instead of the AI reason, which can quote the offending words
+  HIDDEN_REASON_LABELS = {
+    "irrelevant" => "obsah nesúvisiaci s podnetom",
+    "vulgar" => "vulgarizmy",
+    "insulting" => "urážky",
+    "sarcastic" => "sarkazmus",
+    "political" => "politická agitácia"
+  }.freeze
+  HIDDEN_REASON_MIN_SCORE = 0.5
+
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
 
   def author
     user_author
+  end
+
+  def triage_activity_body
+    return "Automaticky skrytý komentár: #{text}" if auto_hidden?
+
+    super
+  end
+
+  def auto_hidden?
+    hidden && ai_evaluation.present? && Issues::ModerateCommentJob.hide?(ai_evaluation)
+  end
+
+  # also for a comment hidden in triage, the score cutoff keeps
+  # categories the AI did not flag out of the reason
+  def hidden_reason
+    return unless hidden && ai_evaluation.present?
+
+    HIDDEN_REASON_LABELS
+      .select { |category, _| ai_evaluation[category].to_f >= HIDDEN_REASON_MIN_SCORE }
+      .values
+      .to_sentence(words_connector: ", ", two_words_connector: " a ", last_word_connector: " a ")
+      .presence
   end
 
   def visible?

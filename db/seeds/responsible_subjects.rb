@@ -32,7 +32,7 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
   { type: city_district, subject_name: "MÚ Čunovo" },
 
   { type: city, subject_name: "Hlavné mesto SR Bratislava" },
-  { type: city, subject_name: "Mesto Banská Bystrica" },
+  { type: city, subject_name: "Banská Bystrica" },
   { type: city, subject_name: "Trnava" },
   { type: city, subject_name: "Nitra" },
   { type: city, subject_name: "Malacky" },
@@ -50,7 +50,7 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
   when city_district
     [ bratislava, bratislava&.municipality_districts&.find_by(name: data[:subject_name].delete_prefix("MÚ ")) ]
   when city
-    [ Municipality.find_by(name: data[:subject_name].delete_prefix("Hlavné mesto SR ").delete_prefix("Mesto ")), nil ]
+    [ Municipality.find_by(name: data[:subject_name].delete_prefix("Hlavné mesto SR ")), nil ]
   else
     [ data[:subject_name].include?("Bratislav") ? bratislava : nil, nil ]
   end
@@ -61,7 +61,10 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
     rs.municipality = municipality
     rs.municipality_district = municipality_district
     rs.email = "#{data[:subject_name].parameterize}@not-existing-domain.com"
-    rs.active = true
-    rs.pro = true
+    # the responsible subject of an inactive municipality waits for responsible_subjects:activate_basic,
+    # which activates it as BASIC
+    waiting_for_activation = municipality.present? && !municipality.active?
+    rs.active = !waiting_for_activation
+    rs.pro = !waiting_for_activation
   end.save!
 end

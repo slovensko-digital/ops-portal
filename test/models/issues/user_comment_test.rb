@@ -47,4 +47,37 @@ class Issues::UserCommentTest < ActiveSupport::TestCase
   test "editable_by? returns false for nil user" do
     assert_not @comment.editable_by?(nil)
   end
+
+  test "hidden_reason lists the categories scored at least 0.5 for an automatically hidden comment" do
+    @comment.update!(hidden: true, ai_evaluation: {
+      "overall_score" => 0.95, "irrelevant" => 0.5, "vulgar" => 0.9, "insulting" => 0.7, "sarcastic" => 0.49, "political" => 0.0,
+      "reason" => "Komentár obsahuje hrubé vyjadrenie \"trt makovy\"."
+    })
+
+    assert_equal "obsah nesúvisiaci s podnetom, vulgarizmy a urážky", @comment.hidden_reason
+  end
+
+  test "hidden_reason is nil when no category reaches 0.5" do
+    @comment.update!(hidden: true, ai_evaluation: { "overall_score" => 0.95, "vulgar" => 0.4, "reason" => "Nevhodný komentár." })
+
+    assert_nil @comment.hidden_reason
+  end
+
+  test "hidden_reason lists the flagged categories for a comment hidden in triage below the auto hide threshold" do
+    @comment.update!(hidden: true, ai_evaluation: { "overall_score" => 0.8, "insulting" => 0.8 })
+
+    assert_equal "urážky", @comment.hidden_reason
+  end
+
+  test "hidden_reason is nil for a visible comment" do
+    @comment.update!(ai_evaluation: { "overall_score" => 0.8, "insulting" => 0.8 })
+
+    assert_nil @comment.hidden_reason
+  end
+
+  test "hidden_reason is nil for a hidden comment without an AI evaluation" do
+    @comment.update!(hidden: true)
+
+    assert_nil @comment.hidden_reason
+  end
 end

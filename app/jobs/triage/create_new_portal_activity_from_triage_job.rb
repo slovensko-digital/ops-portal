@@ -28,7 +28,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
         activity: issue.comment_activities.create!,
       )
       article[:attachments].each do |attachment|
-        comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
+        comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
       end
 
     when "portal_issue_resolution"
@@ -43,7 +43,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
           responsible_subject_author: article[:author]
         )
         article[:attachments].each do |attachment|
-          comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
+          comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
         end
       elsif [ :agent_portal_comment, :agent_portal_and_backoffice_comment ].include?(article[:article_type])
         comment = Issues::AgentComment.create!(
@@ -52,7 +52,7 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
           activity: issue.comment_activities.create!
         )
         article[:attachments].each do |attachment|
-          comment.attachments.attach(io: StringIO.new(Base64.strict_decode64(attachment[:data64])), filename: attachment[:filename])
+          comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
         end
       end
     when "portal_issue_verification"

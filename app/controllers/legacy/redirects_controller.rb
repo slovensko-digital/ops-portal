@@ -2,6 +2,8 @@ class Legacy::RedirectsController < ApplicationController
   before_action :set_legacy_visit_cookie
   before_action :set_municipality, only: [ :search_list, :search_street, :search_stats, :search_map ]
 
+  rescue_from ActiveRecord::RecordNotFound, with: -> { render "errors/render_404", status: :not_found }
+
   def index
     redirect_to root_path
   end

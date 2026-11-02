@@ -27,6 +27,18 @@ class Triage::CreateNewPortalActivityFromTriageJobTest < ActiveJob::TestCase
     assert_equal [ "photo.jpg" ], comment.attachments.map { |a| a.filename.to_s }
   end
 
+  test "attachment named as an image that cannot be read is kept as a plain file" do
+    issue = issues(:one)
+    attachment = triage_attachment(filename: "scan.png").merge(data64: Base64.strict_encode64(file_fixture("not-an-image.png").binread))
+
+    perform triage_ticket(issue, process_type: "portal_issue_triage"), triage_article(article_type: :agent_private_comment, attachments: [ attachment ]), ticket_id: 1
+
+    blob = issue.comments.last.attachments.sole.blob
+    assert_equal "scan.png", blob.filename.to_s
+    assert_equal "application/octet-stream", blob.content_type
+    assert_not blob.variable?
+  end
+
   test "responsible subject reply on a resolution ticket becomes a responsible subject comment" do
     issue = issues(:two)
     article = triage_article(article_type: :responsible_subject_portal_and_backoffice_comment, body: "Odpoveď mesta", author: responsible_subjects(:one))

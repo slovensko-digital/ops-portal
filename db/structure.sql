@@ -826,7 +826,8 @@ CREATE TABLE public.issues_comments (
     legacy_comment_id integer,
     legacy_communication_id integer,
     uuid uuid,
-    last_edited_at timestamp(6) without time zone
+    last_edited_at timestamp(6) without time zone,
+    ai_evaluation jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -4499,6 +4500,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20261003120000'),
 ('20261003115900'),
 ('20261003105314'),
+('20260813133737'),
 ('20260811144543'),
 ('20260811132517'),
 ('20260705131733'),
