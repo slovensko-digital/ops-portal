@@ -7,5 +7,11 @@ class ApplicationJob < ActiveJob::Base
   # Most jobs are safe to ignore if the underlying records are no longer available
   discard_on ActiveJob::DeserializationError
 
+  # Runs when retries run out, on discard_on and on an error no handler catches.
+  # Without it a discarded job is only visible in /admin/good_job.
+  after_discard do |job, error|
+    Rollbar.error(error, job: job.class.name, job_id: job.job_id, executions: job.executions, arguments: job.serialize["arguments"])
+  end
+
   ASAP = -500
 end
