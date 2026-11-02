@@ -57,7 +57,7 @@ class Issues::ModerateCommentJobTest < ActiveJob::TestCase
     assert_no_enqueued_jobs only: Issues::ModerateCommentJob
   end
 
-  test "is discarded without retry when the Gemini request raises" do
+  test "is not retried when the Gemini request raises" do
     stub_request(:post, @gemini_url).to_timeout
 
     assert_nothing_raised do

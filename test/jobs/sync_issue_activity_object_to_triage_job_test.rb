@@ -28,6 +28,10 @@ class SyncIssueActivityObjectToTriageJobTest < ActiveJob::TestCase
 
     triage_zammad_client_mock.expect :create_ticket_from_issue_update!, 99, [ @issue_update ]
 
+    # the verification ticket is closed with the same client
+    triage_zammad_client_mock.expect :close_ticket!, nil, [ "99" ]
+    triage_zammad_client_mock.expect :create_system_note!, nil, [ "99", "Overenie podnetu bolo prijaté." ]
+
     triage_zammad_client_mock.expect :create_system_note!, nil, [
       @issue.resolution_external_id,
       "Stav podnetu bol zmenený na Vyriešený na základe informácie od zadávateľa podnetu."
@@ -41,18 +45,12 @@ class SyncIssueActivityObjectToTriageJobTest < ActiveJob::TestCase
       { "ops_state" => "resolved", "state" => "closed" }
     ]
 
-    close_job_called = false
-    Triage::CloseIssueUpdateTriageTicketJob.stub :perform_now, ->(update, state) {
-      close_job_called = true if update == @issue_update && state == "accepted"
-    } do
-      SyncIssueActivityObjectToTriageJob.new.perform(
-        issue: @issue,
-        activity_object: @issue_update,
-        client: triage_zammad_client_mock
-      )
-    end
+    SyncIssueActivityObjectToTriageJob.new.perform(
+      issue: @issue,
+      activity_object: @issue_update,
+      client: triage_zammad_client_mock
+    )
 
-    assert close_job_called
     assert_equal "99", @issue_update.reload.external_id
     assert_mock triage_zammad_client_mock
   end
