@@ -1,0 +1,7 @@
+<%= turbo_stream.append "issues-items" do %>
+  <%= render @issues %>
+<% end %>
+
+<%= turbo_stream.update "load-more-trigger" do %>
+  <%= render "shared/load_more_issues_trigger", pagination: @issue_pagination %>
+<% end %>

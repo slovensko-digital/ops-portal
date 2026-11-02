@@ -1,4 +1,8 @@
 class ApplicationController < ActionController::Base
+  # Number of issues per page in all issue lists (main list, profile tabs,
+  # public user page).
+  ISSUES_PER_PAGE = 24
+
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   # allow_browser versions: :modern
 

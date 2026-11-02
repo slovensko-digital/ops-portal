@@ -1,0 +1,12 @@
+<%# locals: (issues:, pagination:) %>
+<div data-controller="load-more">
+  <%= turbo_frame_tag "profile-list", target: :_top do %>
+    <div id="issues-items" class="podnet-block-con">
+      <%= render issues %>
+    </div>
+
+    <div id="load-more-trigger" class="load-more-con" data-load-more-target="trigger">
+      <%= render "shared/load_more_issues_trigger", pagination: pagination %>
+    </div>
+  <% end %>
+</div>

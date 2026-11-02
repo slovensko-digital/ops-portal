@@ -17,10 +17,8 @@ module SearchEngine
       scope = apply_filters(scope, search_params)
       scope = apply_sort(scope, search_params)
 
-      scope = scope.page(params[:page])
-      scope = scope.per(@per_page) if @per_page
-
-      results.hits = scope
+      per_page = @per_page || Kaminari.config.default_per_page
+      results.hits, results.pagination = PageRange.paginate(scope, params[:page], per_page)
 
       results
     end
