@@ -94,10 +94,12 @@ inactive. `bin/activate-seeded-municipalities` then runs, on the freshly seeded 
    It creates the municipality's group, organization, 700 trigger and users
    (`podatelna@<municipality>.example.com`, `jan.novak@<municipality>.example.com`) in Triage for the volunteer
    `dobrovolnik@example.org`, then activates it.
+   It asks about the [local Backoffices](#local-backoffice) first, without a terminal it takes the defaults:
+   - Malacky (yes by default) is activated as PRO instead, by
+     `bin/rails responsible_subjects:activate_pro EXISTING_MUNICIPALITY=1`.
+   - Trnava (no by default) is activated as BASIC, then upgraded by `bin/rails responsible_subjects:upgrade_to_pro`.
 4. full access to every Triage group for `admin@example.org`, so the admin sees and works all tickets too,
    without logging in as the volunteer.
-5. `bin/rails responsible_subjects:activate_pro` for the [local Backoffices](#local-backoffice) you pick, it asks:
-   Malacky (yes by default) and Trnava (no by default). Without a terminal it takes the defaults.
 
 New issues in an activated municipality go to the volunteer's group in Triage. The seeded issues stay only in
 the portal, the seeds don't send them to Triage.
@@ -140,7 +142,7 @@ Backoffices log each other out. Chrome and Firefox resolve `*.localhost` without
 Backoffices need about 4.5 GB of Docker memory.
 
 First time, with [Local Triage](#local-triage) set up: `bin/activate-seeded-municipalities` asks which
-municipalities to activate as PRO, runs `responsible_subjects:activate_pro` for them and prints a command per
+municipalities get a Backoffice, activates Malacky as PRO and upgrades Trnava to PRO, and prints a command per
 Backoffice, e.g.:
 
 ```bash
@@ -159,6 +161,9 @@ Click-through:
 3. In the Backoffice, post a public (not internal) note or change the OPS state, it reaches Triage and the portal.
 4. With Trnava: change the responsible subject to Trnava in the Backoffice of Malacky, the ticket shows up in the
    Backoffice of Trnava.
+5. Downgrade and upgrade again: `bin/rails responsible_subjects:downgrade_to_basic NAME=Trnava
+   USERS=podatelna@trnava.example.com,jan.novak@trnava.example.com`, Triage emails Trnava again (Mailpit). Then
+   `upgrade_to_pro` with the same `BACKOFFICE_*` values as the script, the Backoffice of Trnava works again.
 
 ## Testing
 
@@ -167,12 +172,15 @@ Run `bin/rails test:all`. See [docs/TESTING.md](docs/TESTING.md) for what to tes
 ## Connect new Backoffice instance
 
 What the connection does is described in [docs/how-it-works/07](docs/how-it-works/07-backoffice-connector.md),
-the onboarding in [docs/how-it-works/08](docs/how-it-works/08-onboarding.md). Activate the responsible subject as PRO
-first, then deploy the Backoffice with the environment the task prints at the end:
+the onboarding in [docs/how-it-works/08](docs/how-it-works/08-onboarding.md). Activate the municipality as PRO, or
+upgrade a BASIC one, then deploy the Backoffice with the environment the task prints at the end:
 
 ```bash
-bin/rails responsible_subjects:activate_pro NAME="Malacky" BACKOFFICE_URL=https://malacky.odkazprestarostu.sk/ DRY_RUN=1
+bin/rails responsible_subjects:activate_pro BOUNDARY_ID=… NAME="Stupava" DISTRICT="Bratislavský kraj" \
+  TRIAGE_ZAMMAD_AGENT_EMAIL=… BACKOFFICE_URL=https://stupava.odkazprestarostu.sk/ DRY_RUN=1
+bin/rails responsible_subjects:upgrade_to_pro NAME="Malacky" BACKOFFICE_URL=https://malacky.odkazprestarostu.sk/ DRY_RUN=1
 ```
 
-Run it without arguments for help. It generates `API_TOKEN` and `WEBHOOK_SECRET` unless you pass them. For a
-responsible subject activated as BASIC it asks to confirm the changes to its Triage setup first.
+Run them without arguments for help. They generate `API_TOKEN` and `WEBHOOK_SECRET` unless you pass them.
+`upgrade_to_pro` asks to confirm the changes to the Triage setup first. `responsible_subjects:downgrade_to_basic`
+goes back to BASIC.

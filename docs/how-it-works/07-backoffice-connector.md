@@ -24,7 +24,8 @@ except the subtask job have **no tests**.
   OPS API private key, and `ops_api_subject_identifier == client.id`.
 - `ResponsibleSubject#pro?` gates every Triage → Backoffice job.
 
-Setup: `responsible_subjects:activate_pro`, see [08](08-onboarding.md#pro-municipality-responsible_subjectsactivate_pro).
+Setup: `responsible_subjects:activate_pro` for a new municipality, `upgrade_to_pro` for a BASIC one, `downgrade_to_basic`
+back (disables the `Client` and the `Connector::Tenant`), see [08](08-onboarding.md#pro-municipality-responsible_subjectsactivate_pro).
 Locally: README "Local Backoffice".
 
 ## Issue list (`GET /api/v1/issues`)

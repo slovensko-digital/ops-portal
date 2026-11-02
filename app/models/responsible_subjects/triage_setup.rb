@@ -1,4 +1,4 @@
-# The Triage setup of a municipality shared by BasicActivation and ProActivation: the responsible subject user, the
+# The Triage setup of a municipality shared by BasicActivation, ProActivation, ProUpgrade and ProDowngrade: the responsible subject user, the
 # group of the agent (volunteer) who reviews the municipality's tickets, and the 700 trigger assigning new portal
 # tickets from the municipality to the group, the agent and the responsible subject.
 #
@@ -27,6 +27,28 @@ module ResponsibleSubjects::TriageSetup
     else
       []
     end
+  end
+
+  # for a municipality with no Triage setup yet
+  def new_triage_setup_errors
+    errors = []
+    errors << "Triage email address #{GROUP_EMAIL_ADDRESS} does not exist" unless @client.find_email_address(GROUP_EMAIL_ADDRESS)
+    errors << "Triage role #{PORTAL_TECH_ACCOUNT_ROLE} does not exist" unless @client.find_role_by_name(PORTAL_TECH_ACCOUNT_ROLE)
+    return errors if name.blank?
+
+    errors << "Triage group #{name} already exists" if @client.find_group_by_name(name)
+    triggers_for_municipality.each do |trigger|
+      errors << "Triage trigger #{trigger["name"].inspect} (#{trigger["id"]}) already exists"
+    end
+    errors
+  end
+
+  # for a municipality activated before, its group and 700 trigger stay as they are
+  def existing_triage_setup_errors
+    errors = []
+    errors << "Triage group #{name} does not exist" unless @client.find_group_by_name(name)
+    errors << "Triage 700 trigger for #{name} does not exist" if triggers_for_municipality.empty?
+    errors
   end
 
   def create_triage_responsible_subject!(responsible_subject)

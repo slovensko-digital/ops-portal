@@ -9,11 +9,14 @@
 #   2. bin/rails municipality_boundaries:import_all
 #      responsible_subjects:activate_basic finds a municipality's boundary by it
 #   3. bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 for every inactive municipality
-#      creates its Triage setup for the volunteer and activates it, see docs/how-it-works/08-onboarding.md
-#   4. gives the Triage admin (the token's user) full access to every group, so they can open any ticket without
+#      creates its Triage setup for the volunteer and activates it, see docs/how-it-works/08-onboarding.md.
+#      Malacky, when you pick its local Backoffice (yes by default), is activated as PRO instead, by
+#      bin/rails responsible_subjects:activate_pro EXISTING_MUNICIPALITY=1
+#   4. bin/rails responsible_subjects:upgrade_to_pro for Trnava, when you pick its local Backoffice (no by default),
+#      it is activated as BASIC first, so the upgrade is tested too
+#   5. gives the Triage admin (the token's user) full access to every group, so they can open any ticket without
 #      logging in as the volunteer
-#   5. bin/rails responsible_subjects:activate_pro for the local Backoffices you pick (Malacky by default, Trnava
-#      optional), then prints the dev/up command that starts each of them in ../ops-backoffice-saas
+#   6. prints the dev/up command that starts each picked Backoffice in ../ops-backoffice-saas
 #
 # Then start bin/dev. New issues in the activated municipalities go to the volunteer in Triage. The seeded
 # issues stay only in the portal, the seeds don't send them to Triage.
@@ -26,10 +29,11 @@ require "net/http"
 APP_ROOT = File.expand_path("..", __dir__)
 # created by dev/setup_users.rb in ops-triage-zammad
 TRIAGE_AGENT_EMAIL = "dobrovolnik@example.org"
-# PRO municipalities with a local Backoffice (ops-backoffice-saas dev/up), slot n is on port 8080 + n
+# PRO municipalities with a local Backoffice (ops-backoffice-saas dev/up), slot n is on port 8080 + n,
+# activated as PRO or activated as BASIC and upgraded
 LOCAL_BACKOFFICES = [
-  { name: "Malacky", instance: "malacky", slot: 1, default: true },
-  { name: "Trnava", instance: "trnava", slot: 2, default: false }
+  { name: "Malacky", instance: "malacky", slot: 1, default: true, upgrade: false },
+  { name: "Trnava", instance: "trnava", slot: 2, default: false, upgrade: true }
 ].freeze
 
 def run!(*command)
@@ -66,7 +70,7 @@ end
 def ask_for_backoffice?(backoffice)
   return backoffice[:default] unless $stdin.tty?
 
-  print "Activate #{backoffice[:name]} as PRO with local Backoffice #{backoffice[:slot]} " \
+  print "#{backoffice[:upgrade] ? "Upgrade" : "Activate"} #{backoffice[:name]} #{backoffice[:upgrade] ? "from BASIC to" : "as"} PRO with local Backoffice #{backoffice[:slot]} " \
     "(http://#{backoffice[:instance]}.localhost:#{8080 + backoffice[:slot]})? #{backoffice[:default] ? "[Y/n]" : "[y/N]"} "
   answer = $stdin.gets.to_s.strip.downcase
   answer.empty? ? backoffice[:default] : answer.start_with?("y")
@@ -107,18 +111,25 @@ Dir.chdir APP_ROOT do
   run! "bin/rails", "municipality_boundaries:import_all"
 
   municipalities.each do |name, slug|
-    run! "bin/rails", "responsible_subjects:activate_basic", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
-      "USERS=podatelna@#{slug}.example.com,jan.novak@#{slug}.example.com", "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}"
-  end
-
-  give_admin_all_groups(token)
-
-  backoffices.each do |backoffice|
-    run! "bin/rails", "responsible_subjects:activate_pro", "NAME=#{backoffice[:name]}", "YES=1",
+    backoffice = backoffices.find { _1[:name] == name }
+    backoffice_arguments = [
       "BACKOFFICE_URL=http://localhost:#{8080 + backoffice[:slot]}/",
       "BACKOFFICE_API_TOKEN=local-dev-#{backoffice[:instance]}-backoffice-api-token-not-a-secret",
       "BACKOFFICE_WEBHOOK_SECRET=local-dev-#{backoffice[:instance]}-backoffice-webhook-secret-not-a-secret"
+    ] if backoffice
+
+    if backoffice && !backoffice[:upgrade]
+      run! "bin/rails", "responsible_subjects:activate_pro", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
+        "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}", *backoffice_arguments
+      next
+    end
+
+    run! "bin/rails", "responsible_subjects:activate_basic", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
+      "USERS=podatelna@#{slug}.example.com,jan.novak@#{slug}.example.com", "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}"
+    run! "bin/rails", "responsible_subjects:upgrade_to_pro", "NAME=#{name}", "YES=1", *backoffice_arguments if backoffice
   end
+
+  give_admin_all_groups(token)
 
   puts "\n== Done, activated: #{municipalities.map(&:first).join(", ")}. Start bin/dev."
   next if backoffices.empty?

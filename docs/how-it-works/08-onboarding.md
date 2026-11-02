@@ -46,7 +46,8 @@ What it doesn't handle:
   manual.
 - City parts (`Mesto::Časť`). The 700 condition is an exact match on the
   municipality name.
-- PRO setup, see [`activate_pro`](#pro-municipality-responsible_subjectsactivate_pro).
+- PRO setup, see [`activate_pro`](#pro-municipality-responsible_subjectsactivate_pro) and
+  [`upgrade_to_pro`](#basic-to-pro-responsible_subjectsupgrade_to_pro).
 
 ### Locally: `EXISTING_MUNICIPALITY=1`
 
@@ -65,38 +66,97 @@ municipality, see "Local Triage" in the README.
 ## PRO municipality: `responsible_subjects:activate_pro`
 
 ```
-bin/rails responsible_subjects:activate_pro NAME="Malacky" \
-  BACKOFFICE_URL=https://malacky.odkazprestarostu.sk/ DRY_RUN=1
+bin/rails responsible_subjects:activate_pro \
+  BOUNDARY_ID=… NAME="Stupava" DISTRICT="Bratislavský" \
+  TRIAGE_ZAMMAD_AGENT_EMAIL=volunteer@… \
+  BACKOFFICE_URL=https://stupava.odkazprestarostu.sk/ [DRY_RUN=1]
 ```
 
-`ResponsibleSubjects::ProActivation` works on an existing responsible
-subject only (found by `subject_name`), activated as BASIC or not at all.
-It validates first and lists the changes. When the responsible subject was
-activated as BASIC (its Triage organization exists), the task asks to
-confirm them (`YES=1` skips it). Then:
+For a new municipality, like `activate_basic`, with the same checks on the
+boundary, the district, the agent and an existing municipality, RS, group,
+organization or trigger. It also refuses a `Connector::Tenant` named NAME,
+and points an active BASIC RS to `upgrade_to_pro`. Code:
+`app/models/responsible_subjects/pro_activation.rb`, tested in
+`test/models/responsible_subjects/pro_activation_test.rb`.
 
-1. Triage: keeps the responsible subject user (`ops-rs-<id>`, role
-   Zodpovedný Subjekt), group NAME and the 700 trigger, or creates the
-   missing ones as `activate_basic` does. Only then it needs
-   `TRIAGE_ZAMMAD_AGENT_EMAIL`.
-2. Triage: takes every user of organization NAME out of it, role Externý
-   zodpovedný subjekt becomes Customer, so Triage no longer emails them about
-   the municipality's tickets, then deletes the organization. When Zammad
-   refuses (tickets still belong to it), it logs that and goes on. The users
-   stay in Triage and in the portal (`User::ResponsibleSubject`), what should
-   happen to them is not decided yet.
-3. Portal: creates the `Client` and `Connector::Tenant` (`BACKOFFICE_URL`,
+1. Portal: municipality NAME and RS NAME as `activate_basic` does, with
+   `pro` true and no email (step A above).
+2. Triage: RS user, group NAME for the volunteer and the 700 trigger
+   (steps B, C, E and F above). No organization and no users, the
+   municipality works its tickets in the Backoffice, so Triage emails nobody.
+3. Portal: `Client` and `Connector::Tenant` (`BACKOFFICE_URL`,
    `CONNECTOR_WEBHOOK_URL`, generated keys, `API_TOKEN` and `WEBHOOK_SECRET`
-   generated unless passed), sets `active` and `pro` on the responsible subject
-   and `active` on its municipality.
+   generated unless passed), then the municipality and the RS active.
 
 It prints the Backoffice's environment (`OPS_RESPONSIBLE_SUBJECT(_ID)`,
 `WEBHOOK_TENANT_ID`, `API_TOKEN`, `WEBHOOK_SECRET`, `OPS_CONNECTOR_URL`),
-deploy the Backoffice with it. Like `activate_basic`, Triage changes are not
-rolled back when a step fails.
+deploy the Backoffice with it. `EXISTING_MUNICIPALITY=1` works as for
+`activate_basic`. Like `activate_basic`, Triage changes are not rolled back
+when a step fails.
 
-Locally `bin/activate-seeded-municipalities` runs it for Malacky and, if
-asked, Trnava, each with a Backoffice of `ops-backoffice-saas` `dev/up`, see
+## Basic to PRO: `responsible_subjects:upgrade_to_pro`
+
+```
+bin/rails responsible_subjects:upgrade_to_pro NAME="Malacky" \
+  BACKOFFICE_URL=https://malacky.odkazprestarostu.sk/ [DRY_RUN=1] [YES=1]
+```
+
+For an active BASIC RS (found by `subject_name`) with its Triage user, group
+and 700 trigger. It refuses a PRO or inactive RS, an RS with an active
+`Client`, and a `Connector::Tenant` named NAME other than the one a downgrade
+disabled. It lists the changes and asks to confirm them (`YES=1` skips it).
+Code: `app/models/responsible_subjects/pro_upgrade.rb`, tested in
+`test/models/responsible_subjects/pro_upgrade_test.rb`.
+
+1. Triage: keeps the RS user, group NAME and the 700 trigger as they are,
+   including the volunteer the trigger assigns tickets to.
+2. Triage: takes every user of organization NAME out of it, role Externý
+   zodpovedný subjekt becomes Customer, so Triage no longer emails them about
+   the municipality's tickets (ops#1343), then deletes the organization. When
+   Zammad refuses (tickets still belong to it), it logs that and goes on.
+   Each user goes through `UpdatePortalUserFromTriageJob` right away, so the
+   portal makes them `User::Citizen` even when Triage's `user.updated` webhook
+   doesn't reach it. Their RS comments stay, they belong to the RS, not to
+   the user. The users stay in Triage and in the portal, what should happen
+   to them is not decided yet.
+3. Portal: `Client` and `Connector::Tenant` as `activate_pro` does, or enables
+   the ones a downgrade disabled, with the new URL, token and secret. The
+   Tenant keeps its id (`WEBHOOK_TENANT_ID`) and its `Connector::Issue`s.
+   Sets `pro` on the RS.
+
+It prints the Backoffice's environment like `activate_pro`.
+
+## PRO to basic: `responsible_subjects:downgrade_to_basic`
+
+```
+bin/rails responsible_subjects:downgrade_to_basic NAME="Malacky" \
+  USERS="podatelna@malacky.sk,jan.novak@malacky.sk" [DRY_RUN=1] [YES=1]
+```
+
+For an active PRO RS with an active `Client`, its Triage group and 700
+trigger, and no organization NAME in Triage. The municipality's tickets are
+all in Triage, the Backoffice had copies, so nothing moves back. It refuses a
+user of USERS who is in a Triage organization or is a user of another RS in
+the portal. It lists the changes and asks to confirm them (`YES=1` skips it).
+Code: `app/models/responsible_subjects/pro_downgrade.rb`, tested in
+`test/models/responsible_subjects/pro_downgrade_test.rb`.
+
+1. Triage: keeps the RS user, group NAME and the 700 trigger.
+2. Triage: organization NAME and its users as `activate_basic` does (step G
+   above). A user already in Triage, e.g. a Customer left by the upgrade,
+   joins the organization instead and keeps its other roles.
+3. Portal: disables the `Client` (`active` false, the API refuses its tokens)
+   and the `Connector::Tenant` (`inactive`, the Connector webhooks refuse it),
+   sets `pro` false and the RS email to the first of USERS. A later
+   `upgrade_to_pro` enables them again.
+
+Stop the Backoffice after the downgrade.
+
+### Locally
+
+`bin/activate-seeded-municipalities` activates Malacky with `activate_pro
+EXISTING_MUNICIPALITY=1` and, if asked, Trnava with `activate_basic` and then
+`upgrade_to_pro`, each with a Backoffice of `ops-backoffice-saas` `dev/up`, see
 "Local Backoffice" in the README.
 
 ## Users across systems
@@ -131,8 +191,8 @@ Known problems in this flow, tracked in the private `slovensko-digital/ops` repo
 | Issue | Section | Problem |
 |---|---|---|
 | [ops#1341](https://github.com/slovensko-digital/ops/issues/1341) | [Basic municipality: `responsible_subjects:activate_basic`](#basic-municipality-responsible_subjectsactivate_basic) | `activate_basic` has no Triage rollback |
-| [ops#1343](https://github.com/slovensko-digital/ops/issues/1343) | [PRO municipality: Backoffice](#pro-municipality-backoffice) | A PRO RS with Externý email users gets everything twice |
-| [ops#1347](https://github.com/slovensko-digital/ops/issues/1347) | [PRO municipality: Backoffice](#pro-municipality-backoffice) | Backoffice `API_TOKEN` rotation is ignored after the first deploy |
+| [ops#1343](https://github.com/slovensko-digital/ops/issues/1343) | [Basic to PRO: `responsible_subjects:upgrade_to_pro`](#basic-to-pro-responsible_subjectsupgrade_to_pro) | A PRO RS with Externý email users gets everything twice. `upgrade_to_pro` removes them, PRO municipalities set up by hand before it may still have them |
+| [ops#1347](https://github.com/slovensko-digital/ops/issues/1347) | [PRO municipality: `responsible_subjects:activate_pro`](#pro-municipality-responsible_subjectsactivate_pro) | Backoffice `API_TOKEN` rotation is ignored after the first deploy |
 | [ops#1350](https://github.com/slovensko-digital/ops/issues/1350) | [Users across systems](#users-across-systems) | Epic: no agreed sync rules for users between the portal and Triage, so bans, deactivation, organization and role changes leave inconsistent data |
 | [ops#1315](https://github.com/slovensko-digital/ops/issues/1315) | [Users across systems](#users-across-systems) | An RS user deactivated in Triage can still log in to the portal |
 | [ops#1304](https://github.com/slovensko-digital/ops/issues/1304) | [Users across systems](#users-across-systems) | An RS comment crashes when the RS has no `external_id` in Triage |

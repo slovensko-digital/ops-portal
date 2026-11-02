@@ -64,6 +64,12 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
+  test "token of a disabled client is unauthorized" do
+    @client.update!(active: false)
+    get api_v1_issues_url, headers: api_headers(@token)
+    assert_response :unauthorized
+  end
+
   test "token can also be passed as a query parameter" do
     get api_v1_issues_url(token: @token)
     assert_response :success
