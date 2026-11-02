@@ -26,6 +26,7 @@ except the subtask job have **no tests**.
 
 Setup: `responsible_subjects:activate_pro` for a new municipality, `upgrade_to_pro` for a BASIC one, `downgrade_to_basic`
 back (disables the `Client` and the `Connector::Tenant`), see [08](08-onboarding.md#pro-municipality-responsible_subjectsactivate_pro).
+The API refuses a disabled `Client`'s tokens (401), both Connector webhooks answer 404 for an inactive `Connector::Tenant`.
 Locally: README "Local Backoffice".
 
 ## Issue list (`GET /api/v1/issues`)
