@@ -111,10 +111,7 @@ and position (core workflow "show portal preview url instead of portal url",
 priority 160). Tickets without it keep `portal_url`. `portal_url` keeps its
 value, trigger emails still use it. Anyone with the link sees the
 issue read-only, with the same discussion the author sees, a "Náhľad"
-notice and no edit, like, subscribe, share or comment actions. The
-page is sent with `noindex`. The default `Referrer-Policy`
-(`strict-origin-when-cross-origin`) keeps the token out of Referers to other
-sites. Not `no-referrer`: OpenStreetMap blocks map tiles requested without one.
+notice and no edit, like, subscribe, share or comment actions.
 
 The token is an HMAC of the issue id with `ISSUE_PREVIEW_SECRET`, cut to 20
 characters. It never expires and stays valid in every state. Rotating the
