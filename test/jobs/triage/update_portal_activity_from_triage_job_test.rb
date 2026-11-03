@@ -41,6 +41,7 @@ class Triage::UpdatePortalActivityFromTriageJobTest < ActiveJob::TestCase
   test "unknown article is imported as a new activity" do
     client = Minitest::Mock.new
     client.expect :get_ticket, triage_ticket(issues(:two)), [ 3 ]
+    client.expect :get_ticket, triage_ticket(issues(:two)), [ 3 ]
     client.expect :get_article, triage_article(article_type: :agent_portal_comment, body: "Nový článok"), [ 3, "8" ], allowed_article_types: Array
 
     assert_difference -> { issues(:two).comments.count }, 1 do
@@ -50,16 +51,28 @@ class Triage::UpdatePortalActivityFromTriageJobTest < ActiveJob::TestCase
     assert_mock client
   end
 
+  test "unknown article in a ticket that is not a portal ticket is skipped" do
+    client = Minitest::Mock.new
+    client.expect :get_ticket, nil, [ 3 ]
+
+    assert_no_difference -> { Issues::Comment.count } do
+      Triage::UpdatePortalActivityFromTriageJob.new.perform(3, "8", triage_zammad_client: client)
+    end
+
+    assert_mock client
+  end
+
   test "a failing import of an unknown article fails with its own error" do
     # a plain object like ZammadApiClient, which ActiveJob can't serialize
     client = Object.new
-    def client.get_ticket(_ticket_id) = nil
+    def client.get_ticket(_ticket_id) = { origin: "portal", process_type: "unknown" }
+    def client.get_article(*, **) = { article_type: :agent_portal_comment }
 
     error = assert_raises(RuntimeError) do
       Triage::UpdatePortalActivityFromTriageJob.new.perform(3, "8", triage_zammad_client: client)
     end
 
-    assert_equal "Ticket not found", error.message
+    assert_equal "Process type not yet supported: unknown", error.message
     assert_no_enqueued_jobs
   end
 end
