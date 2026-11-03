@@ -206,7 +206,8 @@ CREATE TABLE public.clients (
     webhook_private_key character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    responsible_subject_id bigint
+    responsible_subject_id bigint,
+    active boolean DEFAULT true NOT NULL
 );
 
 
@@ -4426,6 +4427,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261102100000'),
 ('20261019100000'),
 ('20261016100000'),
 ('20261013100200'),
