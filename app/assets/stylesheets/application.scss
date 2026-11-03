@@ -2346,6 +2346,7 @@ section.podnet .podnet-description {
   font-size: variables.em(18,16);
   font-weight: variables.$medium;
   line-height: variables.em(28,18);
+  overflow-wrap: anywhere;
 }
 section.podnet .podnet-pictures-con {
   display: flex;
