@@ -29,6 +29,7 @@
   "address_lon": 17.1077,
   "likes_count": 3,
   "portal_url": "http://localhost:3000/podnety/1",
+  "portal_preview_url": "http://localhost:3000/podnety/1?nahlad=preview-token",
   "responsible_subject": {},
   "previous_responsible_subject": {},
   "responsible_subject_changed_at": null,

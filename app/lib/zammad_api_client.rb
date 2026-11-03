@@ -804,6 +804,7 @@ class ZammadApiClient
       address_house_number: ticket.address_house_number,
       likes_count: ticket.likes_count,
       portal_url: ticket.portal_url,
+      portal_preview_url: ticket.portal_preview_url,
       created_at: ticket.created_at,
       updated_at: ticket.updated_at
     }

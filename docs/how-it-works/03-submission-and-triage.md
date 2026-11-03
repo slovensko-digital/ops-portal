@@ -118,6 +118,9 @@ The token is an HMAC of the issue id with `ISSUE_PREVIEW_SECRET`, cut to 20
 characters. It never expires and stays valid in every state. Rotating the
 secret invalidates every link. A token on a public issue changes nothing.
 
+The R-ticket gets the same link and passes it on to Backoffice, see
+[07](07-backoffice-connector.md#triage--backoffice).
+
 ### 2a. Request supplement (doplnenie) (observed)
 
 ```mermaid

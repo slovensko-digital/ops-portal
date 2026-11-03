@@ -15,6 +15,7 @@
   "ops_investment": false,
   "ops_likes_count": 3,
   "ops_portal_url": "http://localhost:3000/podnety/1",
+  "ops_portal_preview_url": "http://localhost:3000/podnety/1?nahlad=preview-token",
   "address_municipality": "Bratislava",
   "address_municipality_district": "Staré Mesto",
   "address_street": "Hlavná",

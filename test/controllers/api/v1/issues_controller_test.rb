@@ -15,7 +15,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     category: String, subcategory: [ String, NilClass ], subtype: [ String, NilClass ],
     address_municipality: String, address_postcode: [ String, NilClass ], address_street: [ String, NilClass ],
     address_house_number: [ String, NilClass ], likes_count: Integer, address_lat: Float, address_lon: Float,
-    portal_url: String, created_at: String, resolution_started_at: [ String, NilClass ], updated_at: String,
+    portal_url: String, portal_preview_url: [ String, NilClass ], created_at: String, resolution_started_at: [ String, NilClass ], updated_at: String,
     activities: [ {
       triage_identifier: Integer, activity_type: String, uuid: String, author: [ Hash, NilClass ], content_type: String,
       body: String, created_at: String, updated_at: String,

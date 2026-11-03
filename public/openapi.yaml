@@ -696,6 +696,12 @@ components:
           format: uri
           description: URL to the issue in the portal
           example: https://novy.odkazprestarostu.sk/dopyty/12345
+        portal_preview_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Signed read-only link to the issue in the portal. Unlike portal_url it also works while the issue is visible only to its author (e.g. resolved privately, rejected, duplicate). Missing for older issues.
+          example: https://novy.odkazprestarostu.sk/dopyty/12345?nahlad=3f9a1c7e2b4d5e6f7a8b
         created_at:
           type: string
           format: date-time
