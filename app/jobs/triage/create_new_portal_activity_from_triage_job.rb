@@ -22,44 +22,48 @@ class Triage::CreateNewPortalActivityFromTriageJob < ApplicationJob
       issue = Issue.find_by!(triage_external_id: ticket_id)
       return if issue.comments.find_by(triage_external_id: article_id)
 
-      comment = Issues::AgentPrivateComment.create!(
+      Issues::AgentPrivateComment.create!(
         triage_external_id: article_id,
         text: article[:body],
         activity: issue.comment_activities.create!,
+        attachments: attachables(article)
       )
-      article[:attachments].each do |attachment|
-        comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
-      end
 
     when "portal_issue_resolution"
       issue = Issue.find_by!(resolution_external_id: ticket_id)
       return if issue.comments.find_by(triage_external_id: article_id)
 
       if [ :responsible_subject_portal_and_backoffice_comment, :responsible_subject_portal_comment ].include?(article[:article_type])
-        comment = Issues::ResponsibleSubjectComment.create!(
+        Issues::ResponsibleSubjectComment.create!(
           triage_external_id: article_id,
           text: article[:body],
           activity: issue.comment_activities.create!,
-          responsible_subject_author: article[:author]
+          responsible_subject_author: article[:author],
+          attachments: attachables(article)
         )
-        article[:attachments].each do |attachment|
-          comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
-        end
       elsif [ :agent_portal_comment, :agent_portal_and_backoffice_comment ].include?(article[:article_type])
-        comment = Issues::AgentComment.create!(
+        Issues::AgentComment.create!(
           triage_external_id: article_id,
           text: article[:body],
-          activity: issue.comment_activities.create!
+          activity: issue.comment_activities.create!,
+          attachments: attachables(article)
         )
-        article[:attachments].each do |attachment|
-          comment.attachments.attach(ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename]))
-        end
       end
     when "portal_issue_verification"
       # pass
     else
       # TODO add support for other process types
       raise "Process type not yet supported: #{process_type}"
+    end
+  end
+
+  private
+
+  # Attached in the same save as the comment. Attaching after create! saves the comment again, and
+  # EditableWithinEditingWindow then stamps last_edited_at, so the comment shows as edited.
+  def attachables(article)
+    article[:attachments].map do |attachment|
+      ImageUpload.attachable(StringIO.new(Base64.strict_decode64(attachment[:data64])), attachment[:filename])
     end
   end
 end
