@@ -51,6 +51,17 @@ class Triage::CreateNewPortalActivityFromTriageJobTest < ActiveJob::TestCase
     assert_equal "Odpoveď mesta", comment.text
   end
 
+  test "responsible subject reply with an image is not marked as edited" do
+    issue = issues(:two)
+    article = triage_article(article_type: :responsible_subject_portal_and_backoffice_comment, author: responsible_subjects(:one), attachments: [ triage_attachment ])
+
+    perform triage_ticket(issue), article, ticket_id: 3
+
+    comment = issue.comments.last
+    assert_equal [ "photo.jpg" ], comment.attachments.map { |a| a.filename.to_s }
+    assert_not comment.edited?
+  end
+
   test "agent reply on a resolution ticket becomes an agent comment" do
     issue = issues(:two)
 
