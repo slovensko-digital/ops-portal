@@ -146,7 +146,8 @@ class IssuesController < ApplicationController
 
     @preview = true
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
-    response.headers["Referrer-Policy"] = "no-referrer"
+    # strict-origin, not no-referrer: OpenStreetMap blocks map tiles requested without a Referer
+    response.headers["Referrer-Policy"] = "strict-origin"
   end
 
   def check_edit_permissions

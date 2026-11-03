@@ -68,7 +68,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
-    assert_equal "no-referrer", response.headers["Referrer-Policy"]
+    assert_equal "strict-origin", response.headers["Referrer-Policy"]
   end
 
   test "shows a rejected or privately resolved issue with a valid preview token" do

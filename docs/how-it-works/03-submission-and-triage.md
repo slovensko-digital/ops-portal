@@ -112,7 +112,9 @@ priority 160). Tickets without it keep `portal_url`. `portal_url` keeps its
 value, trigger emails still use it. Anyone with the link sees the
 issue read-only, with the same discussion the author sees, a "Náhľad pre
 Triage" notice and no edit, like, subscribe, share or comment actions. The
-page is sent with `noindex` and `no-referrer`.
+page is sent with `noindex` and `Referrer-Policy: strict-origin`, so the token
+never leaves in a Referer. Not `no-referrer`: OpenStreetMap blocks map tiles
+requested without one.
 
 The token is an HMAC of the issue id with `ISSUE_PREVIEW_SECRET`, cut to 20
 characters. It never expires and stays valid in every state. Rotating the
