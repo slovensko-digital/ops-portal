@@ -119,8 +119,8 @@ Wait until Triage answers at http://localhost:8080 before `bin/activate-seeded-m
 `zammad-init` again and takes a few minutes. A reset also applies a changed `WEBHOOK_SECRET`, Triage sets
 it on webhooks only when seeding.
 
-Always `down -v`, with the `-v`: `down` alone keeps the volumes, so the old tickets stay. The reseeded portal starts its
-issue ids at 300300 again, and Triage and the Backoffices refuse a ticket number they already have. The Connector
+Always `down -v`, with the `-v`: `down` alone keeps the volumes, so the old tickets and users stay. The reseeded portal starts its
+issue ids at 300300 again, and a Backoffice refuses a ticket number `OPS-<id>` it already has. The Connector
 job then fails in `/admin/good_job` with "Please contact your administrator".
 
 ```bash
