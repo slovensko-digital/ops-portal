@@ -3528,7 +3528,12 @@ footer .footer-nav-bottom {
 @include meta.load-css("_100em.scss");
 
 
-// Náhľad podnetu cez podpísaný odkaz z Triage
+// Náhľad podnetu cez podpísaný odkaz (Triage, Backoffice)
 .issue-preview-notice {
   margin-bottom: 20px;
+}
+// hlasovanie pri komentároch je v náhľade len na čítanie
+section.podnet .like-dislike-con button.button-share:disabled {
+  cursor: default;
+  fill: transparent;
 }

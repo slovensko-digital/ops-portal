@@ -14,6 +14,20 @@ class IssuePreviewTest < ApplicationSystemTestCase
     assert_no_text "Chcete pridať komentár alebo overiť podnet?"
   end
 
+  test "the discussion is shown in the preview without any actions" do
+    issue = issues(:one)
+
+    visit preview_path(issue)
+
+    within ".podnet-discussion" do
+      assert_selector ".comment"
+      assert_selector ".button-like[disabled]"
+      assert_selector ".button-dislike[disabled]"
+      assert_no_selector ".button-share:not([disabled])"
+      assert_no_link "Upraviť"
+    end
+  end
+
   test "a hidden praise is shown read-only with the preview link" do
     visit preview_path(issues(:praise_waiting))
 
