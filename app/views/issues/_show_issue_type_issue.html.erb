@@ -1,5 +1,5 @@
 <section class="podnet" data-controller="zoombox">
-  <%= render partial: "issues/preview_notice" if @preview %>
+  <%= render partial: "issues/preview_notice" if issue_preview? %>
   <div class="podnet-con">
     <!-- Podnet Description & Pictures -->
     <%= turbo_frame_tag issue, :edit do %>
@@ -39,15 +39,15 @@
         </div>
 
         <div class="share-buttons">
-          <% if !@preview && current_user.can_edit?(issue) %>
+          <% if can_edit_issue?(issue) %>
             <%= button_to "Upraviť", edit_issue_path(issue), method: :get, class: "button button-transparent button-edit" %>
           <% end %>
-          <% unless @preview %>
+          <% if issue_actions_allowed? %>
             <%= render partial: "issue_subscriptions/button" %>
             <%= render partial: "issue_likes/button" %>
           <% end %>
 
-          <% unless issue.editable? || @preview %>
+          <% if can_share_issue?(issue) %>
             <%= render partial: "issues/share_issue_om_social_media", locals: { issue: issue } %>
           <% end %>
         </div>
@@ -152,8 +152,8 @@
           <% end %>
         <% end %>
 
-        <% if @preview %>
-          <%# read-only preview from Triage, no discussion form %>
+        <% if !issue_actions_allowed? %>
+          <%# read-only preview, no discussion form %>
         <% elsif logged_in? %>
           <% if issue.discussion_closed? %>
             <div class="unverified-notice-con">

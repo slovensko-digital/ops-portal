@@ -1,5 +1,5 @@
 <section class="compliment">
-  <%= render partial: "issues/preview_notice" if @preview %>
+  <%= render partial: "issues/preview_notice" if issue_preview? %>
   <h1><%= issue.title %></h1>
 
   <div class="compliment-con">
@@ -13,7 +13,7 @@
       </picture>
     </figure>
 
-    <% unless @preview %>
+    <% if issue_actions_allowed? %>
       <div class="compliment-buttons-con">
         <%= render partial: "issue_likes/button" %>
 

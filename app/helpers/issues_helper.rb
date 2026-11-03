@@ -1,4 +1,23 @@
 module IssuesHelper
+  # The issue page opened with a signed preview link (IssuesController#set_preview): read-only.
+  def issue_preview?
+    @preview.present?
+  end
+
+  # Liking, subscribing, voting and commenting on the issue page. Never in a preview.
+  def issue_actions_allowed?
+    !issue_preview?
+  end
+
+  def can_edit_issue?(issue)
+    issue_actions_allowed? && current_user.can_edit?(issue)
+  end
+
+  # Sharing on social media makes sense only once the issue can't change any more.
+  def can_share_issue?(issue)
+    issue_actions_allowed? && !issue.editable?
+  end
+
   def format_draft_address(draft)
     return "Nezistené" unless draft.address_data
     street = [ draft.address_street, draft.address_house_number ].compact.join(" ")
