@@ -29,6 +29,7 @@ module TriageHelper
       address_house_number: "1",
       likes_count: 0,
       portal_url: "http://localhost:3000/dopyty/#{issue.id}",
+      portal_preview_url: "http://localhost:3000/dopyty/#{issue.id}?nahlad=preview-token",
       created_at: issue.created_at,
       updated_at: issue.updated_at
     }.merge(overrides)

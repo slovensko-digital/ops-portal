@@ -36,6 +36,7 @@ class Connector::ZammadApiClientTest < ActiveSupport::TestCase
       "address_municipality" => "Bratislava",
       "address_municipality_district" => "Staré Mesto",
       "ops_portal_url" => "http://localhost:3000/podnety/1",
+      "ops_portal_preview_url" => "http://localhost:3000/podnety/1?nahlad=preview-token",
       "article" => hash_including(
         "origin_by_id" => 900,
         "body" => "Lavička na námestí má odlomené dosky.",
@@ -253,6 +254,7 @@ class Connector::ZammadApiClientTest < ActiveSupport::TestCase
       "customer_id" => 3,
       "owner_id" => 7,
       "ops_portal_url" => "http://localhost:3000/podnety/1",
+      "ops_portal_preview_url" => "http://localhost:3000/podnety/1?nahlad=preview-token",
       "address_municipality" => "Bratislava",
       "address_street" => "Hlavná",
       "article" => hash_including(
@@ -625,6 +627,7 @@ class Connector::ZammadApiClientTest < ActiveSupport::TestCase
       "address_lat" => 48.1486,
       "address_lon" => 17.1077,
       "portal_url" => "http://localhost:3000/podnety/1",
+      "portal_preview_url" => "http://localhost:3000/podnety/1?nahlad=preview-token",
       "created_at" => "2024-11-05T09:59:21.000Z",
       "updated_at" => "2024-11-06T10:00:00.000Z",
       "activities" => [ citizen_activity, agent_activity ]

@@ -148,6 +148,7 @@ class ZammadApiClient
       state: state,
       ops_state: ops_state,
       portal_url: Rails.application.routes.url_helpers.issue_url(issue),
+      portal_preview_url: IssuePreviewSigner.url(issue),
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: issue.responsible_subject&.then { |s|
         { "label" => s.subject_name, "value" => s.id }
@@ -803,6 +804,7 @@ class ZammadApiClient
       address_house_number: ticket.address_house_number,
       likes_count: ticket.likes_count,
       portal_url: ticket.portal_url,
+      portal_preview_url: ticket.portal_preview_url,
       created_at: ticket.created_at,
       updated_at: ticket.updated_at
     }

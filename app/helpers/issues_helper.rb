@@ -1,4 +1,20 @@
 module IssuesHelper
+  def issue_preview?
+    @preview.present?
+  end
+
+  def issue_actions_allowed?
+    !issue_preview?
+  end
+
+  def can_edit_issue?(issue)
+    issue_actions_allowed? && current_user.can_edit?(issue)
+  end
+
+  def can_share_issue?(issue)
+    issue_actions_allowed? && !issue.editable?
+  end
+
   def format_draft_address(draft)
     return "Nezistené" unless draft.address_data
     street = [ draft.address_street, draft.address_house_number ].compact.join(" ")

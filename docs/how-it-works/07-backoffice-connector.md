@@ -103,6 +103,14 @@ sequenceDiagram
 | 200 "upravených podnetov PRO" → ticket.updated | `SendNewIssueUpdateFromTriageToBackofficeJob` (current RS only) | `UpdateBackofficeIssueFromTriageJob` | ops_state, RS, rs_changed_at, likes, categories, address. Creates the ticket if missing. Zammad `state` untouched |
 | 200 "nových komentárov PRO" → article.created | `ProcessNewActivityFromTriageJob` | `CreateNewBackofficeActivityFromTriageJob` (customer activities only if `receive_customer_activities`) | public note, sender Customer |
 
+The R-ticket carries the signed preview link (`portal_preview_url`, see
+[03](03-submission-and-triage.md#portal-preview-link)). The API returns it next
+to `portal_url` and the connector stores it in `ops_portal_preview_url`, also
+on subtasks. In Backoffice it is shown as "Odkaz na portál" in place of
+`ops_portal_url`, so the link keeps working after the issue becomes private
+(`resolved_private`, `rejected`, `duplicate`). Only tickets created after this
+change have it; existing Backoffice tickets were not backfilled.
+
 ## Backoffice → Triage / portal
 
 | Backoffice trigger | Portal endpoint | Job | Effect |

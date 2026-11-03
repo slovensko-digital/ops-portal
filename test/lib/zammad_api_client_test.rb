@@ -69,6 +69,7 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal responsible_subjects(:two), ticket[:previous_responsible_subject]
     assert_equal users(:one), ticket[:author]
     assert_equal({ firstname: "Jozef", lastname: "Mokry", uuid: users(:one).uuid }, ticket[:author_response])
+    assert_equal "http://localhost:3000/podnety/1?nahlad=preview-token", ticket[:portal_preview_url]
     assert_not_requested :get, zammad_url("ticket_articles/by_ticket/42"), query: hash_including({})
   end
 
@@ -343,6 +344,8 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       "category" => "Zeleň a životné prostredie",
       "responsible_subject" => { "label" => "MÚ Staré Mesto", "value" => responsible_subjects(:one).id },
       "origin" => "portal",
+      "portal_url" => "http://localhost:3000/dopyty/#{issue.id}",
+      "portal_preview_url" => IssuePreviewSigner.url(issue),
       "article" => hash_including(
         "body" => issue.description,
         "sender" => "Customer",

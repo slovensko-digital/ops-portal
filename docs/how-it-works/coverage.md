@@ -18,6 +18,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Phone verification | [08](08-onboarding.md) | `system/profiles/verifications_test.rb`, controller test | 🟡 | `check_code` success/fail; `SendVerificationCodeJob` test file is empty |
 | Submission wizard | [03](03-submission-and-triage.md) | `system/issues/drafts_test.rb` (3), `models/issues/draft_test.rb`, `jobs/issues/draft/*` (Gemini) | 🟡 | `drafts_controller.rb` 61% lines; duplicates step; question flow; Nominatim job (empty test file); no assert that `SyncIssueToTriageJob` is enqueued |
 | Edit while waiting | [03](03-submission-and-triage.md#3-author-edits-while-waiting) | — | ❌ | whole flow |
+| Triage preview link | [03](03-submission-and-triage.md#portal-preview-link) | `system/issue_preview_test.rb`, `controllers/issues_controller_test.rb`, `lib/issue_preview_signer_test.rb` | ✅ | Triage sidebar workflow (no Triage tests) |
 | Portal → Triage create | [03](03-submission-and-triage.md) | `jobs/sync_issue_to_triage_job_test.rb` (7) | 🟡 | `sync_issue_to_triage_job.rb` 69% lines, 26/70 branches |
 | Comment → Triage | [06](06-comments-likes-routing.md) | `jobs/sync_issue_activity_object_to_triage_job_test.rb` (4, updates only) | ❌ | **28.6% lines, 7/84 branches**: article creation, author creation, "already exists" recovery; `SyncEditableActivityToTriageJob` 43%, its test file is empty |
 | Triage → portal (state, comments, users) | [02](02-issue-lifecycle.md) | `jobs/triage/*` (all 17 jobs have tests) | ✅ | duplicate failure branches; attachment decode |

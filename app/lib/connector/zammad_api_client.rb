@@ -115,6 +115,7 @@ module Connector
         customer_id: author.id,
         owner_id: assignee.id,
         ops_portal_url: parent_ticket.ops_portal_url,
+        ops_portal_preview_url: parent_ticket.ops_portal_preview_url,
         address_municipality: parent_ticket.address_municipality,
         address_municipality_district: parent_ticket.address_municipality_district,
         address_street: parent_ticket.address_street,
@@ -648,6 +649,7 @@ module Connector
         ops_responsible_subject_changed_at: issue["responsible_subject_changed_at"],
         ops_likes_count: issue["likes_count"],
         ops_portal_url: issue["portal_url"],
+        ops_portal_preview_url: issue["portal_preview_url"],
         created_at: issue["created_at"],
         updated_at: issue["updated_at"],
         article: {
