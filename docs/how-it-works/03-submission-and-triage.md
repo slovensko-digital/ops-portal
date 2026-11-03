@@ -105,9 +105,11 @@ While an issue is in a private state (`waiting`, `waiting_for_author`,
 issue looks on the portal.
 
 The portal sends `portal_preview_url` with the T-ticket
-(`IssuePreviewSigner.url`, `/dopyty/:id?nahlad=<token>`). Triage shows it as
-"Náhľad na portáli" in the sidebar (core workflows "triage process - setup
-attributes" and "praise - setup attributes"). Anyone with the link sees the
+(`IssuePreviewSigner.url`, `/dopyty/:id?nahlad=<token>`). When a ticket has it,
+Triage shows it in place of `portal_url`, with the same label "Odkaz na portál"
+and position (core workflow "show portal preview url instead of portal url",
+priority 160). Tickets without it keep `portal_url`. `portal_url` keeps its
+value, trigger emails still use it. Anyone with the link sees the
 issue read-only, with the same discussion the author sees, a "Náhľad pre
 Triage" notice and no edit, like, subscribe, share or comment actions. The
 page is sent with `noindex` and `no-referrer`.
