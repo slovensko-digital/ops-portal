@@ -141,7 +141,12 @@ class IssuesController < ApplicationController
   end
 
   def check_show_permissions
-    raise ActionController::RoutingError.new("Not Found") unless @issue.viewable_by?(current_user)
+    return if @issue.viewable_by?(current_user)
+    raise ActionController::RoutingError.new("Not Found") unless IssuePreviewSigner.valid?(@issue, params[IssuePreviewSigner::PARAM])
+
+    @preview = true
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    response.headers["Referrer-Policy"] = "no-referrer"
   end
 
   def check_edit_permissions

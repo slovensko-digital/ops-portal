@@ -343,6 +343,8 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       "category" => "Zeleň a životné prostredie",
       "responsible_subject" => { "label" => "MÚ Staré Mesto", "value" => responsible_subjects(:one).id },
       "origin" => "portal",
+      "portal_url" => "http://localhost:3000/dopyty/#{issue.id}",
+      "portal_preview_url" => IssuePreviewSigner.url(issue),
       "article" => hash_including(
         "body" => issue.description,
         "sender" => "Customer",

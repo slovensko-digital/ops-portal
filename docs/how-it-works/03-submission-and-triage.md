@@ -34,7 +34,7 @@ sequenceDiagram
   participant P as Portal
   participant TZ as Triage
   P->>TZ: SyncIssueToTriageJob: find/create customer ops-user-<id> (Portal User)
-  P->>TZ: create ticket T-<id>: group Incoming, process_type portal_issue_triage, ops_state waiting,<br/>address, category, portal_url, first article = description + photos
+  P->>TZ: create ticket T-<id>: group Incoming, process_type portal_issue_triage, ops_state waiting,<br/>address, category, portal_url, portal_preview_url, first article = description + photos
   P->>P: save triage_external_id, SyncIssueActivitiesToTriageJob (nothing yet)
   TZ->>TZ: 700 rule for the municipality (if any): group, owner, RS
   TZ->>TZ: 900: ops_state_changed_at
@@ -96,6 +96,25 @@ dobrovoľníkov" (core workflows 185/190).
 Triage has no subtasks. The `::po` → `[[podulohy]]` / `@@user … - date`
 syntax works only in a municipality's Backoffice, see
 [07](07-backoffice-connector.md#subtasks-podúlohy).
+
+### Portal preview link
+
+While an issue is in a private state (`waiting`, `waiting_for_author`,
+`rejected`, `resolved_private`, `duplicate`), only its author can open
+`/dopyty/:id`, everyone else gets a 404. So volunteers could not see how the
+issue looks on the portal.
+
+The portal sends `portal_preview_url` with the T-ticket
+(`IssuePreviewSigner.url`, `/dopyty/:id?nahlad=<token>`). Triage shows it as
+"Náhľad na portáli" in the sidebar (core workflows "triage process - setup
+attributes" and "praise - setup attributes"). Anyone with the link sees the
+issue read-only, with the same discussion the author sees, a "Náhľad pre
+Triage" notice and no edit, like, subscribe, share or comment actions. The
+page is sent with `noindex` and `no-referrer`.
+
+The token is an HMAC of the issue id with `ISSUE_PREVIEW_SECRET`, cut to 20
+characters. It never expires and stays valid in every state. Rotating the
+secret invalidates every link. A token on a public issue changes nothing.
 
 ### 2a. Request supplement (doplnenie) (observed)
 

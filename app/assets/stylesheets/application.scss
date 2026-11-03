@@ -3527,3 +3527,8 @@ footer .footer-nav-bottom {
 // 1600px
 @include meta.load-css("_100em.scss");
 
+
+// Náhľad podnetu cez podpísaný odkaz z Triage
+.issue-preview-notice {
+  margin-bottom: 20px;
+}
