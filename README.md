@@ -119,9 +119,13 @@ Wait until Triage answers at http://localhost:8080 before `bin/activate-seeded-m
 `zammad-init` again and takes a few minutes. A reset also applies a changed `WEBHOOK_SECRET`, Triage sets
 it on webhooks only when seeding.
 
+Always `down -v`, with the `-v`: `down` alone keeps the volumes, so the old tickets stay. The reseeded portal starts its
+issue ids at 300300 again, and Triage and the Backoffices refuse a ticket number they already have. The Connector
+job then fails in `/admin/good_job` with "Please contact your administrator".
+
 ```bash
 cd ../ops-triage-zammad && docker compose down -v && docker compose up -d
-cd ../ops-backoffice-saas && dev/compose malacky down -v   # with local Backoffices, also trnava
+cd ../ops-backoffice-saas && dev/compose malacky down -v && dev/compose trnava down -v   # with local Backoffices
 cd ../ops-portal && bin/rails db:seed:replant
 bin/activate-seeded-municipalities   # once Triage is up, then dev/up the Backoffices it prints
 bin/dev
