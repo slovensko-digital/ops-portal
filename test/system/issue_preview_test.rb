@@ -6,7 +6,7 @@ class IssuePreviewTest < ApplicationSystemTestCase
 
     visit preview_path(issue)
 
-    assert_selector ".issue-preview-notice", text: "Náhľad pre Triage"
+    assert_selector ".issue-preview-notice", text: "Náhľad"
     assert_selector "h1", text: "Rozbitá lavička na námestí"
     assert_no_selector ".share-buttons .button-like"
     assert_no_selector ".share-buttons .button-share"
@@ -17,7 +17,7 @@ class IssuePreviewTest < ApplicationSystemTestCase
   test "a hidden praise is shown read-only with the preview link" do
     visit preview_path(issues(:praise_waiting))
 
-    assert_selector ".issue-preview-notice", text: "Náhľad pre Triage"
+    assert_selector ".issue-preview-notice", text: "Náhľad"
     assert_selector "h1", text: "Bike lanes are wide and safety"
     assert_no_selector ".compliment-buttons-con"
   end
