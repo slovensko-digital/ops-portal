@@ -121,8 +121,9 @@ class ResponsibleSubjects::ProUpgrade
     organization_users.each do |user|
       roles = Array(user.roles).map { _1 == EXTERNAL_RESPONSIBLE_SUBJECT_ROLE ? CUSTOMER_ROLE : _1 }.uniq
       @client.update_user!(user.id, organization_id: nil, roles: roles)
-      # Triage sends the same as its user.updated webhook, which does not reach a portal that is down
-      Triage::UpdatePortalUserFromTriageJob.perform_now(user.id, triage_zammad_client: @client)
+      # Triage sends the same as its user.updated webhook, which does not reach a portal that is down. perform, not
+      # perform_now: its retry would enqueue the job with the client, which can't be serialized
+      Triage::UpdatePortalUserFromTriageJob.new.perform(user.id, triage_zammad_client: @client)
       @log.call("Triage and portal: #{user_label(user)} taken out of organization #{name}, roles #{roles.join(", ")}")
     end
 

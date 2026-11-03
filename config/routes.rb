@@ -21,7 +21,9 @@ Rails.application.routes.draw do
   namespace "api", defaults: { format: :json } do
     namespace "v1" do
       resources :issues, only: [ :index, :show, :update ] do
-        resources :activities, only: [ :show, :create ], controller: "issues/activities"
+        resources :activities, only: [ :show, :create ], controller: "issues/activities" do
+          resources :attachments, only: [ :show ], controller: "issues/activities/attachments"
+        end
         collection do
           get :search
         end

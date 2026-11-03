@@ -49,4 +49,17 @@ class Triage::UpdatePortalActivityFromTriageJobTest < ActiveJob::TestCase
 
     assert_mock client
   end
+
+  test "a failing import of an unknown article fails with its own error" do
+    # a plain object like ZammadApiClient, which ActiveJob can't serialize
+    client = Object.new
+    def client.get_ticket(_ticket_id) = nil
+
+    error = assert_raises(RuntimeError) do
+      Triage::UpdatePortalActivityFromTriageJob.new.perform(3, "8", triage_zammad_client: client)
+    end
+
+    assert_equal "Ticket not found", error.message
+    assert_no_enqueued_jobs
+  end
 end
