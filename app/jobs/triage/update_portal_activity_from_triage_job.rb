@@ -8,6 +8,11 @@ class Triage::UpdatePortalActivityFromTriageJob < ApplicationJob
     _ticket, article = triage_zammad_client.find_article(ticket_id, article_id)
     return Rails.logger.info("Article ticket_id: #{ticket_id}, article_id: #{article_id} not found") unless article
 
-    activity_object.update!(hidden: article.internal) unless activity_object.hidden == article.internal
+    return if activity_object.hidden == article.internal
+
+    activity_object.update!(hidden: article.internal)
+    # hidden is part of the visible set, so the counters have to follow it
+    # even though the activity itself did not change.
+    activity_object.issue.reset_counters
   end
 end
