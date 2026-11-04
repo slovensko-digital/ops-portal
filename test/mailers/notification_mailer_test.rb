@@ -16,6 +16,7 @@ class NotificationMailerTest < ActionMailer::TestCase
   test "every mail goes to the subscriber with issue subject and unsubscribe headers" do
     mail = NotificationMailer.with(subscription: @watcher_subscription).issue_resolved
 
+    assert_equal [ "testing@example.com" ], mail.from
     assert_equal [ users(:two).email ], mail.to
     assert_equal "Odkaz pre starostu | #{@issue.title} (Podnet ##{@issue.id})", mail.subject
     assert_equal "<#{unsubscribe_global_subscriptions_url(token: users(:two).email_global_unsubscribe_token)}>", mail.header["List-Unsubscribe"].value
