@@ -95,7 +95,7 @@ class NotificationMailerTest < ActionMailer::TestCase
     mail = NotificationMailer.with(subscription: @author_subscription).new_issue_responsible_subject_comment(comment)
 
     assert_includes mail.body.encoded, "pribudla nová odpoveď od samosprávy"
-  end
+    assert_includes mail.body.encoded, "#komentar_#{comment.id}"  end
 
   test "new_issue_update and new_issue_verification are not implemented yet" do
     assert_raises(NotImplementedError) { NotificationMailer.with(subscription: @author_subscription).new_issue_update.body }
