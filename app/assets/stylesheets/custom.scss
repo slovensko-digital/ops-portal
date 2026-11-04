@@ -244,6 +244,12 @@ select.dropdown-button:open {
     cursor: pointer;
 }
 
+.form-picture-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 section.report .form-items-login {
   display: flex;
   flex-direction: column;
