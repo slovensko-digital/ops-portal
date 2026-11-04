@@ -92,6 +92,11 @@ Authors cannot vote on their own activity: the buttons are disabled and the
 controller returns 403. For a responsible subject comment or reassignment the
 author is any user of that responsible subject (`authored_by?`).
 
+Likes and sharing are only offered on publicly visible issues. In a private
+state (`Issues::State::PRIVATE_KEYS`, only the author sees the issue) the like
+and social share buttons and the like count in issue lists are hidden, and
+`IssueLikesController` answers `401`.
+
 Backoffice has triggers at 10 and 100 likes (`ops_likes_count`), which are
 fed only by those indirect syncs. The trigger condition uses a date operator
 on an integer and may never fire (verify).

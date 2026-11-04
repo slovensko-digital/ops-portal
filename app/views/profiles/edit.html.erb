@@ -26,20 +26,25 @@
     </div>
   <% end %>
 
-  <%= form_with model: @user, scope: :user, url: profile_avatar_path, method: :patch, data: { controller: 'auto-submit' } do |f| %>
-    <div class="form-other-con">
-      <div class="form-picture-con">
-        <figure>
-          <picture>
-            <%= user_avatar @user, variant: :big %>
-          </picture>
-        </figure>
-        <%= f.label :avatar, 'Zmeniť fotku', class: 'button button-transparent' %>
-        <%= f.file_field :avatar, accept: "image/*", data: { action: 'auto-submit#submit' }, class: "sr-only" %>
-        <%= f.submit "Zmeniť fotku", class: 'sr-only' %>
+  <div class="form-other-con">
+    <div class="form-picture-con">
+      <figure>
+        <picture>
+          <%= user_avatar @user, variant: :big %>
+        </picture>
+      </figure>
+      <div class="form-picture-actions">
+        <%= form_with model: @user, scope: :user, url: profile_avatar_path, method: :patch, data: { controller: 'auto-submit' } do |f| %>
+          <%= f.label :avatar, 'Zmeniť fotku', class: 'button button-transparent' %>
+          <%= f.file_field :avatar, accept: "image/*", data: { action: 'auto-submit#submit' }, class: "sr-only" %>
+          <%= f.submit "Zmeniť fotku", class: 'sr-only' %>
+        <% end %>
+        <% if @user.avatar.attached? %>
+          <%= button_to "Odstrániť fotku", profile_avatar_path, method: :delete, class: 'button button-transparent', form: { data: { turbo_confirm: "Naozaj chcete odstrániť profilovú fotku?" } } %>
+        <% end %>
       </div>
     </div>
-  <% end %>
+  </div>
 
   <%= form_with model: @user, scope: :user, url: profile_path, method: :patch do |f| %>
     <%= f.hidden_field :onboarded, value: true %>

@@ -105,7 +105,7 @@ class RodauthMain < Rodauth::Rails::Auth
       db.after_commit { email.deliver_later }
     end
 
-    email_from ENV["NOTIFICATION_SMTP_USERNAME"] # this is actually also the email
+    email_from ENV["NOTIFICATION_SENDER_EMAIL"]
 
     create_verify_account_email do
       RodauthMailer.verify_account(self.class.configuration_name, account_id, verify_account_key_value)
