@@ -71,6 +71,10 @@ class Issues::Update < ApplicationRecord
     last_edited_at.present?
   end
 
+  def authored_by?(user)
+    author.present? && author == user
+  end
+
   def editable_by?(user)
     return false unless author == user
     return false unless within_editing_window?

@@ -20,6 +20,8 @@ class Issues::ActivityVotesController < ApplicationController
   end
 
   def check_permissions
-    render status: :unauthorized, body: nil unless current_user.can_view?(@activity.issue)
+    return render status: :unauthorized, body: nil unless current_user.can_view?(@activity.issue)
+
+    head :forbidden if @activity.authored_by?(current_user)
   end
 end

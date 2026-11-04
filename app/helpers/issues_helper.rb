@@ -7,6 +7,10 @@ module IssuesHelper
     !issue_preview?
   end
 
+  def can_vote_on_activity?(activity)
+    issue_actions_allowed? && !activity.authored_by?(current_user)
+  end
+
   def can_edit_issue?(issue)
     issue_actions_allowed? && current_user.can_edit?(issue)
   end

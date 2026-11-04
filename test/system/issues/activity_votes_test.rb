@@ -5,11 +5,12 @@ class Issues::ActivityVotesTest < ApplicationSystemTestCase
     @comment = issues_comments(:two_comment1)
     @comment.update_columns(text: "Komentár na hlasovanie")
     @activity = @comment.activity
-    login_as users(:one)
-    visit issue_path(issues(:two))
   end
 
   test "user can like, switch to dislike and take the vote back" do
+    login_as users(:legacy_citizen)
+    visit issue_path(issues(:two))
+
     within "#voting_issues_comment_activity_#{@activity.id}" do
       find(".button-like").click
       assert_selector ".button-like.button-active", text: "1"
@@ -32,5 +33,15 @@ class Issues::ActivityVotesTest < ApplicationSystemTestCase
       assert_selector ".button-dislike:not(.button-active)", text: "0"
     end
     assert_equal 0, @activity.reload.votes.count
+  end
+
+  test "author cannot vote on own comment" do
+    login_as users(:one)
+    visit issue_path(issues(:two))
+
+    within "#voting_issues_comment_activity_#{@activity.id}" do
+      assert_selector ".button-like[disabled]"
+      assert_selector ".button-dislike[disabled]"
+    end
   end
 end
