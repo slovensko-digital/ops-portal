@@ -32,6 +32,16 @@ module Notifications
         params: { subscription: @author_subscription }, args: [ nil ]
     end
 
+    test "notifies with the previous responsible subject when the responsible subject is removed" do
+      Notifications::PublishIssueResponsibleSubjectChangedJob.perform_now(
+        @issue, responsible_subject_id_change: [ responsible_subjects(:one).id, nil ]
+      )
+
+      assert_enqueued_emails 2
+      assert_enqueued_email_with NotificationMailer, :issue_responsible_subject_changed,
+        params: { subscription: @author_subscription }, args: [ responsible_subjects(:one) ]
+    end
+
     test "fails when the previous responsible subject does not exist" do
       assert_raises ActiveRecord::RecordNotFound do
         Notifications::PublishIssueResponsibleSubjectChangedJob.new.perform(

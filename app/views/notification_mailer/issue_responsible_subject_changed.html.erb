@@ -13,7 +13,10 @@
   <% if @previous_rs %>
     z kompetencie <strong><%= @previous_rs.subject_name %></strong>
   <% end %>
-  na <strong><%= @new_rs&.subject_name || "iný subjekt" %></strong>. Zvolený subjekt bol o podnete informovaný a v najbližšej dobe sa ním bude zaoberať.
+  na <strong><%= @new_rs&.subject_name || "neznámy subjekt" %></strong>.
+  <% if @new_rs %>
+    Zvolený subjekt bol o podnete informovaný a v najbližšej dobe sa ním bude zaoberať.
+  <% end %>
 </p>
 <p class="ops-email-paragraph">
   <%= ops_button "Zobraziť podnet", "#{issue_url(@issue)}#new_issue_activity" %>

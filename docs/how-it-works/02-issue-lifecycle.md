@@ -99,7 +99,7 @@ Backoffice, console.
 | Change | Activity → object | Partial |
 |---|---|---|
 | `state_id` | `Issues::StateChangeActivity` → `Issues::StateChange` (previous, new) | `issues/state_changes/_state_change` |
-| `responsible_subject_id` | `Issues::SystemResponsibleSubjectChangeActivity` → `Issues::SystemResponsibleSubjectChange` (previous, new, both optional) | `issues/system_responsible_subject_changes/_system_responsible_subject_change` |
+| `responsible_subject_id` | `Issues::SystemResponsibleSubjectChangeActivity` → `Issues::SystemResponsibleSubjectChange` (previous, new, both optional; a missing one shows as `neznámy`) | `issues/system_responsible_subject_changes/_system_responsible_subject_change` |
 
 Both objects return `triage_visible? == false`, so they are never synced
 to Triage, which keeps its own ticket history. A state change to nothing
