@@ -123,7 +123,10 @@ class Issue < ApplicationRecord
     activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
 
     activity_objects.select do |activity|
-      if activity.is_a?(Issues::UserComment) && activity.hidden?
+      # a private comment is a UserComment too, it must not come back as a placeholder after triage
+      if resolution_process? && activity.is_a?(Issues::UserPrivateComment)
+        false
+      elsif activity.is_a?(Issues::UserComment) && activity.hidden?
         true
       elsif triage_process?
         activity.triage_visible?

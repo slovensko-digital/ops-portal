@@ -45,6 +45,10 @@ shown, because it can quote the offending words. The same applies to a
 comment a volunteer hides in Triage after the AI scored it below the auto
 hide threshold. A comment with no category at 0.5 or more shows no reason.
 
+A hidden `UserPrivateComment` shows this placeholder to its author only while
+the issue is in triage. Once the R-ticket exists it disappears from the
+portal, like every other private comment.
+
 A hidden comment reaches Triage as an **internal** article with the body
 `Automaticky skrytý komentár: …`, so it never reaches the RS email or Backoffice. A
 volunteer who makes the article public unhides it on the portal
