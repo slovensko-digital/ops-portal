@@ -17,4 +17,14 @@ class Issues::ResponsibleSubjectHistoryTest < ApplicationSystemTestCase
     assert_selector ".state-change-message .state-badge", text: subject.subject_name, count: 3
     assert_no_text "žiadny"
   end
+
+  test "sidebar shows an issue without a responsible subject as unknown" do
+    issue = issues(:two)
+    issue.update!(responsible_subject: nil)
+
+    visit issue_path(issue)
+
+    assert_selector ".information-wrapper", text: "Zodpovedný:\nneznámy"
+    assert_no_text "Nikto"
+  end
 end
