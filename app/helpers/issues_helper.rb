@@ -11,6 +11,10 @@ module IssuesHelper
     issue_actions_allowed? && !activity.authored_by?(current_user)
   end
 
+  def activity_vote_disabled_reason(activity)
+    "Vlastný príspevok nemôžete hodnotiť." if activity.authored_by?(current_user)
+  end
+
   def can_edit_issue?(issue)
     issue_actions_allowed? && current_user.can_edit?(issue)
   end

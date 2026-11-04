@@ -12,6 +12,7 @@ class Issues::ActivityVotesTest < ApplicationSystemTestCase
     visit issue_path(issues(:two))
 
     within "#voting_issues_comment_activity_#{@activity.id}" do
+      assert_no_selector ".like[title]"
       find(".button-like").click
       assert_selector ".button-like.button-active", text: "1"
       assert_selector ".button-dislike:not(.button-active)", text: "0"
@@ -42,6 +43,7 @@ class Issues::ActivityVotesTest < ApplicationSystemTestCase
     within "#voting_issues_comment_activity_#{@activity.id}" do
       assert_selector ".button-like[disabled]"
       assert_selector ".button-dislike[disabled]"
+      assert_selector ".like[title='Vlastný príspevok nemôžete hodnotiť.']", count: 2
     end
   end
 end

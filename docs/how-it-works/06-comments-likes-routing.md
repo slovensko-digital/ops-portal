@@ -88,7 +88,8 @@ forgets to switch it to public writes something nobody but Triage sees.
 | Like / unlike an issue | `POST/DELETE /dopyty/:id/issue_like` | `IssueLike`, `issues.likes_count` | **Not pushed.** `likes_count` reaches Triage/Backoffice only on the next `SyncIssueToTriageJob` for some other reason |
 | Like / dislike an activity | `POST/DELETE /dopyty/activities/:id/activity_vote` | `ActivityVote` (+1/−1, any integer accepted) | never |
 
-Authors cannot vote on their own activity: the buttons are disabled and the
+Authors cannot vote on their own activity: the buttons are disabled with a
+tooltip explaining why ("Vlastný príspevok nemôžete hodnotiť.") and the
 controller returns 403. For a responsible subject comment or reassignment the
 author is any user of that responsible subject (`authored_by?`).
 

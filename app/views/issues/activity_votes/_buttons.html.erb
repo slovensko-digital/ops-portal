@@ -1,7 +1,7 @@
 <%= turbo_frame_tag activity, :voting do %>
   <div class="like-dislike-con">
     <div class="like-con">
-      <div class="like">
+      <div class="like" <%= tag.attributes(title: activity_vote_disabled_reason(activity)) %>>
         <%= button_to issues_activity_vote_path(activity, vote: 1), method: current_user.likes?(activity) ? :delete : :post, class: class_names("button-share button-like", "button-active": current_user.likes?(activity)), disabled: !can_vote_on_activity?(activity) do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
             <path d="M14.69,10.67c.07-.36.18-.46.27-1.04.19-1.16-.54-2.17-1.71-2.17-7.46,0-5.73.94-4.96-4.71.22-1.62-1.85-2.58-3.07-.76-12.62,18.83,7.06,19.16,7.82,14.54.14-.28,1.68-.95,1.15-2.92.2-.36,1.37-1.23.51-2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
@@ -30,7 +30,7 @@
       -->
     </div>
     <div class="like-con">
-      <div class="like">
+      <div class="like" <%= tag.attributes(title: activity_vote_disabled_reason(activity)) %>>
         <%= button_to issues_activity_vote_path(activity, vote: -1), method: current_user.dislikes?(activity) ? :delete : :post, class: class_names("button-share button-dislike", "button-active": current_user.dislikes?(activity)), disabled: !can_vote_on_activity?(activity) do %>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
             <path d="M1.31,9.33c-.07.36-.18.46-.27,1.04-.19,1.16.54,2.17,1.71,2.17,7.46,0,5.73-.94,4.96,4.71-.22,1.62,1.85,2.58,3.07.76C23.41-.82,3.73-1.15,2.97,3.47c-.14.28-1.68.95-1.15,2.92-.2.36-1.37,1.23-.51,2.94Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
