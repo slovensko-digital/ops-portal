@@ -11,8 +11,16 @@ module IssuesHelper
     issue_actions_allowed? && current_user.can_edit?(issue)
   end
 
+  def can_like_issue?(issue)
+    issue_actions_allowed? && issue.publicly_visible?
+  end
+
+  def show_issue_likes_count?(issue)
+    issue.likes_count > 0 && issue.publicly_visible?
+  end
+
   def can_share_issue?(issue)
-    issue_actions_allowed? && !issue.editable?
+    issue_actions_allowed? && issue.publicly_visible?
   end
 
   def format_draft_address(draft)
