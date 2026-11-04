@@ -16,7 +16,7 @@ module IssuesHelper
   end
 
   def can_share_issue?(issue)
-    issue_actions_allowed? && !issue.editable?
+    issue_actions_allowed? && issue.publicly_visible?
   end
 
   def format_draft_address(draft)

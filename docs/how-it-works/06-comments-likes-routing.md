@@ -88,10 +88,10 @@ forgets to switch it to public writes something nobody but Triage sees.
 | Like / unlike an issue | `POST/DELETE /dopyty/:id/issue_like` | `IssueLike`, `issues.likes_count` | **Not pushed.** `likes_count` reaches Triage/Backoffice only on the next `SyncIssueToTriageJob` for some other reason |
 | Like / dislike an activity | `POST/DELETE /dopyty/activities/:id/activity_vote` | `ActivityVote` (+1/−1, any integer accepted) | never |
 
-Likes are only offered on publicly visible issues. In a private state
-(`Issues::State::PRIVATE_KEYS`, only the author sees the issue) the like
-button and the like count in issue lists are hidden and `IssueLikesController`
-answers `401`.
+Likes and sharing are only offered on publicly visible issues. In a private
+state (`Issues::State::PRIVATE_KEYS`, only the author sees the issue) the like
+and social share buttons and the like count in issue lists are hidden, and
+`IssueLikesController` answers `401`.
 
 Backoffice has triggers at 10 and 100 likes (`ops_likes_count`), which are
 fed only by those indirect syncs. The trigger condition uses a date operator
