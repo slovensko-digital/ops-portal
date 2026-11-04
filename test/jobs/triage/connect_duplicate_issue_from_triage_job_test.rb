@@ -49,6 +49,19 @@ class Triage::ConnectDuplicateIssueFromTriageJobTest < ActiveJob::TestCase
     assert_equal 0, @parent.comments.where(type: "Issues::DuplicateIssueComment").count
   end
 
+  test "a failing update of the issue fails the job before the duplicate is resolved" do
+    @client.expect :get_ticket_resolution_parent_links, [ 3 ], [ 1 ]
+    @ticket[:title] = nil # fails issue validation
+
+    assert_raises(ActiveRecord::RecordInvalid) do
+      Triage::ConnectDuplicateIssueFromTriageJob.new.perform(@ticket, triage_zammad_client: @client)
+    end
+
+    assert_mock @client
+    assert_no_enqueued_jobs
+    assert_equal 0, @parent.comments.where(type: "Issues::DuplicateIssueComment").count
+  end
+
   test "issue already marked as duplicate is not processed again" do
     @issue.update_columns(state_id: issues_states(:duplicate).id)
     @client.expect :get_ticket_resolution_parent_links, [ 3 ], [ 1 ]

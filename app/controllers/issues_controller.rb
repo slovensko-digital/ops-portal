@@ -5,6 +5,7 @@ class IssuesController < ApplicationController
   before_action :set_issue, only: %i[ show edit update ]
   before_action :remember_last_municipality, only: :index
   before_action :force_responsible_subject_login, only: :show, if: -> { params.key?(:force_rs_login) }
+  before_action :set_preview, only: :show # before check_show_permissions, which reads @preview
   before_action :check_show_permissions, only: :show
   before_action :check_edit_permissions, only: %i[ edit update ]
 
@@ -140,8 +141,17 @@ class IssuesController < ApplicationController
     end
   end
 
+  # A valid preview token lets anyone see an issue only its author can see, read-only.
+  # The default Referrer-Policy (strict-origin-when-cross-origin) keeps the token on the portal.
+  def set_preview
+    return if @issue.viewable_by?(current_user)
+
+    @preview = IssuePreviewSigner.valid?(@issue, params[IssuePreviewSigner::PARAM])
+    response.headers["X-Robots-Tag"] = "noindex, nofollow" if @preview
+  end
+
   def check_show_permissions
-    raise ActionController::RoutingError.new("Not Found") unless @issue.viewable_by?(current_user)
+    raise ActionController::RoutingError.new("Not Found") unless @preview || @issue.viewable_by?(current_user)
   end
 
   def check_edit_permissions

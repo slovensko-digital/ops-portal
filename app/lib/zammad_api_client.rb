@@ -161,6 +161,7 @@ class ZammadApiClient
       state: state,
       ops_state: ops_state,
       portal_url: Rails.application.routes.url_helpers.issue_url(issue),
+      portal_preview_url: IssuePreviewSigner.url(issue),
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: issue.responsible_subject&.then { |s|
         { "label" => s.subject_name, "value" => s.id }
@@ -632,6 +633,19 @@ class ZammadApiClient
     @client.organization.create(name: name, shared: false, domain_assignment: false, vip: false, active: true).id
   end
 
+  def get_organization(organization_id)
+    raw_api_request(:get, "organizations/#{organization_id}")
+  end
+
+  # Zammad refuses while users or tickets still belong to the organization
+  def delete_organization!(organization_id)
+    raw_api_request(:delete, "organizations/#{organization_id}")
+  end
+
+  def update_user!(user_id, attributes)
+    raw_api_request(:put, "users/#{user_id}", attributes)
+  end
+
   def find_user_by_email(email)
     @client.user.search(query: email).page(1, 100) { }.find { |user| user.email.to_s.casecmp?(email) }
   end
@@ -803,6 +817,7 @@ class ZammadApiClient
       address_house_number: ticket.address_house_number,
       likes_count: ticket.likes_count,
       portal_url: ticket.portal_url,
+      portal_preview_url: ticket.portal_preview_url,
       created_at: ticket.created_at,
       updated_at: ticket.updated_at
     }

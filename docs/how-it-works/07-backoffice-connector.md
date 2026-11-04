@@ -24,7 +24,10 @@ except the subtask job have **no tests**.
   OPS API private key, and `ops_api_subject_identifier == client.id`.
 - `ResponsibleSubject#pro?` gates every Triage → Backoffice job.
 
-Setup: README "Connect new Backoffice instance".
+Setup: `responsible_subjects:activate_pro` for a new municipality, `upgrade_to_pro` for a BASIC one, `downgrade_to_basic`
+back (disables the `Client` and the `Connector::Tenant`), see [08](08-onboarding.md#pro-municipality-responsible_subjectsactivate_pro).
+The API refuses a disabled `Client`'s tokens (401), both Connector webhooks answer 404 for an inactive `Connector::Tenant`.
+Locally: README "Local Backoffice".
 
 ## Issue list (`GET /api/v1/issues`)
 
@@ -99,6 +102,14 @@ sequenceDiagram
 | 200 "nových podnetov PRO" / "novej pochvaly PRO" → ticket.created | `SendNewIssueFromTriageToBackofficeJob` | `CreateNewBackofficeIssueFromTriageJob` | new `OPS-` ticket |
 | 200 "upravených podnetov PRO" → ticket.updated | `SendNewIssueUpdateFromTriageToBackofficeJob` (current RS only) | `UpdateBackofficeIssueFromTriageJob` | ops_state, RS, rs_changed_at, likes, categories, address. Creates the ticket if missing. Zammad `state` untouched |
 | 200 "nových komentárov PRO" → article.created | `ProcessNewActivityFromTriageJob` | `CreateNewBackofficeActivityFromTriageJob` (customer activities only if `receive_customer_activities`) | public note, sender Customer |
+
+The R-ticket carries the signed preview link (`portal_preview_url`, see
+[03](03-submission-and-triage.md#portal-preview-link)). The API returns it next
+to `portal_url` and the connector stores it in `ops_portal_preview_url`, also
+on subtasks. In Backoffice it is shown as "Odkaz na portál" in place of
+`ops_portal_url`, so the link keeps working after the issue becomes private
+(`resolved_private`, `rejected`, `duplicate`). Only tickets created after this
+change have it; existing Backoffice tickets were not backfilled.
 
 ## Backoffice → Triage / portal
 

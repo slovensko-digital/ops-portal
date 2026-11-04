@@ -18,6 +18,7 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Phone verification | [08](08-onboarding.md) | `system/profiles/verifications_test.rb`, controller test | 🟡 | `check_code` success/fail; `SendVerificationCodeJob` test file is empty |
 | Submission wizard | [03](03-submission-and-triage.md) | `system/issues/drafts_test.rb` (3), `models/issues/draft_test.rb`, `jobs/issues/draft/*` (Gemini) | 🟡 | `drafts_controller.rb` 61% lines; duplicates step; question flow; Nominatim job (empty test file); no assert that `SyncIssueToTriageJob` is enqueued |
 | Edit while waiting | [03](03-submission-and-triage.md#3-author-edits-while-waiting) | — | ❌ | whole flow |
+| Triage preview link | [03](03-submission-and-triage.md#portal-preview-link) | `system/issue_preview_test.rb`, `controllers/issues_controller_test.rb`, `lib/issue_preview_signer_test.rb` | ✅ | Triage sidebar workflow (no Triage tests) |
 | Portal → Triage create | [03](03-submission-and-triage.md) | `jobs/sync_issue_to_triage_job_test.rb` (7) | 🟡 | `sync_issue_to_triage_job.rb` 69% lines, 26/70 branches |
 | Comment → Triage | [06](06-comments-likes-routing.md) | `jobs/sync_issue_activity_object_to_triage_job_test.rb` (4, updates only) | ❌ | **28.6% lines, 7/84 branches**: article creation, author creation, "already exists" recovery; `SyncEditableActivityToTriageJob` 43%, its test file is empty |
 | Triage → portal (state, comments, users) | [02](02-issue-lifecycle.md) | `jobs/triage/*` (all 17 jobs have tests) | ✅ | duplicate failure branches; attachment decode |
@@ -34,11 +35,14 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | Likes, votes | [06](06-comments-likes-routing.md#likes) | `system/issue_likes_test.rb`, `system/issues/activity_votes_test.rb` | 🟡 | `activity_vote_test.rb` empty |
 | Subscriptions / unsubscribe | [06](06-comments-likes-routing.md#subscriptions) | system + controller tests | ✅ | — |
 | Emails (portal) | [09](09-emails.md) | `mailers/notification_mailer_test.rb` (14), notification job tests | ✅ | `RodauthMailer` only indirectly |
-| OPS API | [07](07-backoffice-connector.md) | `controllers/api/v1/*` (46) | 🟡 | falsy update ([ops#1338](https://github.com/slovensko-digital/ops/issues/1338)), client without RS |
-| Connector inbound webhooks | [07](07-backoffice-connector.md) | controller tests (25) | ✅ | — |
+| OPS API | [07](07-backoffice-connector.md) | `controllers/api/v1/*` (47) | 🟡 | falsy update ([ops#1338](https://github.com/slovensko-digital/ops/issues/1338)), client without RS |
+| Connector inbound webhooks | [07](07-backoffice-connector.md) | controller tests (26) | ✅ | — |
 | Connector jobs (Triage → Backoffice, Backoffice → Triage) | [07](07-backoffice-connector.md) | — | ❌ | **all of them**: 17-25% lines; `SendNewActivityToTriageFromBackofficeJob` and `Connector::OpsApiClient` 0% |
 | Subtasks | [07](07-backoffice-connector.md#subtasks-podúlohy) | `lib/connector/subtask_parser_test.rb` (16), job test (7) | 🟡 | `<div>`/`<p>` lines |
 | Basic activation | [08](08-onboarding.md) | `models/responsible_subjects/basic_activation_test.rb` (14) | ✅ | rake wrapper; partial-failure re-run |
+| PRO activation | [08](08-onboarding.md#pro-municipality-responsible_subjectsactivate_pro) | `models/responsible_subjects/pro_activation_test.rb` (6) | ✅ | rake wrapper; partial-failure re-run |
+| Upgrade BASIC → PRO | [08](08-onboarding.md#basic-to-pro-responsible_subjectsupgrade_to_pro) | `models/responsible_subjects/pro_upgrade_test.rb` (7) | ✅ | rake wrapper (confirmation prompt); partial-failure re-run |
+| Downgrade PRO → BASIC | [08](08-onboarding.md#pro-to-basic-responsible_subjectsdowngrade_to_basic) | `models/responsible_subjects/pro_downgrade_test.rb` (5), disabled Client in `controllers/api/v1/issues_controller_test.rb` | ✅ | rake wrapper (confirmation prompt); partial-failure re-run |
 | Citizen rename → Triage/Backoffice | [08](08-onboarding.md) | — | ❌ | 40-67% lines |
 | Triage user change → portal (`user.updated`) | [08](08-onboarding.md#users-across-systems) | `jobs/triage/update_portal_user_from_triage_job_test.rb` (6) | 🟡 | RS ban, deactivation, portal citizen → RS, match by email ([ops#1350](https://github.com/slovensko-digital/ops/issues/1350)) |
 | Scheduled (portal) | [10](10-scheduled.md) | — | ❌ | — |
@@ -56,6 +60,8 @@ and the Ruby patches are all untested. `test/integration/` is empty.
 | triage: volunteer requests supplement | yes (observed) | expect 2 emails today ([ops#1328](https://github.com/slovensko-digital/ops/issues/1328)) |
 | triage: volunteer accepts (+ RS before) | yes (observed) | RS + "Finálny text" required; R created, T closed, RS email, `issue_accepted` |
 | triage admin: onboard municipality | yes (`activate_basic`) | only non-existing municipalities; locally the seeded inactive ones with `EXISTING_MUNICIPALITY=1` |
+| triage admin: activate PRO municipality | yes (`activate_pro`, `upgrade_to_pro`) | `activate_pro` only non-existing municipalities, `upgrade_to_pro` BASIC ones; locally Malacky activated as PRO, Trnava upgraded, each with a local Backoffice |
+| triage admin: downgrade PRO municipality | yes (`downgrade_to_basic`) | Client and Tenant disabled, enabled again by `upgrade_to_pro` |
 | triage admin: 7xx rules for RS / owner | 700 created by code; 750 hand-made | rule order is by name |
 | triage → portal: RS change / assignment | RS yes; owner/group **not mirrored** in the portal | |
 | portal → backoffice: RS change / assignment | RS via Triage → Connector; owner/group: no | Backoffice → Triage → portal hand-off observed ([ops#1333](https://github.com/slovensko-digital/ops/issues/1333), [ops#1348](https://github.com/slovensko-digital/ops/issues/1348)) |

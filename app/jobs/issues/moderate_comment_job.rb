@@ -1,11 +1,6 @@
 class Issues::ModerateCommentJob < ApplicationJob
   queue_as :default
 
-  # moderation is best effort, a failure leaves the comment visible
-  discard_on StandardError do |_job, error|
-    Rollbar.error(error)
-  end
-
   def self.hide?(evaluation)
     evaluation["overall_score"].to_f >= ENV.fetch("COMMENT_AUTO_HIDE_THRESHOLD", 0.9).to_f
   end
@@ -23,6 +18,10 @@ class Issues::ModerateCommentJob < ApplicationJob
     comment.hidden = true if self.class.hide?(evaluation)
 
     comment.save!
+  rescue StandardError => e
+    # moderation is best effort, a failure leaves the comment visible and is not retried.
+    # Rescued here, not with discard_on, so it holds when the job is run with new.perform too.
+    Rollbar.error(e)
   end
 
   private

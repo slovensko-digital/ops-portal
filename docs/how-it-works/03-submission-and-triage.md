@@ -34,7 +34,7 @@ sequenceDiagram
   participant P as Portal
   participant TZ as Triage
   P->>TZ: SyncIssueToTriageJob: find/create customer ops-user-<id> (Portal User)
-  P->>TZ: create ticket T-<id>: group Incoming, process_type portal_issue_triage, ops_state waiting,<br/>address, category, portal_url, first article = description + photos
+  P->>TZ: create ticket T-<id>: group Incoming, process_type portal_issue_triage, ops_state waiting,<br/>address, category, portal_url, portal_preview_url, first article = description + photos
   P->>P: save triage_external_id, SyncIssueActivitiesToTriageJob (nothing yet)
   TZ->>TZ: 700 rule for the municipality (if any): group, owner, RS
   TZ->>TZ: 900: ops_state_changed_at
@@ -96,6 +96,30 @@ dobrovoľníkov" (core workflows 185/190).
 Triage has no subtasks. The `::po` → `[[podulohy]]` / `@@user … - date`
 syntax works only in a municipality's Backoffice, see
 [07](07-backoffice-connector.md#subtasks-podúlohy).
+
+### Portal preview link
+
+While an issue is in a private state (`waiting`, `waiting_for_author`,
+`rejected`, `resolved_private`, `duplicate`), only its author can open
+`/dopyty/:id`, everyone else gets a 404. So volunteers could not see how the
+issue looks on the portal.
+
+The portal sends `portal_preview_url` with the T-ticket
+(`IssuePreviewSigner.url`, `/dopyty/:id?nahlad=<token>`). When a ticket has it,
+Triage shows it in place of `portal_url`, with the same label "Odkaz na portál"
+and position (core workflow "show portal preview url instead of portal url",
+priority 160). Tickets without it keep `portal_url`. `portal_url` keeps its
+value, trigger emails still use it. Anyone with the link sees the
+issue read-only, with the same discussion the author sees, a "Náhľad"
+notice and no actions: no edit, like, subscribe, share or comment, and the
+votes on comments are disabled.
+
+The token is an HMAC of the issue id with `ISSUE_PREVIEW_SECRET`, cut to 20
+characters. It never expires and stays valid in every state. Rotating the
+secret invalidates every link. A token on a public issue changes nothing.
+
+The R-ticket gets the same link and passes it on to Backoffice, see
+[07](07-backoffice-connector.md#triage--backoffice).
 
 ### 2a. Request supplement (doplnenie) (observed)
 
@@ -188,7 +212,7 @@ internal note "Text podnetu bol upravený…". No test covers this.
 | 100 | Instruction notes (closed ticket commented, new praise) | `ops-triage-zammad/lib/tasks/ops/triage.rake` |
 | 148-151 | State flips on replies + webhooks those changes need | same |
 | 200 | Forwarding: RS emails, PRO webhooks, portal webhooks, tag-driven states | same |
-| 700 | Routing per basic municipality (created by `activate_basic`) | `app/models/responsible_subjects/basic_activation.rb:204-225` |
+| 700 | Routing per municipality (created by `activate_basic` or `activate_pro`) | `app/models/responsible_subjects/triage_setup.rb` (`trigger_attributes`) |
 | 750 (team convention) | Hand-made rules for RS / owner assignment | Only in the Triage DB |
 | 800 | Public / internal notes on RS changes, marked resolved, text edits | rake |
 | 900 | Timestamps `ops_state_changed_at`, `responsible_subject_changed_at` (set to now + 1 min) | rake |
