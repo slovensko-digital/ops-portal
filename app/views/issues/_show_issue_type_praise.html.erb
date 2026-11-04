@@ -15,7 +15,7 @@
 
     <% if issue_actions_allowed? %>
       <div class="compliment-buttons-con">
-        <%= render partial: "issue_likes/button" %>
+        <%= render partial: "issue_likes/button" if can_like_issue?(issue) %>
 
         <%= render partial: "issues/share_issue_om_social_media", locals: { issue: issue } %>
       </div>

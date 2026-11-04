@@ -43,7 +43,7 @@ class IssuePreviewTest < ApplicationSystemTestCase
     visit preview_path(issue)
 
     assert_no_selector ".issue-preview-notice"
-    assert_selector ".share-buttons .button-like"
+    assert_selector ".share-buttons .button-edit"
   end
 
   private

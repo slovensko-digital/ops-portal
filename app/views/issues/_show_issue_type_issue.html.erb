@@ -44,6 +44,8 @@
           <% end %>
           <% if issue_actions_allowed? %>
             <%= render partial: "issue_subscriptions/button" %>
+          <% end %>
+          <% if can_like_issue?(issue) %>
             <%= render partial: "issue_likes/button" %>
           <% end %>
 

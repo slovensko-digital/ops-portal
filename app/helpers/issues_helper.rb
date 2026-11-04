@@ -11,6 +11,10 @@ module IssuesHelper
     issue_actions_allowed? && current_user.can_edit?(issue)
   end
 
+  def can_like_issue?(issue)
+    issue_actions_allowed? && issue.publicly_visible?
+  end
+
   def can_share_issue?(issue)
     issue_actions_allowed? && !issue.editable?
   end

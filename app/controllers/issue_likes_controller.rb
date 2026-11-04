@@ -17,6 +17,6 @@ class IssueLikesController < ApplicationController
 
   private
   def check_permissions
-    render status: :unauthorized, body: nil unless current_user.can_view?(@issue)
+    render status: :unauthorized, body: nil unless current_user.can_view?(@issue) && @issue.publicly_visible?
   end
 end
