@@ -58,6 +58,10 @@ class Issues::Comment < ApplicationRecord
     false
   end
 
+  def authored_by?(user)
+    user_author.present? && user_author == user
+  end
+
   def author_display_name
     return author.display_name if author
     author_name

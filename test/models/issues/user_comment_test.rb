@@ -80,4 +80,9 @@ class Issues::UserCommentTest < ActiveSupport::TestCase
 
     assert_nil @comment.hidden_reason
   end
+
+  test "authored_by? is true only for the comment author" do
+    assert @comment.authored_by?(@user)
+    assert_not @comment.authored_by?(users(:two))
+  end
 end

@@ -70,6 +70,10 @@ class Issues::ResponsibleSubjectComment < Issues::Comment
     true
   end
 
+  def authored_by?(user)
+    responsible_subject_author.present? && responsible_subject_author == user.responsible_subject
+  end
+
   def editable_by?(user)
     return false unless responsible_subject_author == user.responsible_subject
     return false unless within_editing_window?
