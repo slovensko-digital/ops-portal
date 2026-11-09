@@ -135,7 +135,7 @@ class CategoryMapper
     [ "Verejné služby", "kanalizácia", "chýbajúci kanalizačný poklop" ] => [ "Kanalizácia", "kanalizáčná vpusť", "chýbajúci kanalizačný poklop" ], # TODO nesprávne dĺžen v subkategórii
     [ "Verejné služby", "kanalizácia", "havária kanalizačného potrubia" ] => [ "Kanalizácia", "kanalizáčná vpusť", "havária kanalizačného potrubia" ], # TODO nesprávne dĺžen v subkategórii
     [ "Verejné služby", "kanalizácia", "poškodený kanalizačný poklop" ] => [ "Kanalizácia", "kanalizáčná vpusť", "poškodený kanalizačný poklop" ], # TODO nesprávne dĺžen v subkategórii
-    [ "Verejné služby", "osvetlenie", "nefunkčné" ] => [ "Osvetlenie", "osvetlenie", "nefunknčné" ], # TODO preklep v subtype
+    [ "Verejné služby", "osvetlenie", "nefunkčné" ] => [ "Osvetlenie", "osvetlenie", "nefunkčné" ],
     [ "Verejné služby", "osvetlenie", "poškodené stĺpy" ] => [ "Osvetlenie", "osvetlenie", "poškodený stĺp" ],
     [ "Verejné služby", "osvetlenie", "chýbajúce/nedostatočné" ] => [ "Osvetlenie", "osvetlenie", "chýbajúce" ],
     [ "Verejné služby", "osvetlenie", "nevhodné (silné a pod.)" ] => [ "Osvetlenie", "osvetlenie", "nevhodné (silné a pod.)" ],
