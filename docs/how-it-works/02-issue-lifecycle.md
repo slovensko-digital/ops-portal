@@ -103,7 +103,11 @@ Backoffice, console.
 
 Both objects return `triage_visible? == false`, so they are never synced
 to Triage, which keeps its own ticket history. A state change to nothing
-(`state_id` set to nil) is not recorded. For the emails these changes send, see
+(`state_id` set to nil) is not recorded. Supplement requests in triage
+(`waiting` <-> `waiting_for_author`) are not recorded either: they stay hidden
+while the issue is in triage and would otherwise all appear at once when the
+issue is accepted (`waiting` -> `sent_to_responsible` is recorded). The request
+itself is visible as a comment and email. For the emails these changes send, see
 [09](09-emails.md).
 
 Issues created before this existed are filled in by

@@ -235,6 +235,26 @@ class Triage::BackfillIssueHistoryJobTest < ActiveJob::TestCase
     assert_mock client
   end
 
+  test "skips supplement loop state changes" do
+    issue = issues(:two)
+    client = client_with(
+      2 => [
+        state_history_entry("waiting", "waiting_for_author", "2024-11-06T09:00:00.000Z"),
+        state_history_entry("waiting_for_author", "waiting", "2024-11-06T09:30:00.000Z"),
+        state_history_entry("waiting", "sent_to_responsible", "2024-11-06T10:00:00.000Z")
+      ],
+      3 => []
+    )
+
+    Triage::BackfillIssueHistoryJob.new.perform(issue, triage_zammad_client: client)
+
+    assert_equal [
+                   [ nil, "waiting" ],
+                   [ "waiting", "sent_to_responsible" ]
+                 ], state_changes_for(issue).map { |c| [ c.previous_state&.key, c.new_state.key ] }
+    assert_mock client
+  end
+
   test "skips issues without any ticket" do
     issue = issues(:without_triage_external_id)
     client = Minitest::Mock.new
