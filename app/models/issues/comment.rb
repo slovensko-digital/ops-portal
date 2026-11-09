@@ -26,6 +26,8 @@
 #  updated_at                    :datetime         not null
 #
 class Issues::Comment < ApplicationRecord
+  TEXT_MAX_LENGTH = 10_000
+
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
   belongs_to :user_author, class_name: "User", optional: true
   belongs_to :agent_author, class_name: "Legacy::Agent", foreign_key: "agent_author_id", optional: true

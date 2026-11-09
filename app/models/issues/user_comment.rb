@@ -29,6 +29,7 @@ class Issues::UserComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
   validates :text, presence: true, if: -> { attachments.empty? }, unless: -> { legacy_id }
+  validates :text, length: { maximum: TEXT_MAX_LENGTH }, unless: -> { legacy_id || triage_external_id }
 
   include EditableWithinEditingWindow
 

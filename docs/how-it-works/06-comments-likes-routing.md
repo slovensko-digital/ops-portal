@@ -31,6 +31,16 @@ Consequences:
   internal/public toggle syncs (`UpdatePortalActivityFromTriageJob` sets
   `hidden`).
 
+## Length limit
+
+Text a citizen or an RS writes in the portal (`UserComment`,
+`UserPrivateComment`, `ResponsibleSubjectComment`) is limited to
+`Issues::Comment::TEXT_MAX_LENGTH` (10 000) characters, on create and on edit.
+Edits happen within the editing window, before the sync to Triage, so the
+check skips any comment with a `triage_external_id`: comments imported from
+Triage keep their full body and hiding an older, longer comment from Triage
+doesn't fail. Legacy, agent and duplicate comments have no limit.
+
 ## Comment moderation (AI)
 
 When the editing window closes, `SyncEditableActivityToTriageJob` runs
