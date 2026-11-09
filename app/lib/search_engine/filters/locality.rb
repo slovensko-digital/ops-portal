@@ -2,7 +2,10 @@ module SearchEngine
   module Filters
     class Locality
       def initialize(locations)
-        @locations = Array(locations).grep(String).map(&:strip).select(&:present?)
+        @locations = Array(locations)
+          .select { _1.is_a?(String) }
+          .map(&:strip)
+          .reject(&:blank?)
       end
 
       def apply(scope)

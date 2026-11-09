@@ -144,7 +144,11 @@ class IssuesController < ApplicationController
   end
 
   def sanitized_lokalita(value)
-    Array(value).grep(String).map { _1.strip.first(MAX_LOKALITA_VALUE_LENGTH).strip }.select(&:present?).uniq
+    Array(value)
+      .select { _1.is_a?(String) }
+      .map { _1.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip }
+      .reject(&:blank?)
+      .uniq
   end
 
   # Use callbacks to share common setup or constraints between actions.

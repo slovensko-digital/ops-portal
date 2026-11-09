@@ -7,7 +7,10 @@ module SearchEngine
   # excludes a district from its municipality.
   class LokalitaTree
     def initialize(locations)
-      @locations = Array(locations).grep(String).map(&:strip).select(&:present?)
+      @locations = Array(locations)
+        .select { _1.is_a?(String) }
+        .map(&:strip)
+        .reject(&:blank?)
       @positives, @negatives = @locations.partition { !_1.start_with?("-") }
     end
 
