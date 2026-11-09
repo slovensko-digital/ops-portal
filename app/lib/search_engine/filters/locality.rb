@@ -1,15 +1,23 @@
 module SearchEngine
   module Filters
-    class Locality < SearchEngine::Controls::SearchField
+    class Locality
       def initialize(locations)
-        @locations = Array(locations).compact_blank
+        @locations = Array(locations).filter_map do |location|
+          next unless location.is_a?(String)
+
+          stripped = location.strip
+          stripped.presence
+        end
       end
 
       def apply(scope)
         return scope if @locations.empty?
 
         positives, negatives = @locations.partition { !_1.start_with?("-") }
-        negatives = negatives.map { _1.delete_prefix("-") }
+        # No positive selection (only exclusions) -> nothing to filter by.
+        return scope if positives.empty?
+
+        negatives = negatives.map { _1.delete_prefix("-").strip }.reject(&:empty?)
 
         municipalities, districts = positives.partition { !_1.include?(" - ") }
 
@@ -18,7 +26,9 @@ module SearchEngine
                                        .pluck(:id)
 
         district_ids = find_district_ids(districts)
-        excluded_district_ids = find_district_ids(negatives)
+        excluded_district_ids = find_district_ids(
+          negatives.select { |negative| municipalities.include?(municipality_name_from(negative)) }
+        )
 
         conditions = []
 
@@ -41,9 +51,18 @@ module SearchEngine
 
       private
 
+      def municipality_name_from(location)
+        location.split(" - ", 2).first&.strip
+      end
+
       def find_district_ids(locations)
         locations
-          .map { _1.split(" - ", 2) }
+          .filter_map do |location|
+            municipality, district = location.split(" - ", 2).map(&:strip)
+            next if municipality.blank? || district.blank?
+
+            [ municipality, district ]
+          end
           .reduce(MunicipalityDistrict.none) do |query, (municipality, district)|
             query.or(
               MunicipalityDistrict

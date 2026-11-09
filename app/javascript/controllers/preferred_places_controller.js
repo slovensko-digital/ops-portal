@@ -20,16 +20,40 @@ export default class extends Controller {
         }
     }
 
+    enter(event) {
+        event.preventDefault()
+    }
+
     filter() {
-        const query = this.inputTarget.value.toLowerCase().trim()
+        const query = this.normalizeString(this.inputTarget.value.trim())
         this.open()
 
+        if (query === "") {
+            this.itemTargets.forEach(item => item.classList.remove("none"))
+            return
+        }
+
+        let currentMunicipalityItem = null
+        let currentMunicipalityMatch = false
+
         this.itemTargets.forEach(item => {
-            const text = item.textContent.toLowerCase()
-            if (text.includes(query)) {
-                item.classList.remove("none")
+            const checkbox = item.querySelector('[data-preferred-places-target="checkbox"]')
+            const fullLabel = checkbox?.dataset.fullLabel || item.textContent
+            const isDistrict = fullLabel.includes(" - ")
+            const normalized = this.normalizeString(fullLabel.trim())
+
+            if (!isDistrict) {
+                currentMunicipalityItem = item
+                currentMunicipalityMatch = normalized.includes(query)
+                item.classList.toggle("none", !currentMunicipalityMatch)
             } else {
-                item.classList.add("none")
+                const districtMatch = normalized.includes(query)
+                const showDistrict = districtMatch || currentMunicipalityMatch
+                item.classList.toggle("none", !showDistrict)
+
+                if (districtMatch && currentMunicipalityItem) {
+                    currentMunicipalityItem.classList.remove("none")
+                }
             }
         })
     }
@@ -60,5 +84,13 @@ export default class extends Controller {
         } else {
             this.inputTarget.placeholder = `${names.slice(0, 2).join(", ")} a ďalšie`
         }
+    }
+
+    normalizeString(str) {
+        return (str || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]/gi, "")
+            .toLowerCase()
     }
 }

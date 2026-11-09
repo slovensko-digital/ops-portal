@@ -1,23 +1,21 @@
 class MigrateUserMunicipalityToJoinTable < ActiveRecord::Migration[8.1]
+  # NOTE: intentionally does NOT drop users.municipality_id.
+  # Old code still reads/writes it, so dropping it in the same deploy would break
+  # processes running the previous release. The column is ignored by the new code
+  # (see User.ignored_columns) and will be dropped in a follow-up deploy.
   def up
     execute <<~SQL
       INSERT INTO municipalities_users (municipality_id, user_id)
       SELECT municipality_id, id
       FROM users
       WHERE municipality_id IS NOT NULL
+      ON CONFLICT DO NOTHING
     SQL
-
-    remove_reference :users, :municipality, foreign_key: true
   end
 
   def down
-    add_reference :users, :municipality, foreign_key: true
-
     execute <<~SQL
-      UPDATE users
-      SET municipality_id = municipalities_users.municipality_id
-      FROM municipalities_users
-      WHERE municipalities_users.user_id = users.id
+      DELETE FROM municipalities_users
     SQL
   end
 end

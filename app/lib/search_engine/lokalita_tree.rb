@@ -7,7 +7,12 @@ module SearchEngine
   # excludes a district from its municipality.
   class LokalitaTree
     def initialize(locations)
-      @locations = Array(locations).compact_blank
+      @locations = Array(locations).filter_map do |location|
+        next unless location.is_a?(String)
+
+        stripped = location.strip
+        stripped.presence
+      end
       @positives, @negatives = @locations.partition { !_1.start_with?("-") }
     end
 

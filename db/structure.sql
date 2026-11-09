@@ -1955,6 +1955,7 @@ CREATE TABLE public.users (
     about character varying,
     "timestamp" timestamp(6) without time zone,
     anonymous boolean DEFAULT false NOT NULL,
+    municipality_id bigint,
     created_from_app boolean DEFAULT false NOT NULL,
     signature character varying,
     city_id integer,
@@ -3840,6 +3841,13 @@ CREATE UNIQUE INDEX index_users_on_legacy_id ON public.users USING btree (legacy
 
 
 --
+-- Name: index_users_on_municipality_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_municipality_id ON public.users USING btree (municipality_id);
+
+
+--
 -- Name: index_users_on_responsible_subject_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4393,6 +4401,14 @@ ALTER TABLE ONLY public.issues_drafts
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_d85a605e0e FOREIGN KEY (subcategory_id) REFERENCES public.issues_subcategories(id);
+
+
+--
+-- Name: users fk_rails_af51c67270; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_rails_af51c67270 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
 
 
 --

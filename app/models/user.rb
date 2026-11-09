@@ -54,6 +54,10 @@
 class User < ApplicationRecord
   include Rodauth::Rails.model
 
+  # Legacy single-municipality column is still present in the DB.
+  # New code uses the HABTM join tables; the column will be dropped in a follow-up.
+  self.ignored_columns = [ "municipality_id" ]
+
   attr_accessor :phone_verification_number
 
   belongs_to :responsible_subject, class_name: "::ResponsibleSubject", optional: true
@@ -100,7 +104,7 @@ class User < ApplicationRecord
   end
 
   def preferred_places
-    municipalities.pluck(:name) + municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }
+    (municipalities.pluck(:name) + municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }).sort
   end
 
   def name=(value)

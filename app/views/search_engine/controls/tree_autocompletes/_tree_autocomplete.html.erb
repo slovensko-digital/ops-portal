@@ -1,5 +1,6 @@
 <div class="form-item-wrapper">
-  <label for="<%= tree_autocomplete.control.label %>"><%= tree_autocomplete.control.label %></label>
+  <% filter_id = "filter-#{tree_autocomplete.control.label.to_s.parameterize}" %>
+  <label for="<%= filter_id %>"><%= tree_autocomplete.control.label %></label>
 
   <div class="autocomplete-wrapper"
        data-controller="autocomplete toggle"
@@ -10,8 +11,8 @@
         keydown.enter->autocomplete#enter">
     <input
       data-autocomplete-target="input"
-      placeholder="<%= tree_autocomplete.items.select(&:selected?).map(&:value).join(', ') %>"
-      id="<%= tree_autocomplete.control.label %>"
+      placeholder="<%= Array(tree_autocomplete.value).select { _1.is_a?(String) }.join(', ') %>"
+      id="<%= filter_id %>"
       autocomplete="off" />
 
     <ul class="dropdown-list none"

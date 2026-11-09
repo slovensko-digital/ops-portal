@@ -83,9 +83,9 @@
           <div class="autocomplete-wrapper"
                data-controller="preferred-places"
                data-action="
-                focusin->toggle#show
-                input->autocomplete#filter
-                keydown.enter->autocomplete#enter
+                focusin->preferred-places#open
+                input->preferred-places#filter
+                keydown.enter->preferred-places#enter
                 click@window->preferred-places#close">
             <input
               type="text"

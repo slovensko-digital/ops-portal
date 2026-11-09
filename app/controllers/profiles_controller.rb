@@ -36,8 +36,14 @@ class ProfilesController < ApplicationController
   def update
     @onboarding = !@user.onboarded?
 
-    @user.assign_attributes(user_attributes)
-    if @user.save(context: @onboarding ? :onboarding : :update)
+    saved = false
+    ActiveRecord::Base.transaction do
+      @user.assign_attributes(user_attributes)
+      saved = @user.save(context: @onboarding ? :onboarding : :update)
+      raise ActiveRecord::Rollback unless saved
+    end
+
+    if saved
       path = @user.onboarded_previously_changed? ? root_path : edit_profile_path
       redirect_to path, notice: "Zmeny profilu boli uložené."
     else

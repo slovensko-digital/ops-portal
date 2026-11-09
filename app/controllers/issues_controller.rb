@@ -1,6 +1,10 @@
 class IssuesController < ApplicationController
   include NormalizedParams
 
+  # Cap session storage to avoid CookieOverflow (cookie store ~4KB).
+  MAX_STORED_LOKALITA = 20
+  MAX_LOKALITA_VALUE_LENGTH = 100
+
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
   before_action :remember_last_lokalita, only: :index
@@ -112,7 +116,7 @@ class IssuesController < ApplicationController
   private
 
   def remember_last_lokalita
-    lokalita = Array(search_params[:lokalita]).compact_blank.presence
+    lokalita = sanitized_lokalita(search_params[:lokalita]).first(MAX_STORED_LOKALITA).presence
 
     if lokalita.present?
       session[:last_lokalita] = lokalita
@@ -136,7 +140,16 @@ class IssuesController < ApplicationController
   end
 
   def last_lokalita
-    Array(session[:last_lokalita]).compact_blank.presence
+    sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA).presence
+  end
+
+  def sanitized_lokalita(value)
+    Array(value).filter_map do |location|
+      next unless location.is_a?(String)
+
+      stripped = location.strip[0, MAX_LOKALITA_VALUE_LENGTH].strip
+      stripped.presence
+    end.uniq
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -173,7 +186,7 @@ class IssuesController < ApplicationController
        permitted = search_engine.required_params + [ :tab ]
 
        sp = normalize_array_params(params, permitted).permit(*permitted).to_h
-       sp[:lokalita] = Array(sp[:lokalita]).presence || lokalita_from_legacy_params
+       sp[:lokalita] = sanitized_lokalita(sp[:lokalita]).presence || sanitized_lokalita(lokalita_from_legacy_params).presence
        sp
     end
   end
