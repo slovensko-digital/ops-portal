@@ -90,7 +90,10 @@ and points an active BASIC RS to `upgrade_to_pro`. Code:
 
 It prints the Backoffice's environment (`OPS_RESPONSIBLE_SUBJECT(_ID)`,
 `WEBHOOK_TENANT_ID`, `API_TOKEN`, `WEBHOOK_SECRET`, `OPS_CONNECTOR_URL`),
-deploy the Backoffice with it. `EXISTING_MUNICIPALITY=1` works as for
+deploy the Backoffice with it. Every Backoffice deploy (`ops:backoffice:migrate`)
+sets the technical user's API token to `API_TOKEN`, so to rotate it change
+`API_TOKEN` in the `Connector::Tenant` and the Backoffice environment and
+redeploy. `EXISTING_MUNICIPALITY=1` works as for
 `activate_basic`. Like `activate_basic`, Triage changes are not rolled back
 when a step fails.
 
@@ -192,7 +195,6 @@ Known problems in this flow, tracked in the private `slovensko-digital/ops` repo
 |---|---|---|
 | [ops#1341](https://github.com/slovensko-digital/ops/issues/1341) | [Basic municipality: `responsible_subjects:activate_basic`](#basic-municipality-responsible_subjectsactivate_basic) | `activate_basic` has no Triage rollback |
 | [ops#1343](https://github.com/slovensko-digital/ops/issues/1343) | [Basic to PRO: `responsible_subjects:upgrade_to_pro`](#basic-to-pro-responsible_subjectsupgrade_to_pro) | A PRO RS with Externý email users gets everything twice. `upgrade_to_pro` removes them, PRO municipalities set up by hand before it may still have them |
-| [ops#1347](https://github.com/slovensko-digital/ops/issues/1347) | [PRO municipality: `responsible_subjects:activate_pro`](#pro-municipality-responsible_subjectsactivate_pro) | Backoffice `API_TOKEN` rotation is ignored after the first deploy |
 | [ops#1350](https://github.com/slovensko-digital/ops/issues/1350) | [Users across systems](#users-across-systems) | Epic: no agreed sync rules for users between the portal and Triage, so bans, deactivation, organization and role changes leave inconsistent data |
 | [ops#1315](https://github.com/slovensko-digital/ops/issues/1315) | [Users across systems](#users-across-systems) | An RS user deactivated in Triage can still log in to the portal |
 | [ops#1304](https://github.com/slovensko-digital/ops/issues/1304) | [Users across systems](#users-across-systems) | An RS comment crashes when the RS has no `external_id` in Triage |
