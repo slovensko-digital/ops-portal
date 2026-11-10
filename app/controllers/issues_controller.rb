@@ -127,8 +127,8 @@ class IssuesController < ApplicationController
 
   # Legacy ?obec=&cast= URLs predate ?lokalita=; map them onto the new format.
   def lokalita_from_legacy_params
-    obces = string_values(params[:obec])
-    casts = string_values(params[:cast])
+    obces = clean_string_list(params[:obec])
+    casts = clean_string_list(params[:cast])
     return if obces.empty?
     return obces if casts.empty?
 
@@ -140,12 +140,12 @@ class IssuesController < ApplicationController
   end
 
   def sanitized_lokalita(value)
-    string_values(value)
+    clean_string_list(value)
       .map { |location| location.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip }
       .uniq
   end
 
-  def string_values(value)
+  def clean_string_list(value)
     Array(value).select { |item| item.is_a?(String) }.map(&:strip).reject(&:blank?)
   end
 
