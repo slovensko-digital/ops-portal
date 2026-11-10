@@ -127,12 +127,8 @@ class IssuesController < ApplicationController
 
   # Legacy ?obec=&cast= URLs predate ?lokalita=; map them onto the new format.
   def lokalita_from_legacy_params
-    obce = Array(params[:obec]).filter_map do |obec|
-      obec.strip.presence if obec.is_a?(String)
-    end
-    casti = Array(params[:cast]).filter_map do |cast|
-      cast.strip.presence if cast.is_a?(String)
-    end
+    obce = Array(params[:obec]).filter_map { |obec| obec.strip.presence if obec.is_a?(String) }
+    casti = Array(params[:cast]).filter_map { |cast| cast.strip.presence if cast.is_a?(String) }
     return if obce.empty?
     return obce if casti.empty?
 
