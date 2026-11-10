@@ -68,7 +68,7 @@ organization whose name equals the ticket's RS label. This goes through the
 | komentáre z portálu | public Customer article (not email) on R | `?force_rs_login` |
 | komentáre z triáže | public agent article with `[[pre zodpovedny subjekt]]` | `?force_rs_login` |
 | nová verejná pochvala | praise → resolved | `portal_url` **(observed)** |
-| nová neverejná pochvala | praise → unresolved | `portal_url` |
+| nová neverejná pochvala | praise → unresolved | none: the praise is private, so the RS would get a 404 |
 
 Every RS email says the RS may reply by email. The reply goes through the
 postmaster filter (see [04](04-resolution.md)).
