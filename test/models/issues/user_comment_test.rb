@@ -85,4 +85,12 @@ class Issues::UserCommentTest < ActiveSupport::TestCase
     assert @comment.authored_by?(@user)
     assert_not @comment.authored_by?(users(:two))
   end
+
+  test "rejects text longer than the limit" do
+    comment = Issues::UserComment.new(user_author: @user, text: "a" * (Issues::Comment::TEXT_MAX_LENGTH + 1))
+    comment.build_activity(issue: @issue, type: Issues::CommentActivity)
+
+    assert_not comment.valid?
+    assert_includes comment.errors.full_messages, "Text komentára je príliš dlhý (maximálne 10000 znakov)"
+  end
 end
