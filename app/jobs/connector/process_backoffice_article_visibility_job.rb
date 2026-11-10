@@ -1,10 +1,12 @@
 class Connector::ProcessBackofficeArticleVisibilityJob < ApplicationJob
   VISIBILITY_WINDOW = 24.hours
 
-  def perform(tenant, ticket_id, article_id, backoffice_client: Connector::BackofficeZammadEnvironment.client(tenant), triage_client: TriageZammadEnvironment.client)
+  def perform(tenant, ticket_id, article_id, updated_by_admin = false, backoffice_client: Connector::BackofficeZammadEnvironment.client(tenant), triage_client: TriageZammadEnvironment.client)
     article = backoffice_client.get_article(ticket_id, article_id)
     return unless article
-    return unless within_visibility_window?(article)
+    # support (admins) may toggle visibility after the window; their change
+    # still has to propagate, otherwise backoffice and portal diverge.
+    return unless updated_by_admin || within_visibility_window?(article)
 
     # internal articles created in backoffice have no activity mapping yet
     # (nothing is sent to triage until they become public), so the mapping
