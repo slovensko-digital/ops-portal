@@ -127,12 +127,16 @@ class IssuesController < ApplicationController
 
   # Legacy ?obec=&cast= URLs predate ?lokalita=; map them onto the new format.
   def lokalita_from_legacy_params
-    obces = clean_string_list(params[:obec])
-    casts = clean_string_list(params[:cast])
-    return if obces.empty?
-    return obces if casts.empty?
+    obce = Array(params[:obec]).filter_map do |obec|
+      obec.strip.presence if obec.is_a?(String)
+    end
+    casti = Array(params[:cast]).filter_map do |cast|
+      cast.strip.presence if cast.is_a?(String)
+    end
+    return if obce.empty?
+    return obce if casti.empty?
 
-    obces.product(casts).map { |obec, cast| "#{obec} - #{cast}" }
+    obce.product(casti).map { |obec, cast| "#{obec} - #{cast}" }
   end
 
   def last_lokalita
@@ -140,13 +144,9 @@ class IssuesController < ApplicationController
   end
 
   def sanitized_lokalita(value)
-    clean_string_list(value)
-      .map { |location| location.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip }
-      .uniq
-  end
-
-  def clean_string_list(value)
-    Array(value).select { |item| item.is_a?(String) }.map(&:strip).reject(&:blank?)
+    Array(value).filter_map do |location|
+      location.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip.presence if location.is_a?(String)
+    end.uniq
   end
 
   # Use callbacks to share common setup or constraints between actions.
