@@ -2,19 +2,21 @@ class Connector::ProcessBackofficeArticleVisibilityJob < ApplicationJob
   VISIBILITY_WINDOW = 24.hours
 
   def perform(tenant, ticket_id, article_id, backoffice_client: Connector::BackofficeZammadEnvironment.client(tenant), triage_client: TriageZammadEnvironment.client)
-    activity = tenant.activities.find_by(backoffice_external_id: article_id.to_i)
-    return unless activity
-
     article = backoffice_client.get_article(ticket_id, article_id)
     return unless article
     return unless within_visibility_window?(article)
 
+    # internal articles created in backoffice have no activity mapping yet
+    # (nothing is sent to triage until they become public), so the mapping
+    # cannot gate the whole job.
+    activity = tenant.activities.find_by(backoffice_external_id: article_id.to_i)
+
     if article.internal == true
-      hide_in_triage(activity, triage_client) if activity.triage_external_id
+      hide_in_triage(activity, triage_client) if activity&.triage_external_id
     elsif article.internal == false
-      if activity.triage_external_id
+      if activity&.triage_external_id
         show_in_triage(activity, triage_client)
-      else
+      elsif tenant.issues.exists?(backoffice_external_id: ticket_id)
         Connector::SendNewActivityToTriageFromBackofficeJob.perform_later(tenant, ticket_id, article_id)
       end
     end

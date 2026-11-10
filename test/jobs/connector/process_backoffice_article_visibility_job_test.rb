@@ -17,9 +17,9 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     OpenStruct.new(internal: internal, created_at: created_at, updated_at: updated_at)
   end
 
-  def backoffice_client(article)
+  def backoffice_client(article, ticket_id: "123", article_id: "9")
     client = Minitest::Mock.new
-    client.expect :get_article, article, [ "123", "9" ]
+    client.expect :get_article, article, [ ticket_id, article_id ]
     client
   end
 
@@ -74,7 +74,9 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
   end
 
   test "forwards an internal comment that has never reached triage when it becomes public" do
-    @tenant.activities.find_by(backoffice_external_id: 9).update!(triage_external_id: nil)
+    # internal articles created in backoffice have no activity mapping yet
+    @tenant.activities.find_by(backoffice_external_id: 9).destroy!
+    @tenant.issues.create!(backoffice_external_id: 123)
 
     assert_enqueued_with(job: Connector::SendNewActivityToTriageFromBackofficeJob, args: [ @tenant, "123", "9" ]) do
       Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
@@ -97,15 +99,28 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     assert_mock triage_client
   end
 
-  test "ignores an article without a tenant activity mapping" do
-    triage_client = Minitest::Mock.new
+  test "ignores an article that no longer exists in backoffice" do
+    client = Minitest::Mock.new
+    client.expect :get_article, nil, [ "123", "999" ]
 
-    Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
-      @tenant, "123", "999",
-      backoffice_client: Minitest::Mock.new,
-      triage_client: triage_client
-    )
+    assert_no_enqueued_jobs do
+      Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
+        @tenant, "123", "999",
+        backoffice_client: client,
+        triage_client: Minitest::Mock.new
+      )
+    end
 
-    assert_mock triage_client
+    assert_mock client
+  end
+
+  test "ignores a public article on a ticket that does not belong to the tenant" do
+    assert_no_enqueued_jobs do
+      Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
+        @tenant, "123", "999",
+        backoffice_client: backoffice_client(backoffice_article(internal: false), article_id: "999"),
+        triage_client: Minitest::Mock.new
+      )
+    end
   end
 end
