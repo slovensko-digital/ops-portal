@@ -70,15 +70,8 @@ class Connector::Backoffice::WebhooksControllerTest < ActionDispatch::Integratio
   end
 
   test "article.updated processes the backoffice article visibility change" do
-    assert_enqueued_with(job: Connector::ProcessBackofficeArticleVisibilityJob, args: [ @tenant, "42", "7", false ]) do
+    assert_enqueued_with(job: Connector::ProcessBackofficeArticleVisibilityJob, args: [ @tenant, "42", "7" ]) do
       post_signed payload("article.updated", ticket_id: "42", article_id: "7")
-    end
-    assert_response :no_content
-  end
-
-  test "article.updated forwards the admin flag" do
-    assert_enqueued_with(job: Connector::ProcessBackofficeArticleVisibilityJob, args: [ @tenant, "42", "7", true ]) do
-      post_signed payload("article.updated", ticket_id: "42", article_id: "7", updated_by_admin: true)
     end
     assert_response :no_content
   end
