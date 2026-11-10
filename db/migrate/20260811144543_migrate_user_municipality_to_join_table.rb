@@ -5,7 +5,6 @@ class MigrateUserMunicipalityToJoinTable < ActiveRecord::Migration[8.1]
       SELECT municipality_id, id
       FROM users
       WHERE municipality_id IS NOT NULL
-      ON CONFLICT DO NOTHING
     SQL
   end
 

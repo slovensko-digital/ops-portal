@@ -62,6 +62,20 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url(lokalita: [ "Bratislava - Staré Mesto" ])
   end
 
+  test "legacy obec array is converted to multiple lokalita values" do
+    get issues_url(obec: [ "Nitra", "Trnava" ])
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ "Nitra", "Trnava" ])
+  end
+
+  test "legacy obec with multiple casts is converted to multiple lokalita values" do
+    get issues_url(obec: "Bratislava", cast: [ "Staré Mesto", "Ružinov" ])
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ "Bratislava - Staré Mesto", "Bratislava - Ružinov" ])
+  end
+
   test "should ignore filter params of unexpected shape" do
     get "/dopyty?kategoria[foo]=bar&obec[foo]=bar&podkategoria[0][x]=y&q[a]=b"
     assert_response :success

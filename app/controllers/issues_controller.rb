@@ -125,18 +125,14 @@ class IssuesController < ApplicationController
     end
   end
 
+  # Legacy ?obec=&cast= URLs predate ?lokalita=; map them onto the new format.
   def lokalita_from_legacy_params
-    obec = params[:obec]
+    obces = string_values(params[:obec])
+    casts = string_values(params[:cast])
+    return if obces.empty?
+    return obces if casts.empty?
 
-    if obec.is_a?(Array)
-      obec.select { _1.is_a?(String) }.map(&:strip).reject(&:empty?).presence
-    elsif obec.is_a?(String) && obec.present?
-      if params[:cast].is_a?(String) && params[:cast].present?
-        [ "#{obec} - #{params[:cast]}" ]
-      else
-        [ obec ]
-      end
-    end
+    obces.product(casts).map { |obec, cast| "#{obec} - #{cast}" }
   end
 
   def last_lokalita
@@ -144,11 +140,13 @@ class IssuesController < ApplicationController
   end
 
   def sanitized_lokalita(value)
-    Array(value)
-      .select { _1.is_a?(String) }
-      .map { _1.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip }
-      .reject(&:blank?)
+    string_values(value)
+      .map { |location| location.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip }
       .uniq
+  end
+
+  def string_values(value)
+    Array(value).select { |item| item.is_a?(String) }.map(&:strip).reject(&:blank?)
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -185,7 +183,7 @@ class IssuesController < ApplicationController
        permitted = search_engine.required_params + [ :tab ]
 
        sp = normalize_array_params(params, permitted).permit(*permitted).to_h
-       sp[:lokalita] = sanitized_lokalita(sp[:lokalita]).presence || sanitized_lokalita(lokalita_from_legacy_params).presence
+       sp[:lokalita] = sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params).presence
        sp
     end
   end
