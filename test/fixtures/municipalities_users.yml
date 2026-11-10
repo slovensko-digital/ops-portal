@@ -1,0 +1,3 @@
+one_banska_bystrica:
+  user_id: <%= ActiveRecord::FixtureSet.identify(:one) %>
+  municipality_id: 2 # banska bystrica

@@ -1392,6 +1392,16 @@ ALTER SEQUENCE public.municipalities_id_seq OWNED BY public.municipalities.id;
 
 
 --
+-- Name: municipalities_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.municipalities_users (
+    municipality_id bigint NOT NULL,
+    user_id bigint NOT NULL
+);
+
+
+--
 -- Name: municipality_boundaries; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1463,6 +1473,16 @@ CREATE SEQUENCE public.municipality_districts_id_seq
 --
 
 ALTER SEQUENCE public.municipality_districts_id_seq OWNED BY public.municipality_districts.id;
+
+
+--
+-- Name: municipality_districts_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.municipality_districts_users (
+    municipality_district_id bigint NOT NULL,
+    user_id bigint NOT NULL
+);
 
 
 --
@@ -3570,6 +3590,20 @@ CREATE INDEX index_municipalities_on_longitude ON public.municipalities USING bt
 
 
 --
+-- Name: index_municipalities_users_on_municipality_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_municipalities_users_on_municipality_id_and_user_id ON public.municipalities_users USING btree (municipality_id, user_id);
+
+
+--
+-- Name: index_municipalities_users_on_user_id_and_municipality_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipalities_users_on_user_id_and_municipality_id ON public.municipalities_users USING btree (user_id, municipality_id);
+
+
+--
 -- Name: index_municipality_boundaries_on_boundary; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3602,6 +3636,20 @@ CREATE UNIQUE INDEX index_municipality_districts_on_legacy_id ON public.municipa
 --
 
 CREATE INDEX index_municipality_districts_on_municipality_id ON public.municipality_districts USING btree (municipality_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_district_and_user; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_municipality_districts_users_on_district_and_user ON public.municipality_districts_users USING btree (municipality_district_id, user_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_user_and_district; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipality_districts_users_on_user_and_district ON public.municipality_districts_users USING btree (user_id, municipality_district_id);
 
 
 --
@@ -3842,6 +3890,14 @@ ALTER TABLE ONLY public.municipalities
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_05f1e72feb FOREIGN KEY (author_id) REFERENCES public.users(id);
+
+
+--
+-- Name: municipality_districts_users fk_rails_0ba6beb486; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.municipality_districts_users
+    ADD CONSTRAINT fk_rails_0ba6beb486 FOREIGN KEY (municipality_district_id) REFERENCES public.municipality_districts(id);
 
 
 --
@@ -4237,6 +4293,14 @@ ALTER TABLE ONLY public.responsible_subjects_users
 
 
 --
+-- Name: municipality_districts_users fk_rails_ab81ca2d9b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.municipality_districts_users
+    ADD CONSTRAINT fk_rails_ab81ca2d9b FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: responsible_subjects_organization_units fk_rails_ac40c26458; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4253,11 +4317,11 @@ ALTER TABLE ONLY public.municipality_boundaries
 
 
 --
--- Name: users fk_rails_af51c67270; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: municipalities_users fk_rails_aedcef4ab7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT fk_rails_af51c67270 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
+ALTER TABLE ONLY public.municipalities_users
+    ADD CONSTRAINT fk_rails_aedcef4ab7 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
 
 
 --
@@ -4341,11 +4405,27 @@ ALTER TABLE ONLY public.issues
 
 
 --
+-- Name: users fk_rails_af51c67270; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_rails_af51c67270 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
+
+
+--
 -- Name: users fk_rails_dc3d17a600; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT fk_rails_dc3d17a600 FOREIGN KEY (street_id) REFERENCES public.streets(id);
+
+
+--
+-- Name: municipalities_users fk_rails_dd0f245748; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.municipalities_users
+    ADD CONSTRAINT fk_rails_dd0f245748 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -4441,6 +4521,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20261003115900'),
 ('20261003105314'),
 ('20260813133737'),
+('20260811144543'),
+('20260811132517'),
 ('20260705131733'),
 ('20260524143000'),
 ('20260524134500'),
