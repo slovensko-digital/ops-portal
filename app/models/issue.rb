@@ -255,18 +255,6 @@ class Issue < ApplicationRecord
     save
   end
 
-  # Supplement requests in triage (waiting <-> waiting_for_author) are not
-  # timeline activity. They stay hidden while the issue is in triage and would
-  # otherwise all pop up at once when the issue is accepted. The request itself
-  # is visible as a comment and email.
-  SUPPLEMENT_LOOP_STATE_KEYS = %w[waiting waiting_for_author].freeze
-
-  def self.supplement_loop_transition?(previous_state, new_state)
-    return false unless previous_state && new_state
-
-    SUPPLEMENT_LOOP_STATE_KEYS.include?(previous_state.key) && SUPPLEMENT_LOOP_STATE_KEYS.include?(new_state.key)
-  end
-
   def track_state_change
     return unless saved_change_to_state_id?
 
@@ -275,7 +263,7 @@ class Issue < ApplicationRecord
     new_state = Issues::State.find_by(id: new_state_id)
 
     return unless new_state
-    return if Issue.supplement_loop_transition?(previous_state, new_state)
+    return if Issues::StateChange.supplement_cycle?(previous_state, new_state)
 
     activity = Issues::StateChangeActivity.create!(issue_id: id)
     Issues::StateChange.create!(
