@@ -26,11 +26,13 @@ class Connector::ProcessBackofficeArticleVisibilityJob < ApplicationJob
 
   # the window is measured from the backoffice article, not from when the
   # portal job runs, so a delayed webhook cannot extend or shorten it.
+  # the boundary matches the backoffice guard (allowed while
+  # created_at + 24h >= now).
   def within_visibility_window?(article)
     return false unless article.created_at
 
     toggle_time = article.updated_at || Time.current
-    toggle_time < article.created_at + VISIBILITY_WINDOW
+    toggle_time <= article.created_at + VISIBILITY_WINDOW
   end
 
   # triage owns the article visibility: flipping it there lets the existing

@@ -87,6 +87,21 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     end
   end
 
+  test "processes a visibility change exactly at the 24 hour boundary" do
+    created_at = 25.hours.ago
+    triage_client = Minitest::Mock.new
+    triage_client.expect :update_article_internal!, nil, [ 7, true ]
+    triage_client.expect :update_ticket!, nil, [ 3, { "ops_state" => "sent_to_responsible" } ]
+
+    Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
+      @tenant, "123", "9",
+      backoffice_client: backoffice_client(backoffice_article(internal: true, created_at: created_at, updated_at: created_at + 24.hours)),
+      triage_client: triage_client
+    )
+
+    assert_mock triage_client
+  end
+
   test "ignores a visibility change after the 24 hour window" do
     triage_client = Minitest::Mock.new
 
