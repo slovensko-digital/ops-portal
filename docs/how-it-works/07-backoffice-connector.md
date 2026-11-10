@@ -107,7 +107,7 @@ sequenceDiagram
 | "OPS - ticket updated" (not by tech user; ops_state / RS / investment changed) | `/connector/backoffice/webhook` | `UpdateTriageIssueFromBackofficeJob` → OPS API PUT → `update_ticket!` | Triage ops_state, RS (+ `previous_responsible_subject`), investment → portal via webhook |
 | same | same | `UpdateSubtaskFromParentTicketJob` | copies the parent address to subtasks |
 | "OPS - article created" (note on an ops ticket, not by tech user) | same | `ProcessNewBackofficeArticleJob` | `[[podulohy]]` → subtasks; else, if public → `SendNewActivityToTriageFromBackofficeJob` → OPS API POST activity → Triage public note as `ops-rs-<id>` → portal `ResponsibleSubjectComment` |
-| "OPS - article updated" (visibility toggle within 24h, admin anytime) | same | `ProcessBackofficeArticleVisibilityJob` | internal→public / public→internal via Triage article (`update_article_internal!`); then the existing Triage → portal sync hides/shows the portal comment, resets counters and moves `ops_state` (`in_progress` ↔ `sent_to_responsible`) |
+| "OPS - article updated" (visibility toggle within 24h) | same | `ProcessBackofficeArticleVisibilityJob` | internal→public / public→internal via Triage article (`update_article_internal!`); then the existing Triage → portal sync hides/shows the portal comment, resets counters and moves `ops_state` (`in_progress` ↔ `sent_to_responsible`) |
 
 Backoffice staff roles:
 
