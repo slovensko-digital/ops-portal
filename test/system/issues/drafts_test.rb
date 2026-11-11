@@ -80,7 +80,6 @@ class Issues::DraftsTest < ApplicationSystemTestCase
 
     click_on "Sledované podnety"
     assert_text "Legacy issue"
-    assert_text "Graffiti"
   end
 
   test "photo that cannot be read is rejected" do

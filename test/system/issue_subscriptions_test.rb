@@ -11,7 +11,8 @@ class IssueSubscriptionsTest < ApplicationSystemTestCase
     assert_text "Zrušiť sledovanie"
     assert user.subscribed_to?(issue)
 
-    visit watched_issues_profile_path
+    visit profile_path
+    click_on "Sledované podnety"
     assert_text issue.title
 
     visit issue_path(issue)
