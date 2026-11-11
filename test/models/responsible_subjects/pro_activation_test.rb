@@ -40,7 +40,7 @@ class ResponsibleSubjects::ProActivationTest < ActiveSupport::TestCase
     assert_requested :post, zammad_url("groups"), query: hash_including({}), body: hash_including("name" => "Nižná")
     assert_requested :post, zammad_url("triggers"), body: hash_including(
       "name" => "700 - Priradenie podnetu skupine Nižná Agent Smith",
-      "perform" => hash_including("ticket.group_id" => { "value" => 9 })
+      "perform" => hash_including("ticket.group_id" => { "value" => "9" })
     )
     assert_not_requested :post, zammad_url("organizations"), query: hash_including({})
     assert_requested :post, zammad_url("users"), query: hash_including({}), times: 1

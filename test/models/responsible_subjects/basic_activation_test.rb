@@ -39,13 +39,30 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
       body: { "groups" => { "Incoming" => "full", "Nižná" => "full" } }
     assert_requested :post, zammad_url("triggers"), body: hash_including(
       "name" => "700 - Priradenie podnetu skupine Nižná Agent Smith",
-      "condition" => hash_including(
-        "ticket.action" => { "operator" => "is", "value" => "create" },
-        "ticket.address_municipality" => { "operator" => "is", "value" => [ "Nižná" ] }
-      ),
+      "condition" => {
+        "operator" => "OR",
+        "conditions" => [
+          {
+            "operator" => "AND",
+            "conditions" => [
+              { "name" => "ticket.process_type", "operator" => "is", "value" => [ "portal_issue_verification", "portal_issue_triage" ] },
+              { "name" => "ticket.action", "operator" => "is", "value" => "create" },
+              { "name" => "ticket.origin", "operator" => "is", "value" => [ "portal" ] },
+              { "name" => "ticket.address_municipality", "operator" => "is", "value" => [ "Nižná" ] }
+            ]
+          },
+          {
+            "operator" => "AND",
+            "conditions" => [
+              { "name" => "ticket.responsible_subject", "operator" => "has changed", "value" => [] },
+              { "name" => "ticket.responsible_subject", "operator" => "is", "value" => [ { "label" => "Nižná", "value" => responsible_subject.id } ] }
+            ]
+          }
+        ]
+      },
       "perform" => {
-        "ticket.group_id" => { "value" => 9 },
-        "ticket.owner_id" => { "pre_condition" => "specific", "value" => 3 },
+        "ticket.group_id" => { "value" => "9" },
+        "ticket.owner_id" => { "pre_condition" => "specific", "value" => "3", "value_completion" => "Agent Smith <agent@example.org>" },
         "ticket.responsible_subject" => { "value" => { "value" => responsible_subject.id, "label" => "Nižná" } }
       }
     )
@@ -171,6 +188,32 @@ class ResponsibleSubjects::BasicActivationTest < ActiveSupport::TestCase
       "perform" => hash_including("ticket.responsible_subject" => { "value" => { "value" => existing.id, "label" => "Nižná" } })
     )
     assert_equal 3, User::ResponsibleSubject.where(responsible_subject: responsible_subject).count
+  end
+
+  test "call routes tickets from every district of a city with districts" do
+    municipality, = create_inactive_municipality
+    municipality.municipality_districts.create!(name: "Sásová, Rudlová", active: true)
+    municipality.municipality_districts.create!(name: "Centrum", active: true)
+    stub_creation
+
+    build_activation(use_existing_municipality: true, boundary_id: nil, district_name: nil).call
+
+    assert_requested(:post, zammad_url("triggers")) do |request|
+      create_branch = JSON.parse(request.body).dig("condition", "conditions", 0, "conditions")
+      create_branch.find { |condition| condition["name"] == "ticket.address_municipality" }["value"] ==
+        [ "Nižná", "Nižná::Centrum", "Nižná::Sásová, Rudlová" ]
+    end
+  end
+
+  test "validate! finds a trigger saved in the Triage admin UI by a district of the municipality" do
+    stub_zammad(:get, "triggers", body: [
+      { id: 72, name: "700 - Priradenie podnetu skupine Nižná Iná Agentka",
+        condition: { operator: "OR", conditions: [
+          { operator: "AND", conditions: [ { name: "ticket.address_municipality", operator: "is", value: [ "Nižná::Centrum" ] } ] }
+        ] } }
+    ])
+
+    assert_invalid "Triage trigger \"700 - Priradenie podnetu skupine Nižná Iná Agentka\" (72) already exists"
   end
 
   test "call with use_existing_municipality links a boundary without a municipality" do
