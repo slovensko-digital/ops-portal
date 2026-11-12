@@ -9,11 +9,13 @@ namespace :municipality_boundaries do
     puts "Resetting municipality boundaries..."
     MunicipalityBoundary.where(boundary_kind: "municipality").delete_all
 
+    district_cities = Municipality.joins(:municipality_districts).distinct.pluck(:name)
+
     imported = 0
     city_parts = Hash.new { |hash, key| hash[key] = [] }
 
     ZbgisAdminBoundaries.each_municipality do |row|
-      if (city = ZbgisAdminBoundaries.city_for_part(row.name))
+      if (city = ZbgisAdminBoundaries.part_city(row.name, district_cities))
         city_parts[city] << row.wkb_hex
       else
         import_boundary_wkb(nil, nil, row.wkb_hex, boundary_kind: "municipality")
@@ -21,7 +23,7 @@ namespace :municipality_boundaries do
       end
     end
 
-    # Bratislava and Košice are split into city parts in ZBGIS,
+    # Whole-city municipalities are split into city parts in ZBGIS,
     # the whole-city boundary is their union.
     city_parts.each do |city_name, wkb_hexes|
       municipality = Municipality.find_by(name: city_name)
@@ -39,6 +41,7 @@ namespace :municipality_boundaries do
   task download_and_import_districts: :environment do
     municipalities_with_districts = Municipality.joins(:municipality_districts).distinct
     total = municipalities_with_districts.count
+    district_cities = municipalities_with_districts.pluck(:name)
 
     puts "Found #{total} municipalities with districts. Reading city parts from ZBGIS..."
 
@@ -46,7 +49,7 @@ namespace :municipality_boundaries do
 
     parts_by_city = Hash.new { |hash, key| hash[key] = [] }
     ZbgisAdminBoundaries.each_municipality do |row|
-      if (city = ZbgisAdminBoundaries.city_for_part(row.name))
+      if (city = ZbgisAdminBoundaries.part_city(row.name, district_cities))
         parts_by_city[city] << row
       end
     end
@@ -67,7 +70,7 @@ namespace :municipality_boundaries do
 
       imported = 0
       parts.each do |part|
-        district_name = ZbgisAdminBoundaries.district_name(part.name)
+        district_name = ZbgisAdminBoundaries.district_name(part.name, municipality.name)
         district = municipality.municipality_districts.find_by(name: district_name)
         puts "  Warning: district not found: #{district_name}" if district.nil?
 

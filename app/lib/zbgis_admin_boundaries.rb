@@ -14,12 +14,10 @@ module ZbgisAdminBoundaries
   GPKG_NAME = "USJ_hranice_0.gpkg"
   SRID = 8353 # S-JTSK03 / Krovak East-North
 
-  # Whole-city municipalities whose parts are separate rows in obec_0.
-  CITY_PART_PREFIXES = {
-    "Bratislava" => "Bratislava-",
-    "Košice" => "Košice-"
-  }.freeze
-
+  # Whole-city municipalities (e.g. Bratislava, Košice) are split into city
+  # parts in ZBGIS. Which rows are parts is derived from our own data:
+  # a row belongs to a city when the city has districts and the row name
+  # starts with "<city>-" (official ZBGIS naming).
   Municipality = Data.define(:code, :name, :wkb_hex)
 
   class << self
@@ -59,20 +57,15 @@ module ZbgisAdminBoundaries
       end
     end
 
-    # Returns the whole-city name when the row is a Bratislava/Košice city part, else nil.
-    def city_for_part(name)
-      CITY_PART_PREFIXES.each do |city, prefix|
-        return city if name.start_with?(prefix)
-      end
-      nil
+    # Returns the city name when the row is a city part of one of the given
+    # cities, else nil.
+    def part_city(name, cities)
+      cities.find { |city| name.start_with?("#{city}-") }
     end
 
-    # Strips the "Bratislava-"/"Košice-" prefix to get the district name.
-    def district_name(name)
-      CITY_PART_PREFIXES.each_value do |prefix|
-        return name.delete_prefix(prefix) if name.start_with?(prefix)
-      end
-      name
+    # Strips the "City-" prefix to get the district name.
+    def district_name(name, city)
+      name.delete_prefix("#{city}-")
     end
 
     # Makes sure PostGIS knows SRID 8353, using the definition bundled in the GPKG.

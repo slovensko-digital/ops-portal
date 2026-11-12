@@ -16,16 +16,19 @@ class ZbgisAdminBoundariesTest < ActiveSupport::TestCase
     assert_raises(RuntimeError) { ZbgisAdminBoundaries.decode_wkb_hex(empty_blob) }
   end
 
-  test "city_for_part detects Bratislava and Košice city parts" do
-    assert_equal "Bratislava", ZbgisAdminBoundaries.city_for_part("Bratislava-Ružinov")
-    assert_equal "Košice", ZbgisAdminBoundaries.city_for_part("Košice-Sever")
-    assert_nil ZbgisAdminBoundaries.city_for_part("Nitra")
+  test "part_city detects city parts of the given cities" do
+    cities = [ "Bratislava", "Košice" ]
+
+    assert_equal "Bratislava", ZbgisAdminBoundaries.part_city("Bratislava-Ružinov", cities)
+    assert_equal "Košice", ZbgisAdminBoundaries.part_city("Košice-Sever", cities)
+    assert_nil ZbgisAdminBoundaries.part_city("Nitra", cities)
+    assert_nil ZbgisAdminBoundaries.part_city("Bratislava-Ružinov", [ "Košice" ])
   end
 
   test "district_name strips the city prefix" do
-    assert_equal "Ružinov", ZbgisAdminBoundaries.district_name("Bratislava-Ružinov")
-    assert_equal "Sever", ZbgisAdminBoundaries.district_name("Košice-Sever")
-    assert_equal "Nitra", ZbgisAdminBoundaries.district_name("Nitra")
+    assert_equal "Ružinov", ZbgisAdminBoundaries.district_name("Bratislava-Ružinov", "Bratislava")
+    assert_equal "Sever", ZbgisAdminBoundaries.district_name("Košice-Sever", "Košice")
+    assert_equal "Nitra", ZbgisAdminBoundaries.district_name("Nitra", "Nitra")
   end
 
   test "each_municipality streams rows from the ZBGIS archive" do
