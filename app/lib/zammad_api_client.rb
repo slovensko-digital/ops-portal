@@ -256,6 +256,10 @@ class ZammadApiClient
     ticket.save
   end
 
+  def update_article_internal!(article_id, internal)
+    raw_api_request(:put, "ticket_articles/#{article_id}", { internal: internal })
+  end
+
   def sync_previous_responsible_subject!(ticket_id, previous_responsible_subject)
     ticket = @client.ticket.find(ticket_id)
 
