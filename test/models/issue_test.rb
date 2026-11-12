@@ -127,38 +127,6 @@ class IssueTest < ActiveSupport::TestCase
     end
   end
 
-  test "supplement loop state changes are not tracked as activity" do
-    issue = issues(:one) # waiting
-
-    assert_no_difference -> { Issues::StateChange.count } do
-      issue.update!(state: issues_states(:waiting_for_author))
-    end
-
-    assert_no_difference -> { Issues::StateChange.count } do
-      issue.update!(state: issues_states(:waiting))
-    end
-  end
-
-  test "supplement loop still enqueues waiting for author notification" do
-    issue = issues(:one) # waiting
-
-    assert_enqueued_with(job: Notifications::PublishIssueStateChangedJob) do
-      issue.update!(state: issues_states(:waiting_for_author))
-    end
-  end
-
-  test "acceptance state change is tracked as activity" do
-    issue = issues(:one) # waiting
-
-    assert_difference -> { Issues::StateChange.count }, 1 do
-      issue.update!(state: issues_states(:sent_to_responsible))
-    end
-
-    change = Issues::StateChange.order(:created_at).last
-    assert_equal "waiting", change.previous_state.key
-    assert_equal "sent_to_responsible", change.new_state.key
-  end
-
   test "entering resolution process enqueues accepted notification" do
     issue = issues(:without_triage_external_id)
 

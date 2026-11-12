@@ -19,15 +19,6 @@ class Issues::StateChange < ApplicationRecord
 
   before_create -> { self.uuid = SecureRandom.uuid }
 
-  # Supplement request cycle (waiting <-> waiting_for_author), not timeline activity.
-  SUPPLEMENT_CYCLE_KEYS = %w[waiting waiting_for_author].freeze
-
-  def self.supplement_cycle?(previous_state, new_state)
-    return false unless previous_state && new_state
-
-    SUPPLEMENT_CYCLE_KEYS.include?(previous_state.key) && SUPPLEMENT_CYCLE_KEYS.include?(new_state.key)
-  end
-
   def author_display_name
     "Odkaz pre starostu"
   end

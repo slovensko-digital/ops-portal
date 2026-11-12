@@ -168,7 +168,6 @@ class Triage::BackfillIssueHistoryJob < ApplicationJob
 
         previous_state = find_state(entry["value_from"])
         next if previous_state == new_state
-        next if Issues::StateChange.supplement_cycle?(previous_state, new_state)
 
         { previous_state: previous_state, new_state: new_state, created_at: parse_time(entry["created_at"]) }
       end

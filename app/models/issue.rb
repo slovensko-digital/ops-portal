@@ -263,7 +263,6 @@ class Issue < ApplicationRecord
     new_state = Issues::State.find_by(id: new_state_id)
 
     return unless new_state
-    return if Issues::StateChange.supplement_cycle?(previous_state, new_state)
 
     activity = Issues::StateChangeActivity.create!(issue_id: id)
     Issues::StateChange.create!(
