@@ -31,11 +31,15 @@ class ZbgisAdminBoundariesTest < ActiveSupport::TestCase
   test "each_municipality streams rows from the ZBGIS archive" do
     Dir.mktmpdir do |dir|
       with_env("ZBGIS_ZIP_PATH" => build_mini_archive(dir)) do
-        rows = ZbgisAdminBoundaries.each_municipality.to_a
+        # Extract from a different working directory so a relative-path
+        # handling bug in extraction cannot go unnoticed.
+        Dir.chdir(Dir.mktmpdir) do
+          rows = ZbgisAdminBoundaries.each_municipality.to_a
 
-        assert_equal [ "Nitra", "Bratislava-Ružinov" ], rows.map(&:name)
-        assert_equal [ 500011, 529311 ], rows.map(&:code)
-        assert rows.all? { |row| row.wkb_hex.match?(/\A[0-9a-f]+\z/) }
+          assert_equal [ "Nitra", "Bratislava-Ružinov" ], rows.map(&:name)
+          assert_equal [ 500011, 529311 ], rows.map(&:code)
+          assert rows.all? { |row| row.wkb_hex.match?(/\A[0-9a-f]+\z/) }
+        end
       end
     end
   end
@@ -51,7 +55,9 @@ class ZbgisAdminBoundariesTest < ActiveSupport::TestCase
   end
 
   def build_mini_archive(dir)
-    gpkg_path = File.join(dir, ZbgisAdminBoundaries::GPKG_NAME)
+    src_dir = File.join(dir, "src")
+    FileUtils.mkdir_p(src_dir)
+    gpkg_path = File.join(src_dir, ZbgisAdminBoundaries::GPKG_NAME)
     db = SQLite3::Database.new(gpkg_path)
     db.execute("CREATE TABLE obec_0 (OBJECTID INTEGER PRIMARY KEY, IDN4 INTEGER, NM4 TEXT, SHAPE BLOB)")
     db.execute("INSERT INTO obec_0 (IDN4, NM4, SHAPE) VALUES (?, ?, ?)", [ 500011, "Nitra", gp_blob(square_wkb(0.0, 0.0)) ])

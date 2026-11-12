@@ -124,9 +124,13 @@ module ZbgisAdminBoundaries
       dest = zip_path.dirname.join(GPKG_NAME)
       return dest if dest.exist? && dest.size.positive? && ENV["ZBGIS_REFRESH"] != "1"
 
-      Zip::File.open(zip_path) do |zip|
+      Zip::File.open(zip_path.to_s) do |zip|
         entry = zip.find_entry(GPKG_NAME) or raise "Missing #{GPKG_NAME} in #{zip_path}"
-        entry.extract(dest) { true }
+        entry.get_input_stream do |input|
+          File.open(dest.to_s, "wb") do |output|
+            IO.copy_stream(input, output)
+          end
+        end
       end
       dest
     end
