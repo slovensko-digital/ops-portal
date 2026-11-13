@@ -159,6 +159,43 @@ EXISTING_MUNICIPALITY=1` and, if asked, Trnava with `activate_basic` and then
 `upgrade_to_pro`, each with a Backoffice of `ops-backoffice-saas` `dev/up`, see
 "Local Backoffice" in the README.
 
+## A volunteer leaves: `ops:owner_handover` (Triage)
+
+```
+rake 'ops:owner_handover:report[old@…]'
+rake 'ops:owner_handover:triggers[old@…,new@…]' [GROUPS="Pezinok;Bratislava / Devín"] [APPLY=1]
+rake 'ops:owner_handover:tickets[old@…,new@…]' [GROUPS=…] [APPLY=1]
+```
+
+Runs in Triage, not in the portal. Code:
+[`ops-triage-zammad`](https://github.com/slovensko-digital/ops-triage-zammad)
+`zammad/app/models/ops/owner_handover.rb` (`Ops::OwnerHandover`, also usable
+from the rails console) and `zammad/lib/tasks/ops/owner_handover.rake`. Not
+tested.
+
+1. `report` lists the 700 triggers that make the volunteer the owner of new
+   tickets, the volunteer's tickets by group and `ops_state`, and other
+   triggers whose conditions name the volunteer, to check by hand.
+2. `triggers` points those 700 triggers to the new volunteer and renames them
+   to end with the new volunteer's name, as `activate_basic` names them
+   (step F above). It handles triggers saved from the admin UI too.
+3. `tickets` moves all of the volunteer's tickets in those groups to the new
+   volunteer, closed ones too: a closed ticket can be reopened, and the new
+   volunteer is then in charge of it. It refuses a group whose active 700
+   trigger still routes to the old volunteer, so run `triggers` first. No
+   Triage trigger runs, so nobody is emailed and no webhook fires.
+
+The handover works by group: a 700 trigger moves as a whole, and tickets move
+with their group. `GROUPS` splits the volunteer's groups between several new
+volunteers, one run per new volunteer. Without it, everything goes to one new
+volunteer. A group is named with its parent, as the report shows it
+(`Bratislava / Devín`). An unknown name fails. The new volunteer gets full
+access to the groups. Without `APPLY=1` the tasks only print what they would
+change.
+
+What it doesn't handle: the old volunteer keeps their group access and their
+Triage account, remove or deactivate them by hand.
+
 ## Users across systems
 
 A user is created either in the portal (citizen registration) or in Triage
