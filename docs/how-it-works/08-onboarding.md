@@ -159,6 +159,11 @@ EXISTING_MUNICIPALITY=1` and, if asked, Trnava with `activate_basic` and then
 `upgrade_to_pro`, each with a Backoffice of `ops-backoffice-saas` `dev/up`, see
 "Local Backoffice" in the README.
 
+## A volunteer leaves
+
+Their 700 triggers and tickets go to other volunteers with the Triage rake tasks
+[`ops:owner_handover`](https://github.com/slovensko-digital/ops-triage-zammad/blob/main/zammad/lib/tasks/ops/owner_handover.rake).
+
 ## Users across systems
 
 A user is created either in the portal (citizen registration) or in Triage
