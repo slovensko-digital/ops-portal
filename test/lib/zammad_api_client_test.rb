@@ -199,6 +199,14 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal "Opravené.", @client.get_article(42, 110)[:body]
   end
 
+  test "get_article drops the empty lines left after the triage tags" do
+    body = "<div>[[ops portal]]<br>\n</div><div>[[pre zodpovedny subjekt]]<br>\n</div>" \
+      "<div><br></div><div>Dobrý deň,</div><div><br></div><div>podnet uzatvárame.</div><p>&nbsp;</p>"
+    stub_article(sender: "Agent", created_by_id: 3, origin_by_id: nil, body: body, content_type: "text/html")
+
+    assert_equal "<div>Dobrý deň,</div><div><br></div><div>podnet uzatvárame.</div>", @client.get_article(42, 110)[:body]
+  end
+
   # Article classification
 
   test "internal articles are never published" do

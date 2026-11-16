@@ -88,6 +88,9 @@ retry), the comment stays visible and the sync continues as usual.
 On T-tickets every public agent article becomes `AgentPrivateComment`, and
 no tags are needed.
 
+The portal comment shows the article text without the tags and without the
+empty lines left where they were.
+
 Article attachments are copied to the portal comment. A file that looks like
 an image but vips can't read is stored as a plain file (link, no thumbnail)
 instead of being dropped (`ImageUpload.attachable`).
