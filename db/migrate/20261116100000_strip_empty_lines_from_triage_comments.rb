@@ -10,16 +10,10 @@ class StripEmptyLinesFromTriageComments < ActiveRecord::Migration[8.1]
   BLANK_MARKUP = %r{<br\s*/?>|&nbsp;}i
   TRAILING_BREAKS = %r{(?:\s|&nbsp;|<br\s*/?>)*<br\s*/?>(?:\s|&nbsp;)*(</(?:div|p)>)\z}i
 
-  class Comment < ActiveRecord::Base
-    self.table_name = "issues_comments"
-    self.inheritance_column = nil
-  end
-
   # Only comments the portal shows: not hidden, and not agent private comments of an issue that already
   # has an R-ticket (those are shown only while the issue is in triage).
   def up
-    Comment.joins("JOIN issues_activities ON issues_activities.id = issues_comments.activity_id")
-      .joins("JOIN issues ON issues.id = issues_activities.issue_id")
+    Issues::Comment.joins(activity: :issue)
       .where.not(triage_external_id: nil).where.not(text: nil).where(hidden: false)
       .where("issues_comments.type <> 'Issues::AgentPrivateComment' OR issues.resolution_external_id IS NULL")
       .find_each do |comment|
