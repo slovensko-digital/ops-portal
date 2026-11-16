@@ -22,6 +22,9 @@ class ZammadApiClient
   EMPTY_LINE = %r{\s|&nbsp;|<br\s*/?>|<(div|p)\b[^>]*>(?:\s|&nbsp;|<br\s*/?>)*</\1>}i
   LEADING_EMPTY_LINES = /\A(?:#{EMPTY_LINE})+/
   TRAILING_EMPTY_LINES = /(?:#{EMPTY_LINE})+\z/
+  # line breaks at the start of the first line or the end of the last one, e.g. <div><br>Dobrý deň</div>
+  LEADING_BREAKS = %r{\A(<(?:div|p)\b[^>]*>)(?:\s|&nbsp;|<br\s*/?>)+}i
+  TRAILING_BREAKS = %r{(?:\s|&nbsp;|<br\s*/?>)+(</(?:div|p)>)\z}i
   AUTOMATED_EMAIL_SENDER_PATTERNS = [
     /\b(?:auto(?:mated)?[-_. ]?reply|bounce|do[-_. ]?not[-_. ]?reply|mailer-daemon|no[-_. ]?reply|postmaster)@/i
   ]
@@ -879,7 +882,10 @@ class ZammadApiClient
 
   def strip_tags_from_article_body(body)
     tags = MARKED_AS_RESOLVED_TAGS + REFERRED_TAGS + [ RESPONSIBLE_SUBJECT_ARTICLE_TAG, OPS_PORTAL_ARTICLE_TAG ]
-    body.gsub(Regexp.union(tags), "").sub(LEADING_EMPTY_LINES, "").sub(TRAILING_EMPTY_LINES, "").strip
+    body.gsub(Regexp.union(tags), "")
+      .sub(LEADING_EMPTY_LINES, "").sub(TRAILING_EMPTY_LINES, "")
+      .sub(LEADING_BREAKS, "\\1").sub(TRAILING_BREAKS, "\\1")
+      .strip
   end
 
   def get_article_type(article, process_type)
