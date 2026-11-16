@@ -19,12 +19,12 @@ class ZammadApiClient
   MARKED_AS_RESOLVED_TAGS = [ "[[vyriesene]]", "[[vyriešené]]", "[[vyrieseny]]", "[[vyriešený]]" ]
   REFERRED_TAGS = [ "[[odstupene]]", "[[odstúpené]]", "[[odstupeny]]", "[[odstúpený]]" ]
   # a tag on its own line (e.g. from the ::ops / ::zodpovedny text modules) leaves an empty <div><br></div> behind
-  EMPTY_LINE = %r{\s|&nbsp;|<br\s*/?>|<(div|p)\b[^>]*>(?:\s|&nbsp;|<br\s*/?>)*</\1>}i
+  EMPTY_LINE = %r{\s|<br\s*/?>|<(div|p)\b[^>]*>(?:\s|&nbsp;|<br\s*/?>)*</\1>}i
   LEADING_EMPTY_LINES = /\A(?:#{EMPTY_LINE})+/
   TRAILING_EMPTY_LINES = /(?:#{EMPTY_LINE})+\z/
   # line breaks at the start of the first line or the end of the last one, e.g. <div><br>Dobrý deň</div>
-  LEADING_BREAKS = %r{\A(<(?:div|p)\b[^>]*>)(?:\s|&nbsp;|<br\s*/?>)+}i
-  TRAILING_BREAKS = %r{(?:\s|&nbsp;|<br\s*/?>)+(</(?:div|p)>)\z}i
+  LEADING_BREAKS = %r{\A(<(?:div|p)\b[^>]*>)(?:\s|&nbsp;)*<br\s*/?>(?:\s|&nbsp;|<br\s*/?>)*}i
+  TRAILING_BREAKS = %r{(?:\s|&nbsp;|<br\s*/?>)*<br\s*/?>(?:\s|&nbsp;)*(</(?:div|p)>)\z}i
   AUTOMATED_EMAIL_SENDER_PATTERNS = [
     /\b(?:auto(?:mated)?[-_. ]?reply|bounce|do[-_. ]?not[-_. ]?reply|mailer-daemon|no[-_. ]?reply|postmaster)@/i
   ]

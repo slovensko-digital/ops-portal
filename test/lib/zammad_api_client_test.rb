@@ -215,6 +215,13 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal "<div>Dobrý deň, <br>podnet bol opätovne preposlaný samospráve.<br>Admin</div>", @client.get_article(42, 110)[:body]
   end
 
+  test "get_article keeps a non-breaking space that is not an empty line" do
+    body = "<div>&nbsp;Dobrý deň, podnet bol poslaný na vybavenie.&nbsp;</div>"
+    stub_article(sender: "Customer", type: "web", body: body, content_type: "text/html")
+
+    assert_equal body, @client.get_article(42, 110)[:body]
+  end
+
   # Article classification
 
   test "internal articles are never published" do
