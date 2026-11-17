@@ -1,0 +1,44 @@
+<%= turbo_frame_tag "duplicate_popup" do %>
+  <div class="add-comment-form-con" data-controller="delegate" data-delegate-target="selectorRoot">
+    <div class="add-comment-form">
+      <div class="duplicate-popup-header">
+        <div class="title">Aktualizovať podnet</div>
+        <button type="button" class="duplicate-popup-close" data-action="dialog#close" aria-label="Zavrieť">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
+            <polygon points="27.71 11.71 26.29 10.29 19 17.59 11.71 10.29 10.29 11.71 17.59 19 10.29 26.29 11.71 27.71 19 20.41 26.29 27.71 27.71 26.29 20.41 19 27.71 11.71"/>
+          </svg>
+        </button>
+      </div>
+      <div class="duplicate-popup-issue"><%= @issue.title %></div>
+      <div class="description">
+        Pri aktualizovaní podnetu je potrebné vždy pridať aj fotografiu, ktorá dokumentuje aktuálny stav.
+      </div>
+
+      <%= form_with model: @update, url: issues_draft_duplicate_path(@draft, @issue), method: :patch, multipart: true do |f| %>
+        <% @update.errors[:base].each do |error| %>
+          <div class="error-message"><%= error %></div>
+        <% end %>
+
+        <%= f.text_area :text, placeholder: "Sem napíšte váš komentár", class: "#{@update.errors[:text].any? ? 'error' : ''}" %>
+        <% @update.errors.full_messages_for(:text).each do |error| %>
+          <div class="error-message"><%= error %></div>
+        <% end %>
+        <% @update.errors.full_messages_for(:attachments).each do |error| %>
+          <div class="error-message"><%= error %></div>
+        <% end %>
+
+        <%= render partial: "uploads/form", locals: { prefix: dom_id(@update), blobs: @update.attachments.blobs, wrapper_class: "pictures-wrapper" } %>
+
+        <div class="buttons-wrapper">
+          <%= f.button class: "button button-transparent", data: { action: "delegate#click", delegate_selector_param: ".new-files" } do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
+              <polygon points="16 9.25 8.75 9.25 8.75 2 7.25 2 7.25 9.25 0 9.25 0 10.75 7.25 10.75 7.25 18 8.75 18 8.75 10.75 16 10.75 16 9.25" fill="#1c3054"/>
+            </svg>
+            <span>Pridať fotografiu</span>
+          <% end %>
+          <%= f.submit "Aktualizovať podnet", class: "button submit" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

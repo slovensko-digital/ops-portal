@@ -3,7 +3,8 @@
 @use "mixins";
 
 @media only screen and (min-width: 23em) {
-	header nav a.add-button {
+	header nav a.add-button,
+	header nav button.add-button {
 		font-size: variables.em(14,16);
 		//padding: 13px 16px;
 		@include mixins.rounded(20px);

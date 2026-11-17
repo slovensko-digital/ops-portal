@@ -1,9 +1,11 @@
 class Gemini
   class Error < StandardError; end
 
+  DEFAULT_MODEL = "gemini-2.5-flash"
+
   def self.generate(messages:, system_prompt:, response_schema: nil)
     conn = Faraday.new(
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+      url: "https://generativelanguage.googleapis.com/v1beta/models/#{model}:generateContent",
       params: { key: ENV["GEMINI_API_KEY"] },
       headers: {
         "content-type": "application/json"
@@ -44,6 +46,10 @@ class Gemini
     rescue JSON::ParserError => e
       raise Error, "Gemini API returned invalid JSON: #{e.message}"
     end
+  end
+
+  def self.model
+    ENV["GEMINI_MODEL"].presence || DEFAULT_MODEL
   end
 
   def self.build_message(thing)

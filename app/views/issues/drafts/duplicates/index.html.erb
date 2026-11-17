@@ -1,0 +1,32 @@
+<% content_for(:title, "Podobné alebo duplicitné dopyty") %>
+
+<div data-controller="dialog">
+  <section class="podnety">
+    <h1>Podobné alebo duplicitné dopyty</h1>
+
+    <% if @issues.any? %>
+      <div class="podnet-block-con">
+        <% @issues.each do |issue| %>
+          <%= render "issues/issue", issue: issue, url: issues_draft_duplicate_path(@draft, issue), link_data: { turbo_frame: "duplicate_popup" } %>
+        <% end %>
+      </div>
+    <% else %>
+      <section class="search-result-blank">
+        <h1>Nenašli sme žiadne podobné dopyty</h1>
+
+        <figure class="empty-box">
+          <%= image_tag "krabica.png", alt: "" %>
+        </figure>
+      </section>
+    <% end %>
+  </section>
+
+  <div class="draft-pending-banner">
+    <div class="draft-pending-banner-text">Máte rozpracovaný podnet. Môžete ho dokončiť tu.</div>
+    <%= link_to "Zobraziť podnet", issues_draft_summary_path(@draft), class: "button" %>
+  </div>
+
+  <dialog class="duplicate-popup" data-dialog-target="dialog" data-action="click->dialog#backdropClose">
+    <%= turbo_frame_tag "duplicate_popup", data: { action: "turbo:frame-load->dialog#open" } %>
+  </dialog>
+</div>
