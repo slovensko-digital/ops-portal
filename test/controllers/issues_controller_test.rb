@@ -59,6 +59,50 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  # triage preview links
+
+  test "shows a hidden issue with a valid preview token" do
+    issue = issues(:one)
+
+    get issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
+    assert_response :success
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+  end
+
+  test "shows a rejected or privately resolved issue with a valid preview token" do
+    issue = issues(:resolved_private)
+
+    get issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
+    assert_response :success
+  end
+
+  test "does not show a hidden issue with a wrong preview token" do
+    get issue_url(issues(:one), nahlad: "wrong")
+    assert_response :not_found
+
+    get issue_url(issues(:one), nahlad: IssuePreviewSigner.token(issues(:resolved_private)))
+    assert_response :not_found
+  end
+
+  test "a preview token does not make a public issue a preview" do
+    issue = issues(:two)
+
+    get issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
+    assert_response :success
+    assert_nil response.headers["X-Robots-Tag"]
+  end
+
+  test "a preview token does not allow editing" do
+    issue = issues(:one)
+
+    get edit_issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
+    assert_response :not_found
+  end
+
   # map data
 
   test "geo returns clustered issues inside the bounding box as GeoJSON" do

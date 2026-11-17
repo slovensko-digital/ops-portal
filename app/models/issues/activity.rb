@@ -20,6 +20,10 @@ class Issues::Activity < ApplicationRecord
     "dummy content"
   end
 
+  def authored_by?(user)
+    false
+  end
+
   def liked_by?(user)
     votes.where(voter: user, vote: 1).exists?
   end

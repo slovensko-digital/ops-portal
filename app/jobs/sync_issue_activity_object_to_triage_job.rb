@@ -66,7 +66,8 @@ class SyncIssueActivityObjectToTriageJob < ApplicationJob
     return unless issue_update.author == issue_update.issue.author && issue_update.resolves_issue?
     return unless issue_update.external_id.present? && issue_update.issue.resolution_external_id.present?
 
-    Triage::CloseIssueUpdateTriageTicketJob.perform_now(issue_update, "accepted")
+    # perform, not perform_now: its retry would enqueue the job with the client, which can't be serialized
+    Triage::CloseIssueUpdateTriageTicketJob.new.perform(issue_update, "accepted", triage_zammad_client: client)
 
     client.create_system_note!(
       issue_update.issue.resolution_external_id,

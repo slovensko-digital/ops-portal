@@ -185,4 +185,34 @@ class IssueTest < ActiveSupport::TestCase
       assert_equal expected, Issue.accepting_updates.exists?(issue.id), "accepting_updates for #{name}"
     end
   end
+
+  test "hidden private comment shows as hidden to the author only while the issue is in triage" do
+    issue = issues(:one)
+    issue.update_columns(resolution_external_id: nil)
+    comment = Issues::UserPrivateComment.create!(
+      text: "Komentár z triáže",
+      hidden: true,
+      user_author: users(:one),
+      activity: issue.comment_activities.create!
+    )
+
+    assert_includes issue.reload.visible_activity_objects, comment
+
+    issue.update_columns(resolution_external_id: 99)
+
+    assert_not_includes issue.reload.visible_activity_objects, comment
+  end
+
+  test "hidden public comment stays in the resolution process as a placeholder" do
+    issue = issues(:one)
+    issue.update_columns(resolution_external_id: 99)
+    comment = Issues::UserComment.create!(
+      text: "Verejný komentár",
+      hidden: true,
+      user_author: users(:one),
+      activity: issue.comment_activities.create!
+    )
+
+    assert_includes issue.reload.visible_activity_objects, comment
+  end
 end

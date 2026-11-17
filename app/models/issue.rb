@@ -105,6 +105,13 @@ class Issue < ApplicationRecord
   scope :searchable, -> { publicly_visible.not_archived }
 
   scope :resolution_process, -> { where.not(resolution_external_id: nil) }
+  # whatever a responsible subject could have dealt with, public or not: the resolution process,
+  # archived legacy issues that passed triage in the old system and accepted praises, private ones too
+  scope :past_triage, -> do
+    resolution_process
+      .or(where(triage_external_id: nil, state: Issues::State.archived).where.not(archived_state: Issues::State.where(key: %w[waiting rejected duplicate])))
+      .or(praise.where(state: Issues::State.where(key: %w[resolved resolved_private])))
+  end
 
   scope :discussion_open, -> do
     not_archived
@@ -124,7 +131,10 @@ class Issue < ApplicationRecord
     activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
 
     activity_objects.select do |activity|
-      if activity.is_a?(Issues::UserComment) && activity.hidden?
+      # a private comment is a UserComment too, it must not come back as a placeholder after triage
+      if resolution_process? && activity.is_a?(Issues::UserPrivateComment)
+        false
+      elsif activity.is_a?(Issues::UserComment) && activity.hidden?
         true
       elsif triage_process?
         activity.triage_visible?

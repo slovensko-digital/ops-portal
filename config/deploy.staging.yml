@@ -23,9 +23,7 @@ env:
     CMS_ROOT_CATEGORY_ID: 15
     CMS_AI_CATEGORY_ID: 18
     TRIAGE_ZAMMAD_URL: https://triage.ops.dev.slovensko.digital/
-    NOTIFICATION_SMTP_USERNAME: notifikacie@ops.dev.slovensko.digital
-    NOTIFICATION_SMTP_SERVER: smtp.m1.websupport.sk
-    NOTIFICATION_SMTP_PORT: 587
+    NOTIFICATION_SENDER_EMAIL: notifikacie@ops.dev.slovensko.digital
     DISCOURSE_URL: https://forum.odkazprestarostu.sk/
     DISCOURSE_IMPORT_CATEGORY_IDS: "15,18"
     AWS_S3_BUCKET: portal-ops-dev-storage

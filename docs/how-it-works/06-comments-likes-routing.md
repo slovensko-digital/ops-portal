@@ -31,6 +31,16 @@ Consequences:
   internal/public toggle syncs (`UpdatePortalActivityFromTriageJob` sets
   `hidden`).
 
+## Length limit
+
+Text a citizen or an RS writes in the portal (`UserComment`,
+`UserPrivateComment`, `ResponsibleSubjectComment`) is limited to
+`Issues::Comment::TEXT_MAX_LENGTH` (10 000) characters, on create and on edit.
+Edits happen within the editing window, before the sync to Triage, so the
+check skips any comment with a `triage_external_id`: comments imported from
+Triage keep their full body and hiding an older, longer comment from Triage
+doesn't fail. Legacy, agent and duplicate comments have no limit.
+
 ## Comment moderation (AI)
 
 When the editing window closes, `SyncEditableActivityToTriageJob` runs
@@ -44,6 +54,10 @@ categories that scored at least 0.5, using fixed labels
 shown, because it can quote the offending words. The same applies to a
 comment a volunteer hides in Triage after the AI scored it below the auto
 hide threshold. A comment with no category at 0.5 or more shows no reason.
+
+A hidden `UserPrivateComment` shows this placeholder to its author only while
+the issue is in triage. Once the R-ticket exists it disappears from the
+portal, like every other private comment.
 
 A hidden comment reaches Triage as an **internal** article with the body
 `Automaticky skrytý komentár: …`, so it never reaches the RS email or Backoffice. A
@@ -74,6 +88,9 @@ retry), the comment stays visible and the sync continues as usual.
 On T-tickets every public agent article becomes `AgentPrivateComment`, and
 no tags are needed.
 
+The portal comment shows the article text without the tags and without the
+empty lines left where they were.
+
 Article attachments are copied to the portal comment. A file that looks like
 an image but vips can't read is stored as a plain file (link, no thumbnail)
 instead of being dropped (`ImageUpload.attachable`).
@@ -87,6 +104,16 @@ forgets to switch it to public writes something nobody but Triage sees.
 |---|---|---|---|
 | Like / unlike an issue | `POST/DELETE /dopyty/:id/issue_like` | `IssueLike`, `issues.likes_count` | **Not pushed.** `likes_count` reaches Triage/Backoffice only on the next `SyncIssueToTriageJob` for some other reason |
 | Like / dislike an activity | `POST/DELETE /dopyty/activities/:id/activity_vote` | `ActivityVote` (+1/−1, any integer accepted) | never |
+
+Authors cannot vote on their own activity: the buttons are disabled with a
+tooltip explaining why ("Vlastný príspevok nemôžete hodnotiť.") and the
+controller returns 403. For a responsible subject comment or reassignment the
+author is any user of that responsible subject (`authored_by?`).
+
+Likes and sharing are only offered on publicly visible issues. In a private
+state (`Issues::State::PRIVATE_KEYS`, only the author sees the issue) the like
+and social share buttons and the like count in issue lists are hidden, and
+`IssueLikesController` answers `401`.
 
 Backoffice has triggers at 10 and 100 likes (`ops_likes_count`), which are
 fed only by those indirect syncs. The trigger condition uses a date operator

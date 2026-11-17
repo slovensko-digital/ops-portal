@@ -20,6 +20,7 @@ json.likes_count @issue[:likes_count]
 json.address_lat @issue[:address_lat]
 json.address_lon @issue[:address_lon]
 json.portal_url @issue[:portal_url]
+json.portal_preview_url @issue[:portal_preview_url]
 json.created_at @issue[:created_at]
 json.resolution_started_at @issue[:resolution_started_at]
 json.updated_at @issue[:updated_at]
@@ -32,10 +33,5 @@ json.activities @issue[:activities] do |activity|
   json.body activity[:body]
   json.created_at activity[:created_at]
   json.updated_at activity[:updated_at]
-  json.attachments activity[:attachments] do |attachment|
-    json.triage_identifier attachment[:triage_identifier]
-    json.filename attachment[:filename]
-    json.content_type attachment[:content_type]
-    json.data64 attachment[:data64]
-  end
+  json.partial! "api/v1/issues/activities/attachments", attachments: activity[:attachments], issue_id: @issue[:triage_identifier], activity_id: activity[:triage_identifier], urls: @attachment_urls
 end

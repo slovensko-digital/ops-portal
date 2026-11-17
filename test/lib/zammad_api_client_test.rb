@@ -69,6 +69,7 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal responsible_subjects(:two), ticket[:previous_responsible_subject]
     assert_equal users(:one), ticket[:author]
     assert_equal({ firstname: "Jozef", lastname: "Mokry", uuid: users(:one).uuid }, ticket[:author_response])
+    assert_equal "http://localhost:3000/podnety/1?nahlad=preview-token", ticket[:portal_preview_url]
     assert_not_requested :get, zammad_url("ticket_articles/by_ticket/42"), query: hash_including({})
   end
 
@@ -113,6 +114,26 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal "Lavička na námestí má odlomené dosky a nedá sa na nej sedieť.", activities.first[:body]
   end
 
+  test "get_ticket without downloading attachments lists them without data" do
+    stub_ticket
+    stub_users
+
+    activities = @client.get_ticket(42, expand: true, download_attachments: false)[:activities]
+
+    assert_equal [ { triage_identifier: 501, filename: "lavicka.jpg", content_type: "image/jpeg" } ], activities.first[:attachments]
+    assert_not_requested :get, %r{ticket_attachment/}
+  end
+
+  test "get_ticket for a praise without downloading attachments lists them without data" do
+    stub_ticket(issue_type: "praise")
+
+    attachments = @client.get_ticket(42, download_attachments: false)[:activities].first[:attachments]
+
+    assert_equal [ 501, 502 ], attachments.map { it[:triage_identifier] }
+    assert attachments.none? { it.key?(:data64) }
+    assert_not_requested :get, %r{ticket_attachment/}
+  end
+
   test "get_ticket maps a verification ticket" do
     stub_ticket(process_type: "portal_issue_verification", issue_resolved: "yes")
 
@@ -137,10 +158,68 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_nil @client.get_article(42, 999)
   end
 
+  test "get_article without downloading attachments still leaves out html bodies" do
+    stub_ticket
+    stub_users
+
+    attachments = @client.get_article(42, 101, download_attachments: false)[:attachments]
+
+    assert_equal [ 501 ], attachments.map { it[:triage_identifier] }
+    assert_not_requested :get, %r{ticket_attachment/}
+  end
+
+  # download_attachment
+
+  test "download_attachment returns the file as triage serves it" do
+    disposition = "inline; filename=\"lavicka.jpg\"; filename*=UTF-8''lavi%C4%8Dka.jpg"
+    stub_zammad(:get, "ticket_attachment/42/101/501", body: "image-bytes",
+      headers: { "Content-Type" => "image/jpeg", "Content-Disposition" => disposition })
+
+    assert_equal({ body: "image-bytes", content_type: "image/jpeg", content_disposition: disposition },
+      @client.download_attachment(42, 101, 501))
+  end
+
+  test "download_attachment returns nil when triage refuses or does not know the file" do
+    stub_zammad(:get, "ticket_attachment/42/101/501", status: 403, body: { error: "The file does not belong to the specified article." })
+    stub_zammad(:get, "ticket_attachment/42/101/502", status: 404, body: zammad_not_found("Store"))
+
+    assert_nil @client.download_attachment(42, 101, 501)
+    assert_nil @client.download_attachment(42, 101, 502)
+  end
+
+  test "download_attachment raises other triage errors" do
+    stub_zammad(:get, "ticket_attachment/42/101/501", status: 500, body: { error: "Internal Server Error" })
+
+    assert_raises(RuntimeError) { @client.download_attachment(42, 101, 501) }
+  end
+
   test "get_article strips triage tags from the body" do
     stub_article(sender: "Agent", created_by_id: 3, origin_by_id: nil, body: "[[ops portal]] Opravené. [[vyriešené]] ")
 
     assert_equal "Opravené.", @client.get_article(42, 110)[:body]
+  end
+
+  test "get_article drops the empty lines left after the triage tags" do
+    body = "<div>[[ops portal]]<br>\n</div><div>[[pre zodpovedny subjekt]]<br>\n</div>" \
+      "<div><br></div><div>Dobrý deň,</div><div><br></div><div>podnet uzatvárame.</div><p>&nbsp;</p>"
+    stub_article(sender: "Agent", created_by_id: 3, origin_by_id: nil, body: body, content_type: "text/html")
+
+    assert_equal "<div>Dobrý deň,</div><div><br></div><div>podnet uzatvárame.</div>", @client.get_article(42, 110)[:body]
+  end
+
+  test "get_article drops the line break at the start of the text after the triage tags" do
+    body = "<div>[[ops portal]]</div><div>[[pre zodpovedny subjekt]]</div><div></div>\n\n" \
+      "<div><br>Dobrý deň, <br>podnet bol opätovne preposlaný samospráve.<br>Admin<br></div>"
+    stub_article(sender: "Agent", created_by_id: 3, origin_by_id: nil, body: body, content_type: "text/html")
+
+    assert_equal "<div>Dobrý deň, <br>podnet bol opätovne preposlaný samospráve.<br>Admin</div>", @client.get_article(42, 110)[:body]
+  end
+
+  test "get_article keeps a non-breaking space that is not an empty line" do
+    body = "<div>&nbsp;Dobrý deň, podnet bol poslaný na vybavenie.&nbsp;</div>"
+    stub_article(sender: "Customer", type: "web", body: body, content_type: "text/html")
+
+    assert_equal body, @client.get_article(42, 110)[:body]
   end
 
   # Article classification
@@ -288,6 +367,8 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       "category" => "Zeleň a životné prostredie",
       "responsible_subject" => { "label" => "MÚ Staré Mesto", "value" => responsible_subjects(:one).id },
       "origin" => "portal",
+      "portal_url" => "http://localhost:3000/dopyty/#{issue.id}",
+      "portal_preview_url" => IssuePreviewSigner.url(issue),
       "article" => hash_including(
         "body" => issue.description,
         "sender" => "Customer",

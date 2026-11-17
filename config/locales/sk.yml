@@ -103,6 +103,14 @@ sk:
           attributes:
             responsible_subject:
               other_than: "nesmie byť totožný s aktuálnym subjektom"
+        issues/user_comment:
+          attributes:
+            text:
+              too_long: je príliš dlhý (maximálne %{count} znakov)
+        issues/responsible_subject_comment:
+          attributes:
+            text:
+              too_long: je príliš dlhý (maximálne %{count} znakov)
         user:
           confirmation: "je nesprávny"
           attributes:

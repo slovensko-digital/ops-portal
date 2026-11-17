@@ -38,6 +38,10 @@ class Issues::ResponsibleSubjectChange < ApplicationRecord
     responsible_subject_author
   end
 
+  def authored_by?(user)
+    responsible_subject_author.present? && responsible_subject_author == user.responsible_subject
+  end
+
   def author_display_name
     author&.subject_name || "Odpoveď zodpovedného subjektu"
   end

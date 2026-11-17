@@ -13,6 +13,8 @@
 class Issues::CommentActivity < Issues::Activity
   has_one :activity_object, class_name: "Issues::Comment", foreign_key: :activity_id, dependent: :destroy
 
+  delegate :authored_by?, to: :activity_object, allow_nil: true
+
   def content
     activity_object.text
   end

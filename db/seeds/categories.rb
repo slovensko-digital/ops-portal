@@ -174,7 +174,7 @@ end
 
 seed_category("Osvetlenie") do |category|
   seed_subcategory(category, "osvetlenie") do |subcategory|
-    seed_subtype(subcategory, "nefunknčné")
+    seed_subtype(subcategory, "nefunkčné")
     seed_subtype(subcategory, "poškodený stĺp")
     seed_subtype(subcategory, "chýbajúce")
     seed_subtype(subcategory, "nedostatočné")
