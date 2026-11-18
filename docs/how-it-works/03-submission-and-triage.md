@@ -14,7 +14,7 @@ flowchart TD
   D --> E[Category → Subcategory → Subtype]
   E --> F[Details: title 10-200, description 25-3500]
   F --> G[Zhrnutie podnetu<br/>incomplete draft: Rozpracovaný podnet,<br/>Pokračovať to the unfinished step]
-  G -->|POST checks| G1{wizard step unfinished?<br/>no category, title or location}
+  G -->|POST checks| G1{wizard step unfinished?<br/>no photos, location, category,<br/>title or description}
   G1 -->|yes, e.g. summary opened earlier| G
   G1 -->|no| H{checks_step valid?}
   H -->|municipality not supported| H1[Unsupported municipality page]
@@ -56,9 +56,9 @@ details) shows "Rozpracovaný podnet" instead: the sections filled in so far,
 read-only, and "Pokračovať" to that step.
 
 `checks/create` and `checks/confirm` redirect to the summary ("Rozpracovaný
-podnet") when the draft is incomplete (e.g. a summary page opened earlier). Before, a draft without a
-category failed in `Issue#save!` with a 422. Turbo then reloaded the summary,
-so "Odoslať podnet" seemed to do nothing.
+podnet") when the draft is incomplete (e.g. a summary page opened earlier).
+Before, a draft without a category failed in `Issue#save!` with a 422. Turbo
+then reloaded the summary, so "Odoslať podnet" seemed to do nothing.
 
 ### Stuck in Incoming
 
