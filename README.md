@@ -89,8 +89,8 @@ inactive. `bin/activate-seeded-municipalities` then runs, on the freshly seeded 
 1. a check that Triage is up, that `TRIAGE_ZAMMAD_ADMIN_API_TOKEN` (the local Triage admin's, in `.env.sample`)
    works and that the portal has inactive municipalities. It asks for the token when it doesn't work.
 2. `bin/rails municipality_boundaries:download_and_import_municipalities`, the activation finds the municipalities'
-   boundaries by it. Then `download_and_import_districts` (Bratislava's city parts from the Overpass API), only a
-   warning when Overpass fails.
+   boundaries by it. Then `download_and_import_districts` (city parts from GKÚ ZBGIS), only a
+   warning when no district data is found.
 3. `bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 NAME=…` for every inactive
    municipality, the way production onboards one ([docs/how-it-works/08](docs/how-it-works/08-onboarding.md)).
    It creates the municipality's group, organization, 700 trigger and users
