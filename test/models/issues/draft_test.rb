@@ -56,4 +56,40 @@ class Issues::DraftTest < ActiveSupport::TestCase
 
     assert draft.confirmable?
   end
+
+  test "first unfinished step follows the wizard order" do
+    draft = Issues::Draft.new(author: users(:one))
+    assert_equal :geo, draft.first_unfinished_step
+
+    draft.assign_attributes(latitude: 48.16, longitude: 17.05)
+    assert_equal :suggestions, draft.first_unfinished_step
+
+    draft.picked_suggestion_index = -1
+    assert_equal :category, draft.first_unfinished_step
+
+    draft.category = issues_categories(:one)
+    assert_equal :details, draft.first_unfinished_step
+
+    draft.assign_attributes(title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit")
+    assert_equal :summary, draft.first_unfinished_step
+    assert draft.complete?
+  end
+
+  test "first unfinished step is the category when a picked suggestion's category does not exist" do
+    draft = Issues::Draft.new(
+      author: users(:one), latitude: 48.16, longitude: 17.05, picked_suggestion_index: 0,
+      title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit"
+    )
+
+    assert_equal :category, draft.first_unfinished_step
+  end
+
+  test "first unfinished step is the category when the author wrote a title without picking a suggestion" do
+    draft = Issues::Draft.new(
+      author: users(:one), latitude: 48.16, longitude: 17.05,
+      title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit"
+    )
+
+    assert_equal :category, draft.first_unfinished_step
+  end
 end

@@ -3,5 +3,6 @@ class Issues::Drafts::SummariesController < ApplicationController
   include Issues::DraftScoped
 
   def show
+    render :unfinished unless @draft.complete?
   end
 end
