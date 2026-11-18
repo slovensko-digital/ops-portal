@@ -208,6 +208,42 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     assert_equal "Zeleň a životné prostredie", @user.issues.last.category.name
   end
 
+  test "unfinished draft whose photos were all removed continues with the photos" do
+    login_as(@user)
+
+    click_on "Nahlásiť podnet"
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+    assert_text "Lokalita"
+
+    click_on "Späť"
+    accept_confirm { find(".close-button").click }
+    assert_no_selector ".report-summary-edit-pictures img"
+    assert_no_link "Pokračovať"
+
+    visit root_path
+    click_on "Neodoslaný podnet"
+    click_on "Zobraziť neodoslaný podnet"
+
+    assert_selector "h1", text: "Rozpracovaný podnet"
+    assert_text "Žiadne fotky"
+    click_on "Pokračovať"
+
+    assert_text "Nahrať fotku"
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+    click_on "Pokračovať"
+
+    assert_text "Lokalita"
+  end
+
+  test "location step without photos does not fail" do
+    login_as(@user)
+    draft = @user.issues_drafts.create!
+
+    visit issues_draft_geo_path(draft)
+
+    assert_text "Lokalita"
+  end
+
   private
 
   def leave_draft_on_suggestions_step

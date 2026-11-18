@@ -155,6 +155,7 @@ class Issues::Draft < ApplicationRecord
 
   # The wizard step the author has not completed yet, :summary once the draft can be submitted.
   def first_unfinished_step
+    return :photos if photos.none?
     return :geo if geo.nil?
     return :suggestions if category.nil? && title.blank? && picked_suggestion_index.nil?
     return :category if category.nil?

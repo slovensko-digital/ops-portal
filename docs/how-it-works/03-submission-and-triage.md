@@ -51,7 +51,7 @@ The draft is kept. The header button shows "Neodoslaný podnet" while one
 exists, and `/dopyty/novy-dopyt/podnet` offers "Zobraziť neodoslaný podnet".
 That link opens the summary. A complete draft shows "Zhrnutie podnetu" with
 "Upraviť" per section and "Odoslať podnet". A draft with an unfinished step
-(`Issues::Draft#first_unfinished_step`: location, suggestions, category,
+(`Issues::Draft#first_unfinished_step`: photos, location, suggestions, category,
 details) shows "Rozpracovaný podnet" instead: the sections filled in so far,
 read-only, and "Pokračovať" to that step.
 

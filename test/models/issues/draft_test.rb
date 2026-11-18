@@ -59,6 +59,9 @@ class Issues::DraftTest < ActiveSupport::TestCase
 
   test "first unfinished step follows the wizard order" do
     draft = Issues::Draft.new(author: users(:one))
+    assert_equal :photos, draft.first_unfinished_step
+
+    draft.photos.attach(io: file_fixture("graffiti-with-geo.jpg").open, filename: "photo.jpg", content_type: "image/jpeg")
     assert_equal :geo, draft.first_unfinished_step
 
     draft.assign_attributes(latitude: 48.16, longitude: 17.05)
@@ -80,6 +83,7 @@ class Issues::DraftTest < ActiveSupport::TestCase
       author: users(:one), latitude: 48.16, longitude: 17.05, picked_suggestion_index: 0,
       title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit"
     )
+    draft.photos.attach(io: file_fixture("graffiti-with-geo.jpg").open, filename: "photo.jpg", content_type: "image/jpeg")
 
     assert_equal :category, draft.first_unfinished_step
   end
@@ -89,6 +93,7 @@ class Issues::DraftTest < ActiveSupport::TestCase
       author: users(:one), latitude: 48.16, longitude: 17.05,
       title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit"
     )
+    draft.photos.attach(io: file_fixture("graffiti-with-geo.jpg").open, filename: "photo.jpg", content_type: "image/jpeg")
 
     assert_equal :category, draft.first_unfinished_step
   end
