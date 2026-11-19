@@ -3,26 +3,27 @@ name: Deploy
 on:
   workflow_call:
     inputs:
-      environment:
-        description: GitHub environment that holds the secrets and vars
-        required: true
-        type: string
       destination:
-        description: Kamal destination (config/deploy.<destination>.yml)
-        required: true
-        type: string
-      ssh_key_secret:
-        description: Name of the secret with the SSH deploy key
+        description: Kamal destination, staging or production
         required: true
         type: string
 
 jobs:
   deploy:
-    name: Deploy to ${{ inputs.environment }}
+    name: Deploy to ${{ inputs.destination }}
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    # GitHub environment of each Kamal destination
+    environment: ${{ fromJSON('{"staging":"dev","production":"prod"}')[inputs.destination] }}
 
     steps:
+      - name: Check destination
+        if: ${{ !contains(fromJSON('["staging","production"]'), inputs.destination) }}
+        env:
+          DESTINATION: ${{ inputs.destination }}
+        run: |
+          echo "::error::Unknown destination '$DESTINATION', use staging or production"
+          exit 1
+
       - name: Checkout code
         uses: actions/checkout@v6
 
@@ -38,7 +39,8 @@ jobs:
 
       - uses: webfactory/ssh-agent@v0.10.0
         with:
-          ssh-private-key: ${{ secrets[inputs.ssh_key_secret] }}
+          # SSH key secret of each Kamal destination
+          ssh-private-key: ${{ secrets[fromJSON('{"staging":"DEV_DEPLOY_KEY","production":"OPS_PROD_DEPLOY_KEY"}')[inputs.destination]] }}
 
       - name: Run deploy command
         env:

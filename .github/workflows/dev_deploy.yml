@@ -9,7 +9,5 @@ jobs:
     name: Deploy to DEV environment
     uses: ./.github/workflows/deploy.yml
     with:
-      environment: dev
       destination: staging
-      ssh_key_secret: DEV_DEPLOY_KEY
     secrets: inherit

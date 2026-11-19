@@ -10,7 +10,5 @@ jobs:
     name: Deploy to PROD environment
     uses: ./.github/workflows/deploy.yml
     with:
-      environment: prod
       destination: production
-      ssh_key_secret: OPS_PROD_DEPLOY_KEY
     secrets: inherit
