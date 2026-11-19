@@ -4,25 +4,49 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: dev or prod
+        description: staging or production, also the Kamal destination (config/deploy.<environment>.yml)
         required: true
         type: string
 
 jobs:
-  deploy:
-    name: Deploy to ${{ inputs.environment }}
+  # Settings of each environment, the only place that maps them
+  settings:
+    name: Resolve ${{ inputs.environment }} settings
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    outputs:
+      github_environment: ${{ steps.settings.outputs.github_environment }}
+      ssh_key_secret: ${{ steps.settings.outputs.ssh_key_secret }}
 
     steps:
-      - name: Check environment
-        if: ${{ !contains(fromJSON('["dev","prod"]'), inputs.environment) }}
+      - name: Resolve settings
+        id: settings
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "::error::Unknown environment '$ENVIRONMENT', use dev or prod"
-          exit 1
+          case "$ENVIRONMENT" in
+            staging)
+              GITHUB_ENVIRONMENT=dev
+              SSH_KEY_SECRET=DEV_DEPLOY_KEY
+              ;;
+            production)
+              GITHUB_ENVIRONMENT=PROD
+              SSH_KEY_SECRET=OPS_PROD_DEPLOY_KEY
+              ;;
+            *)
+              echo "::error::Unknown environment '$ENVIRONMENT', use staging or production"
+              exit 1
+              ;;
+          esac
+          echo "github_environment=$GITHUB_ENVIRONMENT" >> "$GITHUB_OUTPUT"
+          echo "ssh_key_secret=$SSH_KEY_SECRET" >> "$GITHUB_OUTPUT"
 
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    needs: settings
+    runs-on: ubuntu-latest
+    environment: ${{ needs.settings.outputs.github_environment }}
+
+    steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
@@ -38,8 +62,7 @@ jobs:
 
       - uses: webfactory/ssh-agent@v0.10.0
         with:
-          # SSH key secret of each environment
-          ssh-private-key: ${{ secrets[fromJSON('{"dev":"DEV_DEPLOY_KEY","prod":"OPS_PROD_DEPLOY_KEY"}')[inputs.environment]] }}
+          ssh-private-key: ${{ secrets[needs.settings.outputs.ssh_key_secret] }}
 
       - name: Run deploy command
         env:
@@ -77,5 +100,4 @@ jobs:
           PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
           RAILS_LOG_LEVEL: ${{ vars.RAILS_LOG_LEVEL }}
 
-        # Kamal destination of each environment (config/deploy.<destination>.yml)
-        run: kamal deploy -d ${{ fromJSON('{"dev":"staging","prod":"production"}')[inputs.environment] }}
+        run: kamal deploy -d ${{ inputs.environment }}
