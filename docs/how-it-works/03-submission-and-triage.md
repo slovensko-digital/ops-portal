@@ -13,8 +13,10 @@ flowchart TD
   C -->|FetchAddressDetailsJob - Nominatim| D[Suggestions: AI title + category,<br/>or own title]
   D --> E[Category → Subcategory → Subtype]
   E --> F[Details: title 10-200, description 25-3500]
-  F --> G[Summary]
-  G -->|POST checks| H{checks_step valid?}
+  F --> G[Zhrnutie podnetu<br/>incomplete draft: Rozpracovaný podnet,<br/>Pokračovať to the unfinished step]
+  G -->|POST checks| G1{wizard step unfinished?<br/>no photos, location, category,<br/>title or description}
+  G1 -->|yes, e.g. summary opened earlier| G
+  G1 -->|no| H{checks_step valid?}
   H -->|municipality not supported| H1[Unsupported municipality page]
   H -->|duplicates within 500 m,<br/>same category| H2[Podnet má problém:<br/>Zobraziť podobné podnety]
   H2 -->|duplicates_shown = true,<br/>redirect to filtered list| H3[List page. User must go back via<br/>header 'Neodoslaný podnet' and submit again]
@@ -47,6 +49,16 @@ T-300302 stayed in `Incoming`, owner none, RS empty (see below).
 
 The draft is kept. The header button shows "Neodoslaný podnet" while one
 exists, and `/dopyty/novy-dopyt/podnet` offers "Zobraziť neodoslaný podnet".
+That link opens the summary. A complete draft shows "Zhrnutie podnetu" with
+"Upraviť" per section and "Odoslať podnet". A draft with an unfinished step
+(`Issues::Draft#first_unfinished_step`: photos, location, suggestions, category,
+details) shows "Rozpracovaný podnet" instead: the sections filled in so far,
+read-only, and "Pokračovať" to that step.
+
+`checks/create` and `checks/confirm` redirect to the summary ("Rozpracovaný
+podnet") when the draft is incomplete (e.g. a summary page opened earlier).
+Before, a draft without a category failed in `Issue#save!` with a 422. Turbo
+then reloaded the summary, so "Odoslať podnet" seemed to do nothing.
 
 ### Stuck in Incoming
 

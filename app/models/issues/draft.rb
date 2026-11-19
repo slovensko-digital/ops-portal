@@ -153,6 +153,21 @@ class Issues::Draft < ApplicationRecord
     save(context: :suggestions_step)
   end
 
+  # The wizard step the author has not completed yet, :summary once the draft can be submitted.
+  def first_unfinished_step
+    return :photos if photos.none?
+    return :geo if geo.nil?
+    return :suggestions if category.nil? && title.blank? && picked_suggestion_index.nil?
+    return :category if category.nil?
+    return :details if title.blank? || description.blank?
+
+    :summary
+  end
+
+  def complete?
+    first_unfinished_step == :summary
+  end
+
   def confirmable?
     !checks.nil? && checks.all? { |check| check["action"] == "confirm" }
   end
