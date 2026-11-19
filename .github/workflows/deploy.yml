@@ -3,25 +3,24 @@ name: Deploy
 on:
   workflow_call:
     inputs:
-      destination:
-        description: Kamal destination, staging or production
+      environment:
+        description: dev or prod
         required: true
         type: string
 
 jobs:
   deploy:
-    name: Deploy to ${{ inputs.destination }}
+    name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    # GitHub environment of each Kamal destination
-    environment: ${{ fromJSON('{"staging":"dev","production":"prod"}')[inputs.destination] }}
+    environment: ${{ inputs.environment }}
 
     steps:
-      - name: Check destination
-        if: ${{ !contains(fromJSON('["staging","production"]'), inputs.destination) }}
+      - name: Check environment
+        if: ${{ !contains(fromJSON('["dev","prod"]'), inputs.environment) }}
         env:
-          DESTINATION: ${{ inputs.destination }}
+          ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "::error::Unknown destination '$DESTINATION', use staging or production"
+          echo "::error::Unknown environment '$ENVIRONMENT', use dev or prod"
           exit 1
 
       - name: Checkout code
@@ -39,8 +38,8 @@ jobs:
 
       - uses: webfactory/ssh-agent@v0.10.0
         with:
-          # SSH key secret of each Kamal destination
-          ssh-private-key: ${{ secrets[fromJSON('{"staging":"DEV_DEPLOY_KEY","production":"OPS_PROD_DEPLOY_KEY"}')[inputs.destination]] }}
+          # SSH key secret of each environment
+          ssh-private-key: ${{ secrets[fromJSON('{"dev":"DEV_DEPLOY_KEY","prod":"OPS_PROD_DEPLOY_KEY"}')[inputs.environment]] }}
 
       - name: Run deploy command
         env:
@@ -78,4 +77,5 @@ jobs:
           PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
           RAILS_LOG_LEVEL: ${{ vars.RAILS_LOG_LEVEL }}
 
-        run: kamal deploy -d ${{ inputs.destination }}
+        # Kamal destination of each environment (config/deploy.<destination>.yml)
+        run: kamal deploy -d ${{ fromJSON('{"dev":"staging","prod":"production"}')[inputs.environment] }}
