@@ -51,7 +51,7 @@
 
       <div class="account-item-con">
         <div class="description">Preferované mesto alebo obec</div>
-        <div class="item-title"><%= @user.municipality&.name || '&mdash;'.html_safe %></div>
+        <div class="item-title"><%= preferred_places(@user) %></div>
       </div>
 
       <div class="account-item-con">

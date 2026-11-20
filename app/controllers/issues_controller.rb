@@ -1,9 +1,13 @@
 class IssuesController < ApplicationController
   include NormalizedParams
 
+  # Cap session storage to avoid CookieOverflow (cookie store ~4KB).
+  MAX_STORED_LOKALITA = 20
+  MAX_LOKALITA_VALUE_LENGTH = 100
+
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
-  before_action :remember_last_municipality, only: :index
+  before_action :remember_last_lokalita, only: :index
   before_action :force_responsible_subject_login, only: :show, if: -> { params.key?(:force_rs_login) }
   before_action :set_preview, only: :show # before check_show_permissions, which reads @preview
   before_action :check_show_permissions, only: :show
@@ -12,10 +16,10 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
-    elsif session[:last_municipality].present?
-      issues_path(obec: session[:last_municipality], cast: session[:last_municipality_district].presence)
-    elsif current_user.municipality
-      issues_path(obec: current_user.municipality.name)
+    elsif last_lokalita.present?
+      issues_path(lokalita: last_lokalita)
+    elsif current_user.preferred_places.any?
+      issues_path(lokalita: current_user.preferred_places)
     else
       issues_path
     end
@@ -112,14 +116,34 @@ class IssuesController < ApplicationController
 
   private
 
-  def remember_last_municipality
-    if search_params[:obec].present?
-      session[:last_municipality] = search_params[:obec]
-      session[:last_municipality_district] = search_params[:cast]
+  def remember_last_lokalita
+    lokalita = sanitized_lokalita(search_params[:lokalita]).first(MAX_STORED_LOKALITA).presence
+
+    if lokalita.present?
+      session[:last_lokalita] = lokalita
     else
-      session.delete(:last_municipality)
-      session.delete(:last_municipality_district)
+      session.delete(:last_lokalita)
     end
+  end
+
+  # Legacy ?obec=&cast= URLs predate ?lokalita=; map them onto the new format.
+  def lokalita_from_legacy_params
+    obce = Array(params[:obec]).filter_map { |obec| obec.strip.presence if obec.is_a?(String) }
+    casti = Array(params[:cast]).filter_map { |cast| cast.strip.presence if cast.is_a?(String) }
+    return if obce.empty?
+    return obce if casti.empty?
+
+    obce.product(casti).map { |obec, cast| "#{obec} - #{cast}" }
+  end
+
+  def last_lokalita
+    sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA).presence
+  end
+
+  def sanitized_lokalita(value)
+    Array(value).filter_map do |location|
+      location.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip.presence if location.is_a?(String)
+    end.uniq
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -162,9 +186,11 @@ class IssuesController < ApplicationController
 
   def search_params
     @search_params ||= begin
-      permitted = search_engine.required_params + [ :tab ]
+       permitted = search_engine.required_params + [ :tab ]
 
-      normalize_array_params(params, permitted).permit(*permitted).to_h
+       sp = normalize_array_params(params, permitted).permit(*permitted).to_h
+       sp[:lokalita] = sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params).presence
+       sp
     end
   end
 
@@ -277,33 +303,19 @@ class IssuesController < ApplicationController
           end
         ),
 
-        SearchEngine::Controls::Autocomplete.new(
-          param_name: :obec,
-          label: "Obec",
-          items: -> { Municipality.active.where(active_on_old_portal: false).order(Arel.sql("name COLLATE unicode")).pluck(:name) },
-          filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = Municipality.active.where(name: params[:obec]).pluck(:id)
-            scope.where(municipality_id: ids)
-          end
-        ),
-
-        SearchEngine::Controls::Dropdown.new(
-          param_name: :cast,
-          label: "Mestská časť",
-          items: ->(params) do
-            return [] unless params[:obec].present?
-
-            MunicipalityDistrict.joins(:municipality)
-              .where(municipalities: { name: params[:obec], active: true })
-              .order(Arel.sql("municipality_districts.name COLLATE unicode"))
-              .pluck(:name)
+        SearchEngine::Controls::TreeAutocomplete.new(
+          param_name: :lokalita,
+          label: "Obec / Mestská časť",
+          multiple: true,
+          filter_label: ->(value) do
+            if value.to_s.start_with?("-")
+              "Okrem: #{value.delete_prefix("-")}"
+            else
+              value.to_s.split(" - ", 2).last
+            end
           end,
-          filter: ->(scope, params) do
-            # push down ids as constants so optimizer can use stats
-            ids = MunicipalityDistrict.where(name: params[:cast]).pluck(:id)
-            scope.where(municipality_district_id: ids)
-          end
+          items: ->(params) { SearchEngine::LokalitaTree.new(params[:lokalita]).items },
+          filter: ->(scope, params) { SearchEngine::Filters::Locality.new(params[:lokalita]).apply(scope) }
         ),
 
         SearchEngine::Controls::Autocomplete.new(

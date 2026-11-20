@@ -6,7 +6,7 @@ def seed_user(email:, firstname:, lastname:, municipality_name: nil, type: User:
     type: type.name,
     firstname: firstname,
     lastname: lastname,
-    municipality: municipality_name && Municipality.find_by!(name: municipality_name),
+    municipalities: municipality_name ? [ Municipality.find_by!(name: municipality_name) ] : [],
     status: :verified,
     onboarded: true,
     gdpr_accepted: true,

@@ -24,6 +24,21 @@ class Issues::SearchTest < ApplicationSystemTestCase
     assert_no_text @bratislava.title
   end
 
+  test "filter by lokalita tree combines municipalities, districts and exclusions" do
+    petrzalka_issue = issues(:two)
+    petrzalka_issue.update_columns(municipality_district_id: municipality_districts(:Petržalka).id)
+
+    ruzinov_issue = issues(:legacy_discussion_closed)
+    ruzinov_issue.update_columns(municipality_district_id: municipality_districts(:Ružinov).id)
+
+    visit issues_path(lokalita: [ "Nitra", "Bratislava - Petržalka", "-Bratislava - Ružinov" ])
+
+    assert_text @nitra.title
+    assert_text petrzalka_issue.title
+    assert_no_text ruzinov_issue.title
+    assert_no_text @private.title
+  end
+
   test "filter by responsible subject and by state" do
     visit issues_path(zodpovedny: "BVS")
     assert_text @nitra.title

@@ -1,5 +1,6 @@
 <div class="form-item-wrapper">
-  <label for="<%= autocomplete.control.label %>"><%= autocomplete.control.label %></label>
+  <% filter_id = "filter-#{autocomplete.control.label.to_s.parameterize}" %>
+  <label for="<%= filter_id %>"><%= autocomplete.control.label %></label>
 
   <div class="autocomplete-wrapper"
        data-controller="autocomplete toggle"
@@ -11,7 +12,7 @@
     <input
       data-autocomplete-target="input"
       placeholder="<%= autocomplete.items.select(&:selected?).map(&:label).join(', ') %>"
-      id="<%= autocomplete.control.label %>"
+      id="<%= filter_id %>"
       autocomplete="off" />
 
     <ul class="dropdown-list none"
