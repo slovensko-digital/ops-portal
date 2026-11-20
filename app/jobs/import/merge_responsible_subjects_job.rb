@@ -6,6 +6,8 @@ class Import::MergeResponsibleSubjectsJob < ApplicationJob
 
     ResponsibleSubjects::User.where(responsible_subject_id: other_responsible_subjects_ids).update_all(responsible_subject_id: main_responsible_subject)
 
+    User.where(responsible_subject_id: other_responsible_subjects_ids).update_all(responsible_subject_id: main_responsible_subject.id)
+
     ResponsibleSubjects::OrganizationUnit.where(responsible_subject_id: other_responsible_subjects_ids).update_all(responsible_subject_id: main_responsible_subject)
 
     ResponsibleSubject.where(id: other_responsible_subjects_ids).update_all(active: false)
