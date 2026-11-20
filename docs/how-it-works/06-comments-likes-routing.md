@@ -29,7 +29,9 @@ Consequences:
   window isn't reflected in that email.
 - Triage-side edits of an article body never reach the portal. Only the
   internal/public toggle syncs (`UpdatePortalActivityFromTriageJob` sets
-  `hidden`).
+  `hidden`). Triage sends `article.updated` for articles in every ticket.
+  If the portal doesn't know the article, the job imports it, but only
+  when the ticket is a portal ticket. Articles in other tickets are skipped.
 
 ## Length limit
 
