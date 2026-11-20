@@ -51,8 +51,8 @@
     <div class="profile-suggestion-con">
       <div class="profil-nav-con">
         <ul>
-          <li><%= link_to "Moje podnety", profile_path, class: class_names("button button-transparent", active: @tab == :my) %></li>
-          <li><%= link_to "Sledované podnety", watched_issues_profile_path, class: class_names("button button-transparent", active: @tab == :watched) %></li>
+          <li><%= link_to "Moje podnety", issues_path(zobrazit: "Moje dopyty"), class: "button button-transparent", data: { turbo_frame: "_top" } %></li>
+          <li><%= link_to "Sledované podnety", issues_path(zobrazit: "Sledované dopyty"), class: "button button-transparent", data: { turbo_frame: "_top" } %></li>
         </ul>
       </div>
       <% if @issues.length > 0 %>
