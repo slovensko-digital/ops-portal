@@ -72,19 +72,36 @@ module ResponsibleSubjects::TriageSetup
     @log.call("Triage: trigger #{trigger_name}")
   end
 
+  # The same condition and perform as a trigger saved in the Triage admin UI (expert mode): a new portal ticket from
+  # the municipality, or a ticket whose responsible subject is changed to this one, goes to the group and the agent.
   def trigger_attributes(group_id, responsible_subject)
     {
       name: trigger_name,
       condition: {
-        "ticket.process_type" => { "operator" => "is", "value" => [ "portal_issue_verification", "portal_issue_triage" ] },
-        "ticket.origin" => { "operator" => "is", "value" => [ "portal" ] },
-        # Zammad matches the action only as a string, the trigger never fires with [ "create" ]
-        "ticket.action" => { "operator" => "is", "value" => "create" },
-        "ticket.address_municipality" => { "operator" => "is", "value" => [ name ] }
+        "operator" => "OR",
+        "conditions" => [
+          {
+            "operator" => "AND",
+            "conditions" => [
+              { "name" => "ticket.process_type", "operator" => "is", "value" => [ "portal_issue_verification", "portal_issue_triage" ] },
+              # Zammad matches the action only as a string, the trigger never fires with [ "create" ]
+              { "name" => "ticket.action", "operator" => "is", "value" => "create" },
+              { "name" => "ticket.origin", "operator" => "is", "value" => [ "portal" ] },
+              { "name" => "ticket.address_municipality", "operator" => "is", "value" => address_municipality_values(responsible_subject.municipality) }
+            ]
+          },
+          {
+            "operator" => "AND",
+            "conditions" => [
+              { "name" => "ticket.responsible_subject", "operator" => "has changed", "value" => [] },
+              { "name" => "ticket.responsible_subject", "operator" => "is", "value" => [ { "label" => name, "value" => responsible_subject.id } ] }
+            ]
+          }
+        ]
       },
       perform: {
-        "ticket.group_id" => { "value" => group_id },
-        "ticket.owner_id" => { "pre_condition" => "specific", "value" => agent.id },
+        "ticket.group_id" => { "value" => group_id.to_s },
+        "ticket.owner_id" => { "pre_condition" => "specific", "value" => agent.id.to_s, "value_completion" => "#{agent_name} <#{agent.email}>" },
         "ticket.responsible_subject" => { "value" => { "value" => responsible_subject.id, "label" => name } }
       },
       disable_notification: true,
@@ -99,11 +116,34 @@ module ResponsibleSubjects::TriageSetup
     @client.get_triggers.select { |trigger| trigger_for_municipality?(trigger) }
   end
 
+  # A ticket of a city with districts has "City::District" in address_municipality (ZammadApiClient#build_ticket_municipality)
+  # and Zammad's "is" matches the exact value, a tree_select parent does not match its children. Plain "City" is for
+  # an address outside every district boundary.
+  def address_municipality_values(municipality)
+    [ name, *municipality.municipality_districts.alphabetical.map { |district| "#{name}::#{district.name}" } ]
+  end
+
   # trigger names end with the agent's name, so "... Nižná Myšľa Jozef Mak" cannot be told from
-  # a Nižná trigger by its name, its condition on the municipality can
+  # a Nižná trigger by its name, its condition on the municipality ("Nižná" or "Nižná::<district>") can
   def trigger_for_municipality?(trigger)
     (agent.present? && trigger["name"] == trigger_name) ||
-      Array(trigger.dig("condition", "ticket.address_municipality", "value")).include?(name)
+      trigger_municipality_values(trigger["condition"]).any? { |value| value == name || value.to_s.start_with?("#{name}::") }
+  end
+
+  def trigger_municipality_values(condition)
+    condition_leaves(condition)
+      .select { |field, spec| field == "ticket.address_municipality" && spec.is_a?(Hash) && spec["operator"] == "is" }
+      .flat_map { |_field, spec| Array(spec["value"]) }
+  end
+
+  # [field, spec] pairs of a condition in either format Zammad stores: flat { "ticket.x" => spec } or, saved from the
+  # admin UI in expert mode, nested { "operator" => "OR", "conditions" => [ { "name" => "ticket.x", ... }, ... ] }
+  def condition_leaves(condition)
+    return [] unless condition.is_a?(Hash)
+    return Array(condition["conditions"]).flat_map { |child| condition_leaves(child) } if condition.key?("conditions")
+    return [ [ condition["name"], condition ] ] if condition.key?("name")
+
+    condition.to_a
   end
 
   def agent_name

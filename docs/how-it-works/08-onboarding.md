@@ -24,7 +24,7 @@ flowchart TD
   B --> C[Triage: group NAME, email podnety@triaz…,<br/>group added to Portal Tech Account]
   C --> D[Triage: organization NAME]
   D --> E[Triage: volunteer gets group NAME]
-  E --> F[Triage: trigger 700 - Priradenie podnetu skupine NAME Agent<br/>address_municipality is NAME → group, owner, RS]
+  E --> F[Triage: trigger 700 - Priradenie podnetu skupine NAME Agent<br/>new portal ticket with address_municipality NAME or NAME::district,<br/>or RS changed to NAME → group, owner, RS]
   F --> G[Triage: users. First = Externý zodpovedný subjekt, others Customer,<br/>org NAME → UpdatePortalUserFromTriageJob → portal User::ResponsibleSubject]
   G --> H[Portal tx: municipality + RS active]
 ```
@@ -44,8 +44,6 @@ What it doesn't handle:
   inactive municipality, and Triage has a partial setup. A re-run fails
   validation on the already-created group or organization. The cleanup is
   manual.
-- City parts (`Mesto::Časť`). The 700 condition is an exact match on the
-  municipality name.
 - PRO setup, see [`activate_pro`](#pro-municipality-responsible_subjectsactivate_pro) and
   [`upgrade_to_pro`](#basic-to-pro-responsible_subjectsupgrade_to_pro).
 
