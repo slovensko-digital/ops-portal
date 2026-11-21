@@ -29,10 +29,16 @@ class Connector::ProcessBackofficeArticleVisibilityJob < ApplicationJob
   # the boundary matches the backoffice guard (allowed while
   # created_at + 24h >= now).
   def within_visibility_window?(article)
-    return false unless article.created_at
+    created_at = parse_time(article.created_at)
+    return false unless created_at
 
-    toggle_time = article.updated_at || Time.current
-    toggle_time <= article.created_at + VISIBILITY_WINDOW
+    toggle_time = parse_time(article.updated_at) || Time.current
+    toggle_time <= created_at + VISIBILITY_WINDOW
+  end
+
+  # the zammad api returns timestamps as iso8601 strings
+  def parse_time(value)
+    value.is_a?(String) ? Time.zone.parse(value) : value
   end
 
   # triage owns the article visibility: flipping it there lets the existing

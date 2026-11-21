@@ -14,7 +14,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
   end
 
   def backoffice_article(internal:, created_at: 1.hour.ago, updated_at: Time.current)
-    OpenStruct.new(internal: internal, created_at: created_at, updated_at: updated_at)
+    # the zammad api returns timestamps as iso8601 strings
+    OpenStruct.new(internal: internal, created_at: created_at&.utc&.iso8601(3), updated_at: updated_at&.utc&.iso8601(3))
   end
 
   def backoffice_client(article, ticket_id: "123", article_id: "9")
