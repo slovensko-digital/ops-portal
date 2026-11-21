@@ -69,6 +69,13 @@ class Connector::Backoffice::WebhooksControllerTest < ActionDispatch::Integratio
     assert_response :no_content
   end
 
+  test "article.updated processes the backoffice article visibility change" do
+    assert_enqueued_with(job: Connector::ProcessBackofficeArticleVisibilityJob, args: [ @tenant, "42", "7" ]) do
+      post_signed payload("article.updated", ticket_id: "42", article_id: "7")
+    end
+    assert_response :no_content
+  end
+
   test "article.created without article is a bad request" do
     assert_no_enqueued_jobs do
       post_signed payload("article.created", ticket_id: "42")
