@@ -31,8 +31,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
 
     Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
       @tenant, "123", "9",
-      backoffice_client: backoffice_client(backoffice_article(internal: true)),
-      triage_client: triage_client
+      zammad_api_client: backoffice_client(backoffice_article(internal: true)),
+      triage_zammad_client: triage_client
     )
 
     assert_mock triage_client
@@ -51,8 +51,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
 
     Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
       @tenant, "123", "9",
-      backoffice_client: backoffice_client(backoffice_article(internal: true)),
-      triage_client: triage_client
+      zammad_api_client: backoffice_client(backoffice_article(internal: true)),
+      triage_zammad_client: triage_client
     )
 
     assert_mock triage_client
@@ -67,8 +67,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
 
     Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
       @tenant, "123", "9",
-      backoffice_client: backoffice_client(backoffice_article(internal: false)),
-      triage_client: triage_client
+      zammad_api_client: backoffice_client(backoffice_article(internal: false)),
+      triage_zammad_client: triage_client
     )
 
     assert_mock triage_client
@@ -82,8 +82,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     assert_enqueued_with(job: Connector::SendNewActivityToTriageFromBackofficeJob, args: [ @tenant, "123", "9" ]) do
       Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
         @tenant, "123", "9",
-        backoffice_client: backoffice_client(backoffice_article(internal: false)),
-        triage_client: Minitest::Mock.new
+        zammad_api_client: backoffice_client(backoffice_article(internal: false)),
+        triage_zammad_client: Minitest::Mock.new
       )
     end
   end
@@ -96,8 +96,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
 
     Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
       @tenant, "123", "9",
-      backoffice_client: backoffice_client(backoffice_article(internal: true, created_at: created_at, updated_at: created_at + 24.hours)),
-      triage_client: triage_client
+      zammad_api_client: backoffice_client(backoffice_article(internal: true, created_at: created_at, updated_at: created_at + 24.hours)),
+      triage_zammad_client: triage_client
     )
 
     assert_mock triage_client
@@ -108,8 +108,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
 
     Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
       @tenant, "123", "9",
-      backoffice_client: backoffice_client(backoffice_article(internal: true, created_at: 25.hours.ago, updated_at: 1.minute.ago)),
-      triage_client: triage_client
+      zammad_api_client: backoffice_client(backoffice_article(internal: true, created_at: 25.hours.ago, updated_at: 1.minute.ago)),
+      triage_zammad_client: triage_client
     )
 
     assert_mock triage_client
@@ -122,8 +122,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     assert_no_enqueued_jobs do
       Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
         @tenant, "123", "999",
-        backoffice_client: client,
-        triage_client: Minitest::Mock.new
+        zammad_api_client: client,
+        triage_zammad_client: Minitest::Mock.new
       )
     end
 
@@ -134,8 +134,8 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     assert_no_enqueued_jobs do
       Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
         @tenant, "123", "999",
-        backoffice_client: backoffice_client(backoffice_article(internal: false), article_id: "999"),
-        triage_client: Minitest::Mock.new
+        zammad_api_client: backoffice_client(backoffice_article(internal: false), article_id: "999"),
+        triage_zammad_client: Minitest::Mock.new
       )
     end
   end
