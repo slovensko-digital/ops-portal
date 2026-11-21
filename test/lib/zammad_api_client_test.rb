@@ -69,6 +69,7 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     assert_equal responsible_subjects(:two), ticket[:previous_responsible_subject]
     assert_equal users(:one), ticket[:author]
     assert_equal({ firstname: "Jozef", lastname: "Mokry", uuid: users(:one).uuid }, ticket[:author_response])
+    assert_equal "http://localhost:3000/podnety/1?nahlad=preview-token", ticket[:portal_preview_url]
     assert_not_requested :get, zammad_url("ticket_articles/by_ticket/42"), query: hash_including({})
   end
 
@@ -196,6 +197,29 @@ class ZammadApiClientTest < ActiveSupport::TestCase
     stub_article(sender: "Agent", created_by_id: 3, origin_by_id: nil, body: "[[ops portal]] Opravené. [[vyriešené]] ")
 
     assert_equal "Opravené.", @client.get_article(42, 110)[:body]
+  end
+
+  test "get_article drops the empty lines left after the triage tags" do
+    body = "<div>[[ops portal]]<br>\n</div><div>[[pre zodpovedny subjekt]]<br>\n</div>" \
+      "<div><br></div><div>Dobrý deň,</div><div><br></div><div>podnet uzatvárame.</div><p>&nbsp;</p>"
+    stub_article(sender: "Agent", created_by_id: 3, origin_by_id: nil, body: body, content_type: "text/html")
+
+    assert_equal "<div>Dobrý deň,</div><div><br></div><div>podnet uzatvárame.</div>", @client.get_article(42, 110)[:body]
+  end
+
+  test "get_article drops the line break at the start of the text after the triage tags" do
+    body = "<div>[[ops portal]]</div><div>[[pre zodpovedny subjekt]]</div><div></div>\n\n" \
+      "<div><br>Dobrý deň, <br>podnet bol opätovne preposlaný samospráve.<br>Admin<br></div>"
+    stub_article(sender: "Agent", created_by_id: 3, origin_by_id: nil, body: body, content_type: "text/html")
+
+    assert_equal "<div>Dobrý deň, <br>podnet bol opätovne preposlaný samospráve.<br>Admin</div>", @client.get_article(42, 110)[:body]
+  end
+
+  test "get_article keeps a non-breaking space that is not an empty line" do
+    body = "<div>&nbsp;Dobrý deň, podnet bol poslaný na vybavenie.&nbsp;</div>"
+    stub_article(sender: "Customer", type: "web", body: body, content_type: "text/html")
+
+    assert_equal body, @client.get_article(42, 110)[:body]
   end
 
   # Article classification
@@ -343,6 +367,8 @@ class ZammadApiClientTest < ActiveSupport::TestCase
       "category" => "Zeleň a životné prostredie",
       "responsible_subject" => { "label" => "MÚ Staré Mesto", "value" => responsible_subjects(:one).id },
       "origin" => "portal",
+      "portal_url" => "http://localhost:3000/dopyty/#{issue.id}",
+      "portal_preview_url" => IssuePreviewSigner.url(issue),
       "article" => hash_including(
         "body" => issue.description,
         "sender" => "Customer",

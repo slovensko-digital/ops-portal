@@ -4,6 +4,7 @@
 #
 #  id                     :bigint           not null, primary key
 #  responsible_subject_id :bigint
+#  active                 :boolean          default(TRUE), not null
 #  api_token_public_key   :string
 #  name                   :string
 #  url                    :string
@@ -13,6 +14,8 @@
 #
 class Client < ApplicationRecord
   belongs_to :responsible_subject, optional: true
+
+  scope :active, -> { where(active: true) }
 
   encrypts :webhook_private_key
 end

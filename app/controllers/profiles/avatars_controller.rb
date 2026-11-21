@@ -8,6 +8,11 @@ class Profiles::AvatarsController < ApplicationController
     end
   end
 
+  def destroy
+    current_user.avatar.purge_later
+    redirect_to edit_profile_path, notice: "Fotka bola odstránená."
+  end
+
   private
 
   def avatar_params

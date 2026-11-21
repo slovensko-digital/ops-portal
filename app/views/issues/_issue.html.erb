@@ -30,7 +30,7 @@
         <%= issue_state_badge(issue) %>
       <% end %>
       <div class="icon-con">
-        <% if issue.likes_count > 0 %>
+        <% if show_issue_likes_count?(issue) %>
           <div class="icon-block">
             <div class="icon-like">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

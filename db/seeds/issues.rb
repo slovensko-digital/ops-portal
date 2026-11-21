@@ -29,7 +29,7 @@ ISSUE_TEMPLATES = [
   { category: "Komunikácie", subcategory: "schody", subtype: "poškodená", photo: "sidewalk",
     titles: [ "Poškodené schody k zastávke MHD" ],
     descriptions: [ "Betónové schody pri ulici %{street} sú popraskané, chýbajú kusy schodov a zábradlie sa kýve." ] },
-  { category: "Osvetlenie", subcategory: "osvetlenie", subtype: "nefunknčné", photo: "streetlight",
+  { category: "Osvetlenie", subcategory: "osvetlenie", subtype: "nefunkčné", photo: "streetlight",
     titles: [ "Nesvieti verejné osvetlenie na ulici %{street}", "Nefunkčná lampa pri prechode pre chodcov" ],
     descriptions: [ "Už niekoľko dní nesvieti pouličná lampa, celý úsek ulice %{street} je večer úplne tmavý a nebezpečný pre chodcov." ] },
   { category: "Osvetlenie", subcategory: "osvetlenie", subtype: "poškodený stĺp", photo: "streetlight",

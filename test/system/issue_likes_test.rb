@@ -21,6 +21,14 @@ class IssueLikesTest < ApplicationSystemTestCase
     assert_equal 0, issue.reload.likes_count
   end
 
+  test "author does not see the like button on an issue in a private state" do
+    login_as users(:one)
+    visit issue_path(issues(:one))
+
+    assert_selector ".share-buttons .button-edit"
+    assert_no_selector ".share-buttons .button-like"
+  end
+
   test "anonymous user is asked to create a profile" do
     visit issue_path(issues(:two))
 

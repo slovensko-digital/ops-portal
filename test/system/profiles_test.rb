@@ -104,4 +104,26 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_text "Profilová fotka môže byť iba obrázok."
     assert_not user.reload.avatar.attached?
   end
+
+  test "citizen user can remove profile picture" do
+    user = users(:one)
+    user.avatar.attach(io: file_fixture("avatar.png").open, filename: "avatar.png", content_type: "image/png")
+    login_as(user)
+
+    visit edit_profile_path
+    accept_confirm { click_button "Odstrániť fotku" }
+
+    assert_text "Fotka bola odstránená."
+    assert_no_button "Odstrániť fotku"
+    assert_not user.reload.avatar.attached?
+  end
+
+  test "citizen user without profile picture does not see the remove button" do
+    login_as(users(:one))
+
+    visit edit_profile_path
+
+    assert_selector "h1", text: "Osobné údaje"
+    assert_no_button "Odstrániť fotku"
+  end
 end

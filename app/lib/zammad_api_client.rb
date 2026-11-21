@@ -18,6 +18,13 @@ class ZammadApiClient
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
   MARKED_AS_RESOLVED_TAGS = [ "[[vyriesene]]", "[[vyriešené]]", "[[vyrieseny]]", "[[vyriešený]]" ]
   REFERRED_TAGS = [ "[[odstupene]]", "[[odstúpené]]", "[[odstupeny]]", "[[odstúpený]]" ]
+  # a tag on its own line (e.g. from the ::ops / ::zodpovedny text modules) leaves an empty <div><br></div> behind
+  EMPTY_LINE = %r{\s|<br\s*/?>|<(div|p)\b[^>]*>(?:\s|&nbsp;|<br\s*/?>)*</\1>}i
+  LEADING_EMPTY_LINES = /\A(?:#{EMPTY_LINE})+/
+  TRAILING_EMPTY_LINES = /(?:#{EMPTY_LINE})+\z/
+  # line breaks at the start of the first line or the end of the last one, e.g. <div><br>Dobrý deň</div>
+  LEADING_BREAKS = %r{\A(<(?:div|p)\b[^>]*>)(?:\s|&nbsp;)*<br\s*/?>(?:\s|&nbsp;|<br\s*/?>)*}i
+  TRAILING_BREAKS = %r{(?:\s|&nbsp;|<br\s*/?>)*<br\s*/?>(?:\s|&nbsp;)*(</(?:div|p)>)\z}i
   AUTOMATED_EMAIL_SENDER_PATTERNS = [
     /\b(?:auto(?:mated)?[-_. ]?reply|bounce|do[-_. ]?not[-_. ]?reply|mailer-daemon|no[-_. ]?reply|postmaster)@/i
   ]
@@ -148,6 +155,7 @@ class ZammadApiClient
       state: state,
       ops_state: ops_state,
       portal_url: Rails.application.routes.url_helpers.issue_url(issue),
+      portal_preview_url: IssuePreviewSigner.url(issue),
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: issue.responsible_subject&.then { |s|
         { "label" => s.subject_name, "value" => s.id }
@@ -623,6 +631,19 @@ class ZammadApiClient
     @client.organization.create(name: name, shared: false, domain_assignment: false, vip: false, active: true).id
   end
 
+  def get_organization(organization_id)
+    raw_api_request(:get, "organizations/#{organization_id}")
+  end
+
+  # Zammad refuses while users or tickets still belong to the organization
+  def delete_organization!(organization_id)
+    raw_api_request(:delete, "organizations/#{organization_id}")
+  end
+
+  def update_user!(user_id, attributes)
+    raw_api_request(:put, "users/#{user_id}", attributes)
+  end
+
   def find_user_by_email(email)
     @client.user.search(query: email).page(1, 100) { }.find { |user| user.email.to_s.casecmp?(email) }
   end
@@ -794,6 +815,7 @@ class ZammadApiClient
       address_house_number: ticket.address_house_number,
       likes_count: ticket.likes_count,
       portal_url: ticket.portal_url,
+      portal_preview_url: ticket.portal_preview_url,
       created_at: ticket.created_at,
       updated_at: ticket.updated_at
     }
@@ -864,7 +886,10 @@ class ZammadApiClient
 
   def strip_tags_from_article_body(body)
     tags = MARKED_AS_RESOLVED_TAGS + REFERRED_TAGS + [ RESPONSIBLE_SUBJECT_ARTICLE_TAG, OPS_PORTAL_ARTICLE_TAG ]
-    body.gsub(Regexp.union(tags), "").strip
+    body.gsub(Regexp.union(tags), "")
+      .sub(LEADING_EMPTY_LINES, "").sub(TRAILING_EMPTY_LINES, "")
+      .sub(LEADING_BREAKS, "\\1").sub(TRAILING_BREAKS, "\\1")
+      .strip
   end
 
   def get_article_type(article, process_type)

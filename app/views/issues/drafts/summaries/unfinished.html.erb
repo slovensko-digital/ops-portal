@@ -1,0 +1,10 @@
+<%= content_for(:title, 'Rozpracovaný podnet') %>
+<section class="report">
+  <h1>Rozpracovaný podnet</h1>
+
+  <div class="report-suggestion-description">Pokračujte na doplnenie chýbajúcich údajov.</div>
+
+  <%= render "sections", draft: @draft, editable: false %>
+
+  <%= link_to "Pokračovať", unfinished_step_issues_draft_path(@draft), class: "button" %>
+</section>

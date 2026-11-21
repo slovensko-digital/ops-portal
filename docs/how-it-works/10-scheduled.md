@@ -10,7 +10,9 @@
 
 There is no portal cron for reminders, auto-close or reconciliation with
 Triage. A failed sync is retried 5 times (`ApplicationJob`) and then sits in
-GoodJob as discarded (`/admin/good_job`). Nothing alerts on it.
+GoodJob as discarded (`/admin/good_job`). Every discarded job (retries
+used up, `discard_on`, or an error with no handler) is reported to Rollbar
+by `ApplicationJob`'s `after_discard`; nothing re-syncs it.
 
 ## Triage (Zammad schedulers, `ops-triage-zammad/lib/tasks/ops/triage.rake`)
 
