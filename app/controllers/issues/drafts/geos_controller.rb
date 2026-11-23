@@ -3,7 +3,9 @@ class Issues::Drafts::GeosController < ApplicationController
   include Issues::DraftScoped
 
   def show
-    @draft.load_geo_from_exif(@draft.photos.first) unless @draft.geo.present?
+    photo = @draft.photos.first
+    # the author may have removed every photo, e.g. by going back from this step
+    @draft.load_geo_from_exif(photo) if @draft.geo.nil? && photo
   end
 
   def update

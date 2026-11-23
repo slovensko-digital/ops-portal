@@ -39,6 +39,21 @@ mails off on GET).
 | verify login change | `/verify-login-change?key=` (to the new address) | |
 | email auth (magic link, RS login) | `/email-auth?key=` → confirm page → `session[:login_redirect]` | 10 min |
 
+## Portal sender and SMTP
+
+Both portal mailers send from `NOTIFICATION_SENDER_EMAIL`, set per destination
+in `config/deploy.<destination>.yml`. The SMTP login is separate, because on
+Amazon SES it is not an email address:
+
+| Env | Where | Default |
+|---|---|---|
+| `NOTIFICATION_SMTP_SERVER`, `NOTIFICATION_SMTP_PORT` | GitHub environment variables | `smtp.m1.websupport.sk`, `587` |
+| `NOTIFICATION_SMTP_USERNAME` | GitHub environment variable | `NOTIFICATION_SENDER_EMAIL` |
+| `NOTIFICATION_SMTP_PASSWORD` | GitHub environment secret | none |
+
+The change takes effect on the next deploy. SES only accepts a sender its
+SMTP user is allowed to send from.
+
 ## Triage → responsible subject (basic)
 
 Sender: the group's email address (`podnety@triaz.odkazprestarostu.sk`).
@@ -53,7 +68,7 @@ organization whose name equals the ticket's RS label. This goes through the
 | komentáre z portálu | public Customer article (not email) on R | `?force_rs_login` |
 | komentáre z triáže | public agent article with `[[pre zodpovedny subjekt]]` | `?force_rs_login` |
 | nová verejná pochvala | praise → resolved | `portal_url` **(observed)** |
-| nová neverejná pochvala | praise → unresolved | `portal_url` |
+| nová neverejná pochvala | praise → unresolved | none: the praise is private, so the RS would get a 404 |
 
 Every RS email says the RS may reply by email. The reply goes through the
 postmaster filter (see [04](04-resolution.md)).

@@ -55,6 +55,21 @@ class Connector::WebhooksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "webhook for an unknown or inactive tenant is not found" do
+    signature = generate_hmac_signature(@webhook_payload, @tenant.ops_webhook_public_key, @timestamp, @hook_id)
+    headers = { "Content-Type" => "application/json", "webhook-timestamp" => @timestamp, "webhook-id" => @hook_id, "webhook-signature" => signature }
+    unknown_payload = JSON.parse(@webhook_payload).deep_merge("data" => { "subject_id" => 0 }).to_json
+
+    assert_no_enqueued_jobs do
+      post connector_webhook_url, params: unknown_payload, headers: headers
+      assert_response :not_found
+
+      @tenant.inactive!
+      post connector_webhook_url, params: @webhook_payload, headers: headers
+      assert_response :not_found
+    end
+  end
+
   test "webhook should handle issue_created event correctly" do
     payload = {
       type: "issue.created",

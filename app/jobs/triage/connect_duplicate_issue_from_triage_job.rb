@@ -6,7 +6,8 @@ class Triage::ConnectDuplicateIssueFromTriageJob < ApplicationJob
     parent_ticket_ids = @triage_zammad_client.get_ticket_resolution_parent_links(ticket[:triage_identifier])
     valid_duplicate = valid_duplicate?(parent_ticket_ids, issue)
     ticket[:ops_state] = issue.state unless valid_duplicate
-    Triage::UpdatePortalIssueFromTriageJob.perform_now(ticket)
+    # perform, not perform_now: its retry would swallow the error and the duplicate would be resolved anyway
+    Triage::UpdatePortalIssueFromTriageJob.new.perform(ticket)
 
     return if issue.state.key == "duplicate"
 

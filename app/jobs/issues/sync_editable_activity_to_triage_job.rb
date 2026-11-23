@@ -8,8 +8,8 @@ class Issues::SyncEditableActivityToTriageJob < ApplicationJob
     end
 
     # moderate before syncing so a hidden comment reaches triage as internal;
-    # a failed moderation is discarded and does not block the sync
-    Issues::ModerateCommentJob.perform_now(activity_object) if activity_object.is_a?(Issues::UserComment)
+    # a failed moderation is rescued inside the job and does not block the sync
+    Issues::ModerateCommentJob.new.perform(activity_object) if activity_object.is_a?(Issues::UserComment)
 
     sync_job.perform_later(issue: activity_object.issue, activity_object: activity_object)
   end

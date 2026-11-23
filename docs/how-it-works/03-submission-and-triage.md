@@ -13,8 +13,10 @@ flowchart TD
   C -->|FetchAddressDetailsJob - Nominatim| D[Suggestions: AI title + category,<br/>or own title]
   D --> E[Category → Subcategory → Subtype]
   E --> F[Details: title 10-200, description 25-3500]
-  F --> G[Summary]
-  G -->|POST checks| H{checks_step valid?}
+  F --> G[Zhrnutie podnetu<br/>incomplete draft: Rozpracovaný podnet,<br/>Pokračovať to the unfinished step]
+  G -->|POST checks| G1{wizard step unfinished?<br/>no photos, location, category,<br/>title or description}
+  G1 -->|yes, e.g. summary opened earlier| G
+  G1 -->|no| H{checks_step valid?}
   H -->|municipality not supported| H1[Unsupported municipality page]
   H -->|duplicates within 500 m,<br/>same category| H2[Podnet má problém:<br/>Zobraziť podobné podnety]
   H2 -->|duplicates_shown = true,<br/>redirect to filtered list| H3[List page. User must go back via<br/>header 'Neodoslaný podnet' and submit again]
@@ -34,7 +36,7 @@ sequenceDiagram
   participant P as Portal
   participant TZ as Triage
   P->>TZ: SyncIssueToTriageJob: find/create customer ops-user-<id> (Portal User)
-  P->>TZ: create ticket T-<id>: group Incoming, process_type portal_issue_triage, ops_state waiting,<br/>address, category, portal_url, first article = description + photos
+  P->>TZ: create ticket T-<id>: group Incoming, process_type portal_issue_triage, ops_state waiting,<br/>address, category, portal_url, portal_preview_url, first article = description + photos
   P->>P: save triage_external_id, SyncIssueActivitiesToTriageJob (nothing yet)
   TZ->>TZ: 700 rule for the municipality (if any): group, owner, RS
   TZ->>TZ: 900: ops_state_changed_at
@@ -47,6 +49,16 @@ T-300302 stayed in `Incoming`, owner none, RS empty (see below).
 
 The draft is kept. The header button shows "Neodoslaný podnet" while one
 exists, and `/dopyty/novy-dopyt/podnet` offers "Zobraziť neodoslaný podnet".
+That link opens the summary. A complete draft shows "Zhrnutie podnetu" with
+"Upraviť" per section and "Odoslať podnet". A draft with an unfinished step
+(`Issues::Draft#first_unfinished_step`: photos, location, suggestions, category,
+details) shows "Rozpracovaný podnet" instead: the sections filled in so far,
+read-only, and "Pokračovať" to that step.
+
+`checks/create` and `checks/confirm` redirect to the summary ("Rozpracovaný
+podnet") when the draft is incomplete (e.g. a summary page opened earlier).
+Before, a draft without a category failed in `Issue#save!` with a 422. Turbo
+then reloaded the summary, so "Odoslať podnet" seemed to do nothing.
 
 ### Stuck in Incoming
 
@@ -96,6 +108,30 @@ dobrovoľníkov" (core workflows 185/190).
 Triage has no subtasks. The `::po` → `[[podulohy]]` / `@@user … - date`
 syntax works only in a municipality's Backoffice, see
 [07](07-backoffice-connector.md#subtasks-podúlohy).
+
+### Portal preview link
+
+While an issue is in a private state (`waiting`, `waiting_for_author`,
+`rejected`, `resolved_private`, `duplicate`), only its author can open
+`/dopyty/:id`, everyone else gets a 404. So volunteers could not see how the
+issue looks on the portal.
+
+The portal sends `portal_preview_url` with the T-ticket
+(`IssuePreviewSigner.url`, `/dopyty/:id?nahlad=<token>`). When a ticket has it,
+Triage shows it in place of `portal_url`, with the same label "Odkaz na portál"
+and position (core workflow "show portal preview url instead of portal url",
+priority 160). Tickets without it keep `portal_url`. `portal_url` keeps its
+value, trigger emails still use it. Anyone with the link sees the
+issue read-only, with the same discussion the author sees, a "Náhľad"
+notice and no actions: no edit, like, subscribe, share or comment, and the
+votes on comments are disabled.
+
+The token is an HMAC of the issue id with `ISSUE_PREVIEW_SECRET`, cut to 20
+characters. It never expires and stays valid in every state. Rotating the
+secret invalidates every link. A token on a public issue changes nothing.
+
+The R-ticket gets the same link and passes it on to Backoffice, see
+[07](07-backoffice-connector.md#triage--backoffice).
 
 ### 2a. Request supplement (doplnenie) (observed)
 
@@ -188,7 +224,7 @@ internal note "Text podnetu bol upravený…". No test covers this.
 | 100 | Instruction notes (closed ticket commented, new praise) | `ops-triage-zammad/lib/tasks/ops/triage.rake` |
 | 148-151 | State flips on replies + webhooks those changes need | same |
 | 200 | Forwarding: RS emails, PRO webhooks, portal webhooks, tag-driven states | same |
-| 700 | Routing per basic municipality (created by `activate_basic`) | `app/models/responsible_subjects/basic_activation.rb:204-225` |
+| 700 | Routing per municipality (created by `activate_basic` or `activate_pro`) | `app/models/responsible_subjects/triage_setup.rb` (`trigger_attributes`) |
 | 750 (team convention) | Hand-made rules for RS / owner assignment | Only in the Triage DB |
 | 800 | Public / internal notes on RS changes, marked resolved, text edits | rake |
 | 900 | Timestamps `ops_state_changed_at`, `responsible_subject_changed_at` (set to now + 1 min) | rake |
@@ -209,4 +245,3 @@ Known problems in this flow, tracked in the private `slovensko-digital/ops` repo
 | [ops#1328](https://github.com/slovensko-digital/ops/issues/1328) | [2a. Request supplement (doplnenie) (observed)](#2a-request-supplement-doplnenie-observed) | Request supplement sends the author two emails |
 | [ops#1330](https://github.com/slovensko-digital/ops/issues/1330) | [2b. Accept (observed)](#2b-accept-observed) | The supplement has to be copied into "Finálny text" by hand; accept overwrites the citizen's text |
 | [ops#1345](https://github.com/slovensko-digital/ops/issues/1345) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | `ChecksController#confirm` renders nothing; no double-submit lock |
-| [ops#1346](https://github.com/slovensko-digital/ops/issues/1346) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | Typo "nefunknčné" in a subtype shown in the wizard |

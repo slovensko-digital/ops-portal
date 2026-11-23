@@ -1,4 +1,5 @@
 <section class="compliment">
+  <%= render partial: "issues/preview_notice" if issue_preview? %>
   <h1><%= issue.title %></h1>
 
   <div class="compliment-con">
@@ -12,11 +13,13 @@
       </picture>
     </figure>
 
-    <div class="compliment-buttons-con">
-      <%= render partial: "issue_likes/button" %>
+    <% if issue_actions_allowed? %>
+      <div class="compliment-buttons-con">
+        <%= render partial: "issue_likes/button" if can_like_issue?(issue) %>
 
-      <%= render partial: "issues/share_issue_om_social_media", locals: { issue: issue } %>
-    </div>
+        <%= render partial: "issues/share_issue_om_social_media", locals: { issue: issue } if can_share_issue?(issue) %>
+      </div>
+    <% end %>
 
     <div class="info-block">
       <div class="info-block-item">

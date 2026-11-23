@@ -1,38 +1,58 @@
 require "json"
-require "cgi"
 
 namespace :municipality_boundaries do
-  desc "Download and import all Slovak municipality boundaries from Overpass API"
+  desc "Download and import all Slovak municipality boundaries from ZBGIS (GKÚ)"
   task download_and_import_municipalities: :environment do
-    unless File.exist?("tmp/municipalities.geojson")
-      puts "No local municipalities.geojson file found. Downloading from Overpass API..."
-      puts "Downloading municipalities from Overpass API (this may take 1-2 minutes)..."
-      geojson = OverpassClient.fetch_municipalities_geojson
-      File.write("tmp/municipalities.geojson", JSON.pretty_generate(geojson)) # Save a copy of the downloaded data for reference/debugging
-    else
-      puts "Using local municipalities.geojson file..."
-      geojson = JSON.parse(File.read("tmp/municipalities.geojson"))
-    end
+    puts "Importing municipality boundaries from ZBGIS (this may take a few minutes)..."
+    ZbgisAdminBoundaries.ensure_srid!
 
-    features = geojson["features"] || []
-    puts "Got #{features.count} features. Resetting municipality boundaries..."
-
+    puts "Resetting municipality boundaries..."
     MunicipalityBoundary.where(boundary_kind: "municipality").delete_all
 
-    puts "Importing municipality boundaries..."
+    district_cities = Municipality.joins(:municipality_districts).distinct.pluck(:name)
 
-    imported, skipped = import_features(features, import_mode: :municipalities)
+    imported = 0
+    city_parts = Hash.new { |hash, key| hash[key] = [] }
+
+    ZbgisAdminBoundaries.each_municipality do |row|
+      if (city = ZbgisAdminBoundaries.part_city(row.name, district_cities))
+        city_parts[city] << row.wkb_hex
+      else
+        import_boundary_wkb(nil, nil, row.wkb_hex, boundary_kind: "municipality")
+        imported += 1
+      end
+    end
+
+    # Whole-city municipalities are split into city parts in ZBGIS,
+    # the whole-city boundary is their union.
+    city_parts.each do |city_name, wkb_hexes|
+      municipality = Municipality.find_by(name: city_name)
+      puts "  Warning: municipality not found: #{city_name}" if municipality.nil?
+      import_union_wkb(municipality&.id, nil, wkb_hexes, boundary_kind: "municipality")
+      imported += 1
+    end
+
     matched, unmatched, ambiguous = connect_municipality_boundaries_by_location
 
-    puts "Done. Imported: #{imported}, Skipped: #{skipped}, Matched: #{matched}, Unmatched: #{unmatched}, Ambiguous: #{ambiguous}"
+    puts "Done. Imported: #{imported}, Matched: #{matched}, Unmatched: #{unmatched}, Ambiguous: #{ambiguous}"
   end
 
   desc "Download and import district boundaries for municipalities that have districts"
   task download_and_import_districts: :environment do
     municipalities_with_districts = Municipality.joins(:municipality_districts).distinct
     total = municipalities_with_districts.count
+    district_cities = municipalities_with_districts.pluck(:name)
 
-    puts "Found #{total} municipalities with districts. Downloading from Overpass API..."
+    puts "Found #{total} municipalities with districts. Reading city parts from ZBGIS..."
+
+    ZbgisAdminBoundaries.ensure_srid!
+
+    parts_by_city = Hash.new { |hash, key| hash[key] = [] }
+    ZbgisAdminBoundaries.each_municipality do |row|
+      if (city = ZbgisAdminBoundaries.part_city(row.name, district_cities))
+        parts_by_city[city] << row
+      end
+    end
 
     imported_total = 0
     skipped_total = 0
@@ -42,48 +62,30 @@ namespace :municipality_boundaries do
 
       MunicipalityBoundary.district_boundaries.where(municipality: municipality).delete_all
 
-      municipality_boundary = MunicipalityBoundary.municipalities.find_by(municipality: municipality)
-
-      unless municipality_boundary
-        puts "  -> Municipality boundary missing for #{municipality.name}. District boundaries will be imported unmatched."
-      end
-
-      # Determine OSM admin_level for the municipality.
-      # Bratislava and Košice are admin_level=5, everything else is 8.
-      admin_level = %w[Bratislava Košice].include?(municipality.name) ? 5 : 8
-
-      geojson = OverpassClient.fetch_districts_geojson(
-        municipality_name: municipality.name,
-        admin_level: admin_level
-      )
-
-      if geojson.nil?
-        puts "  -> No district data found in OSM for #{municipality.name} (admin_level=#{admin_level})"
+      parts = parts_by_city[municipality.name]
+      if parts.blank?
+        puts "  -> No district data found in ZBGIS for #{municipality.name}"
         next
       end
 
-      features = geojson["features"] || []
-      imported, skipped = import_features(
-        features,
-        municipality: municipality,
-        municipality_boundary: municipality_boundary,
-        municipality_hint: municipality.name,
-        silent: true,
-        import_mode: :districts
-      )
+      imported = 0
+      parts.each do |part|
+        district_name = ZbgisAdminBoundaries.district_name(part.name, municipality.name)
+        district = municipality.municipality_districts.find_by(name: district_name)
+        puts "  Warning: district not found: #{district_name}" if district.nil?
+
+        import_boundary_wkb(municipality.id, district&.id, part.wkb_hex, boundary_kind: "district")
+        imported += 1
+      end
       imported_total += imported
-      skipped_total += skipped
 
-      puts "  -> Imported: #{imported}, Skipped: #{skipped}"
-
-      # Be nice to the Overpass servers — wait 2s between requests.
-      sleep 2 unless idx >= total - 1
+      puts "  -> Imported: #{imported}, Skipped: 0"
     end
 
     puts "\nDone. Total imported: #{imported_total}, Total skipped: #{skipped_total}"
   end
 
-  desc "Download and import all municipality and district boundaries from Overpass API"
+  desc "Download and import all municipality and district boundaries from ZBGIS"
   task import_all: :environment do
     puts "=== Step 1: Import municipalities ==="
     Rake::Task["municipality_boundaries:download_and_import_municipalities"].invoke
@@ -300,6 +302,48 @@ namespace :municipality_boundaries do
 
   def municipality_location_point_sql
     "ST_SetSRID(ST_MakePoint(municipalities.longitude, municipalities.latitude), 4326)"
+  end
+
+  def import_boundary_wkb(municipality_id, district_id, wkb_hex, boundary_kind:)
+    validate_wkb_hex!(wkb_hex)
+
+    sql = <<~SQL
+      INSERT INTO municipality_boundaries (municipality_id, municipality_district_id, boundary_kind, boundary, created_at, updated_at)
+      VALUES (?, ?, ?, ST_Force2D(ST_Transform(ST_SetSRID(ST_GeomFromWKB(decode(?, 'hex')), #{ZbgisAdminBoundaries::SRID}), 4326)), NOW(), NOW())
+      ON CONFLICT DO NOTHING
+    SQL
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql([
+        sql,
+        municipality_id,
+        district_id,
+        boundary_kind,
+        wkb_hex
+      ])
+    )
+  end
+
+  def import_union_wkb(municipality_id, district_id, wkb_hexes, boundary_kind:)
+    wkb_hexes.each { |hex| validate_wkb_hex!(hex) }
+
+    geoms = wkb_hexes.map do |hex|
+      "ST_Transform(ST_SetSRID(ST_GeomFromWKB(decode('#{hex}', 'hex')), #{ZbgisAdminBoundaries::SRID}), 4326)"
+    end.join(", ")
+
+    sql = <<~SQL
+      INSERT INTO municipality_boundaries (municipality_id, municipality_district_id, boundary_kind, boundary, created_at, updated_at)
+      SELECT ?, ?, ?, ST_Force2D(ST_Multi(ST_UnaryUnion(ST_Collect(ARRAY[#{geoms}])))), NOW(), NOW()
+      ON CONFLICT DO NOTHING
+    SQL
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.sanitize_sql([ sql, municipality_id, district_id, boundary_kind ])
+    )
+  end
+
+  def validate_wkb_hex!(wkb_hex)
+    raise "Invalid WKB hex" unless wkb_hex.is_a?(String) && wkb_hex.match?(/\A[0-9a-f]+\z/)
   end
 
   def import_boundary(municipality, district, geometry, boundary_kind:)

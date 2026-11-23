@@ -12,4 +12,6 @@
 #
 class Issues::ResponsibleSubjectChangeActivity < Issues::Activity
   has_one :activity_object, class_name: "Issues::ResponsibleSubjectChange", foreign_key: :activity_id, dependent: :destroy
+
+  delegate :authored_by?, to: :activity_object, allow_nil: true
 end

@@ -152,4 +152,105 @@ class Issues::DraftsTest < ApplicationSystemTestCase
 
     assert_text "Mestská časť nie je zatiaľ zapojená do portálu Odkaz pre starostu"
   end
+
+  test "resuming an unfinished draft shows what was filled in and continues with the next step" do
+    login_as(@user)
+    leave_draft_on_suggestions_step
+
+    visit root_path
+    click_on "Neodoslaný podnet"
+    click_on "Zobraziť neodoslaný podnet"
+
+    assert_selector "h1", text: "Rozpracovaný podnet"
+    assert_selector ".report-summary-edit-pictures img"
+    assert_text "Miesto podnetu"
+    assert_no_text "Kategória podnetu"
+    assert_no_link "Upraviť"
+    assert_no_button "Odoslať podnet"
+
+    click_on "Pokračovať"
+
+    assert_text "Poškodená rozvodná skriňa"
+    assert_text "Vlastný nadpis podnetu"
+  end
+
+  test "unfinished draft with a title but no category continues with the category and can be submitted" do
+    stub_json_request(
+      :post,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=",
+      body: /checks prompt/,
+      response: "webmock/gemini/checks-empty.json"
+    )
+
+    login_as(@user)
+    leave_draft_on_suggestions_step
+    # the state of the drafts that failed on submit in production
+    @user.issues_drafts.last.update!(title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit")
+
+    visit root_path
+    click_on "Neodoslaný podnet"
+    click_on "Zobraziť neodoslaný podnet"
+
+    assert_selector "h1", text: "Rozpracovaný podnet"
+    assert_text "Graffiti na skrini"
+    click_on "Pokračovať"
+
+    assert_text "Výber kategórie problému"
+    click_on "Zeleň a životné prostredie"
+    click_on "Strom"
+    click_on "vyvaleny"
+
+    assert_selector "h1", text: "Zhrnutie podnetu"
+    assert_text "Graffiti na skrini"
+    click_on "Odoslať podnet"
+
+    assert_text "Podnet bol odoslaný!"
+    assert_equal "Zeleň a životné prostredie", @user.issues.last.category.name
+  end
+
+  test "unfinished draft whose photos were all removed continues with the photos" do
+    login_as(@user)
+
+    click_on "Nahlásiť podnet"
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+    assert_text "Lokalita"
+
+    click_on "Späť"
+    accept_confirm { find(".close-button").click }
+    assert_no_selector ".report-summary-edit-pictures img"
+    assert_no_link "Pokračovať"
+
+    visit root_path
+    click_on "Neodoslaný podnet"
+    click_on "Zobraziť neodoslaný podnet"
+
+    assert_selector "h1", text: "Rozpracovaný podnet"
+    assert_text "Žiadne fotky"
+    click_on "Pokračovať"
+
+    assert_text "Nahrať fotku"
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+    click_on "Pokračovať"
+
+    assert_text "Lokalita"
+  end
+
+  test "location step without photos does not fail" do
+    login_as(@user)
+    draft = @user.issues_drafts.create!
+
+    visit issues_draft_geo_path(draft)
+
+    assert_text "Lokalita"
+  end
+
+  private
+
+  def leave_draft_on_suggestions_step
+    click_on "Nahlásiť podnet"
+    attach_file "issues_draft_photos", "test/fixtures/files/graffiti-with-geo.jpg", visible: false
+    assert_text "Lokalita"
+    click_on "Pokračovať"
+    assert_text "Poškodená rozvodná skriňa"
+  end
 end
