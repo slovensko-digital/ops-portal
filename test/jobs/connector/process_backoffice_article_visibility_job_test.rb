@@ -59,6 +59,7 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
   end
 
   test "shows the triage article and advances the issue state when an internal comment becomes public" do
+    @comment.update!(hidden: true)
     @issue.update!(state: issues_states(:sent_to_responsible))
 
     triage_client = Minitest::Mock.new
@@ -68,6 +69,32 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
       @tenant, "123", "9",
       zammad_api_client: backoffice_client(backoffice_article(internal: false)),
+      triage_zammad_client: triage_client
+    )
+
+    assert_mock triage_client
+  end
+
+  test "ignores an update that does not change visibility" do
+    triage_client = Minitest::Mock.new
+
+    Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
+      @tenant, "123", "9",
+      zammad_api_client: backoffice_client(backoffice_article(internal: false)),
+      triage_zammad_client: triage_client
+    )
+
+    assert_mock triage_client
+  end
+
+  test "updates the triage article when the portal comment does not exist yet" do
+    @comment.destroy!
+    triage_client = Minitest::Mock.new
+    triage_client.expect :update_article_internal!, nil, [ 7, true ]
+
+    Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
+      @tenant, "123", "9",
+      zammad_api_client: backoffice_client(backoffice_article(internal: true)),
       triage_zammad_client: triage_client
     )
 

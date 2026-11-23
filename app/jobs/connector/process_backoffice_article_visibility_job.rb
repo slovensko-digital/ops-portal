@@ -22,6 +22,7 @@ class Connector::ProcessBackofficeArticleVisibilityJob < ApplicationJob
 
   def sync_visibility(triage_article_id, hidden, triage_zammad_client)
     comment = Issues::ResponsibleSubjectComment.find_by(triage_external_id: triage_article_id)
+    return if comment&.hidden == hidden
 
     triage_zammad_client.update_article_internal!(triage_article_id, hidden)
     sync_issue_state(comment, hidden, triage_zammad_client) if comment
