@@ -8,7 +8,7 @@ class Connector::Backoffice::WebhooksController < ActionController::API
     case event_type
     when "article.created"
       Connector::ProcessNewBackofficeArticleJob.perform_later(@tenant, data.require(:ticket_id), data.require(:article_id))
-    when "article.updated"
+    when "article.visibility_changed"
       Connector::ProcessBackofficeArticleVisibilityJob.perform_later(@tenant, data.require(:ticket_id), data.require(:article_id))
     when "ticket.updated"
       Connector::UpdateTriageIssueFromBackofficeJob.perform_later(@tenant, data.require(:ticket_id))
