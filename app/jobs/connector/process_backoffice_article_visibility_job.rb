@@ -31,7 +31,7 @@ class Connector::ProcessBackofficeArticleVisibilityJob < ApplicationJob
   end
 
   def state_after_showing(issue)
-    "in_progress" if issue.state&.key.in?(%w[sent_to_responsible unresolved])
+    "in_progress" if issue.state&.key == "sent_to_responsible"
   end
 
   def state_after_hiding(issue, comment)

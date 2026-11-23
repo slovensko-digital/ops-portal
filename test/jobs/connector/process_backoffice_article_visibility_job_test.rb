@@ -75,6 +75,22 @@ class Connector::ProcessBackofficeArticleVisibilityJobTest < ActiveJob::TestCase
     assert_mock triage_client
   end
 
+  test "shows the triage article but leaves an unresolved issue alone" do
+    @comment.update!(hidden: true)
+    @issue.update!(state: issues_states(:unresolved))
+
+    triage_client = Minitest::Mock.new
+    triage_client.expect :update_article_internal!, nil, [ 7, false ]
+
+    Connector::ProcessBackofficeArticleVisibilityJob.perform_now(
+      @tenant, "123", "9",
+      zammad_api_client: backoffice_client(backoffice_article(internal: false)),
+      triage_zammad_client: triage_client
+    )
+
+    assert_mock triage_client
+  end
+
   test "ignores an update that does not change visibility" do
     triage_client = Minitest::Mock.new
 
