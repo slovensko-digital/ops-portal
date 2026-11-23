@@ -79,19 +79,25 @@
       </div>
 
       <div class="form-items-con">
-        <div class="form-item-wrapper">
-          <%= f.label :preferred_places, "Preferované mestá alebo obce", for: "preferred_places" %>
+        <div class="form-item-wrapper"
+             data-controller="preferred-places"
+             data-action="
+              keydown.enter->preferred-places#enter
+              keydown.esc->preferred-places#close
+              click@window->preferred-places#closeOnOutsideClick">
+          <%= f.label :preferred_places, for: "preferred_places" do %>
+            Preferované mestá alebo obce
+            <span class="form-label-count" data-preferred-places-target="count"></span>
+          <% end %>
 
           <%= f.hidden_field :municipality_ids, multiple: true, value: "" %>
           <%= f.hidden_field :municipality_district_ids, multiple: true, value: "" %>
 
-          <div class="autocomplete-wrapper"
-               data-controller="preferred-places"
-               data-action="
-                focusin->preferred-places#open
-                input->preferred-places#filter
-                keydown.enter->preferred-places#enter
-                click@window->preferred-places#close">
+          <div class="autocomplete-wrapper">
+            <div class="filter-select-buttons-con none"
+                 data-preferred-places-target="pills"
+                 aria-live="polite"></div>
+
             <input
               type="text"
               class="form-input"
@@ -110,7 +116,21 @@
                 <% end %>
               <% end %>
             </ul>
+
+            <div class="dropdown-not-found none" data-preferred-places-target="empty" role="status">
+              Pre „<strong data-preferred-places-target="query"></strong>“ sme nenašli žiadnu obec ani mestskú časť.
+              <span>Skontrolujte, či je názov napísaný správne.</span>
+            </div>
           </div>
+
+          <template data-preferred-places-target="pillTemplate">
+            <button type="button" class="button button-transparent filter-select-button" data-action="preferred-places#remove">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20" aria-hidden="true">
+                <polygon points="14 4.06 12.94 3 7 8.94 1.06 3 0 4.06 5.94 10 0 15.94 1.06 17 7 11.06 12.94 17 14 15.94 8.06 10 14 4.06"/>
+              </svg>
+              <span data-pill-label></span>
+            </button>
+          </template>
         </div>
 
         <div class="form-notice">

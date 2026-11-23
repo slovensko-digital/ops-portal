@@ -11,6 +11,7 @@
           preferred_places_target: "checkbox",
           label: item[:label],
           full_label: item[:full_label],
+          district: item[:is_district],
           action: "change->preferred-places#toggle"
         }
       }, item[:id], nil %>
@@ -23,6 +24,7 @@
           preferred_places_target: "checkbox",
           label: item[:label],
           full_label: item[:full_label],
+          district: item[:is_district],
           action: "change->preferred-places#toggle"
         }
       }, item[:id], nil %>

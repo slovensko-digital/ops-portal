@@ -43,6 +43,59 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_equal true, user.gdpr_stats_accepted
   end
 
+  test "citizen user sees preferred places as pills and can remove one" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+
+    assert_selector "label", text: "Preferované mestá alebo obce (1)"
+    find("button.filter-select-button", text: "Banská Bystrica").click
+
+    assert_no_selector "button.filter-select-button"
+    assert_selector "label", exact_text: "Preferované mestá alebo obce"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_not_includes user.reload.municipalities.pluck(:name), "Banská Bystrica"
+  end
+
+  test "citizen user sees only the district name in a district pill" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    find('input[data-preferred-places-target="input"]').fill_in(with: "Petržalka")
+    find("label", exact_text: "Petržalka").click
+
+    assert_selector "button.filter-select-button[title='Odstrániť: Bratislava - Petržalka']", exact_text: "Petržalka"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_includes user.reload.municipality_districts.pluck(:name), "Petržalka"
+  end
+
+  test "citizen user sees a message when no preferred place matches the search" do
+    login_as(users(:one))
+
+    visit edit_profile_path
+    input = find('input[data-preferred-places-target="input"]')
+    input.fill_in(with: "xyzq")
+
+    assert_text "Pre „xyzq“ sme nenašli žiadnu obec ani mestskú časť."
+
+    input.send_keys(:escape)
+
+    assert_no_text "sme nenašli žiadnu obec ani mestskú časť"
+    assert_equal "", input.value
+  end
+
   test "responsible subject user can't update profile" do
     user = users(:responsible_subject)
     login_via_magic_link(user.email)
