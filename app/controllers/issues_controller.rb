@@ -126,7 +126,7 @@ class IssuesController < ApplicationController
     query = request.query_parameters.except("obec", "cast", "lokalita")
     query["lokalita"] = values if values.present?
 
-    redirect_to [ issues_path, query.to_query.presence ].compact.join("?"), status: :moved_permanently
+    redirect_to issues_path(query), status: :moved_permanently
   end
 
   def remember_last_lokalita
