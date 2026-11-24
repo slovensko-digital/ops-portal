@@ -48,6 +48,13 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url(lokalita: [ "Nitra" ])
   end
 
+  test "old lokalita separator is turned into the current one" do
+    get issues_url(lokalita: [ "Bratislava - Petržalka" ])
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ "Bratislava-Petržalka" ])
+  end
+
   test "old lokalita exclusion values are dropped" do
     get issues_url(lokalita: [ "Bratislava", "-Bratislava - Ružinov" ])
     get relevant_issues_url
@@ -66,7 +73,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     get issues_url(obec: "Bratislava", cast: "Staré Mesto")
     get relevant_issues_url
 
-    assert_redirected_to issues_url(lokalita: [ "Bratislava - Staré Mesto" ])
+    assert_redirected_to issues_url(lokalita: [ "Bratislava-Staré Mesto" ])
   end
 
   test "legacy obec array is converted to multiple lokalita values" do
@@ -80,7 +87,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     get issues_url(obec: "Bratislava", cast: [ "Staré Mesto", "Ružinov" ])
     get relevant_issues_url
 
-    assert_redirected_to issues_url(lokalita: [ "Bratislava - Staré Mesto", "Bratislava - Ružinov" ])
+    assert_redirected_to issues_url(lokalita: [ "Bratislava-Staré Mesto", "Bratislava-Ružinov" ])
   end
 
   test "should ignore filter params of unexpected shape" do

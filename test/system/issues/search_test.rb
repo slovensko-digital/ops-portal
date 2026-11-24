@@ -31,7 +31,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
     ruzinov_issue = issues(:legacy_discussion_closed)
     ruzinov_issue.update_columns(municipality_district_id: municipality_districts(:Ružinov).id)
 
-    visit issues_path(lokalita: [ "Nitra", "Bratislava - Petržalka" ])
+    visit issues_path(lokalita: [ "Nitra", "Bratislava-Petržalka" ])
 
     assert_text @nitra.title
     assert_text petrzalka_issue.title

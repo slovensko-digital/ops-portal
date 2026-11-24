@@ -108,6 +108,12 @@ class User < ApplicationRecord
     (municipalities.pluck(:name) + municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }).sort
   end
 
+  # The preferred places as ?lokalita[]= values ("Bratislava-Petržalka").
+  def preferred_lokalita
+    municipalities.pluck(:name) +
+      municipality_districts.includes(:municipality).map { |d| SearchEngine::Lokalita.value(d.municipality.name, d.name) }
+  end
+
   def name=(value)
     self.firstname = value
     self.lastname = nil

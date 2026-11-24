@@ -3,6 +3,10 @@ class AnonymousUser
     []
   end
 
+  def preferred_lokalita
+    []
+  end
+
   def municipalities
     Municipality.none
   end

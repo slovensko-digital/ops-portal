@@ -2,8 +2,8 @@ module SearchEngine
   # Builds the municipality/district selection tree for the "Obec / Mestská časť"
   # search filter.
   #
-  # Locations are plain strings: "Bratislava" selects a whole municipality and
-  # "Bratislava - Petržalka" a single district. The selection follows the profile
+  # Locations are plain strings (see Lokalita): "Bratislava" selects a whole
+  # municipality and "Bratislava-Petržalka" a single district. The selection follows the profile
   # picker:
   # - a selected municipality shows all its districts as selected, but only the
   #   municipality is in the params;
@@ -35,8 +35,8 @@ module SearchEngine
     end
 
     def parent_item(municipality)
-      others = outside(municipality)
-      district_values = municipality.active_districts.map { district_value(municipality, _1) }
+      district_values = district_values(municipality)
+      others = outside(municipality, district_values)
 
       {
         label: municipality.name,
@@ -51,8 +51,8 @@ module SearchEngine
 
     def district_items(municipality)
       municipality_selected = @locations.include?(municipality.name)
-      district_values = municipality.active_districts.map { district_value(municipality, _1) }
-      others = outside(municipality)
+      district_values = district_values(municipality)
+      others = outside(municipality, district_values)
 
       municipality.active_districts.zip(district_values).map do |district, value|
         siblings = district_values - [ value ]
@@ -79,15 +79,14 @@ module SearchEngine
       end
     end
 
-    def district_value(municipality, district)
-      "#{municipality.name} - #{district.name}"
+    def district_values(municipality)
+      municipality.active_districts.map { Lokalita.value(municipality.name, _1.name) }
     end
 
-    # The selection without this municipality and any of its districts.
-    def outside(municipality)
-      @locations.reject do |location|
-        location == municipality.name || location.start_with?("#{municipality.name} - ")
-      end
+    # The selection without this municipality and any of its districts. Matched
+    # exactly: "Súľov-Hradná" is a municipality of its own, not a district of "Súľov".
+    def outside(municipality, district_values)
+      @locations - [ municipality.name ] - district_values
     end
   end
 end

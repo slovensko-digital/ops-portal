@@ -18,8 +18,8 @@ class IssuesController < ApplicationController
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
     elsif last_lokalita.present?
       issues_path(lokalita: last_lokalita)
-    elsif current_user.preferred_places.any?
-      issues_path(lokalita: current_user.preferred_places)
+    elsif current_user.preferred_lokalita.any?
+      issues_path(lokalita: current_user.preferred_lokalita)
     else
       issues_path
     end
@@ -133,11 +133,13 @@ class IssuesController < ApplicationController
     return if obce.empty?
     return obce if casti.empty?
 
-    obce.product(casti).map { |obec, cast| "#{obec} - #{cast}" }
+    obce.product(casti).map { |obec, cast| SearchEngine::Lokalita.value(obec, cast) }
   end
 
+  # Sessions from before the "-" separator may still hold "Obec - Časť" values.
   def last_lokalita
-    sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA).presence
+    values = sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA)
+    SearchEngine::Lokalita.new(values).canonical.presence
   end
 
   # Old URLs may still carry "-Obec - Časť" exclusions, which the filter no longer supports.
@@ -193,9 +195,17 @@ class IssuesController < ApplicationController
        permitted = search_engine.required_params + [ :tab ]
 
        sp = normalize_array_params(params, permitted).permit(*permitted).to_h
-       sp[:lokalita] = sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params).presence
+       @lokalita = SearchEngine::Lokalita.new(sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params))
+       sp[:lokalita] = @lokalita.canonical.presence
        sp
     end
+  end
+
+  # The ?lokalita[]= values; built in search_params, which also turns old
+  # "Obec - Časť" values into the current "Obec-Časť" form.
+  def lokalita
+    search_params
+    @lokalita
   end
 
   def search_engine
@@ -311,7 +321,7 @@ class IssuesController < ApplicationController
           param_name: :lokalita,
           label: "Obec / Mestská časť",
           multiple: true,
-          filter_label: ->(value) { value.to_s.split(" - ", 2).last },
+          filter_label: ->(value) { lokalita.label(value) },
           items: ->(params) { SearchEngine::LokalitaTree.new(params[:lokalita]).items },
           filter: ->(scope, params) { SearchEngine::Filters::Locality.new(params[:lokalita]).apply(scope) }
         ),

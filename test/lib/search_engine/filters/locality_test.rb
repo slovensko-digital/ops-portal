@@ -26,11 +26,18 @@ class SearchEngine::Filters::LocalityTest < ActiveSupport::TestCase
   end
 
   test "districts include only their issues" do
-    ids = SearchEngine::Filters::Locality.new([ "Bratislava - Petržalka" ]).apply(Issue.searchable).pluck(:id)
+    ids = SearchEngine::Filters::Locality.new([ "Bratislava-Petržalka" ]).apply(Issue.searchable).pluck(:id)
 
     assert_includes ids, @in_petrzalka.id
     assert_not_includes ids, @in_ruzinov.id
     assert_not_includes ids, @without_district.id
+  end
+
+  test "matches districts written with the old separator" do
+    ids = SearchEngine::Filters::Locality.new([ "Bratislava - Petržalka" ]).apply(Issue.searchable).pluck(:id)
+
+    assert_includes ids, @in_petrzalka.id
+    assert_not_includes ids, @in_ruzinov.id
   end
 
   test "ignores old exclusion values" do
