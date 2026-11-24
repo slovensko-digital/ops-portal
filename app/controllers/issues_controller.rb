@@ -330,7 +330,7 @@ class IssuesController < ApplicationController
           label: "Obec / Mestská časť",
           filter_label: ->(value) { locality_selection.label(value) },
           items: -> do
-            Municipality.active.where(active_on_old_portal: false).includes(:active_districts).alphabetical.map do |municipality|
+            Municipality.on_new_portal.includes(:active_districts).alphabetical.map do |municipality|
               districts = municipality.active_districts.map do |district|
                 { label: district.name, value: SearchEngine::LocalitySelection.param(district) }
               end

@@ -31,7 +31,7 @@ SitemapGenerator::Sitemap.create do
     add path, lastmod: page.updated_at, changefreq: "weekly", priority: 0.7
   end
 
-  Municipality.active.where(active_on_old_portal: false).find_each do |municipality|
+  Municipality.on_new_portal.find_each do |municipality|
     add issues_path(lokalita: [ SearchEngine::LocalitySelection.param(municipality) ]),
         changefreq: "daily",
         priority: 0.6

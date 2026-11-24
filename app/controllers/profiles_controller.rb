@@ -68,10 +68,7 @@ class ProfilesController < ApplicationController
   end
 
   def set_municipalities
-    @municipalities = Municipality.active
-                                  .where(active_on_old_portal: false)
-                                  .includes(:active_districts)
-                                  .alphabetical
+    @municipalities = Municipality.on_new_portal.includes(:active_districts).alphabetical
   end
 
   def set_cms_pages
