@@ -1,9 +1,13 @@
 module SearchEngine
   module Controls
     class TreeAutocomplete < Dropdown
-      TreeItem = Struct.new(:label, :value, :selected, :level, :add_params, :remove_params, keyword_init: true) do
+      TreeItem = Struct.new(:label, :value, :selected, :partial, :level, :add_params, :remove_params, keyword_init: true) do
         def selected?
           selected
+        end
+
+        def partial?
+          partial
         end
       end
 
@@ -11,9 +15,7 @@ module SearchEngine
         super(**args, sort: sort)
       end
 
-      # Removing a city chip also drops its district selections and exclusions,
-      # otherwise ["Bratislava", "-Bratislava - Ružinov"] would degrade to an
-      # exclusion-only list showing zero issues.
+      # Removing a city chip also drops any of its districts left in the params.
       def add_applied_filter(results)
         return unless results.search_params[@param_name].present?
 
@@ -21,7 +23,7 @@ module SearchEngine
 
         values.each do |value|
           remove_values =
-            if value.is_a?(String) && !value.start_with?("-") && !value.include?(" - ")
+            if value.is_a?(String) && !value.include?(" - ")
               values.reject { same_tree?(_1, value) }
             else
               (values - [ value ]).uniq
@@ -50,6 +52,7 @@ module SearchEngine
             value: item_data[:value],
             level: item_data[:level] || 0,
             selected: item_data[:selected],
+            partial: item_data[:partial],
             add_params: results.search_params.merge(@param_name => @multiple ? add_vals : item_data[:value]),
             remove_params: results.search_params.merge(@param_name => @multiple ? remove_vals : nil)
           )
@@ -61,9 +64,7 @@ module SearchEngine
       def same_tree?(location, municipality_name)
         return false unless location.is_a?(String)
 
-        location == municipality_name ||
-          location.start_with?("#{municipality_name} - ") ||
-          location.start_with?("-#{municipality_name} - ")
+        location == municipality_name || location.start_with?("#{municipality_name} - ")
       end
     end
   end

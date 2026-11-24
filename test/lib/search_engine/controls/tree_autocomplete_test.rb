@@ -7,13 +7,7 @@ class SearchEngine::Controls::TreeAutocompleteTest < ActiveSupport::TestCase
       label: "Obec / Mestská časť",
       items: [],
       filter: ->(scope, _params) { scope },
-      filter_label: ->(value) do
-        if value.to_s.start_with?("-")
-          "Okrem: #{value.to_s.delete_prefix("-")}"
-        else
-          value.to_s.split(" - ", 2).last
-        end
-      end
+      filter_label: ->(value) { value.to_s.split(" - ", 2).last }
     )
   end
 
@@ -23,21 +17,21 @@ class SearchEngine::Controls::TreeAutocompleteTest < ActiveSupport::TestCase
     results
   end
 
-  test "removing a city chip also removes its exclusions" do
-    results = results_with("Bratislava", "-Bratislava - Ružinov")
+  test "removing a city chip also removes its districts" do
+    results = results_with("Nitra", "Bratislava", "Bratislava - Ružinov")
     control.add_applied_filter(results)
 
     city_chip = results.applied_filters.find { _1.label == "Bratislava" }
 
-    assert_equal [], city_chip.remove_filter_params[:lokalita]
+    assert_equal [ "Nitra" ], city_chip.remove_filter_params[:lokalita]
   end
 
-  test "removing an exclusion chip keeps the rest of the selection" do
-    results = results_with("Bratislava", "-Bratislava - Ružinov")
+  test "removing a district chip keeps the rest of the selection" do
+    results = results_with("Nitra", "Bratislava - Petržalka", "Bratislava - Ružinov")
     control.add_applied_filter(results)
 
-    exclusion_chip = results.applied_filters.find { _1.label == "Okrem: Bratislava - Ružinov" }
+    district_chip = results.applied_filters.find { _1.label == "Ružinov" }
 
-    assert_equal [ "Bratislava" ], exclusion_chip.remove_filter_params[:lokalita]
+    assert_equal [ "Nitra", "Bratislava - Petržalka" ], district_chip.remove_filter_params[:lokalita]
   end
 end

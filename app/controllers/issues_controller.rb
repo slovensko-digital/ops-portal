@@ -140,9 +140,13 @@ class IssuesController < ApplicationController
     sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA).presence
   end
 
+  # Old URLs may still carry "-Obec - Časť" exclusions, which the filter no longer supports.
   def sanitized_lokalita(value)
     Array(value).filter_map do |location|
-      location.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip.presence if location.is_a?(String)
+      next unless location.is_a?(String)
+      next if location.strip.start_with?("-")
+
+      location.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip.presence
     end.uniq
   end
 
@@ -307,13 +311,7 @@ class IssuesController < ApplicationController
           param_name: :lokalita,
           label: "Obec / Mestská časť",
           multiple: true,
-          filter_label: ->(value) do
-            if value.to_s.start_with?("-")
-              "Okrem: #{value.delete_prefix("-")}"
-            else
-              value.to_s.split(" - ", 2).last
-            end
-          end,
+          filter_label: ->(value) { value.to_s.split(" - ", 2).last },
           items: ->(params) { SearchEngine::LokalitaTree.new(params[:lokalita]).items },
           filter: ->(scope, params) { SearchEngine::Filters::Locality.new(params[:lokalita]).apply(scope) }
         ),

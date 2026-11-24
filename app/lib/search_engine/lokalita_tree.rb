@@ -2,16 +2,21 @@ module SearchEngine
   # Builds the municipality/district selection tree for the "Obec / Mestská časť"
   # search filter.
   #
-  # Locations are plain strings: "Bratislava" selects a whole municipality,
-  # "Bratislava - Petržalka" selects a single district and "-Bratislava - Petržalka"
-  # excludes a district from its municipality.
+  # Locations are plain strings: "Bratislava" selects a whole municipality and
+  # "Bratislava - Petržalka" a single district. The selection follows the profile
+  # picker:
+  # - a selected municipality shows all its districts as selected, but only the
+  #   municipality is in the params;
+  # - unselecting one of those districts replaces the municipality with its other
+  #   districts, so the municipality becomes partial;
+  # - selecting the last missing district replaces the districts with the
+  #   municipality again.
   class LokalitaTree
     def initialize(locations)
       @locations = Array(locations)
         .select { _1.is_a?(String) }
         .map(&:strip)
-        .reject(&:blank?)
-      @positives, @negatives = @locations.partition { !_1.start_with?("-") }
+        .reject { _1.blank? || _1.start_with?("-") }
     end
 
     def items
@@ -30,61 +35,59 @@ module SearchEngine
     end
 
     def parent_item(municipality)
-      others = @locations.reject { same_tree?(_1, municipality.name) }
+      others = outside(municipality)
+      district_values = municipality.active_districts.map { district_value(municipality, _1) }
 
       {
         label: municipality.name,
         value: municipality.name,
         level: 0,
-        selected: @positives.include?(municipality.name),
+        selected: @locations.include?(municipality.name),
+        partial: !@locations.include?(municipality.name) && district_values.intersect?(@locations),
         add_params: others + [ municipality.name ],
         remove_params: others
       }
     end
 
     def district_items(municipality)
-      municipality_selected = @positives.include?(municipality.name)
+      municipality_selected = @locations.include?(municipality.name)
+      district_values = municipality.active_districts.map { district_value(municipality, _1) }
+      others = outside(municipality)
 
-      municipality.active_districts.map do |district|
-        value = "#{municipality.name} - #{district.name}"
-        selected = @positives.include?(value) ||
-          (municipality_selected && !@negatives.include?("-#{value}"))
+      municipality.active_districts.zip(district_values).map do |district, value|
+        siblings = district_values - [ value ]
+        selected = municipality_selected || @locations.include?(value)
 
-        district_item(district.name, value, selected, municipality_selected)
+        add_params =
+          if (siblings - @locations).empty?
+            others + [ municipality.name ]
+          else
+            (@locations + [ value ]).uniq
+          end
+
+        remove_params = municipality_selected ? others + siblings : @locations - [ value ]
+
+        {
+          label: district.name,
+          value: value,
+          level: 1,
+          selected: selected,
+          partial: false,
+          add_params: add_params,
+          remove_params: remove_params
+        }
       end
     end
 
-    def district_item(label, value, selected, municipality_selected)
-      negative_value = "-#{value}"
-
-      add_params, remove_params =
-        if municipality_selected
-          if @positives.include?(value)
-            [ @locations - [ negative_value ],
-              ((@locations - [ value ]) + [ negative_value ]).uniq ]
-          else
-            [ @locations - [ negative_value ],
-              (@locations + [ negative_value ]).uniq ]
-          end
-        else
-          [ (@locations + [ value ]).uniq,
-            @locations - [ value ] ]
-        end
-
-      {
-        label: label,
-        value: value,
-        level: 1,
-        selected: selected,
-        add_params: add_params,
-        remove_params: remove_params
-      }
+    def district_value(municipality, district)
+      "#{municipality.name} - #{district.name}"
     end
 
-    def same_tree?(location, municipality_name)
-      location == municipality_name ||
-        location.start_with?("#{municipality_name} - ") ||
-        location.start_with?("-#{municipality_name} - ")
+    # The selection without this municipality and any of its districts.
+    def outside(municipality)
+      @locations.reject do |location|
+        location == municipality.name || location.start_with?("#{municipality.name} - ")
+      end
     end
   end
 end

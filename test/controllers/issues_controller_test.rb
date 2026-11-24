@@ -48,6 +48,13 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url(lokalita: [ "Nitra" ])
   end
 
+  test "old lokalita exclusion values are dropped" do
+    get issues_url(lokalita: [ "Bratislava", "-Bratislava - Ružinov" ])
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ "Bratislava" ])
+  end
+
   test "legacy obec param is converted to lokalita and remembered" do
     get issues_url(obec: "Nitra")
     get relevant_issues_url

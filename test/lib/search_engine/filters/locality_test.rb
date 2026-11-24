@@ -17,18 +17,26 @@ class SearchEngine::Filters::LocalityTest < ActiveSupport::TestCase
     @without_district = issues(:praise_published)
   end
 
-  test "exclusion-only list does not filter anything" do
-    all = Issue.searchable
-    filtered = SearchEngine::Filters::Locality.new([ "-Bratislava - Ružinov" ]).apply(all)
+  test "a municipality includes all its issues" do
+    ids = SearchEngine::Filters::Locality.new([ "Bratislava" ]).apply(Issue.searchable).pluck(:id)
 
-    assert_equal all.count, filtered.count
+    assert_includes ids, @in_petrzalka.id
+    assert_includes ids, @in_ruzinov.id
+    assert_includes ids, @without_district.id
   end
 
-  test "ignores exclusions whose municipality is not selected" do
-    with_orphan = SearchEngine::Filters::Locality.new([ "Nitra", "-Bratislava - Ružinov" ]).apply(Issue.searchable)
-    without_orphan = SearchEngine::Filters::Locality.new([ "Nitra" ]).apply(Issue.searchable)
+  test "districts include only their issues" do
+    ids = SearchEngine::Filters::Locality.new([ "Bratislava - Petržalka" ]).apply(Issue.searchable).pluck(:id)
 
-    assert_equal without_orphan.pluck(:id).sort, with_orphan.pluck(:id).sort
+    assert_includes ids, @in_petrzalka.id
+    assert_not_includes ids, @in_ruzinov.id
+    assert_not_includes ids, @without_district.id
+  end
+
+  test "ignores old exclusion values" do
+    with_exclusion = SearchEngine::Filters::Locality.new([ "Bratislava", "-Bratislava - Ružinov" ]).apply(Issue.searchable)
+
+    assert_includes with_exclusion.pluck(:id), @in_ruzinov.id
   end
 
   test "ignores non-string values instead of raising" do
@@ -36,13 +44,5 @@ class SearchEngine::Filters::LocalityTest < ActiveSupport::TestCase
     clean = SearchEngine::Filters::Locality.new([ "Nitra" ]).apply(Issue.searchable)
 
     assert_equal clean.pluck(:id).sort, with_junk.pluck(:id).sort
-  end
-
-  test "excludes selected district but keeps the rest of the municipality including issues without district" do
-    ids = SearchEngine::Filters::Locality.new([ "Bratislava", "-Bratislava - Ružinov" ]).apply(Issue.searchable).pluck(:id)
-
-    assert_includes ids, @in_petrzalka.id
-    assert_includes ids, @without_district.id
-    assert_not_includes ids, @in_ruzinov.id
   end
 end
