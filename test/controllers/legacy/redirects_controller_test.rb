@@ -58,7 +58,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy all issues list of non-existent municipality to issues path" do
     get "/r/non-existent/vsetky-podnety"
 
-    assert_response :moved_permanently
+    assert_response :found
 
     assert_redirected_to issues_path
   end
@@ -82,7 +82,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy municipality district issues list of non-existent municipality to issues path" do
     get "/r/non-existent/podnety/stare-mesto"
 
-    assert_response :moved_permanently
+    assert_response :found
 
     assert_redirected_to issues_path
   end
@@ -122,7 +122,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy street slug of non-existent municipality to issues path" do
     get "/r/non-existent/podnety/ulica/1480/viedenska-cesta-stara-cast"
 
-    assert_response :moved_permanently
+    assert_response :found
 
     assert_redirected_to issues_path
   end
@@ -144,7 +144,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy statistics page of non-existent municipality to issues path" do
     get "/r/non-existent/statistiky"
 
-    assert_response :moved_permanently
+    assert_response :found
 
     assert_redirected_to issues_path
   end
@@ -160,7 +160,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy map page of non-existent municipality to issues path" do
     get "/r/non-existent/mapa"
 
-    assert_response :moved_permanently
+    assert_response :found
 
     assert_redirected_to issues_path
   end
