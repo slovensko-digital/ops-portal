@@ -13,6 +13,7 @@ module ProfilesHelper
     municipalities.map do |m|
       {
         id: m.id,
+        municipality_id: m.id,
         label: m.name,
         full_label: m.name,
         selected: user_m_ids.include?(m.id),
@@ -20,6 +21,7 @@ module ProfilesHelper
         districts: m.active_districts.map do |md|
           {
             id: md.id,
+            municipality_id: m.id,
             label: md.name,
             full_label: "#{m.name} - #{md.name}",
             selected: user_md_ids.include?(md.id),

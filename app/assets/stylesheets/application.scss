@@ -1734,6 +1734,22 @@ ul.dropdown-list li.active .form-check-box {
 ul.dropdown-list li.active svg {
   display: block;
 }
+// Partial municipality (only some districts chosen): a dash instead of the tick.
+.form-check-box-dash {
+  display: none;
+}
+ul.dropdown-list li.partial .form-check-box {
+  background: variables.$blue;
+}
+ul.dropdown-list li.partial .form-check-box svg {
+  display: none;
+}
+ul.dropdown-list li.partial .form-check-box-dash {
+  background: variables.$black;
+  display: block;
+  height: 2px;
+  width: 12px;
+}
 // Search with no match: the message replaces the (empty) list
 ul.dropdown-list.is-no-match {
   display: none;

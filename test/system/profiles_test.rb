@@ -81,6 +81,73 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_includes user.reload.municipality_districts.pluck(:name), "Petržalka"
   end
 
+  test "citizen user selecting a municipality ticks its districts but saves only the municipality" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    find('input[data-preferred-places-target="input"]').fill_in(with: "Spišská Nová Ves")
+    find("label", exact_text: "Spišská Nová Ves").click
+
+    assert_selector "li.district.active", count: 7
+    assert_selector "button.filter-select-button", exact_text: "Spišská Nová Ves"
+    assert_no_selector "button.filter-select-button", text: "Ferčekovce"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_includes user.reload.municipalities.pluck(:name), "Spišská Nová Ves"
+    assert_empty user.municipality_districts
+  end
+
+  test "citizen user unticking a district of a selected municipality keeps the other districts" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    find('input[data-preferred-places-target="input"]').fill_in(with: "Banská Bystrica")
+    find("label", exact_text: "Centrum").click
+
+    assert_selector "li.partial", exact_text: "Banská Bystrica"
+    assert_no_selector "button.filter-select-button", exact_text: "Banská Bystrica"
+    assert_selector "button.filter-select-button", count: 6
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    user.reload
+    assert_not_includes user.municipalities.pluck(:name), "Banská Bystrica"
+    assert_equal 6, user.municipality_districts.count
+    assert_not_includes user.municipality_districts.pluck(:name), "Centrum"
+  end
+
+  test "citizen user ticking every district of a municipality selects the whole municipality" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    find('input[data-preferred-places-target="input"]').fill_in(with: "Spišská Nová Ves")
+    district_labels = all("li.district label", count: 7)
+    district_labels.each(&:click)
+
+    assert_selector "li.active:not(.district)", exact_text: "Spišská Nová Ves"
+    assert_no_selector "li.partial"
+    assert_selector "button.filter-select-button", exact_text: "Spišská Nová Ves"
+    assert_no_selector "button.filter-select-button", text: "Ferčekovce"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_includes user.reload.municipalities.pluck(:name), "Spišská Nová Ves"
+    assert_empty user.municipality_districts
+  end
+
   test "citizen user sees a message when no preferred place matches the search" do
     login_as(users(:one))
 
