@@ -71,7 +71,7 @@ class ProfilesController < ApplicationController
     @municipalities = Municipality.active
                                   .where(active_on_old_portal: false)
                                   .includes(:active_districts)
-                                  .order(Arel.sql("name COLLATE unicode"))
+                                  .alphabetical
   end
 
   def set_cms_pages
