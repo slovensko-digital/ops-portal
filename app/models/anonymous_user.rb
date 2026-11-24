@@ -1,8 +1,4 @@
 class AnonymousUser
-  def preferred_localities
-    []
-  end
-
   def municipalities
     Municipality.none
   end
