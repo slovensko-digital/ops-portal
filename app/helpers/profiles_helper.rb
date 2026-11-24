@@ -14,6 +14,7 @@ module ProfilesHelper
     municipalities.map do |m|
       {
         id: m.id,
+        field: :municipality_ids,
         municipality_id: m.id,
         label: m.name,
         full_label: m.name,
@@ -22,6 +23,7 @@ module ProfilesHelper
         districts: m.active_districts.map do |md|
           {
             id: md.id,
+            field: :municipality_district_ids,
             municipality_id: m.id,
             label: md.name,
             full_label: "#{m.name} - #{md.name}",

@@ -4,35 +4,19 @@
     data-full-label="<%= item[:full_label] %>">
   <label class="check-box-label <%= 'check-box-label--district' if item[:is_district] %>">
 
-    <% if item[:is_district] %>
-      <%= f.check_box :municipality_district_ids, {
-        multiple: true,
-        class: "sr-only",
-        checked: item[:selected],
-        data: {
-          preferred_localities_target: "checkbox",
-          label: item[:label],
-          full_label: item[:full_label],
-          district: item[:is_district],
-          municipality_id: item[:municipality_id],
-          action: "change->preferred-localities#toggleLocality"
-        }
-      }, item[:id], nil %>
-    <% else %>
-      <%= f.check_box :municipality_ids, {
-        multiple: true,
-        class: "sr-only",
-        checked: item[:selected],
-        data: {
-          preferred_localities_target: "checkbox",
-          label: item[:label],
-          full_label: item[:full_label],
-          district: item[:is_district],
-          municipality_id: item[:municipality_id],
-          action: "change->preferred-localities#toggleLocality"
-        }
-      }, item[:id], nil %>
-    <% end %>
+    <%= f.check_box item[:field], {
+      multiple: true,
+      class: "sr-only",
+      checked: item[:selected],
+      data: {
+        preferred_localities_target: "checkbox",
+        label: item[:label],
+        full_label: item[:full_label],
+        district: item[:is_district],
+        municipality_id: item[:municipality_id],
+        action: "change->preferred-localities#toggleLocality"
+      }
+    }, item[:id], nil %>
 
     <div class="form-check-box">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 20">
