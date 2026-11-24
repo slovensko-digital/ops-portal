@@ -12,33 +12,33 @@ class Legacy::RedirectsController < ApplicationController
     return redirect_to issues_path unless @municipality
 
     municipality_district = @municipality.municipality_districts.where("? = ANY(aliases)", params[:municipality_district_slug]).first
-    redirect_to issues_path(lokalita: [ (municipality_district || @municipality).locality_param ]), status: :moved_permanently
+    redirect_to helpers.search_issues_path(lokalita: municipality_district || @municipality), status: :moved_permanently
   end
 
   def search_street
     return redirect_to issues_path unless @municipality
 
     street = Street.find_by!(legacy_id: params[:legacy_id])
-    redirect_params = { lokalita: [ @municipality.locality_param ], ulica: street.name }
+    redirect_params = { lokalita: @municipality, ulica: street.name }
 
     if params[:status].present?
       state = Issues::State.find_by(legacy_id: params[:status])
       redirect_params[:stav] = state.name if state
     end
 
-    redirect_to issues_path(redirect_params), status: :moved_permanently
+    redirect_to helpers.search_issues_path(redirect_params), status: :moved_permanently
   end
 
   def search_stats
     return redirect_to issues_path unless @municipality
 
-    redirect_to issues_path(lokalita: [ @municipality.locality_param ], tab: "stats"), status: :moved_permanently
+    redirect_to helpers.search_issues_path(lokalita: @municipality, tab: "stats"), status: :moved_permanently
   end
 
   def search_map
     return redirect_to issues_path unless @municipality
 
-    redirect_to issues_path(lokalita: [ @municipality.locality_param ], tab: "map"), status: :moved_permanently
+    redirect_to helpers.search_issues_path(lokalita: @municipality, tab: "map"), status: :moved_permanently
   end
 
   def show_issue

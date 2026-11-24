@@ -52,13 +52,7 @@
             <table width="100%" style="overflow:hidden;margin:0px">
               <tr>
                 <td align="left">
-                  <% if @municipality_district %>
-                    <a href="<%= issues_path(lokalita: [ @municipality_district.locality_param ]) %>" target="_blank"><%= "Zobraziť viac" %></a>
-                  <% elsif @municipality %>
-                    <a href="<%= issues_path(lokalita: [ @municipality.locality_param ]) %>" target="_blank"><%= "Zobraziť viac" %></a>
-                  <% else %>
-                    <a href="<%= issues_path %>" target="_blank"><%= "Zobraziť viac" %></a>
-                  <% end %>
+                  <a href="<%= search_issues_path(lokalita: @municipality_district || @municipality) %>" target="_blank"><%= "Zobraziť viac" %></a>
                 </td>
                 <% if @width > 250 %>
                   <td style="width:33%;text-align:center;">
@@ -77,12 +71,8 @@
           <% if @width > 250 && @statistics %>
             <div id="widget_statistiky" class="tab">
               <h1><%= image_tag "/img/legacy/s3.jpg", alt: "" %>
-                <% if @municipality_district %>
-                  <a target="_blank" href="<%= issues_path(lokalita: [ @municipality_district.locality_param ], stav: 'Odoslané') %>">
-                    <b><%= @statistics[:total][:open] %></b> otvorených podnetov
-                  </a>
-                <% elsif @municipality %>
-                  <a target="_blank" href="<%= issues_path(lokalita: [ @municipality.locality_param ], stav: 'Odoslané') %>">
+                <% if @municipality %>
+                  <a target="_blank" href="<%= search_issues_path(lokalita: @municipality_district || @municipality, stav: 'Odoslané') %>">
                     <b><%= @statistics[:total][:open] %></b> otvorených podnetov
                   </a>
                 <% else %>
@@ -104,12 +94,8 @@
               </p>
               <hr />
               <h1><%= image_tag "/img/legacy/s1.jpg", alt: "" %>
-                <% if @municipality_district %>
-                  <%= link_to issues_path(lokalita: [ @municipality_district.locality_param ], stav: 'Vyriešený'), target: "_blank" do %>
-                    <b><%= @statistics[:total][:solved] %></b> vyriešených podnetov
-                  <% end %>
-                <% elsif @municipality %>
-                  <%= link_to issues_path(lokalita: [ @municipality.locality_param ], stav: 'Vyriešený'), target: "_blank" do %>
+                <% if @municipality %>
+                  <%= link_to search_issues_path(lokalita: @municipality_district || @municipality, stav: 'Vyriešený'), target: "_blank" do %>
                     <b><%= @statistics[:total][:solved] %></b> vyriešených podnetov
                   <% end %>
                 <% else %>
@@ -131,12 +117,8 @@
               </p>
               <hr />
               <h1><%= image_tag "/img/legacy/s2.jpg", alt: "" %>
-                <% if @municipality_district %>
-                  <%= link_to issues_path(lokalita: [ @municipality_district.locality_param ], stav: 'Nevyriešené'), target: "_blank" do %>
-                    <b><%= @statistics[:total][:unsolved] %></b> nevyriešených podnetov
-                  <% end %>
-                <% elsif @municipality %>
-                  <%= link_to issues_path(lokalita: [ @municipality.locality_param ], stav: 'Nevyriešené'), target: "_blank" do %>
+                <% if @municipality %>
+                  <%= link_to search_issues_path(lokalita: @municipality_district || @municipality, stav: 'Nevyriešené'), target: "_blank" do %>
                     <b><%= @statistics[:total][:unsolved] %></b> nevyriešených podnetov
                   <% end %>
                 <% else %>
@@ -157,10 +139,8 @@
                 <% end %>
               </p>
               <hr />
-              <% if @municipality_district %>
-                <%= link_to "Viac »", issues_path(lokalita: [ @municipality_district.locality_param ], tab: 'stats'), class: "alignright", style: "margin-top:-3px;", target: "_blank" %>
-              <% elsif @municipality %>
-                <%= link_to "Viac »", issues_path(lokalita: [ @municipality.locality_param ], tab: 'stats'), class: "alignright", style: "margin-top:-3px;", target: "_blank" %>
+              <% if @municipality %>
+                <%= link_to "Viac »", search_issues_path(lokalita: @municipality_district || @municipality, tab: 'stats'), class: "alignright", style: "margin-top:-3px;", target: "_blank" %>
               <% end %>
               <br style="clear:both" />
             </div>

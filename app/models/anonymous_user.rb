@@ -3,10 +3,6 @@ class AnonymousUser
     []
   end
 
-  def preferred_locality_params
-    []
-  end
-
   def municipalities
     Municipality.none
   end

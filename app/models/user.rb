@@ -107,10 +107,6 @@ class User < ApplicationRecord
     (municipalities.pluck(:name) + municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }).sort
   end
 
-  def preferred_locality_params
-    municipalities.map(&:locality_param) + municipality_districts.includes(:municipality).map(&:locality_param)
-  end
-
   def name=(value)
     self.firstname = value
     self.lastname = nil

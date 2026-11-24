@@ -35,6 +35,16 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url(lokalita: [ user.municipalities.first!.name ])
   end
 
+  test "should redirect citizen user to followed municipalities, then districts" do
+    user = users(:one)
+    user.municipality_districts << municipality_districts(:Petržalka)
+
+    post "/login", params: { email: user.email, password: "password" }
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ user.municipalities.first!.name, "Bratislava-Petržalka" ])
+  end
+
   test "should redirect anonymous user to all issues" do
     get relevant_issues_url
 

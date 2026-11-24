@@ -19,8 +19,8 @@ class IssuesController < ApplicationController
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
     elsif last_localities.present?
       issues_path(lokalita: last_localities)
-    elsif current_user.preferred_locality_params.any?
-      issues_path(lokalita: current_user.preferred_locality_params)
+    elsif preferred_places.any?
+      helpers.search_issues_path(lokalita: preferred_places)
     else
       issues_path
     end
@@ -146,7 +146,12 @@ class IssuesController < ApplicationController
     return if obce.empty?
     return obce if casti.empty?
 
-    obce.product(casti).map { |obec, cast| SearchEngine::LocalitySelection.param(obec, cast) }
+    obce.product(casti).map { |obec, cast| SearchEngine::LocalitySelection.param_from_names(obec, cast) }
+  end
+
+  def preferred_places
+    @preferred_places ||= current_user.municipalities.alphabetical.to_a +
+      current_user.municipality_districts.includes(:municipality).alphabetical.to_a
   end
 
   def last_localities
@@ -327,10 +332,10 @@ class IssuesController < ApplicationController
           items: -> do
             Municipality.active.where(active_on_old_portal: false).includes(:active_districts).alphabetical.map do |municipality|
               districts = municipality.active_districts.map do |district|
-                { label: district.name, value: SearchEngine::LocalitySelection.param(municipality.name, district.name) }
+                { label: district.name, value: SearchEngine::LocalitySelection.param(district) }
               end
 
-              { label: municipality.name, value: municipality.locality_param, children: districts }
+              { label: municipality.name, value: SearchEngine::LocalitySelection.param(municipality), children: districts }
             end
           end,
           filter: ->(scope, params) do

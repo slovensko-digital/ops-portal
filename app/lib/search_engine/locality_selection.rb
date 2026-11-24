@@ -10,7 +10,17 @@ module SearchEngine
   class LocalitySelection
     SEPARATOR = "-"
 
-    def self.param(municipality_name, district_name = nil)
+    # The value of a Municipality or MunicipalityDistrict. Anything else is
+    # taken to be a value already.
+    def self.param(place)
+      case place
+      when MunicipalityDistrict then param_from_names(place.municipality.name, place.name)
+      when Municipality then param_from_names(place.name)
+      else place
+      end
+    end
+
+    def self.param_from_names(municipality_name, district_name = nil)
       return municipality_name if district_name.blank?
 
       "#{municipality_name}#{SEPARATOR}#{district_name}"
@@ -47,7 +57,7 @@ module SearchEngine
                               .where(municipalities: { name: prefixes })
                               .includes(:municipality)
                               .each_with_object({}) do |district, by_value|
-            value = district.locality_param
+            value = self.class.param(district)
             by_value[value] = district if rest.include?(value)
           end
         end

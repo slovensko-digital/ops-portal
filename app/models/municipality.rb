@@ -32,7 +32,7 @@ class Municipality < ApplicationRecord
   has_many :municipality_boundaries
   has_and_belongs_to_many :users
 
-  has_many :active_districts, -> { active.alphabetical }, class_name: "MunicipalityDistrict"
+  has_many :active_districts, -> { active.alphabetical }, class_name: "MunicipalityDistrict", inverse_of: :municipality
 
   scope :active, -> { where(active: true) }
   scope :archived, -> { where(archived: true) }
@@ -41,11 +41,6 @@ class Municipality < ApplicationRecord
 
   enum :municipality_type, huge: 2, other: 1
   enum :category, regional_capital: 1, town: 2, village: 3 # TODO Pomenovanie ciselnych hodnot iba podla nasho usudku
-
-  # The value of this municipality in the ?lokalita[]= search param.
-  def locality_param
-    name
-  end
 
   def whitelisted_street?(name)
     streets.whitelisted.find_by_name(name).present?

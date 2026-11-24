@@ -41,7 +41,13 @@ module IssuesHelper
     [ issue.address_street.presence, issue.municipality_district&.name, issue.municipality&.name ].compact.join(", ")
   end
 
+  # /dopyty with the current filters and params on top. :lokalita takes
+  # municipalities and districts (one or a list) as well as values.
   def search_issues_path(params = {})
+    if params.key?(:lokalita)
+      params = params.merge(lokalita: Array(params[:lokalita]).map { SearchEngine::LocalitySelection.param(it) })
+    end
+
     if @search_results
       issues_path(@search_results.search_params.merge(params))
     else

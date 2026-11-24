@@ -2,8 +2,14 @@ require "test_helper"
 
 class SearchEngine::LocalitySelectionTest < ActiveSupport::TestCase
   test "joins a municipality and a district with a hyphen" do
-    assert_equal "Bratislava-Petržalka", SearchEngine::LocalitySelection.param("Bratislava", "Petržalka")
-    assert_equal "Bratislava", SearchEngine::LocalitySelection.param("Bratislava")
+    assert_equal "Bratislava-Petržalka", SearchEngine::LocalitySelection.param(municipality_districts(:Petržalka))
+    assert_equal "Bratislava", SearchEngine::LocalitySelection.param(municipalities(:bratislava))
+    assert_equal "Bratislava-Petržalka", SearchEngine::LocalitySelection.param_from_names("Bratislava", "Petržalka")
+    assert_equal "Bratislava", SearchEngine::LocalitySelection.param_from_names("Bratislava")
+  end
+
+  test "passes a value through" do
+    assert_equal "Nitra", SearchEngine::LocalitySelection.param("Nitra")
   end
 
   test "resolves municipalities and districts" do
