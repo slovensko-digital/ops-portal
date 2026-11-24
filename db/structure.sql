@@ -4325,6 +4325,14 @@ ALTER TABLE ONLY public.municipalities_users
 
 
 --
+-- Name: users fk_rails_af51c67270; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_rails_af51c67270 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
+
+
+--
 -- Name: responsible_subjects fk_rails_b01f09f6a3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4402,14 +4410,6 @@ ALTER TABLE ONLY public.issues_drafts
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_d85a605e0e FOREIGN KEY (subcategory_id) REFERENCES public.issues_subcategories(id);
-
-
---
--- Name: users fk_rails_af51c67270; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT fk_rails_af51c67270 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
 
 
 --
