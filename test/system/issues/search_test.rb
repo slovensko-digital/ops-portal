@@ -39,6 +39,42 @@ class Issues::SearchTest < ApplicationSystemTestCase
     assert_no_text @private.title
   end
 
+  test "lokalita filter search shows a matching district under its municipality" do
+    visit issues_path
+    find("#filter-obec-mestska-cast").fill_in(with: "Petržalka")
+
+    within(".dropdown-list") do
+      assert_selector "li", exact_text: "Bratislava"
+      assert_selector "li", exact_text: "Petržalka"
+      assert_no_selector "li", exact_text: "Ružinov"
+      assert_no_selector "li", exact_text: "Nitra"
+    end
+  end
+
+  test "lokalita filter search shows a message when nothing matches and closes on escape" do
+    visit issues_path
+    input = find("#filter-obec-mestska-cast")
+    input.fill_in(with: "xyzq")
+
+    assert_text "Pre „xyzq“ sme nenašli žiadnu obec ani mestskú časť."
+
+    input.send_keys(:escape)
+
+    assert_no_text "sme nenašli žiadnu obec ani mestskú časť"
+    assert_no_selector "li", exact_text: "Bratislava"
+  end
+
+  test "lokalita filter list closes on a click outside" do
+    visit issues_path
+    find("#filter-obec-mestska-cast").click
+
+    assert_selector "li", exact_text: "Bratislava"
+
+    find(".filter-title").click
+
+    assert_no_selector "li", exact_text: "Bratislava"
+  end
+
   test "filter by responsible subject and by state" do
     visit issues_path(zodpovedny: "BVS")
     assert_text @nitra.title

@@ -3,26 +3,26 @@
   <label for="<%= filter_id %>"><%= tree_autocomplete.control.label %></label>
 
   <div class="autocomplete-wrapper"
-       data-controller="autocomplete toggle"
-       data-autocomplete-none-class="none"
+       data-controller="tree-autocomplete"
        data-action="
-        focusin->toggle#show
-        input->autocomplete#filter
-        keydown.enter->autocomplete#enter">
+        input->tree-autocomplete#filter
+        keydown.enter->tree-autocomplete#enter
+        keydown.esc->tree-autocomplete#closeOnEscape
+        click@window->tree-autocomplete#closeOnOutsideClick">
     <input
-      data-autocomplete-target="input"
+      data-tree-autocomplete-target="input"
+      data-action="focusin->tree-autocomplete#open"
       placeholder="<%= Array(tree_autocomplete.value).select { _1.is_a?(String) }.join(', ') %>"
       id="<%= filter_id %>"
       autocomplete="off" />
 
     <ul class="dropdown-list none"
-        data-toggle-target="toggleable"
-        data-toggle-class="none"
-        data-autocomplete-target="list" >
+        data-tree-autocomplete-target="list">
       <% tree_autocomplete.items.each do |item| %>
         <li
-          data-autocomplete-target="item"
-          data-search-key="<%= item.label %>"
+          data-tree-autocomplete-target="item"
+          data-full-label="<%= item.value %>"
+          data-level="<%= item.level %>"
           class="<%= class_names("check-box": tree_autocomplete.multiple, "nested-level-#{item.level}": item.level > 0, active: item.selected?) %>" >
           <%= link_to item.selected? ? item.remove_params : item.add_params, class: '' do %>
             <% if tree_autocomplete.multiple %>
@@ -37,5 +37,10 @@
         </li>
       <% end %>
     </ul>
+
+    <div class="dropdown-not-found none" data-tree-autocomplete-target="empty" role="status">
+      Pre „<strong data-tree-autocomplete-target="query"></strong>“ sme nenašli žiadnu obec ani mestskú časť.
+      <span>Skontrolujte, či je názov napísaný správne.</span>
+    </div>
   </div>
 </div>
