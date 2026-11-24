@@ -48,52 +48,61 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url(lokalita: [ "Nitra" ])
   end
 
-  test "old lokalita separator is turned into the current one" do
+  test "old lokalita separator redirects to the current one" do
     get issues_url(lokalita: [ "Bratislava - Petržalka" ])
-    get relevant_issues_url
 
     assert_redirected_to issues_url(lokalita: [ "Bratislava-Petržalka" ])
+    assert_response :moved_permanently
   end
 
-  test "old lokalita exclusion values are dropped" do
-    get issues_url(lokalita: [ "Bratislava", "-Bratislava - Ružinov" ])
-    get relevant_issues_url
+  test "current lokalita values are not redirected" do
+    get issues_url(lokalita: [ "Bratislava-Petržalka", "Nitra" ])
 
-    assert_redirected_to issues_url(lokalita: [ "Bratislava" ])
+    assert_response :success
   end
 
-  test "legacy obec param is converted to lokalita and remembered" do
+  test "legacy obec param redirects to lokalita" do
     get issues_url(obec: "Nitra")
-    get relevant_issues_url
 
     assert_redirected_to issues_url(lokalita: [ "Nitra" ])
+    assert_response :moved_permanently
   end
 
-  test "legacy obec and cast params are converted to lokalita and remembered" do
-    get issues_url(obec: "Bratislava", cast: "Staré Mesto")
-    get relevant_issues_url
+  test "legacy obec and cast params redirect to lokalita and keep other params" do
+    get issues_url(obec: "Bratislava", cast: "Staré Mesto", stav: "V riešení", tab: "stats")
 
-    assert_redirected_to issues_url(lokalita: [ "Bratislava-Staré Mesto" ])
+    assert_redirected_to issues_url(lokalita: [ "Bratislava-Staré Mesto" ], stav: "V riešení", tab: "stats")
   end
 
-  test "legacy obec array is converted to multiple lokalita values" do
+  test "legacy obec array redirects to multiple lokalita values" do
     get issues_url(obec: [ "Nitra", "Trnava" ])
-    get relevant_issues_url
 
     assert_redirected_to issues_url(lokalita: [ "Nitra", "Trnava" ])
   end
 
-  test "legacy obec with multiple casts is converted to multiple lokalita values" do
+  test "legacy obec with multiple casts redirects to multiple lokalita values" do
     get issues_url(obec: "Bratislava", cast: [ "Staré Mesto", "Ružinov" ])
-    get relevant_issues_url
 
     assert_redirected_to issues_url(lokalita: [ "Bratislava-Staré Mesto", "Bratislava-Ružinov" ])
   end
 
   test "should ignore filter params of unexpected shape" do
     get "/dopyty?kategoria[foo]=bar&obec[foo]=bar&podkategoria[0][x]=y&q[a]=b"
+    assert_response :moved_permanently
+    assert_not_includes response.location, "obec"
+
+    follow_redirect!
     assert_response :success
     assert_nil session[:last_lokalita]
+  end
+
+  test "issue location links use lokalita" do
+    issue = issues(:two)
+
+    get issue_url(issue)
+
+    assert_select "a[href=?]", issues_path(lokalita: [ issue.municipality.name ])
+    assert_select "a[href*='obec=']", count: 0
   end
 
   test "should not show resolved_private issues" do

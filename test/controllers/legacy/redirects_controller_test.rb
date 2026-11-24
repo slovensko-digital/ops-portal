@@ -42,7 +42,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy all issues list to municipality issues path" do
     get "/r/bratislava/vsetky-podnety"
 
-    assert_redirected_to issues_path(obec: "Bratislava")
+    assert_redirected_to issues_path(lokalita: [ "Bratislava" ])
   end
 
   test "should redirect legacy all issues list of non-existent municipality to issues path" do
@@ -54,13 +54,13 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy municipality district issues list to municipality district issues path" do
     get "/r/bratislava/podnety/stare-mesto"
 
-    assert_redirected_to issues_path(obec: "Bratislava", cast: "Staré Mesto")
+    assert_redirected_to issues_path(lokalita: [ "Bratislava-Staré Mesto" ])
   end
 
   test "should redirect legacy municipality district issues list to municipality issues path when district does not exist" do
     get "/r/bratislava/podnety/neexistujuca-stvrt"
 
-    assert_redirected_to issues_path(obec: "Bratislava")
+    assert_redirected_to issues_path(lokalita: [ "Bratislava" ])
   end
 
   test "should redirect legacy municipality district issues list of non-existent municipality to issues path" do
@@ -72,25 +72,25 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy street index to municipality issues path" do
     get "/r/trencin/podnety/ulica"
 
-    assert_redirected_to issues_path(obec: "Trenčín")
+    assert_redirected_to issues_path(lokalita: [ "Trenčín" ])
   end
 
   test "should redirect legacy street slug to municipality issues path with street" do
     get "/r/trencin/podnety/ulica/1480/viedenska-cesta-stara-cast"
 
-    assert_redirected_to issues_path(obec: "Trenčín", ulica: "Viedenská cesta")
+    assert_redirected_to issues_path(lokalita: [ "Trenčín" ], ulica: "Viedenská cesta")
   end
 
   test "should redirect legacy street slug with known status to municipality issues path with street and state" do
     get "/r/trencin/podnety/ulica/1480/viedenska-cesta-stara-cast?status=2"
 
-    assert_redirected_to issues_path(obec: "Trenčín", ulica: "Viedenská cesta", stav: "V riešení")
+    assert_redirected_to issues_path(lokalita: [ "Trenčín" ], ulica: "Viedenská cesta", stav: "V riešení")
   end
 
   test "should redirect legacy street slug with unknown status to municipality issues path with street only" do
     get "/r/trencin/podnety/ulica/1480/viedenska-cesta-stara-cast?status=999"
 
-    assert_redirected_to issues_path(obec: "Trenčín", ulica: "Viedenská cesta")
+    assert_redirected_to issues_path(lokalita: [ "Trenčín" ], ulica: "Viedenská cesta")
   end
 
   test "should redirect legacy street slug of non-existent municipality to issues path" do
@@ -108,7 +108,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy statistics page to municipality issues stats tab" do
     get "/r/bratislava/statistiky"
 
-    assert_redirected_to issues_path(obec: "Bratislava", tab: "stats")
+    assert_redirected_to issues_path(lokalita: [ "Bratislava" ], tab: "stats")
   end
 
   test "should redirect legacy statistics page of non-existent municipality to issues path" do
@@ -120,7 +120,7 @@ class Legacy::RedirectsControllerTest < ActionDispatch::IntegrationTest
   test "should redirect legacy map page to municipality issues map tab" do
     get "/r/bratislava/mapa"
 
-    assert_redirected_to issues_path(obec: "Bratislava", tab: "map")
+    assert_redirected_to issues_path(lokalita: [ "Bratislava" ], tab: "map")
   end
 
   test "should redirect legacy map page of non-existent municipality to issues path" do

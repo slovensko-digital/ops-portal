@@ -13,9 +13,9 @@ class Legacy::RedirectsController < ApplicationController
 
     municipality_district = @municipality.municipality_districts.where("? = ANY(aliases)", params[:municipality_district_slug]).first
     if municipality_district
-      redirect_to issues_path(obec: @municipality.name, cast: municipality_district.name)
+      redirect_to issues_path(lokalita: [ SearchEngine::Lokalita.value(@municipality.name, municipality_district.name) ])
     else
-      redirect_to issues_path(obec: @municipality.name)
+      redirect_to issues_path(lokalita: [ @municipality.name ])
     end
   end
 
@@ -23,7 +23,7 @@ class Legacy::RedirectsController < ApplicationController
     return redirect_to issues_path unless @municipality
 
     street = Street.find_by!(legacy_id: params[:legacy_id])
-    redirect_params = { obec: @municipality.name, ulica: street.name }
+    redirect_params = { lokalita: [ @municipality.name ], ulica: street.name }
 
     if params[:status].present?
       state = Issues::State.find_by(legacy_id: params[:status])
@@ -36,13 +36,13 @@ class Legacy::RedirectsController < ApplicationController
   def search_stats
     return redirect_to issues_path unless @municipality
 
-    redirect_to issues_path(obec: @municipality.name, tab: "stats")
+    redirect_to issues_path(lokalita: [ @municipality.name ], tab: "stats")
   end
 
   def search_map
     return redirect_to issues_path unless @municipality
 
-    redirect_to issues_path(obec: @municipality.name, tab: "map")
+    redirect_to issues_path(lokalita: [ @municipality.name ], tab: "map")
   end
 
   def show_issue

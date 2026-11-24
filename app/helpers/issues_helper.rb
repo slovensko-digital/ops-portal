@@ -1,4 +1,11 @@
 module IssuesHelper
+  # /dopyty filtered to a municipality or one of its districts, in the ?lokalita[]= form.
+  def lokalita_issues_path(municipality_name, district_name = nil, **params)
+    return issues_path(**params) if municipality_name.blank?
+
+    issues_path(lokalita: [ SearchEngine::Lokalita.value(municipality_name, district_name) ], **params)
+  end
+
   def issue_preview?
     @preview.present?
   end

@@ -64,11 +64,4 @@ class SearchEngine::LokalitaTreeTest < ActiveSupport::TestCase
 
     assert_equal [ "Nitra", "Bratislava" ], item(items, "Bratislava-Ružinov")[:add_params]
   end
-
-  test "ignores old exclusion values" do
-    items = SearchEngine::LokalitaTree.new([ "Bratislava", "-Bratislava - Ružinov" ]).items
-
-    assert item(items, "Bratislava-Ružinov")[:selected]
-    assert_equal [], item(items, "Bratislava")[:remove_params]
-  end
 end

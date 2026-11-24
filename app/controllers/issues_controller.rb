@@ -7,6 +7,7 @@ class IssuesController < ApplicationController
 
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
+  before_action :redirect_to_canonical_lokalita, only: :index
   before_action :remember_last_lokalita, only: :index
   before_action :force_responsible_subject_login, only: :show, if: -> { params.key?(:force_rs_login) }
   before_action :set_preview, only: :show # before check_show_permissions, which reads @preview
@@ -116,6 +117,19 @@ class IssuesController < ApplicationController
 
   private
 
+  # One URL per selection: old ?obec=&cast= params and old "Obec - Časť" values
+  # redirect permanently to the ?lokalita[]= form. Other params are kept.
+  def redirect_to_canonical_lokalita
+    values = search_params[:lokalita]
+    legacy_params = params.key?(:obec) || params.key?(:cast)
+    return if !legacy_params && Array(@raw_lokalita) == Array(values)
+
+    query = request.query_parameters.except("obec", "cast", "lokalita")
+    query["lokalita"] = values if values.present?
+
+    redirect_to [ issues_path, query.to_query.presence ].compact.join("?"), status: :moved_permanently
+  end
+
   def remember_last_lokalita
     lokalita = sanitized_lokalita(search_params[:lokalita]).first(MAX_STORED_LOKALITA).presence
 
@@ -142,13 +156,9 @@ class IssuesController < ApplicationController
     SearchEngine::Lokalita.new(values).canonical.presence
   end
 
-  # Old URLs may still carry "-Obec - Časť" exclusions, which the filter no longer supports.
   def sanitized_lokalita(value)
     Array(value).filter_map do |location|
-      next unless location.is_a?(String)
-      next if location.strip.start_with?("-")
-
-      location.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip.presence
+      location.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip.presence if location.is_a?(String)
     end.uniq
   end
 
@@ -195,6 +205,7 @@ class IssuesController < ApplicationController
        permitted = search_engine.required_params + [ :tab ]
 
        sp = normalize_array_params(params, permitted).permit(*permitted).to_h
+       @raw_lokalita = sp[:lokalita]
        @lokalita = SearchEngine::Lokalita.new(sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params))
        sp[:lokalita] = @lokalita.canonical.presence
        sp

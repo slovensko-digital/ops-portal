@@ -32,7 +32,7 @@ SitemapGenerator::Sitemap.create do
   end
 
   Municipality.active.where(active_on_old_portal: false).find_each do |municipality|
-    add issues_path(obec: municipality.name),
+    add issues_path(lokalita: [ municipality.name ]),
         changefreq: "daily",
         priority: 0.6
   end

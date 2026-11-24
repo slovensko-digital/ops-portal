@@ -1,12 +1,11 @@
 module SearchEngine
   module Filters
     class Locality
-      # Old URLs may still carry "-Obec - Časť" exclusions; they are ignored.
       def initialize(locations)
         @locations = Array(locations)
           .select { _1.is_a?(String) }
           .map(&:strip)
-          .reject { _1.blank? || _1.start_with?("-") }
+          .reject(&:blank?)
       end
 
       def apply(scope)
