@@ -323,9 +323,17 @@ class IssuesController < ApplicationController
         SearchEngine::Controls::TreeAutocomplete.new(
           param_name: :lokalita,
           label: "Obec / Mestská časť",
-          multiple: true,
           filter_label: ->(value) { locality_selection.label(value) },
-          items: ->(params) { SearchEngine::LocalityTree.new(params[:lokalita]).items },
+          items: -> do
+            Municipality.active.where(active_on_old_portal: false).includes(:active_districts)
+              .order(Arel.sql("name COLLATE unicode")).map do |municipality|
+              districts = municipality.active_districts.map do |district|
+                { label: district.name, value: SearchEngine::LocalitySelection.param(municipality.name, district.name) }
+              end
+
+              { label: municipality.name, value: municipality.locality_param, children: districts }
+            end
+          end,
           filter: ->(scope, params) do
             # push down ids as constants so optimizer can use stats
             municipality_ids = locality_selection.municipalities.map(&:id)
