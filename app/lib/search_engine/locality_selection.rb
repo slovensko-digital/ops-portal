@@ -1,15 +1,16 @@
 module SearchEngine
-  # Values of the ?lokalita[]= search param: "Bratislava" is a municipality and
+  # The localities (municipalities and districts) selected in one search, as the
+  # values of the ?lokalita[]= param: "Bratislava" is a municipality and
   # "Bratislava-Petržalka" one of its districts.
   #
   # Names can contain "-" themselves (the municipality "Súľov-Hradná", the
   # district "Trenčín - Juh"), so a value is never split blindly: it is matched
   # against the real municipality and district names. An exact municipality name
   # wins over a municipality-district pair.
-  class Lokalita
+  class LocalitySelection
     SEPARATOR = "-"
 
-    def self.value(municipality_name, district_name = nil)
+    def self.param(municipality_name, district_name = nil)
       return municipality_name if district_name.blank?
 
       "#{municipality_name}#{SEPARATOR}#{district_name}"
@@ -46,7 +47,7 @@ module SearchEngine
                               .where(municipalities: { name: prefixes })
                               .includes(:municipality)
                               .each_with_object({}) do |district, by_value|
-            value = self.class.value(district.municipality.name, district.name)
+            value = district.locality_param
             by_value[value] = district if rest.include?(value)
           end
         end

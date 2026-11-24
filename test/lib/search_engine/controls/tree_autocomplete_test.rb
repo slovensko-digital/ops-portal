@@ -11,9 +11,9 @@ class SearchEngine::Controls::TreeAutocompleteTest < ActiveSupport::TestCase
     )
   end
 
-  def results_with(*lokalita)
+  def results_with(*localities)
     results = SearchEngine::Results.new
-    results.search_params = { lokalita: lokalita }.with_indifferent_access
+    results.search_params = { lokalita: localities }.with_indifferent_access
     results
   end
 

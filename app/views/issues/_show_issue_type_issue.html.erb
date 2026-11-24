@@ -122,10 +122,10 @@
         <div class="information-wrapper">
           <div class="label">Poloha:</div>
           <div class="value-con">
-            <% if issue.address_street.present? %><%= link_to issue.address_street, lokalita_issues_path(issue.municipality&.name, issue.municipality_district&.name, ulica: issue.address_street), class: "value" %><% end %>
-            <% if issue.municipality_district %><%= link_to issue.municipality_district.name, lokalita_issues_path(issue.municipality.name, issue.municipality_district.name), class: "value" %>
+            <% if issue.address_street.present? %><%= link_to issue.address_street, issues_path(lokalita: Array(issue.locality_param), ulica: issue.address_street), class: "value" %><% end %>
+            <% if issue.municipality_district %><%= link_to issue.municipality_district.name, issues_path(lokalita: [ issue.municipality_district.locality_param ]), class: "value" %>
             <% end %>
-            <%= link_to issue.municipality.name, lokalita_issues_path(issue.municipality.name), class: "value" %>
+            <%= link_to issue.municipality.name, issues_path(lokalita: [ issue.municipality.locality_param ]), class: "value" %>
           </div>
           <div class="map" data-controller="map" data-map-latitude-value="<%= issue.latitude %>" data-map-longitude-value="<%= issue.longitude %>">
             <div data-map-target="map"></div>

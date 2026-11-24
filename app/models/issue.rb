@@ -119,6 +119,11 @@ class Issue < ApplicationRecord
     imported_at.present?
   end
 
+  # The most specific locality of the issue in the ?lokalita[]= search param.
+  def locality_param
+    (municipality_district || municipality)&.locality_param
+  end
+
   def visible_activity_objects
     activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
 

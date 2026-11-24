@@ -3,7 +3,7 @@ class AnonymousUser
     []
   end
 
-  def preferred_lokalita
+  def preferred_locality_params
     []
   end
 

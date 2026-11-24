@@ -2,13 +2,13 @@ class IssuesController < ApplicationController
   include NormalizedParams
 
   # Cap session storage to avoid CookieOverflow (cookie store ~4KB).
-  MAX_STORED_LOKALITA = 20
-  MAX_LOKALITA_VALUE_LENGTH = 100
+  MAX_STORED_LOCALITIES = 20
+  MAX_LOCALITY_VALUE_LENGTH = 100
 
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
-  before_action :redirect_legacy_lokalita_params, only: :index
-  before_action :remember_last_lokalita, only: :index
+  before_action :redirect_legacy_locality_params, only: :index
+  before_action :remember_last_localities, only: :index
   before_action :force_responsible_subject_login, only: :show, if: -> { params.key?(:force_rs_login) }
   before_action :set_preview, only: :show # before check_show_permissions, which reads @preview
   before_action :check_show_permissions, only: :show
@@ -17,10 +17,10 @@ class IssuesController < ApplicationController
   def relevant
     path = if current_user.responsible_subject
       issues_path(zodpovedny: current_user.responsible_subject.subject_name)
-    elsif last_lokalita.present?
-      issues_path(lokalita: last_lokalita)
-    elsif current_user.preferred_lokalita.any?
-      issues_path(lokalita: current_user.preferred_lokalita)
+    elsif last_localities.present?
+      issues_path(lokalita: last_localities)
+    elsif current_user.preferred_locality_params.any?
+      issues_path(lokalita: current_user.preferred_locality_params)
     else
       issues_path
     end
@@ -119,7 +119,7 @@ class IssuesController < ApplicationController
 
   # One URL per selection: old ?obec=&cast= params redirect permanently to the
   # ?lokalita[]= form. Other params are kept.
-  def redirect_legacy_lokalita_params
+  def redirect_legacy_locality_params
     return if !params.key?(:obec) && !params.key?(:cast)
 
     values = search_params[:lokalita]
@@ -129,33 +129,33 @@ class IssuesController < ApplicationController
     redirect_to issues_path(query), status: :moved_permanently
   end
 
-  def remember_last_lokalita
-    lokalita = sanitized_lokalita(search_params[:lokalita]).first(MAX_STORED_LOKALITA).presence
+  def remember_last_localities
+    localities = sanitized_localities(search_params[:lokalita]).first(MAX_STORED_LOCALITIES).presence
 
-    if lokalita.present?
-      session[:last_lokalita] = lokalita
+    if localities.present?
+      session[:last_localities] = localities
     else
-      session.delete(:last_lokalita)
+      session.delete(:last_localities)
     end
   end
 
   # Legacy ?obec=&cast= URLs predate ?lokalita=; map them onto the new format.
-  def lokalita_from_legacy_params
+  def localities_from_legacy_params
     obce = Array(params[:obec]).filter_map { |obec| obec.strip.presence if obec.is_a?(String) }
     casti = Array(params[:cast]).filter_map { |cast| cast.strip.presence if cast.is_a?(String) }
     return if obce.empty?
     return obce if casti.empty?
 
-    obce.product(casti).map { |obec, cast| SearchEngine::Lokalita.value(obec, cast) }
+    obce.product(casti).map { |obec, cast| SearchEngine::LocalitySelection.param(obec, cast) }
   end
 
-  def last_lokalita
-    sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA).presence
+  def last_localities
+    sanitized_localities(session[:last_localities]).first(MAX_STORED_LOCALITIES).presence
   end
 
-  def sanitized_lokalita(value)
-    Array(value).filter_map do |location|
-      location.strip.truncate(MAX_LOKALITA_VALUE_LENGTH, omission: "").strip.presence if location.is_a?(String)
+  def sanitized_localities(value)
+    Array(value).filter_map do |locality|
+      locality.strip.truncate(MAX_LOCALITY_VALUE_LENGTH, omission: "").strip.presence if locality.is_a?(String)
     end.uniq
   end
 
@@ -202,13 +202,13 @@ class IssuesController < ApplicationController
        permitted = search_engine.required_params + [ :tab ]
 
        sp = normalize_array_params(params, permitted).permit(*permitted).to_h
-       sp[:lokalita] = sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params).presence
+       sp[:lokalita] = sanitized_localities(sp[:lokalita].presence || localities_from_legacy_params).presence
        sp
     end
   end
 
-  def lokalita
-    @lokalita ||= SearchEngine::Lokalita.new(search_params[:lokalita])
+  def locality_selection
+    @locality_selection ||= SearchEngine::LocalitySelection.new(search_params[:lokalita])
   end
 
   def search_engine
@@ -324,9 +324,15 @@ class IssuesController < ApplicationController
           param_name: :lokalita,
           label: "Obec / Mestská časť",
           multiple: true,
-          filter_label: ->(value) { lokalita.label(value) },
-          items: ->(params) { SearchEngine::LokalitaTree.new(params[:lokalita]).items },
-          filter: ->(scope, params) { SearchEngine::Filters::Locality.new(params[:lokalita]).apply(scope) }
+          filter_label: ->(value) { locality_selection.label(value) },
+          items: ->(params) { SearchEngine::LocalityTree.new(params[:lokalita]).items },
+          filter: ->(scope, params) do
+            # push down ids as constants so optimizer can use stats
+            municipality_ids = locality_selection.municipalities.map(&:id)
+            district_ids = locality_selection.districts.map(&:id)
+
+            scope.where(municipality_id: municipality_ids).or(scope.where(municipality_district_id: district_ids))
+          end
         ),
 
         SearchEngine::Controls::Autocomplete.new(

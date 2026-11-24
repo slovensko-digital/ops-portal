@@ -2,7 +2,7 @@ module SearchEngine
   # Builds the municipality/district selection tree for the "Obec / Mestská časť"
   # search filter.
   #
-  # Locations are plain strings (see Lokalita): "Bratislava" selects a whole
+  # Localities are plain strings (see LocalitySelection): "Bratislava" selects a whole
   # municipality and "Bratislava-Petržalka" a single district. The selection follows the profile
   # picker:
   # - a selected municipality shows all its districts as selected, but only the
@@ -11,7 +11,7 @@ module SearchEngine
   #   districts, so the municipality becomes partial;
   # - selecting the last missing district replaces the districts with the
   #   municipality again.
-  class LokalitaTree
+  class LocalityTree
     def initialize(locations)
       @locations = Array(locations)
         .select { _1.is_a?(String) }
@@ -80,7 +80,7 @@ module SearchEngine
     end
 
     def district_values(municipality)
-      municipality.active_districts.map { Lokalita.value(municipality.name, _1.name) }
+      municipality.active_districts.map { LocalitySelection.param(municipality.name, _1.name) }
     end
 
     # The selection without this municipality and any of its districts. Matched

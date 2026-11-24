@@ -27,4 +27,9 @@ class MunicipalityDistrict < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :with_boundaries, -> { where(id: MunicipalityBoundary.select(:municipality_district_id)) }
   scope :alphabetical, -> { order(Arel.sql("municipality_districts.name COLLATE unicode")) }
+
+  # The value of this district in the ?lokalita[]= search param: "Bratislava-Petržalka".
+  def locality_param
+    SearchEngine::LocalitySelection.param(municipality.name, name)
+  end
 end

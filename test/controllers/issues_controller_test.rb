@@ -41,7 +41,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url
   end
 
-  test "last visited lokalita is remembered for relevant issues" do
+  test "last visited localities are remembered for relevant issues" do
     get issues_url(lokalita: [ "Nitra" ])
     get relevant_issues_url
 
@@ -86,7 +86,7 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
 
     follow_redirect!
     assert_response :success
-    assert_nil session[:last_lokalita]
+    assert_nil session[:last_localities]
   end
 
   test "issue location links use lokalita" do
