@@ -33,13 +33,6 @@ class SearchEngine::Filters::LocalityTest < ActiveSupport::TestCase
     assert_not_includes ids, @without_district.id
   end
 
-  test "matches districts written with the old separator" do
-    ids = SearchEngine::Filters::Locality.new([ "Bratislava - Petržalka" ]).apply(Issue.searchable).pluck(:id)
-
-    assert_includes ids, @in_petrzalka.id
-    assert_not_includes ids, @in_ruzinov.id
-  end
-
   test "ignores non-string values instead of raising" do
     with_junk = SearchEngine::Filters::Locality.new([ 1, nil, "  ", "Nitra" ]).apply(Issue.searchable)
     clean = SearchEngine::Filters::Locality.new([ "Nitra" ]).apply(Issue.searchable)

@@ -29,11 +29,4 @@ class SearchEngine::LokalitaTest < ActiveSupport::TestCase
     assert_equal [ "Trenčín - Juh" ], lokalita.districts.map(&:name)
     assert_equal "Trenčín - Juh", lokalita.label("Trenčín-Trenčín - Juh")
   end
-
-  test "turns old separator values into the current form" do
-    lokalita = SearchEngine::Lokalita.new([ "Bratislava - Petržalka", "Trenčín - Trenčín - Juh", "Nitra", "Nowhere" ])
-
-    assert_equal [ "Bratislava-Petržalka", "Trenčín-Trenčín - Juh", "Nitra", "Nowhere" ], lokalita.canonical
-    assert_equal "Petržalka", lokalita.label("Bratislava-Petržalka")
-  end
 end

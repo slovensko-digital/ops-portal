@@ -7,7 +7,7 @@ class IssuesController < ApplicationController
 
   before_action :ensure_user_onboarded
   before_action :set_issue, only: %i[ show edit update ]
-  before_action :redirect_to_canonical_lokalita, only: :index
+  before_action :redirect_legacy_lokalita_params, only: :index
   before_action :remember_last_lokalita, only: :index
   before_action :force_responsible_subject_login, only: :show, if: -> { params.key?(:force_rs_login) }
   before_action :set_preview, only: :show # before check_show_permissions, which reads @preview
@@ -117,13 +117,12 @@ class IssuesController < ApplicationController
 
   private
 
-  # One URL per selection: old ?obec=&cast= params and old "Obec - Časť" values
-  # redirect permanently to the ?lokalita[]= form. Other params are kept.
-  def redirect_to_canonical_lokalita
-    values = search_params[:lokalita]
-    legacy_params = params.key?(:obec) || params.key?(:cast)
-    return if !legacy_params && Array(@raw_lokalita) == Array(values)
+  # One URL per selection: old ?obec=&cast= params redirect permanently to the
+  # ?lokalita[]= form. Other params are kept.
+  def redirect_legacy_lokalita_params
+    return if !params.key?(:obec) && !params.key?(:cast)
 
+    values = search_params[:lokalita]
     query = request.query_parameters.except("obec", "cast", "lokalita")
     query["lokalita"] = values if values.present?
 
@@ -150,10 +149,8 @@ class IssuesController < ApplicationController
     obce.product(casti).map { |obec, cast| SearchEngine::Lokalita.value(obec, cast) }
   end
 
-  # Sessions from before the "-" separator may still hold "Obec - Časť" values.
   def last_lokalita
-    values = sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA)
-    SearchEngine::Lokalita.new(values).canonical.presence
+    sanitized_lokalita(session[:last_lokalita]).first(MAX_STORED_LOKALITA).presence
   end
 
   def sanitized_lokalita(value)
@@ -205,18 +202,13 @@ class IssuesController < ApplicationController
        permitted = search_engine.required_params + [ :tab ]
 
        sp = normalize_array_params(params, permitted).permit(*permitted).to_h
-       @raw_lokalita = sp[:lokalita]
-       @lokalita = SearchEngine::Lokalita.new(sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params))
-       sp[:lokalita] = @lokalita.canonical.presence
+       sp[:lokalita] = sanitized_lokalita(sp[:lokalita].presence || lokalita_from_legacy_params).presence
        sp
     end
   end
 
-  # The ?lokalita[]= values; built in search_params, which also turns old
-  # "Obec - Časť" values into the current "Obec-Časť" form.
   def lokalita
-    search_params
-    @lokalita
+    @lokalita ||= SearchEngine::Lokalita.new(search_params[:lokalita])
   end
 
   def search_engine

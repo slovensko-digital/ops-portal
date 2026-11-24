@@ -48,13 +48,6 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url(lokalita: [ "Nitra" ])
   end
 
-  test "old lokalita separator redirects to the current one" do
-    get issues_url(lokalita: [ "Bratislava - Petržalka" ])
-
-    assert_redirected_to issues_url(lokalita: [ "Bratislava-Petržalka" ])
-    assert_response :moved_permanently
-  end
-
   test "current lokalita values are not redirected" do
     get issues_url(lokalita: [ "Bratislava-Petržalka", "Nitra" ])
 

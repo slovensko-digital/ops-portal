@@ -6,12 +6,8 @@ module SearchEngine
   # district "Trenčín - Juh"), so a value is never split blindly: it is matched
   # against the real municipality and district names. An exact municipality name
   # wins over a municipality-district pair.
-  #
-  # Old links used " - " as the separator ("Bratislava - Petržalka"); they still
-  # match and come out in the current form.
   class Lokalita
     SEPARATOR = "-"
-    LEGACY_SEPARATOR = " - "
 
     def self.value(municipality_name, district_name = nil)
       return municipality_name if district_name.blank?
@@ -31,21 +27,9 @@ module SearchEngine
       @districts ||= district_by_value.values.uniq
     end
 
-    # The values in the current form; values that match nothing stay as they are.
-    def canonical
-      @values.map do |value|
-        district = district_by_value[value]
-        district ? self.class.value(district.municipality.name, district.name) : value
-      end.uniq
-    end
-
     # Chip label: a district shows only its own name, anything else the value itself.
-    # Takes the value in either form.
     def label(value)
-      district = district_by_value[value] ||
-        districts.find { self.class.value(_1.municipality.name, _1.name) == value }
-
-      district&.name || value
+      district_by_value[value]&.name || value
     end
 
     private
@@ -62,10 +46,8 @@ module SearchEngine
                               .where(municipalities: { name: prefixes })
                               .includes(:municipality)
                               .each_with_object({}) do |district, by_value|
-            [ SEPARATOR, LEGACY_SEPARATOR ].each do |separator|
-              value = "#{district.municipality.name}#{separator}#{district.name}"
-              by_value[value] ||= district if rest.include?(value)
-            end
+            value = self.class.value(district.municipality.name, district.name)
+            by_value[value] = district if rest.include?(value)
           end
         end
       end
