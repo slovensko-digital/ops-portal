@@ -133,6 +133,23 @@ class Issues::SearchTest < ApplicationSystemTestCase
     assert_no_selector "li", text: "BVS"
   end
 
+  test "stav podnetu list closes on escape and on a click outside" do
+    visit issues_path
+    open_stav = -> { find("label", exact_text: "Stav podnetu").sibling(".dropdown-button").click }
+
+    open_stav.call
+    assert_selector "li", exact_text: "Odstúpený"
+
+    find("body").send_keys(:escape)
+    assert_no_selector "li", exact_text: "Odstúpený"
+
+    open_stav.call
+    assert_selector "li", exact_text: "Odstúpený"
+
+    find(".filter-title").click
+    assert_no_selector "li", exact_text: "Odstúpený"
+  end
+
   test "filter by responsible subject and by state" do
     visit issues_path(zodpovedny: "BVS")
     assert_text @nitra.title

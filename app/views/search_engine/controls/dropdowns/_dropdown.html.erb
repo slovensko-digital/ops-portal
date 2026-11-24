@@ -1,6 +1,10 @@
-<div class="form-item-wrapper" data-controller="toggle">
+<div class="form-item-wrapper"
+     data-controller="select"
+     data-action="
+      keydown.esc@window->select#closeOnEscape
+      click@window->select#closeOnOutsideClick">
   <label><%= dropdown.control.label %></label>
-  <div class="dropdown-button" data-action="click->toggle#toggle">
+  <div class="dropdown-button" data-action="click->select#toggle">
     <% selected = dropdown.items.select(&:selected?) %>
     <% if selected.any? %>
       <span title="<%= selected.map(&:label).join(', ') %>"><%= selected.map(&:label).join(', ') %></span>
@@ -11,7 +15,7 @@
       <polygon points="7 14.07 0 7.07 1.14 5.93 7 11.79 12.86 5.93 14 7.07 7 14.07"/>
     </svg>
   </div>
-  <ul class="dropdown-list none" data-toggle-target="toggleable" data-toggle-class="none">
+  <ul class="dropdown-list none" data-select-target="list">
     <% dropdown.items.each do |item| %>
       <li class="<%= class_names("check-box": dropdown.multiple, active: item.selected?) %>">
         <%= link_to item.selected? ? item.remove_params : item.add_params, class: '' do %>
