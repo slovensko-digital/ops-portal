@@ -150,6 +150,17 @@ class Issues::SearchTest < ApplicationSystemTestCase
     assert_no_text @bratislava.title
   end
 
+  test "text search keeps every selected place" do
+    visit issues_path(lokalita: [ "Nitra", "Bratislava" ])
+
+    fill_in "Textové vyhľadávanie", with: "Ticket#R-#{@nitra.id}\n"
+
+    assert_current_path(/q=/)
+    assert_text @nitra.title
+    assert_selector "a[title='Odstrániť tento filter']", exact_text: "Nitra"
+    assert_selector "a[title='Odstrániť tento filter']", exact_text: "Bratislava"
+  end
+
   test "fulltext search and search by ticket number" do
     visit issues_path(q: "Bratislava")
     assert_text @bratislava.title

@@ -55,6 +55,22 @@ module IssuesHelper
     end
   end
 
+  # Keeps the current filters when a text search is submitted. A list param needs one
+  # name[] field per value: a single field would join the values with spaces.
+  def hidden_search_param_fields(except:)
+    return unless @search_results
+
+    fields = @search_results.search_params.except(except).compact.flat_map do |name, value|
+      if value.is_a?(Array)
+        value.map { |item| hidden_field_tag("#{name}[]", item, id: nil) }
+      else
+        hidden_field_tag(name, value, id: nil)
+      end
+    end
+
+    safe_join(fields)
+  end
+
   def praise_image_tag(issue)
     image_tag "pochvala-#{(issue.id % 6) + 1}.png", alt: "Pochvala"
   end
