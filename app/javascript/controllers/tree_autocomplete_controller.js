@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 // tree order: a matching district keeps its municipality visible, and a matching municipality shows
 // all of its districts (district names repeat across cities, so the parent tells them apart).
 export default class extends Controller {
-    static targets = [ "input", "list", "item", "empty", "query" ]
+    static targets = [ "input", "list", "item", "empty" ]
 
     open() {
         this.listTarget.classList.remove("none")
@@ -77,7 +77,6 @@ export default class extends Controller {
 
         this.listTarget.classList.toggle("is-no-match", noMatch)
         this.emptyTarget.classList.toggle("none", !(isOpen && noMatch))
-        this.queryTarget.textContent = query
     }
 
     normalizeString(str) {

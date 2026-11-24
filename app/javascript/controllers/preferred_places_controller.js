@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 // removable pills above the search input. A district pill shows only the district name; the full
 // "Municipality - District" name is in its title and aria-label (district names repeat across cities).
 export default class extends Controller {
-    static targets = [ "input", "list", "checkbox", "item", "pills", "pillTemplate", "count", "empty", "query" ]
+    static targets = [ "input", "list", "checkbox", "item", "pills", "pillTemplate", "count", "empty" ]
     static values = {
         defaultPlaceholder: { type: String, default: "Vyhľadajte lokality..." },
         addPlaceholder: { type: String, default: "Pridať ďalšie..." },
@@ -174,7 +174,6 @@ export default class extends Controller {
 
         this.listTarget.classList.toggle("is-no-match", noMatch)
         this.emptyTarget.classList.toggle("none", !(isOpen && noMatch))
-        this.queryTarget.textContent = query
     }
 
     // Only the search input, the list and the "not found" message keep the list open; the label and

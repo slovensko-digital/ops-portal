@@ -155,11 +155,11 @@ class ProfilesTest < ApplicationSystemTestCase
     input = find('input[data-preferred-places-target="input"]')
     input.fill_in(with: "xyzq")
 
-    assert_text "Pre „xyzq“ sme nenašli žiadnu obec ani mestskú časť."
+    assert_text "Nič sme nenašli."
 
     input.send_keys(:escape)
 
-    assert_no_text "sme nenašli žiadnu obec ani mestskú časť"
+    assert_no_text "Nič sme nenašli."
     assert_equal "", input.value
   end
 

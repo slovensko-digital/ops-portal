@@ -79,11 +79,11 @@ class Issues::SearchTest < ApplicationSystemTestCase
     input = find("#filter-obec-mestska-cast")
     input.fill_in(with: "xyzq")
 
-    assert_text "Pre „xyzq“ sme nenašli žiadnu obec ani mestskú časť."
+    assert_text "Nič sme nenašli."
 
     input.send_keys(:escape)
 
-    assert_no_text "sme nenašli žiadnu obec ani mestskú časť"
+    assert_no_text "Nič sme nenašli."
     assert_no_selector "li", exact_text: "Bratislava"
   end
 
@@ -96,6 +96,43 @@ class Issues::SearchTest < ApplicationSystemTestCase
     find(".filter-title").click
 
     assert_no_selector "li", exact_text: "Bratislava"
+  end
+
+  test "zodpovedny subjekt list closes on escape" do
+    visit issues_path
+    input = find("#filter-zodpovedny-subjekt")
+    input.fill_in(with: "BVS")
+
+    assert_selector "li", text: "BVS"
+
+    input.send_keys(:escape)
+
+    assert_no_selector "li", text: "BVS"
+    assert_equal "", input.value
+  end
+
+  test "zodpovedny subjekt search shows a message when nothing matches" do
+    visit issues_path
+    input = find("#filter-zodpovedny-subjekt")
+    input.fill_in(with: "xyzq")
+
+    assert_text "Nič sme nenašli."
+
+    input.fill_in(with: "BVS")
+
+    assert_no_text "Nič sme nenašli."
+    assert_selector "li", text: "BVS"
+  end
+
+  test "zodpovedny subjekt list closes on a click outside" do
+    visit issues_path
+    find("#filter-zodpovedny-subjekt").click
+
+    assert_selector "li", text: "BVS"
+
+    find(".filter-title").click
+
+    assert_no_selector "li", text: "BVS"
   end
 
   test "filter by responsible subject and by state" do

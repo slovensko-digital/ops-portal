@@ -3,21 +3,21 @@
   <label for="<%= filter_id %>"><%= autocomplete.control.label %></label>
 
   <div class="autocomplete-wrapper"
-       data-controller="autocomplete toggle"
+       data-controller="autocomplete"
        data-autocomplete-none-class="none"
        data-action="
-        focusin->toggle#show
         input->autocomplete#filter
-        keydown.enter->autocomplete#enter">
+        keydown.enter->autocomplete#enter
+        keydown.esc->autocomplete#closeOnEscape
+        click@window->autocomplete#closeOnOutsideClick">
     <input
       data-autocomplete-target="input"
+      data-action="focusin->autocomplete#open"
       placeholder="<%= autocomplete.items.select(&:selected?).map(&:label).join(', ') %>"
       id="<%= filter_id %>"
       autocomplete="off" />
 
     <ul class="dropdown-list none"
-        data-toggle-target="toggleable"
-        data-toggle-class="none"
         data-autocomplete-target="list" >
       <% autocomplete.items.each do |item| %>
         <li
@@ -36,5 +36,7 @@
         </li>
       <% end %>
     </ul>
+
+    <div class="dropdown-not-found none" data-autocomplete-target="empty" role="status">Nič sme nenašli.</div>
   </div>
 </div>

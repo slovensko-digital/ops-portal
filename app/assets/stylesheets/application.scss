@@ -1755,6 +1755,7 @@ ul.dropdown-list.is-no-match {
   display: none;
 }
 .dropdown-not-found {
+  background: variables.$white;
   border: 1px solid variables.$black;
   box-sizing: border-box;
   color: variables.$black;
@@ -1764,13 +1765,6 @@ ul.dropdown-list.is-no-match {
   line-height: variables.em(24,16);
   padding: 12px 14px;
   @include mixins.rounded(6px);
-}
-.dropdown-not-found strong {
-  font-weight: variables.$semibold;
-}
-.dropdown-not-found span {
-  color: variables.$black-light;
-  display: block;
 }
 .form-label-count {
   color: variables.$black-light;
