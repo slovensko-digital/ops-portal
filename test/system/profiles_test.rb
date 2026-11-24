@@ -15,8 +15,7 @@ class ProfilesTest < ApplicationSystemTestCase
     choose "user_anonymous_true"
 
     # Select municipality
-    find('input[data-preferred-places-target="input"]').click
-    find("label", exact_text: "Nitra").click
+    select_from_search "Nitra", from: "Preferované mestá alebo obce"
 
     # Set email notifications
     choose "user_email_notifiable_true"
@@ -68,8 +67,7 @@ class ProfilesTest < ApplicationSystemTestCase
     login_as(user)
 
     visit edit_profile_path
-    find('input[data-preferred-places-target="input"]').fill_in(with: "Petržalka")
-    find("label", exact_text: "Petržalka").click
+    select_from_search "Petržalka", from: "Preferované mestá alebo obce"
 
     assert_selector "button.filter-select-button[title='Odstrániť: Bratislava - Petržalka']", exact_text: "Petržalka"
 
@@ -86,8 +84,7 @@ class ProfilesTest < ApplicationSystemTestCase
     login_as(user)
 
     visit edit_profile_path
-    find('input[data-preferred-places-target="input"]').fill_in(with: "Spišská Nová Ves")
-    find("label", exact_text: "Spišská Nová Ves").click
+    select_from_search "Spišská Nová Ves", from: "Preferované mestá alebo obce"
 
     assert_selector "li.district.active", count: 7
     assert_selector "button.filter-select-button", exact_text: "Spišská Nová Ves"
@@ -107,8 +104,7 @@ class ProfilesTest < ApplicationSystemTestCase
     login_as(user)
 
     visit edit_profile_path
-    find('input[data-preferred-places-target="input"]').fill_in(with: "Banská Bystrica")
-    find("label", exact_text: "Centrum").click
+    select_from_search "Centrum", from: "Preferované mestá alebo obce", search: "Banská Bystrica"
 
     assert_selector "li.partial", exact_text: "Banská Bystrica"
     assert_no_selector "button.filter-select-button", exact_text: "Banská Bystrica"
@@ -130,9 +126,8 @@ class ProfilesTest < ApplicationSystemTestCase
     login_as(user)
 
     visit edit_profile_path
-    find('input[data-preferred-places-target="input"]').fill_in(with: "Spišská Nová Ves")
-    district_labels = all("li.district label", count: 7)
-    district_labels.each(&:click)
+    fill_in "Preferované mestá alebo obce", with: "Spišská Nová Ves"
+    all("li.district label", count: 7).each(&:click)
 
     assert_selector "li.active:not(.district)", exact_text: "Spišská Nová Ves"
     assert_no_selector "li.partial"
@@ -152,7 +147,7 @@ class ProfilesTest < ApplicationSystemTestCase
     login_as(users(:one))
 
     visit edit_profile_path
-    input = find('input[data-preferred-places-target="input"]')
+    input = find_field("Preferované mestá alebo obce")
     input.fill_in(with: "xyzq")
 
     assert_text "Nič sme nenašli."

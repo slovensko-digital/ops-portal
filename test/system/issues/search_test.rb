@@ -47,16 +47,14 @@ class Issues::SearchTest < ApplicationSystemTestCase
     ruzinov_issue.update_columns(municipality_district_id: municipality_districts(:Ružinov).id)
 
     visit issues_path(lokalita: [ "Bratislava" ])
-    find("#filter-obec-mestska-cast").fill_in(with: "Ružinov")
-    find("li.nested-level-1 a", exact_text: "Ružinov").click
+    select_from_search "Ružinov", from: "Obec / Mestská časť"
 
     assert_selector "li.partial", exact_text: "Bratislava", visible: :all
     assert_no_selector ".filter-select-button", exact_text: "Bratislava"
     assert_text petrzalka_issue.title
     assert_no_text ruzinov_issue.title
 
-    find("#filter-obec-mestska-cast").fill_in(with: "Ružinov")
-    find("li.nested-level-1 a", exact_text: "Ružinov").click
+    select_from_search "Ružinov", from: "Obec / Mestská časť"
 
     assert_selector ".filter-select-button", exact_text: "Bratislava"
     assert_text ruzinov_issue.title
@@ -64,7 +62,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
 
   test "lokalita filter search shows a matching district under its municipality" do
     visit issues_path
-    find("#filter-obec-mestska-cast").fill_in(with: "Petržalka")
+    fill_in "Obec / Mestská časť", with: "Petržalka"
 
     within(".dropdown-list") do
       assert_selector "li", exact_text: "Bratislava"
@@ -76,7 +74,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
 
   test "lokalita filter search shows a message when nothing matches and closes on escape" do
     visit issues_path
-    input = find("#filter-obec-mestska-cast")
+    input = find_field("Obec / Mestská časť")
     input.fill_in(with: "xyzq")
 
     assert_text "Nič sme nenašli."
@@ -89,7 +87,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
 
   test "lokalita filter list closes on a click outside" do
     visit issues_path
-    find("#filter-obec-mestska-cast").click
+    find_field("Obec / Mestská časť").click
 
     assert_selector "li", exact_text: "Bratislava"
 
@@ -100,7 +98,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
 
   test "zodpovedny subjekt list closes on escape" do
     visit issues_path
-    input = find("#filter-zodpovedny-subjekt")
+    input = find_field("Zodpovedný subjekt")
     input.fill_in(with: "BVS")
 
     assert_selector "li", text: "BVS"
@@ -113,7 +111,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
 
   test "zodpovedny subjekt search shows a message when nothing matches" do
     visit issues_path
-    input = find("#filter-zodpovedny-subjekt")
+    input = find_field("Zodpovedný subjekt")
     input.fill_in(with: "xyzq")
 
     assert_text "Nič sme nenašli."
@@ -126,7 +124,7 @@ class Issues::SearchTest < ApplicationSystemTestCase
 
   test "zodpovedny subjekt list closes on a click outside" do
     visit issues_path
-    find("#filter-zodpovedny-subjekt").click
+    find_field("Zodpovedný subjekt").click
 
     assert_selector "li", text: "BVS"
 
