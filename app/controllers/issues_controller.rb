@@ -199,11 +199,11 @@ class IssuesController < ApplicationController
 
   def search_params
     @search_params ||= begin
-       permitted = search_engine.required_params + [ :tab ]
+      permitted = search_engine.required_params + [ :tab ]
 
-       sp = normalize_array_params(params, permitted).permit(*permitted).to_h
-       sp[:lokalita] = sanitized_localities(sp[:lokalita].presence || localities_from_legacy_params).presence
-       sp
+      sp = normalize_array_params(params, permitted).permit(*permitted).to_h
+      sp[:lokalita] = sanitized_localities(sp[:lokalita].presence || localities_from_legacy_params).presence
+      sp
     end
   end
 
