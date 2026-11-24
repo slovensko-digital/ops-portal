@@ -27,7 +27,6 @@ module SearchEngine
       @municipalities ||= Municipality.active.where(name: @values).to_a
     end
 
-    # Districts are looked up only for values that are not a municipality name.
     def districts
       @districts ||= district_by_value.values.uniq
     end

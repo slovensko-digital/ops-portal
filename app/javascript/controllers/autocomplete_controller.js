@@ -8,7 +8,6 @@ export default class extends Controller {
         this.originalOrder = [...this.itemTargets]
     }
 
-    // The open/close actions are for a dropdown list; the list stays put without them.
     open() {
         this.listTarget.classList.remove(this.noneClass)
         this.element.classList.add("is-open")
@@ -71,7 +70,6 @@ export default class extends Controller {
         this.updateEmpty()
     }
 
-    // While the list is open and nothing matches, the "not found" message replaces the empty list.
     updateEmpty() {
         if (!this.hasEmptyTarget) return
 

@@ -69,7 +69,6 @@ export default class extends Controller {
         this.updateEmpty()
     }
 
-    // While the list is open and nothing matches, the "not found" message replaces the empty list.
     updateEmpty() {
         const query = this.inputTarget.value.trim()
         const isOpen = this.element.classList.contains("is-open")

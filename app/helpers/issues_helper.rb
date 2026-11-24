@@ -1,5 +1,4 @@
 module IssuesHelper
-  # /dopyty filtered to a municipality or one of its districts, in the ?lokalita[]= form.
   def lokalita_issues_path(municipality_name, district_name = nil, **params)
     return issues_path(**params) if municipality_name.blank?
 
