@@ -4,15 +4,12 @@
 
   <div class="autocomplete-wrapper"
        data-controller="autocomplete"
-       data-autocomplete-none-class="none"
        data-action="
-        input->autocomplete#filter
-        keydown.enter->autocomplete#enter
-        keydown.esc->autocomplete#closeOnEscape
+        keydown.esc@window->autocomplete#closeOnEscape
         click@window->autocomplete#closeOnOutsideClick">
     <input
       data-autocomplete-target="input"
-      data-action="focusin->autocomplete#open"
+      data-action="focusin->autocomplete#open input->autocomplete#filter keydown.enter->autocomplete#enter"
       placeholder="<%= autocomplete.items.select(&:selected?).map(&:label).join(', ') %>"
       id="<%= filter_id %>"
       autocomplete="off" />

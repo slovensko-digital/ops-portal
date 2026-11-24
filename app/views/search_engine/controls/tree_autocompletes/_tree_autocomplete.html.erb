@@ -5,13 +5,11 @@
   <div class="autocomplete-wrapper"
        data-controller="tree-autocomplete"
        data-action="
-        input->tree-autocomplete#filter
-        keydown.enter->tree-autocomplete#enter
-        keydown.esc->tree-autocomplete#closeOnEscape
+        keydown.esc@window->tree-autocomplete#closeOnEscape
         click@window->tree-autocomplete#closeOnOutsideClick">
     <input
       data-tree-autocomplete-target="input"
-      data-action="focusin->tree-autocomplete#open"
+      data-action="focusin->tree-autocomplete#open input->tree-autocomplete#filter keydown.enter->tree-autocomplete#enter"
       placeholder="<%= Array(tree_autocomplete.value).select { _1.is_a?(String) }.join(', ') %>"
       id="<%= filter_id %>"
       autocomplete="off" />

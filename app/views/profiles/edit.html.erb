@@ -82,8 +82,7 @@
         <div class="form-item-wrapper"
              data-controller="preferred-localities"
              data-action="
-              keydown.enter->preferred-localities#enter
-              keydown.esc->preferred-localities#close
+              keydown.esc@window->preferred-localities#closeOnEscape
               click@window->preferred-localities#closeOnOutsideClick">
           <%= f.label :preferred_localities, for: "preferred_localities" do %>
             Preferované mestá alebo obce
@@ -102,7 +101,7 @@
               type="text"
               class="form-input"
               data-preferred-localities-target="input"
-              data-action="focusin->preferred-localities#open input->preferred-localities#filter"
+              data-action="focusin->preferred-localities#open input->preferred-localities#filter keydown.enter->preferred-localities#enter"
               id="preferred_localities"
               autocomplete="off" />
 

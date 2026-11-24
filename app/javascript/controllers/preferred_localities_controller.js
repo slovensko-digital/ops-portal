@@ -1,10 +1,11 @@
-import { Controller } from "@hotwired/stimulus"
+import TreeAutocompleteController from "controllers/tree_autocomplete_controller"
 
-// Profile "Preferované mestá alebo obce": searchable checkbox list with the selection shown as
-// removable pills above the search input. A district pill shows only the district name; the full
-// "Municipality - District" name is in its title and aria-label (district names repeat across cities).
-export default class extends Controller {
-    static targets = [ "input", "list", "checkbox", "item", "pills", "pillTemplate", "count", "empty" ]
+// Profile "Preferované mestá alebo obce": the searchable tree of tree_autocomplete_controller.js with
+// checkboxes, and the selection shown as removable pills above the search input. A district pill
+// shows only the district name; the full "Municipality - District" name is in its title and
+// aria-label (district names repeat across cities).
+export default class extends TreeAutocompleteController {
+    static targets = [ "checkbox", "pills", "pillTemplate", "count" ]
     static values = {
         defaultPlaceholder: { type: String, default: "Vyhľadajte lokality..." },
         addPlaceholder: { type: String, default: "Pridať ďalšie..." },
@@ -22,71 +23,12 @@ export default class extends Controller {
         this.renderSelection()
     }
 
-    open() {
-        this.listTarget.classList.remove("none")
-        this.element.classList.add("is-open")
-        this.updateEmpty()
-    }
-
-    close() {
-        this.listTarget.classList.add("none")
-        this.element.classList.remove("is-open")
-        this.inputTarget.value = ""
-        this.itemTargets.forEach(item => item.classList.remove("none"))
-        this.updateEmpty()
-    }
-
-    closeOnOutsideClick(event) {
-        if (!this.element.classList.contains("is-open")) return
-        if (this.clickedInside(event.target)) return
-
-        this.close()
-    }
-
-    enter(event) {
-        event.preventDefault()
-    }
-
-    filter() {
-        const query = this.normalizeString(this.inputTarget.value.trim())
-        this.open()
-
-        if (query === "") {
-            this.itemTargets.forEach(item => item.classList.remove("none"))
-            this.updateEmpty()
-            return
-        }
-
-        let currentMunicipalityItem = null
-        let currentMunicipalityMatch = false
-
-        this.itemTargets.forEach(item => {
-            const checkbox = item.querySelector('[data-preferred-localities-target="checkbox"]')
-            const normalized = this.normalizeString(checkbox.dataset.fullLabel.trim())
-
-            if (checkbox.dataset.district !== "true") {
-                currentMunicipalityItem = item
-                currentMunicipalityMatch = normalized.includes(query)
-                item.classList.toggle("none", !currentMunicipalityMatch)
-            } else {
-                const districtMatch = normalized.includes(query)
-                item.classList.toggle("none", !(districtMatch || currentMunicipalityMatch))
-
-                if (districtMatch && currentMunicipalityItem) {
-                    currentMunicipalityItem.classList.remove("none")
-                }
-            }
-        })
-
-        this.updateEmpty()
-    }
-
     // The checked inputs are exactly what gets saved: a whole municipality, or some of its districts.
     // - A checked municipality shows all its districts as ticked, but only the municipality is saved.
     // - Unticking one of those districts unchecks the municipality and checks the other districts,
     //   so the municipality becomes partial (shown as "-").
     // - Ticking the last missing district collapses back to the whole municipality.
-    toggle(event) {
+    toggleLocality(event) {
         const checkbox = event.target
         const { parent, districts } = this.group(checkbox.dataset.municipalityId)
 
@@ -166,15 +108,6 @@ export default class extends Controller {
         return pill
     }
 
-    updateEmpty() {
-        const query = this.inputTarget.value.trim()
-        const isOpen = this.element.classList.contains("is-open")
-        const noMatch = query !== "" && this.itemTargets.every(item => item.classList.contains("none"))
-
-        this.listTarget.classList.toggle("is-no-match", noMatch)
-        this.emptyTarget.classList.toggle("none", !(isOpen && noMatch))
-    }
-
     // Only the search input, the list and the "not found" message keep the list open; the label and
     // the pills count as outside. Removing a pill re-renders the pills, so its click target is already
     // detached by the time this runs: that click leaves the list as it was.
@@ -182,13 +115,5 @@ export default class extends Controller {
         if (!target.isConnected) return true
 
         return [ this.inputTarget, this.listTarget, this.emptyTarget ].some(part => part.contains(target))
-    }
-
-    normalizeString(str) {
-        return (str || "")
-            .normalize("NFD")
-            .replace(/[̀-ͯ]/g, "")
-            .replace(/[^a-z0-9]/gi, "")
-            .toLowerCase()
     }
 }
