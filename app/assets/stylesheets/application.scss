@@ -1679,7 +1679,7 @@ ul.dropdown-list {
   background: variables.$white;
   border: 1px solid variables.$black;
   box-sizing: border-box;
-  height: 194px;
+  height: variables.$dropdown-list-height;
   overflow-y: scroll;
   @include mixins.rounded(6px);
 }
@@ -1762,6 +1762,7 @@ ul.dropdown-list.is-no-match {
   font-family: variables.$general;
   font-size: variables.em(16,16);
   font-weight: variables.$medium;
+  height: variables.$dropdown-list-height;
   line-height: variables.em(24,16);
   padding: 12px 14px;
   @include mixins.rounded(6px);
