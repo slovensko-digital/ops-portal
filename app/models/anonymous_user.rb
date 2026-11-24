@@ -1,5 +1,5 @@
 class AnonymousUser
-  def preferred_places
+  def preferred_localities
     []
   end
 

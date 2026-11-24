@@ -103,7 +103,7 @@ class User < ApplicationRecord
     [ firstname, lastname ].compact.join(" ")
   end
 
-  def preferred_places
+  def preferred_localities
     (municipalities.pluck(:name) + municipality_districts.includes(:municipality).map { |d| "#{d.municipality.name} - #{d.name}" }).sort
   end
 

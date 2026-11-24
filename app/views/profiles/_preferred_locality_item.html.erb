@@ -1,5 +1,5 @@
 <li class="<%= class_names("check-box", district: item[:is_district], active: item[:selected]) %>"
-    data-preferred-places-target="item">
+    data-preferred-localities-target="item">
   <label class="check-box-label <%= 'check-box-label--district' if item[:is_district] %>">
 
     <% if item[:is_district] %>
@@ -8,12 +8,12 @@
         class: "sr-only",
         checked: item[:selected],
         data: {
-          preferred_places_target: "checkbox",
+          preferred_localities_target: "checkbox",
           label: item[:label],
           full_label: item[:full_label],
           district: item[:is_district],
           municipality_id: item[:municipality_id],
-          action: "change->preferred-places#toggle"
+          action: "change->preferred-localities#toggle"
         }
       }, item[:id], nil %>
     <% else %>
@@ -22,12 +22,12 @@
         class: "sr-only",
         checked: item[:selected],
         data: {
-          preferred_places_target: "checkbox",
+          preferred_localities_target: "checkbox",
           label: item[:label],
           full_label: item[:full_label],
           district: item[:is_district],
           municipality_id: item[:municipality_id],
-          action: "change->preferred-places#toggle"
+          action: "change->preferred-localities#toggle"
         }
       }, item[:id], nil %>
     <% end %>

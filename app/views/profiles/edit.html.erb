@@ -80,14 +80,14 @@
 
       <div class="form-items-con">
         <div class="form-item-wrapper"
-             data-controller="preferred-places"
+             data-controller="preferred-localities"
              data-action="
-              keydown.enter->preferred-places#enter
-              keydown.esc->preferred-places#close
-              click@window->preferred-places#closeOnOutsideClick">
-          <%= f.label :preferred_places, for: "preferred_places" do %>
+              keydown.enter->preferred-localities#enter
+              keydown.esc->preferred-localities#close
+              click@window->preferred-localities#closeOnOutsideClick">
+          <%= f.label :preferred_localities, for: "preferred_localities" do %>
             Preferované mestá alebo obce
-            <span class="form-label-count" data-preferred-places-target="count"></span>
+            <span class="form-label-count" data-preferred-localities-target="count"></span>
           <% end %>
 
           <%= f.hidden_field :municipality_ids, multiple: true, value: "" %>
@@ -95,33 +95,33 @@
 
           <div class="autocomplete-wrapper">
             <div class="filter-select-buttons-con none"
-                 data-preferred-places-target="pills"
+                 data-preferred-localities-target="pills"
                  aria-live="polite"></div>
 
             <input
               type="text"
               class="form-input"
-              data-preferred-places-target="input"
-              data-action="focusin->preferred-places#open input->preferred-places#filter"
-              id="preferred_places"
+              data-preferred-localities-target="input"
+              data-action="focusin->preferred-localities#open input->preferred-localities#filter"
+              id="preferred_localities"
               autocomplete="off" />
 
             <ul class="dropdown-list none"
-                data-preferred-places-target="list">
-              <% preferred_places_options(@user, @municipalities).each do |municipality| %>
-                <%= render 'profiles/preferred_place_item', f: f, item: municipality %>
+                data-preferred-localities-target="list">
+              <% preferred_locality_options(@user, @municipalities).each do |municipality| %>
+                <%= render 'profiles/preferred_locality_item', f: f, item: municipality %>
 
                 <% municipality[:districts].each do |district| %>
-                  <%= render 'profiles/preferred_place_item', f: f, item: district %>
+                  <%= render 'profiles/preferred_locality_item', f: f, item: district %>
                 <% end %>
               <% end %>
             </ul>
 
-            <div class="dropdown-not-found none" data-preferred-places-target="empty" role="status">Nič sme nenašli.</div>
+            <div class="dropdown-not-found none" data-preferred-localities-target="empty" role="status">Nič sme nenašli.</div>
           </div>
 
-          <template data-preferred-places-target="pillTemplate">
-            <button type="button" class="button button-transparent filter-select-button" data-action="preferred-places#remove">
+          <template data-preferred-localities-target="pillTemplate">
+            <button type="button" class="button button-transparent filter-select-button" data-action="preferred-localities#remove">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20" aria-hidden="true">
                 <polygon points="14 4.06 12.94 3 7 8.94 1.06 3 0 4.06 5.94 10 0 15.94 1.06 17 7 11.06 12.94 17 14 15.94 8.06 10 14 4.06"/>
               </svg>

@@ -61,7 +61,7 @@ export default class extends Controller {
         let currentMunicipalityMatch = false
 
         this.itemTargets.forEach(item => {
-            const checkbox = item.querySelector('[data-preferred-places-target="checkbox"]')
+            const checkbox = item.querySelector('[data-preferred-localities-target="checkbox"]')
             const normalized = this.normalizeString(checkbox.dataset.fullLabel.trim())
 
             if (checkbox.dataset.district !== "true") {

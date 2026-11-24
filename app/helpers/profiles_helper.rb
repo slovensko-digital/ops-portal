@@ -1,12 +1,12 @@
 module ProfilesHelper
-  def preferred_places(user)
-    names = user.preferred_places
+  def preferred_localities(user)
+    names = user.preferred_localities
     return "&mdash;".html_safe if names.empty?
 
     names.join(", ")
   end
 
-  def preferred_places_options(user, municipalities)
+  def preferred_locality_options(user, municipalities)
     user_m_ids = user.municipalities.pluck(:id)
     user_md_ids = user.municipality_districts.pluck(:id)
 

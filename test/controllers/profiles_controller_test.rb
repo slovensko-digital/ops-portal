@@ -1,7 +1,7 @@
 require "test_helper"
 
 class ProfilesControllerTest < ActionDispatch::IntegrationTest
-  test "failed profile update does not persist preferred places" do
+  test "failed profile update does not persist preferred localities" do
     user = users(:one)
     post "/login", params: { email: user.email, password: "password" }
     assert_response :redirect

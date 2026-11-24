@@ -42,7 +42,7 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_equal true, user.gdpr_stats_accepted
   end
 
-  test "citizen user sees preferred places as pills and can remove one" do
+  test "citizen user sees preferred localities as pills and can remove one" do
     user = users(:one)
     login_as(user)
 
@@ -143,7 +143,7 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_empty user.municipality_districts
   end
 
-  test "citizen user sees a message when no preferred place matches the search" do
+  test "citizen user sees a message when no preferred locality matches the search" do
     login_as(users(:one))
 
     visit edit_profile_path
