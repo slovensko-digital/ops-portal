@@ -77,14 +77,19 @@ Commands:
 
 Then bin/activate-seeded-municipalities on a fresh Triage, and bin/dev.
 
+Without --backoffices, up and reset start the Backoffices set up before, running or stopped, Malacky when there are
+none. reset always wipes every Backoffice, then starts only these.
+
 Options:
         --backoffices=LIST           up, reset: Backoffices to start, e.g. malacky,trnava or none
         --build                      up: rebuild the Zammad images
         --yes                        reset: don't ask
 ```
 
-`up` and `reset` start the Backoffices in `--backoffices` (`none`: only Triage). Without it they start the ones that
-ran before, Malacky when none did. The list of Backoffices is in `config/local_backoffices.yml`.
+`up` and `reset` start the Backoffices in `--backoffices` (`none`: only Triage). Without it they start the ones set
+up before, running or stopped (each has a `.env.<instance>` in `../ops-backoffice-saas`), Malacky when there are
+none. So after `up --backoffices=none` a plain `reset` starts the stopped Backoffices again. The list of Backoffices
+is in `config/local_backoffices.yml`.
 
 `bin/ops` only touches the compose projects `ops-triage-zammad`, `ops-backoffice-<instance>` and the container
 `ops-postgres`, other projects (e.g. `ops-triage-e2e`) keep running. The worktrees of this repo share its ports and
@@ -139,10 +144,17 @@ portal database (`db:reset`), then gets everything ready like a first `up`. It a
 `bin/dev` first, `bin/ops` refuses while port 3000 is in use. Then run `bin/activate-seeded-municipalities` and
 `bin/dev`.
 
+It always wipes every Backoffice, also the ones it doesn't start again. Without `--backoffices` it starts again
+the ones set up before, e.g. both after `up --backoffices=malacky,trnava`. `--backoffices` changes which ones, for
+the activation that follows: `malacky,trnava` makes both municipalities PRO, `none` makes all of them BASIC. A
+Backoffice left out is not set up any more (its `.env.<instance>` is removed), the next `up` and `reset` don't start
+it.
+
 ```bash
-bin/ops reset
-bin/ops reset --backoffices=malacky,trnava
-bin/ops reset --yes
+bin/ops reset                                  # the Backoffices set up before
+bin/ops reset --backoffices=malacky,trnava     # both, Malacky and Trnava become PRO
+bin/ops reset --backoffices=none               # no Backoffice, every municipality becomes BASIC
+bin/ops reset --yes                            # don't ask
 ```
 
 Always reset the portal, Triage and the Backoffices together, with their volumes. Resetting only the portal leaves

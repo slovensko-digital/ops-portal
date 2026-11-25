@@ -11,6 +11,9 @@
 #
 # Then bin/activate-seeded-municipalities on a fresh Triage, and bin/dev.
 #
+# Without --backoffices, up and reset start the Backoffices set up before, running or stopped, Malacky when there are
+# none. reset always wipes every Backoffice, then starts only these.
+#
 # Options:
 
 # up and reset start the Backoffices of config/local_backoffices.yml in --backoffices (none: only Triage), otherwise
