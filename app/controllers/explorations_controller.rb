@@ -12,14 +12,15 @@ class ExplorationsController < ActionController::Base
   end
 
   def show
-    path = ROOT.join(params[:path]).expand_path
-    return head :not_found unless path.to_s.start_with?("#{ROOT}/")
+    # Only files that exist under explorations/ are served, never a path built from params.
+    path = ROOT.glob("**/*").find { |entry| entry.relative_path_from(ROOT).to_s == params[:path] }
+    return head :not_found unless path
 
     if path.directory?
       return redirect_to "#{request.path}/" unless request.original_fullpath.end_with?("/")
       path = path.join("index.html")
+      return head :not_found unless path.file?
     end
-    return head :not_found unless path.file?
 
     response.headers["Cache-Control"] = "no-store"
     send_file path, disposition: :inline, type: Rack::Mime.mime_type(path.extname, "text/plain")
