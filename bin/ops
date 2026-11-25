@@ -325,7 +325,7 @@ def parse_bytes(text)
   number, unit = text.strip.match(/\A([\d.]+)\s*([KMGT]?i?B)\z/)&.captures
   return 0 unless number
 
-  number.to_f * 1024**({ "B" => 0, "KiB" => 1, "kB" => 1, "MiB" => 2, "MB" => 2, "GiB" => 3, "GB" => 3, "TiB" => 4 }[unit] || 0)
+  number.to_f * 1024**({ "B" => 0, "KiB" => 1, "MiB" => 2, "MB" => 2, "GiB" => 3, "GB" => 3, "TiB" => 4 }[unit] || 0)
 end
 
 def gigabytes(bytes) = format("%.1f GB", bytes / 1024.0**3)

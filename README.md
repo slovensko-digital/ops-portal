@@ -49,8 +49,7 @@ Portal only (no local Triage):
 rm -rf storage/[!.]* && bin/rails db:reset    # the uploaded files, then drops, recreates and seeds the database
 ```
 
-Not `db:seed:replant`: it also empties PostGIS's `spatial_ref_sys`, the boundary import then fails with
-"Cannot find SRID (4326) in spatial_ref_sys". `db:reset` needs `bin/dev` and consoles stopped, it drops the database.
+`db:reset` needs `bin/dev` and consoles stopped, it drops the database.
 
 With a local Triage, always reset both together, see [Local Triage](#reset-portal-and-triage).
 Resetting only the portal leaves tickets, groups and triggers in Triage for issues and municipalities
@@ -100,7 +99,7 @@ Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the po
 `host.docker.internal:3000` (webhooks signed with `WEBHOOK_SECRET`, responsible subject search),
 so `bin/dev` has to be running for Triage changes to reach the portal.
 
-The seeds (`db:prepare` seeds a new database) activate only Bratislava (with its city parts) is
+The seeds (`db:prepare` seeds a new database) activate only Bratislava (with its city parts).
 Banská Bystrica, Trnava, Nitra, Malacky and Pezinok and their responsible subjects wait inactive.
 `bin/activate-seeded-municipalities` then runs, on the freshly seeded portal and a fresh Triage:
 
