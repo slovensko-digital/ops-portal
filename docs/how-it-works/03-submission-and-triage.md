@@ -58,7 +58,12 @@ read-only, and "Pokračovať" to that step.
 `checks/create` and `checks/confirm` redirect to the summary ("Rozpracovaný
 podnet") when the draft is incomplete (e.g. a summary page opened earlier).
 Before, a draft without a category failed in `Issue#save!` with a 422. Turbo
-then reloaded the summary, so "Odoslať podnet" seemed to do nothing.
+ then reloaded the summary, so "Odoslať podnet" seemed to do nothing.
+
+While the request runs, Turbo disables the clicked button and shows
+"Kontrolujeme podnet…" on the summary or "Odosielame podnet…" after confirming
+a warning. This prevents repeat clicks on that button, not concurrent requests
+from separate tabs or clients.
 
 ### Stuck in Incoming
 
@@ -244,4 +249,4 @@ Known problems in this flow, tracked in the private `slovensko-digital/ops` repo
 | [ops#1323](https://github.com/slovensko-digital/ops/issues/1323) | [2c. Reject](#2c-reject) | A rejected issue can't be supplemented |
 | [ops#1328](https://github.com/slovensko-digital/ops/issues/1328) | [2a. Request supplement (doplnenie) (observed)](#2a-request-supplement-doplnenie-observed) | Request supplement sends the author two emails |
 | [ops#1330](https://github.com/slovensko-digital/ops/issues/1330) | [2b. Accept (observed)](#2b-accept-observed) | The supplement has to be copied into "Finálny text" by hand; accept overwrites the citizen's text |
-| [ops#1345](https://github.com/slovensko-digital/ops/issues/1345) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | `ChecksController#confirm` renders nothing; no double-submit lock |
+| [ops#1345](https://github.com/slovensko-digital/ops/issues/1345) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | `ChecksController#confirm` renders nothing when the draft is not confirmable; no server-side protection against concurrent submissions |

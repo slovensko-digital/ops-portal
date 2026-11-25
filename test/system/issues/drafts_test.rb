@@ -68,10 +68,23 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     click_on "Pokračovať"
 
     assert_text "Zhrnutie podnetu"
-    click_on "Odoslať podnet"
+    submit = find_button("Odoslať podnet")
+    pause_submission(submit)
+    submit.send_keys(:enter)
+
+    pending = find_button("Kontrolujeme podnet…", disabled: true)
+    assert_not_equal "none", spinner_animation(pending)
+    page.execute_script("arguments[0].click()", pending.native)
+    assert_equal 1, page.evaluate_script("window.pendingSubmission.requests")
+    page.execute_script("window.pendingSubmission.release()")
 
     assert_text "Podnet má problém"
-    click_on "Odoslať podnet aj tak"
+    confirmation = find_button("Odoslať podnet aj tak")
+    pause_submission(confirmation)
+    confirmation.click
+
+    assert_button "Odosielame podnet…", disabled: true
+    page.execute_script("window.pendingSubmission.release()")
 
     assert_text "Podnet bol odoslaný!"
 
@@ -106,6 +119,32 @@ class Issues::DraftsTest < ApplicationSystemTestCase
 
     assert_text "sú v nepodporovanom formáte."
     assert_equal [ "graffiti-with-geo.jpg" ], @user.issues_drafts.last.photos.map { |photo| photo.filename.to_s }
+  end
+
+  test "failed submission restores the button with reduced motion" do
+    draft = @user.issues_drafts.create!(
+      category: issues_categories(:one), latitude: 48.16, longitude: 17.05,
+      title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit"
+    )
+    file_fixture("graffiti-with-geo.jpg").open do |photo|
+      draft.photos.attach(io: photo, filename: "graffiti-with-geo.jpg")
+    end
+    login_as(@user)
+    visit issues_draft_summary_path(draft)
+    browser = page.driver.browser
+    browser.execute_cdp("Emulation.setEmulatedMedia", features: [ { name: "prefers-reduced-motion", value: "reduce" } ])
+
+    submit = find_button("Odoslať podnet")
+    pause_submission(submit)
+    submit.click
+
+    pending = find_button("Kontrolujeme podnet…", disabled: true)
+    assert_equal "none", spinner_animation(pending)
+    page.execute_script("window.pendingSubmission.reject()")
+
+    assert_button "Odoslať podnet", disabled: false
+  ensure
+    browser&.execute_cdp("Emulation.setEmulatedMedia", features: [])
   end
 
   test "issue creation on unsupported municipality" do
@@ -252,5 +291,35 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     assert_text "Lokalita"
     click_on "Pokračovať"
     assert_text "Poškodená rozvodná skriňa"
+  end
+
+  def pause_submission(button)
+    page.execute_script(<<~JS, button.native)
+      const action = arguments[0].form.action;
+      const fetch = window.fetch;
+      const pending = window.pendingSubmission = { requests: 0 };
+
+      window.fetch = (url, options) => {
+        if (String(url) !== action || options?.method?.toUpperCase() !== "POST") {
+          return fetch(url, options);
+        }
+
+        pending.requests++;
+        return new Promise((resolve, reject) => {
+          pending.release = () => {
+            window.fetch = fetch;
+            resolve(fetch(url, options));
+          };
+          pending.reject = () => {
+            window.fetch = fetch;
+            reject(new TypeError("Simulated network failure"));
+          };
+        });
+      };
+    JS
+  end
+
+  def spinner_animation(button)
+    page.evaluate_script("getComputedStyle(arguments[0], '::before').animationName", button.native)
   end
 end
