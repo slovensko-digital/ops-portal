@@ -151,7 +151,7 @@ to the dropped database) and runs `bin/rails log:clear tmp:clear`, recreates the
 start `bin/dev`. Without `--backoffices` it starts the Backoffices that ran before (a `.env.<instance>` in
 `ops-backoffice-saas`), Malacky when none did. A Backoffice left out loses its `.env.<instance>`. Stop `bin/dev`
 first, `bin/ops` refuses while port 3000 is in use. When Docker runs out of memory, it stops and names the
-container (exit code 137).
+container.
 
 Always reset the portal, Triage and the Backoffices together, with their volumes. The reseeded portal starts its
 issue ids at 300300 again, and a Backoffice that kept its tickets refuses a ticket number `OPS-<id>` it already has:
