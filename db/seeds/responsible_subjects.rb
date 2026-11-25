@@ -33,9 +33,11 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
 
   { type: city, subject_name: "Hlavné mesto SR Bratislava" },
   { type: city, subject_name: "Banská Bystrica" },
-  { type: city, subject_name: "Trnava" },
+  # Trnava and Malacky have fixed ids: their local Backoffices (config/local_backoffices.yml, started by bin/ops)
+  # start with their responsible subject id before bin/activate-seeded-municipalities activates them
+  { type: city, subject_name: "Trnava", id: 20 },
   { type: city, subject_name: "Nitra" },
-  { type: city, subject_name: "Malacky" },
+  { type: city, subject_name: "Malacky", id: 22 },
   { type: city, subject_name: "Pezinok" },
 
   { type: other, subject_name: "Národná diaľničná spoločnosť" },
@@ -56,6 +58,7 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
   end
 
   ResponsibleSubject.find_or_initialize_by(subject_name: data[:subject_name]).tap do |rs|
+    rs.id ||= data[:id]
     rs.responsible_subjects_type = data[:type]
     rs.name = data[:subject_name]
     rs.municipality = municipality
@@ -67,4 +70,6 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
     rs.active = !waiting_for_activation
     rs.pro = !waiting_for_activation
   end.save!
+  # the next responsible subject without a fixed id gets one after it, not a fixed one
+  ActiveRecord::Base.connection.reset_pk_sequence!("responsible_subjects") if data[:id]
 end

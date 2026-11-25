@@ -58,57 +58,51 @@ the portal no longer has, and `bin/activate-seeded-municipalities` expects a fre
 
 ## Local Triage
 
-Run the portal together with a local Triage to click through the whole flow. Clone
-[ops-triage-zammad](https://github.com/slovensko-digital/ops-triage-zammad) next to this repo
-(`../ops-triage-zammad`).
+Run the portal together with a local Triage and [local Backoffices](#local-backoffice) to click through the whole
+flow. Clone [ops-triage-zammad](https://github.com/slovensko-digital/ops-triage-zammad) and
+[ops-backoffice-saas](https://github.com/slovensko-digital/ops-backoffice-saas) next to this repo.
 
 | What | URL |
 |---|---|
 | Triage | http://localhost:8080, `admin@example.org` / `PASSword123`, volunteer `dobrovolnik@example.org` / `PASSword123` |
 | Triage emails | http://localhost:8025 (Mailpit), every email Triage sends, e.g. trigger emails to responsible subjects |
 
-`bin/ops` runs the portal, Triage and the [local Backoffices](#local-backoffice) together:
+First time:
 
 ```bash
-bin/ops reset    # first time, and to wipe everything, see below
-bin/ops up       # every day: Postgres, Triage, the Backoffices, waits until they answer, then start bin/dev
-bin/ops up --backoffices=none      # only Triage, or e.g. --backoffices=malacky, stops the other Backoffices
-bin/ops down     # stops them, keeps the data (stop bin/dev with Ctrl-C)
-bin/ops status   # what runs, the URLs, Docker memory
-bin/ops logs triage zammad-railsserver   # or portal, postgres, malacky, trnava
-```
-
-With `--backoffices=none` the PRO municipalities (Malacky, and Trnava when set up) stay PRO in the portal, their
-issues' Connector jobs fail in `/admin/good_job` until their Backoffice runs. Use the other municipalities, or
-`bin/ops reset --backoffices=none` to have all of them BASIC.
-
-`up --build` rebuilds the Zammad images after a pull in `ops-triage-zammad` or `ops-backoffice-saas`.
-`bin/ops` doesn't run `bin/dev`, start it yourself. It only touches the compose projects `ops-triage-zammad`,
-`ops-backoffice-<instance>` and the container `ops-postgres`, other projects (e.g. `ops-triage-e2e`) keep running.
-The worktrees of this repo share its ports and Postgres, run `bin/ops` and `bin/dev` in one of them at a time.
-
-By hand, the first time is:
-
-```bash
-# Triage, the first start takes a few minutes (zammad-init)
-cd ../ops-triage-zammad && docker compose up -d --build
-
-# Portal, the Triage token and webhook secret in .env.sample already match the Triage ones
-cd ../ops-portal && cp .env.sample .env
-docker compose up -d && bin/setup --skip-server
-bin/activate-seeded-municipalities   # once Triage answers, sets up the seeded municipalities in Triage, see below
+bundle install
+bin/ops up                           # Postgres, the database, Triage and Malacky's Backoffice, all at once
+bin/activate-seeded-municipalities   # sets up the seeded municipalities in the fresh Triage, see below
 bin/dev
 ```
 
-and every day `docker compose up -d` in `ops-triage-zammad`, `docker compose up -d` and `bin/dev` here.
+Every day `bin/ops up` and `bin/dev`. `bin/ops` gets the stack ready and waits until it answers:
+
+```bash
+bin/ops up       # Postgres, db:prepare, Triage and the Backoffices, also the first time, then start bin/dev
+bin/ops up --backoffices=none      # only Triage, or e.g. --backoffices=malacky,trnava, stops the other Backoffices
+bin/ops down     # stops them, keeps the data (stop bin/dev with Ctrl-C)
+bin/ops status   # what runs, the URLs, Docker memory
+bin/ops reset    # wipes everything, see below
+bin/ops logs triage zammad-railsserver   # or portal, postgres, malacky, trnava
+```
+
+With `--backoffices=none` the PRO municipalities stay PRO in the portal, their issues' Connector jobs fail in
+`/admin/good_job` until their Backoffice runs. Use the other municipalities, or `bin/ops reset --backoffices=none`
+and `bin/activate-seeded-municipalities` to have all of them BASIC.
+
+`up --build` rebuilds the Zammad images after a pull in `ops-triage-zammad` or `ops-backoffice-saas`. `.env` is
+copied from `.env.sample` when it's missing. `bin/ops` only touches the compose projects `ops-triage-zammad`,
+`ops-backoffice-<instance>` and the container `ops-postgres`, other projects (e.g. `ops-triage-e2e`) keep running.
+The worktrees of this repo share its ports and Postgres, run `bin/ops` and `bin/dev` in one of them at a time.
 
 Who calls whom: the portal calls Triage at `localhost:8080`. Triage calls the portal at
 `host.docker.internal:3000` (webhooks signed with `WEBHOOK_SECRET`, responsible subject search),
 so `bin/dev` has to be running for Triage changes to reach the portal.
 
-`bin/setup` seeds the portal (`db:prepare` seeds a new database). Only Bratislava (with its city parts) is
-seeded active. Banská Bystrica, Trnava, Nitra, Malacky and Pezinok and their responsible subjects are seeded
-inactive. `bin/activate-seeded-municipalities` then runs, on the freshly seeded portal and a fresh Triage:
+The seeds (`db:prepare` seeds a new database) activate only Bratislava (with its city parts) is
+Banská Bystrica, Trnava, Nitra, Malacky and Pezinok and their responsible subjects wait inactive.
+`bin/activate-seeded-municipalities` then runs, on the freshly seeded portal and a fresh Triage:
 
 1. a check that Triage is up, that `TRIAGE_ZAMMAD_ADMIN_API_TOKEN` (the local Triage admin's, in `.env.sample`)
    works and that the portal has inactive municipalities. It asks for the token when it doesn't work.
@@ -120,14 +114,13 @@ inactive. `bin/activate-seeded-municipalities` then runs, on the freshly seeded 
    It creates the municipality's group, organization, 700 trigger and users
    (`podatelna@<municipality>.example.com`, `jan.novak@<municipality>.example.com`) in Triage for the volunteer
    `dobrovolnik@example.org`, then activates it.
-   It asks about the [local Backoffices](#local-backoffice) first, without a terminal it takes the defaults,
-   `BACKOFFICES=malacky,trnava` (or `none`) picks them without asking:
-   - Malacky (yes by default) is activated as PRO instead, by
-     `bin/rails responsible_subjects:activate_pro EXISTING_MUNICIPALITY=1`.
-   - Trnava (no by default) is activated as BASIC, then upgraded by `bin/rails responsible_subjects:upgrade_to_pro`.
+   A municipality whose [local Backoffice](#local-backoffice) answers becomes PRO instead:
+   - Malacky by `bin/rails responsible_subjects:activate_pro EXISTING_MUNICIPALITY=1`.
+   - Trnava is activated as BASIC, then upgraded by `bin/rails responsible_subjects:upgrade_to_pro`.
 4. full access to every Triage group for `admin@example.org`, so the admin sees and works all tickets too,
    without logging in as the volunteer.
-5. the `dev/up` command per picked Backoffice, printed, or run with `START_BACKOFFICES=1`.
+5. a check that each of these Backoffices runs with the portal's ids, `dev/up` again for one that doesn't, see
+   [Local Backoffice](#local-backoffice).
 
 New issues in an activated municipality go to the volunteer's group in Triage. The seeded issues stay only in
 the portal, the seeds don't send them to Triage.
@@ -142,16 +135,14 @@ Click-through:
 
 ```bash
 bin/ops reset                          # asks first, --yes doesn't
-bin/ops reset --backoffices=malacky    # or malacky,trnava or none
+bin/ops reset --backoffices=malacky,trnava    # or none
 ```
 
-It wipes Triage and every Backoffice with their volumes, deletes the portal's uploaded files (`storage/`, they belong
-to the dropped database) and runs `bin/rails log:clear tmp:clear`, recreates the portal database (`db:reset`), runs
-`bin/activate-seeded-municipalities` once Triage answers, starts the Backoffices with the portal's new ids, then
-start `bin/dev`. Without `--backoffices` it starts the Backoffices that ran before (a `.env.<instance>` in
-`ops-backoffice-saas`), Malacky when none did. A Backoffice left out loses its `.env.<instance>`. Stop `bin/dev`
-first, `bin/ops` refuses while port 3000 is in use. When Docker runs out of memory, it stops and names the
-container.
+Then `bin/activate-seeded-municipalities` and `bin/dev`. It wipes Triage and every Backoffice with their volumes,
+the portal's uploaded files (`storage/`, they belong to the dropped database), logs and `tmp/` (`log:clear
+tmp:clear`) and the portal database (`db:reset`), then gets everything ready like a first `bin/ops up`, all at once.
+Without `--backoffices` it starts the Backoffices that ran before, Malacky when none did. Stop `bin/dev` first,
+`bin/ops` refuses while port 3000 is in use. When Docker runs out of memory, it stops and names the container.
 
 Always reset the portal, Triage and the Backoffices together, with their volumes. The reseeded portal starts its
 issue ids at 300300 again, and a Backoffice that kept its tickets refuses a ticket number `OPS-<id>` it already has:
@@ -174,17 +165,15 @@ Each Backoffice has a host name of its own. Cookies ignore ports, so on the same
 Backoffices log each other out. Chrome and Firefox resolve `*.localhost` without any setup. Triage and two
 Backoffices need about 4.5 GB of Docker memory.
 
-First time, with [Local Triage](#local-triage) set up: `bin/activate-seeded-municipalities` asks which
-municipalities get a Backoffice, activates Malacky as PRO and upgrades Trnava to PRO, and prints a command per
-Backoffice, e.g.:
+`bin/ops up` starts Malacky's Backoffice, `--backoffices=malacky,trnava` both, the list is in
+`config/local_backoffices.yml`. Then `bin/activate-seeded-municipalities` makes their municipalities PRO.
 
-```bash
-cd ../ops-backoffice-saas && dev/up malacky 1 Malacky 22 1 local-dev-malacky-backoffice-api-token-not-a-secret local-dev-malacky-backoffice-webhook-secret-not-a-secret
-```
-
-`dev/up` gets the ids and secrets the portal created, so start the Backoffice after the activation.
-`bin/ops reset` runs it for you, and `bin/ops up` starts every Backoffice with a `.env.<instance>`. By hand, every
-day: `dev/compose malacky up -d` (and `trnava`) in `ops-backoffice-saas`.
+A Backoffice starts before the activation, so it gets the portal's ids from `config/local_backoffices.yml`
+(`ops-backoffice-saas` `dev/up` writes them to `.env.<instance>`): the responsible subject id, fixed in
+`db/seeds/responsible_subjects.rb`, and the tenant id, the `Connector::Tenant` the activation creates. With both
+Backoffices it creates Malacky's first, then Trnava's. When it gets another id (e.g. only Trnava runs and gets
+tenant 1), it starts the Backoffice again with it. A Backoffice added by `bin/ops up` after the activation stays
+unused, its municipality is BASIC: `bin/ops reset --backoffices=malacky,trnava`, then activate.
 
 Who calls whom: the portal calls the Backoffice at `localhost:<port>`. The Backoffice calls the portal at
 `host.docker.internal:3000` (`/connector/backoffice/webhook`, responsible subject search).
@@ -197,7 +186,7 @@ Click-through:
    Backoffice of Trnava.
 5. Downgrade and upgrade again: `bin/rails responsible_subjects:downgrade_to_basic NAME=Trnava
    USERS=podatelna@trnava.example.com,jan.novak@trnava.example.com`, Triage emails Trnava again (Mailpit). Then
-   `upgrade_to_pro` with the same `BACKOFFICE_*` values as the script, the Backoffice of Trnava works again.
+   `upgrade_to_pro` with Trnava's `BACKOFFICE_*` values from `config/local_backoffices.yml`, the Backoffice of Trnava works again.
 
 ## Testing
 

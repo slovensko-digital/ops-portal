@@ -4,23 +4,25 @@
 # "Local Backoffice" in README.md.
 #
 #   bin/ops up [--backoffices=malacky,trnava|none] [--build]
-#                                     start Postgres, Triage and the Backoffices, wait until they answer
+#                                     get Postgres, the portal database, Triage and the Backoffices ready, also the
+#                                     first time, all at once
 #   bin/ops down                      stop them all, keeps the data
 #   bin/ops status                    what runs, its URL and Docker memory
 #   bin/ops reset [--backoffices=malacky,trnava|none] [--yes]
-#                                     wipe Triage and the Backoffices, reseed the portal, activate the seeded
-#                                     municipalities, start the Backoffices
+#                                     wipe them all, then get them ready like a first up
 #   bin/ops logs <portal|postgres|triage|<backoffice>> [service]
 #
-# A Backoffice is known by its .env.<instance> in ../ops-backoffice-saas (dev/up writes it). reset starts the
-# known ones again, Malacky when there are none, or the ones in --backoffices. up starts the known ones, or the ones
-# in --backoffices (none: only Triage) and stops the others, they keep their data.
+# Then bin/activate-seeded-municipalities on a fresh Triage, and bin/dev. The Backoffices are in
+# config/local_backoffices.yml. up and reset start the ones that ran before (a .env.<instance> in
+# ../ops-backoffice-saas), Malacky when none did, or the ones in --backoffices (none: only Triage); up stops the
+# others, they keep their data.
 #
 # The portal uses the Postgres on the port of DATABASE_URL: whatever answers there (e.g. Postgres.app), otherwise
 # bin/ops starts the Docker container ops-postgres. It only touches the compose projects ops-triage-zammad and
 # ops-backoffice-<instance> and the container ops-postgres, never others (e.g. ops-triage-e2e) or a local Postgres.
 # Worktrees of this repo use the same ports and the same Postgres, run it from one of them at a time.
 require "json"
+require "yaml"
 require "net/http"
 require "fileutils"
 require "open3"
@@ -35,6 +37,7 @@ TRIAGE_PORT = 8080
 POSTGRES_CONTAINER = "ops-postgres"
 PORTAL_PORT = 3000
 DEFAULT_BACKOFFICES = [ "malacky" ].freeze
+LOCAL_BACKOFFICES = YAML.load_file(File.join(APP_ROOT, "config/local_backoffices.yml")).freeze
 # the first start runs zammad-init, it takes minutes
 ZAMMAD_TIMEOUT = 20 * 60
 
@@ -54,8 +57,29 @@ def capture(*command)
   status.success? ? output : ""
 end
 
-def triage_compose(*args, chdir: TRIAGE_DIR) = run!("docker", "compose", "-p", TRIAGE_PROJECT, *args, chdir: chdir)
-def backoffice_compose(backoffice, *args) = run!("dev/compose", backoffice.instance, *args, chdir: BACKOFFICE_DIR)
+# runs the steps of each name one after another and the names at once, { name => [[command, chdir], ...] },
+# every output line starts with its name, aborts when any of them failed
+def run_parallel!(steps)
+  return if steps.empty?
+
+  width = steps.keys.map(&:length).max
+  output = Mutex.new
+  failed = steps.map do |name, commands|
+    Thread.new do
+      commands.all? do |command, chdir|
+        output.synchronize { puts "\n== [#{name}] #{command.join(" ")}" }
+        Open3.popen2e(*command, chdir: chdir) do |_, out, wait|
+          out.each_line { |line| output.synchronize { puts "[#{name.ljust(width)}] #{line}" } }
+          wait.value.success?
+        end
+      end || name
+    end
+  end.map(&:value).grep(String)
+  abort "\n#{failed.join(", ")} failed, see the output above" if failed.any?
+end
+
+def triage_compose(*args) = [ [ "docker", "compose", "-p", TRIAGE_PROJECT, *args ], TRIAGE_DIR ]
+def backoffice_compose(backoffice, *args) = [ [ "dev/compose", backoffice.instance, *args ], BACKOFFICE_DIR ]
 
 def known_backoffices
   Dir[File.join(BACKOFFICE_DIR, ".env.*")].filter_map do |path|
@@ -185,117 +209,116 @@ def check_portal_stopped!
   abort "Something runs on port #{PORTAL_PORT}, stop bin/dev first (also in the other worktrees)"
 end
 
-def print_next_step
-  if port_open?(PORTAL_PORT)
-    puts "\n== The portal runs on http://localhost:#{PORTAL_PORT}"
-  else
-    puts "\n== Start the portal: bin/dev"
-  end
+def print_next_step(fresh_triage)
+  puts "\n== Ready. Next:"
+  puts "  bin/activate-seeded-municipalities   # the fresh Triage has no municipalities yet" if fresh_triage
+  puts(port_open?(PORTAL_PORT) ? "  the portal runs on http://localhost:#{PORTAL_PORT}" : "  bin/dev")
 end
 
+# the Backoffices to start: --backoffices, the ones that ran before, or Malacky
+def picked_backoffices(options)
+  instances = options[:backoffices] || known_backoffices.map(&:instance).then { _1.empty? ? DEFAULT_BACKOFFICES : _1 }
+  unknown = instances - LOCAL_BACKOFFICES.map { _1["instance"] }
+  abort "Unknown Backoffice #{unknown.join(", ")}, config/local_backoffices.yml has #{LOCAL_BACKOFFICES.map { _1["instance"] }.join(", ")}" if unknown.any?
+  LOCAL_BACKOFFICES.select { instances.include?(_1["instance"]) }
+end
+
+# up -d starts a Backoffice with its .env.<instance>, the activation may have changed its ids there. dev/up writes it
+# with the fixed values of config/local_backoffices.yml and (re)creates the Backoffice: a new one, and after a reset
+def start_backoffice(config, build, fixed_values: false)
+  backoffice = known_backoffices.find { _1.instance == config["instance"] }
+  return backoffice_compose(backoffice, "up", "-d", *build) if backoffice && !fixed_values
+
+  dev_up = config.values_at("instance", "slot", "name", "responsible_subject_id", "tenant_id", "api_token", "webhook_secret")
+  [ [ "dev/up", *dev_up.map(&:to_s) ], BACKOFFICE_DIR ]
+end
+
+def zammads(backoffices)
+  { "Triage" => [ TRIAGE_PROJECT, TRIAGE_PORT ] }.merge(backoffices.to_h { [ _1["instance"], [ "ops-backoffice-#{_1["instance"]}", 8080 + _1["slot"] ] ] })
+end
+
+# Gets the stack ready, also the first time: Postgres, the portal database (db:prepare creates and seeds a new one),
+# Triage and the Backoffices, all at once, then waits until they answer.
 def up(options)
   check_repos!
-  if options[:backoffices] && (unknown = options[:backoffices] - known_backoffices.map(&:instance)).any?
-    abort "No Backoffice #{unknown.join(", ")}, known: #{known_backoffices.map(&:instance).join(", ").then { _1.empty? ? "none" : _1 }}. " \
-      "bin/ops reset --backoffices=... sets one up"
-  end
-  if !volumes?(TRIAGE_PROJECT)
-    abort "There is no local Triage yet, set everything up with: bin/ops reset"
-  end
+  backoffices = picked_backoffices(options)
+  fresh_triage = !volumes?(TRIAGE_PROJECT)
+  build = options[:build] ? [ "--build" ] : []
+  known = known_backoffices
 
   ensure_bundle
   start_postgres
+  # db:prepare creates and seeds a new database, migrates an existing one
+  steps = { "portal" => [ [ [ "bin/rails", "db:prepare" ], APP_ROOT ] ], "triage" => [ triage_compose("up", "-d", *build) ] }
+  # the others stop, it frees their memory (about 1.5 GB each), they keep their data
+  known.each { steps[_1.instance] = [ backoffice_compose(_1, "stop") ] }
+  backoffices.each { steps[_1["instance"]] = [ start_backoffice(_1, build) ] }
+  run_parallel!(steps)
 
-  build = options[:build] ? [ "--build" ] : []
-  triage_compose "up", "-d", *build
-  backoffices = known_backoffices
-  if options[:backoffices]
-    left_out, backoffices = backoffices.partition { !options[:backoffices].include?(_1.instance) }
-    # frees their memory, about 1.5 GB each
-    left_out.each { backoffice_compose(_1, "stop") }
-  end
-  backoffices.each { backoffice_compose(_1, "up", "-d", *build) }
-  run! "bin/rails", "db:prepare"
-
-  wait_for_zammads({ "Triage" => [ TRIAGE_PROJECT, TRIAGE_PORT ] }.merge(backoffices.to_h { [ _1.instance, [ _1.project, _1.port ] ] }))
+  wait_for_zammads(zammads(backoffices))
   status
-  print_next_step
+  new_backoffices = backoffices.reject { |config| known.any? { _1.instance == config["instance"] } }
+  if new_backoffices.any? && !fresh_triage
+    puts "\n== #{new_backoffices.map { _1["name"] }.join(", ")} stays BASIC in the portal, it was activated without its new " \
+      "Backoffice. To make it PRO: bin/ops reset, then bin/activate-seeded-municipalities"
+  end
+  print_next_step(fresh_triage)
 end
 
 def down
   check_repos!
-  triage_compose "stop"
-  known_backoffices.each { backoffice_compose(_1, "stop") }
-  run! "docker", "stop", POSTGRES_CONTAINER if docker_postgres_state == "running"
+  steps = { "triage" => [ triage_compose("stop") ] }.merge(known_backoffices.to_h { [ _1.instance, [ backoffice_compose(_1, "stop") ] ] })
+  steps["postgres"] = [ [ [ "docker", "stop", POSTGRES_CONTAINER ], APP_ROOT ] ] if docker_postgres_state == "running"
+  run_parallel!(steps)
   puts "\n== The Postgres on port #{postgres_port} keeps running, it is not bin/ops's" if port_open?(postgres_port)
   puts "\n== Stopped, the data stays. Stop bin/dev with Ctrl-C." if port_open?(PORTAL_PORT)
 end
 
-# Wipes Triage and the Backoffices (always with their volumes, see "Reset portal and Triage" in README.md) and
-# fills the stack again. The fill is fill_with_seeds today, a restore of a prepared snapshot can replace it.
+# Wipes everything and gets the stack ready again, like a first up, all at once: Triage and every Backoffice with
+# their volumes (see "Reset portal and Triage" in README.md), the portal's uploaded files, logs, tmp and database.
+# The portal is filled by db:reset's seeds today, a restore of a prepared snapshot can replace it.
 def reset(options)
   check_repos!
   check_portal_stopped!
-  backoffices = options[:backoffices] || known_backoffices.map(&:instance).then { _1.empty? ? DEFAULT_BACKOFFICES : _1 }
+  backoffices = picked_backoffices(options)
   confirm_reset!(backoffices, options[:yes])
 
   ensure_bundle
   start_postgres
-  wipe_zammads(backoffices)
-  wipe_portal_files
-  fill_with_seeds(backoffices)
-  wait_for_zammads(known_backoffices.select { backoffices.include?(_1.instance) }.to_h { [ _1.instance, [ _1.project, _1.port ] ] })
+  # the uploaded files (Active Storage's local service) belong to the database db:reset drops
+  puts "\n== Removing the uploaded files in storage/"
+  FileUtils.rm_rf(Dir[File.join(APP_ROOT, "storage", "[^.]*")])
+  # log:clear tmp:clear as bin/setup does, tmp:clear empties the test uploads in tmp/storage too. db:reset, not
+  # db:seed:replant: replant truncates PostGIS's spatial_ref_sys, the boundary import then fails
+  steps = {
+    "portal" => [ [ [ "bin/rails", "log:clear", "tmp:clear" ], APP_ROOT ], [ [ "bin/rails", "db:reset" ], APP_ROOT ] ],
+    "triage" => [ triage_compose("down", "-v"), triage_compose("up", "-d") ]
+  }
+  known_backoffices.each { steps[_1.instance] = [ backoffice_compose(_1, "down", "-v") ] }
+  backoffices.each { (steps[_1["instance"]] ||= []) << start_backoffice(_1, [ "--build" ], fixed_values: true) }
+  run_parallel!(steps)
+
+  known_backoffices.reject { |known| backoffices.any? { _1["instance"] == known.instance } }.each do |backoffice|
+    File.delete(File.join(BACKOFFICE_DIR, ".env.#{backoffice.instance}"))
+    puts "== Removed .env.#{backoffice.instance}, the Backoffice #{backoffice.instance} is not started any more"
+  end
+
+  wait_for_zammads(zammads(backoffices))
   status
-  print_next_step
+  print_next_step(true)
 end
 
-# the Backoffices bin/activate-seeded-municipalities can set up (its LOCAL_BACKOFFICES)
-def activatable_backoffices = File.read(File.join(APP_ROOT, "bin/activate-seeded-municipalities")).scan(/instance: "([a-z0-9-]+)"/).flatten
-
 def confirm_reset!(backoffices, yes)
-  unknown = backoffices - activatable_backoffices
-  abort "Unknown Backoffice #{unknown.join(", ")}, bin/activate-seeded-municipalities sets up #{activatable_backoffices.join(", ")}" if unknown.any?
   return if yes
 
   message = "This wipes the portal database (#{URI(database_url).path.delete_prefix("/")}) and its uploaded files, " \
     "the local Triage and the " \
     "local Backoffices (#{known_backoffices.map(&:instance).join(", ").then { _1.empty? ? "none yet" : _1 }}), " \
-    "then starts #{backoffices.empty? ? "no Backoffice" : "the Backoffices #{backoffices.join(", ")}"}."
+    "then starts #{backoffices.empty? ? "no Backoffice" : "the Backoffices #{backoffices.map { _1["instance"] }.join(", ")}"}."
   abort "#{message} Run it with --yes." unless $stdin.tty?
 
   print "#{message} Continue? [y/N] "
   abort "Nothing changed." unless $stdin.gets.to_s.strip.downcase.start_with?("y")
-end
-
-def wipe_zammads(backoffices)
-  triage_compose "down", "-v"
-  known_backoffices.each do |backoffice|
-    backoffice_compose backoffice, "down", "-v"
-    next if backoffices.include?(backoffice.instance)
-
-    # its ids are gone with the portal's, dev/up writes it again
-    File.delete(File.join(BACKOFFICE_DIR, ".env.#{backoffice.instance}"))
-    puts "== Removed .env.#{backoffice.instance}, the Backoffice #{backoffice.instance} is not started any more"
-  end
-  triage_compose "up", "-d"
-end
-
-# the uploaded files (Active Storage's local service in storage/) belong to the database that db:reset drops,
-# log:clear tmp:clear as bin/setup does, tmp:clear empties the test uploads in tmp/storage too
-def wipe_portal_files
-  puts "\n== Removing the uploaded files in storage/"
-  FileUtils.rm_rf(Dir[File.join(APP_ROOT, "storage", "[^.]*")])
-  run! "bin/rails", "log:clear", "tmp:clear"
-end
-
-# seeds the portal, activates the seeded municipalities in Triage and starts the Backoffices with the portal's ids
-def fill_with_seeds(backoffices)
-  # drops the database, loads db/structure.sql and seeds. Not db:seed:replant: it truncates PostGIS's
-  # spatial_ref_sys too, the boundary import then fails with "Cannot find SRID (4326)"
-  run! "bin/rails", "db:reset"
-
-  wait_for_zammads({ "Triage" => [ TRIAGE_PROJECT, TRIAGE_PORT ] })
-  run! "bin/activate-seeded-municipalities", env: { "BACKOFFICES" => backoffices.empty? ? "none" : backoffices.join(","), "START_BACKOFFICES" => "1" }
 end
 
 def parse_bytes(text)
