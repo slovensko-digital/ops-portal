@@ -294,6 +294,20 @@ Backoffices call the portal at `host.docker.internal:3000` (webhooks signed with
 `/connector/backoffice/webhook`, responsible subject search), so `bin/dev` has to be running for their changes to
 reach the portal.
 
+### Connect to the databases
+
+The portal, Triage and the Backoffices keep their databases in one Postgres on `localhost:5432` (user `ops`,
+password `ops`). Open a shell in one of them:
+
+```bash
+psql postgresql://ops:ops@localhost:5432/ops_triage_development       # with the PostgreSQL client
+docker exec -it ops-postgres psql -U ops -d ops_triage_development    # without it, inside the Docker Postgres
+bin/rails dbconsole                                                   # the portal's database
+```
+
+In `psql`, `\l` lists the databases and `\c ops_backoffice_malacky_development` switches to another one. A GUI client
+(TablePlus, DBeaver, RubyMine) connects with the same URL.
+
 ## Seeded data
 
 After `bin/activate-seeded-municipalities`:
