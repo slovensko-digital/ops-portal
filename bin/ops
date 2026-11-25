@@ -1,21 +1,21 @@
 #!/usr/bin/env ruby
-# Local development only: starts, stops and resets the whole local stack, the portal with its Postgres, the
-# local Triage (../ops-triage-zammad) and the local Backoffices (../ops-backoffice-saas), see "Local Triage" and
-# "Local Backoffice" in README.md.
+# Local development only: starts, stops and resets the local stack, the portal's Postgres and database, the local
+# Triage (../ops-triage-zammad) and the local Backoffices (../ops-backoffice-saas). See "bin/ops commands" in README.md.
 #
-#   bin/ops up [--backoffices=malacky,trnava|none] [--build]
-#                                     get Postgres, the portal database, Triage and the Backoffices ready, also the
-#                                     first time, all at once
-#   bin/ops down                      stop them all, keeps the data
-#   bin/ops status                    what runs, its URL and Docker memory
-#   bin/ops reset [--backoffices=malacky,trnava|none] [--yes]
-#                                     wipe them all, then get them ready like a first up
-#   bin/ops logs <portal|postgres|triage|<backoffice>> [service]
+# Commands:
+#   bin/ops up [--backoffices=LIST] [--build]   # Start Postgres, Triage and the Backoffices, prepare the database
+#   bin/ops down                                # Stop them all, keep the data
+#   bin/ops status                              # Show what runs, its URLs and Docker memory
+#   bin/ops reset [--backoffices=LIST] [--yes]  # Wipe them all and the portal's data, then start them like a first up
+#   bin/ops logs TARGET [SERVICE]               # Follow the logs of portal, postgres, triage or a Backoffice
 #
-# Then bin/activate-seeded-municipalities on a fresh Triage, and bin/dev. The Backoffices are in
-# config/local_backoffices.yml. up and reset start the ones that ran before (a .env.<instance> in
-# ../ops-backoffice-saas), Malacky when none did, or the ones in --backoffices (none: only Triage); up stops the
-# others, they keep their data.
+# Then bin/activate-seeded-municipalities on a fresh Triage, and bin/dev.
+#
+# Options:
+
+# up and reset start the Backoffices of config/local_backoffices.yml in --backoffices (none: only Triage), otherwise
+# the ones that ran before (a .env.<instance> in ../ops-backoffice-saas), Malacky when none did; up stops the others,
+# they keep their data.
 #
 # The portal uses the Postgres on the port of DATABASE_URL: whatever answers there (e.g. Postgres.app), otherwise
 # bin/ops starts the Docker container ops-postgres. It only touches the compose projects ops-triage-zammad and
@@ -275,7 +275,7 @@ def down
 end
 
 # Wipes everything and gets the stack ready again, like a first up, all at once: Triage and every Backoffice with
-# their volumes (see "Reset portal and Triage" in README.md), the portal's uploaded files, logs, tmp and database.
+# their volumes (see "reset" in README.md), the portal's uploaded files, logs, tmp and database.
 # The portal is filled by db:reset's seeds today, a restore of a prepared snapshot can replace it.
 def reset(options)
   check_repos!
@@ -389,12 +389,13 @@ end
 $stdout.sync = true
 options = {}
 parser = OptionParser.new do |opts|
-  opts.banner = File.readlines(__FILE__)[1..17].map { _1.sub(/^# ?/, "") }.join
-  opts.on("--build", "up: rebuild the Zammad images") { options[:build] = true }
-  opts.on("--yes", "reset: don't ask") { options[:yes] = true }
+  # the help is the first comment block of this file
+  opts.banner = File.readlines(__FILE__).drop(1).take_while { _1.start_with?("#") }.map { _1.sub(/^# ?/, "") }.join.chomp
   opts.on("--backoffices=LIST", "up, reset: Backoffices to start, e.g. malacky,trnava or none") do |list|
     options[:backoffices] = list.split(",").map(&:strip) - [ "none", "" ]
   end
+  opts.on("--build", "up: rebuild the Zammad images") { options[:build] = true }
+  opts.on("--yes", "reset: don't ask") { options[:yes] = true }
 end
 arguments = begin
   parser.parse(ARGV)

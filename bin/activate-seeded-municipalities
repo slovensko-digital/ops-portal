@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Sets up the seeded inactive municipalities of a fresh local portal in the local Triage, the way production
 # onboards a municipality. Run it once after bin/ops up on a fresh Triage, or after bin/ops reset
-# (see "Local Triage" in README.md):
+# (see "Seeded data" in README.md):
 #
 #   1. checks that the local Triage is up and that TRIAGE_ZAMMAD_ADMIN_API_TOKEN works, asks for the
 #      token when it doesn't, and that the seeds left inactive municipalities, before anything is changed

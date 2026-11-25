@@ -61,7 +61,7 @@ refuses an active or archived municipality, a missing or active RS, and an
 RS that already has a Triage user. The municipality's seeded issues are not
 sent to Triage.
 `bin/activate-seeded-municipalities` runs it for every seeded inactive
-municipality, see "Local Triage" in the README.
+municipality, see "Seeded data" in the README.
 
 ## PRO municipality: `responsible_subjects:activate_pro`
 
@@ -157,7 +157,7 @@ Stop the Backoffice after the downgrade.
 `bin/activate-seeded-municipalities` activates Malacky with `activate_pro
 EXISTING_MUNICIPALITY=1` and Trnava with `activate_basic` and then
 `upgrade_to_pro`, each when its local Backoffice (`bin/ops`) answers, see
-"Local Backoffice" in the README. The seeds make every responsible subject BASIC,
+"Seeded data" in the README. The seeds make every responsible subject BASIC,
 only these tasks make one PRO.
 
 ## A volunteer leaves
