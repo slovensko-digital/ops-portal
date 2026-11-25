@@ -28,10 +28,14 @@ Tested on macOS and Linux.
    sudo apt install pkg-config libexif-dev libvips libpq-dev postgresql-client libcurl4-openssl-dev tzdata
    ```
 
-3. **PostgreSQL 17 with PostGIS 3.6**, as in `docker-compose.yml`. The easiest is
-   [Docker](https://docs.docker.com/get-started/get-docker/), `docker compose up -d` starts it. With your own
-   server, e.g. Postgres.app, create the role from `DATABASE_URL` in `.env`. It has to be a superuser to create the
-   PostGIS extension:
+3. **[Docker](https://docs.docker.com/get-started/get-docker/)**, `docker compose up -d` starts PostgreSQL 17 with
+   PostGIS 3.6 from `docker-compose.yml`.
+
+   <details>
+   <summary>Use your own PostgreSQL instead of Docker</summary>
+
+   It has to be PostgreSQL 17 with PostGIS 3.6, e.g. Postgres.app, on port 5432. Create the role from
+   `DATABASE_URL` in `.env`, it has to be a superuser to create the PostGIS extension:
 
    ```bash
    # macOS (Homebrew, Postgres.app)
@@ -40,8 +44,10 @@ Tested on macOS and Linux.
    sudo -u postgres psql -c "CREATE ROLE ops LOGIN SUPERUSER PASSWORD 'ops';"
    ```
 
-   A Postgres listening on port 5432 takes it first, the portal then uses it, and `bin/ops` leaves the Docker one
-   off.
+   Then skip `docker compose up -d`. A Postgres listening on port 5432 takes it first, the portal then uses it, and
+   `bin/ops` leaves the Docker one off.
+
+   </details>
 
 ## Run only the portal
 
@@ -60,7 +66,7 @@ To work on the portal itself, e.g. the frontend, without Triage and the Backoffi
    cp .env.sample .env
    ```
 
-3. Start Postgres, skip it with your own server:
+3. Start Postgres:
 
    ```bash
    docker compose up -d
@@ -102,8 +108,8 @@ What doesn't work without the rest of the stack, and in both setups:
 
 The portal, a local Triage and local Backoffices, to click through the whole flow:
 
-1. Install the [prerequisites](#prerequisites) and Docker, Triage and the Backoffices run in it. Give Docker about
-   4.5 GB of memory (about 1.5 GB per Zammad: Triage and two Backoffices).
+1. Install the [prerequisites](#prerequisites). Docker is needed here even with your own PostgreSQL, Triage and the
+   Backoffices run in it. Give it about 4.5 GB of memory (about 1.5 GB per Zammad: Triage and two Backoffices).
 
 2. Clone [ops-triage-zammad](https://github.com/slovensko-digital/ops-triage-zammad) and
    [ops-backoffice-saas](https://github.com/slovensko-digital/ops-backoffice-saas) next to this repo:
@@ -141,7 +147,7 @@ The portal, a local Triage and local Backoffices, to click through the whole flo
 
 Every day: `bin/ops up`, then `bin/dev`.
 
-`bin/ops` starts the Docker Postgres unless your own server answers on its port, see [Prerequisites](#prerequisites).
+`bin/ops` starts the Docker Postgres unless your own server answers on its port.
 
 ## bin/ops commands
 
@@ -379,7 +385,7 @@ Backoffice (a PRO municipality), and with Trnava a hand-off from one PRO municip
 
 | Symptom | Fix |
 |---|---|
-| `role "ops" does not exist`, `password authentication failed for user "ops"`, `extension "postgis" is not available`, or port 5432 already allocated | Another Postgres has port 5432, the portal reaches it instead of the Docker one. Stop it, or set it up as your own server, see [Prerequisites](#prerequisites). |
+| `role "ops" does not exist`, `password authentication failed for user "ops"`, `extension "postgis" is not available`, or port 5432 already allocated | Another Postgres has port 5432, the portal reaches it instead of the Docker one. Stop it, or set it up as your own server ("Use your own PostgreSQL" in [Prerequisites](#prerequisites)). |
 | `unrecognized configuration parameter "transaction_timeout"` | Your Postgres is older than 17. Use the Docker one or upgrade. |
 | `failed to execute: psql` | Install the PostgreSQL client, see [Prerequisites](#prerequisites). |
 | `docker compose`: `permission denied` (Linux) | `sudo usermod -aG docker $USER`, then log out and in. |
