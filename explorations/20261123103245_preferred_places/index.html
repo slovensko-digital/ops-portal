@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Preferred places input</title>
+  <meta name="exploration-status" content="chosen">
+  <meta name="exploration-note" content="A4, implemented in PR #102">
+  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="assets/proto.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+<nav class="proto-bar"><a href="/explorations">Explorations</a><a href="index.html" aria-current="page"><strong>Prototyp · Preferované lokality</strong></a><a href="0-current.html">0 · Dnes</a><a href="a-chips-above.html">A · Štítky nad poľom</a><a href="a2-filter-pills.html">A2 · Pilulky ako vo filtri</a><a href="a3-filter-pills-muted.html">A3 · Pilulky, obec sivou</a><a href="a4-filter-pills-district.html">A4 · Pilulky, len časť</a><a href="b-tags-inside.html">B · Štítky v poli</a><a href="c-selected-list.html">C · Zoznam pod poľom</a><a href="d-summary-rows.html">D · Súhrn a úprava</a></nav>
+<div class="proto-page">
+  <div class="proto-index proto-doc">
+    <h1>Preferred places input</h1>
+    <p class="proto-meta">
+      Started 2026-11-23 10:32 UTC · Page: profile edit, field „Preferované mestá alebo obce“ ·
+      Status: <strong>chosen</strong> — A4, implemented in
+      <a href="https://github.com/slovensko-digital/ops-portal/pull/102">PR #102</a>
+    </p>
+
+    <h2>Prompt</h2>
+    <pre class="proto-prompt">let's explore (create a simple static html css js (stimulus) pages that matches the look &amp; feel for from the page) possibilities how to improve the Preferované mestá alebo obce input.
+
+problems.
+- it is hard to locate what is already selected
+- if I have multiple options the text says 'a dalsie'. so I have to save an go to the profile page to see what am I following.
+
+ideas
+- someting like a tags input with the ability to remove each of the selected municipality by clicking on a close button next to it.
+- multiple rows to surface the text.</pre>
+
+    <h2>Problems</h2>
+    <ul>
+      <li>It is hard to see what is already selected: the selection lives only in the placeholder.</li>
+      <li>With more than two places the placeholder ends with „a ďalšie“, so the full selection is visible only on the profile page after saving.</li>
+    </ul>
+
+    <h2>Ideas</h2>
+    <ul>
+      <li><em>User:</em> a tags input, each selected place removable with its own × button. → A, B</li>
+      <li><em>User:</em> multiple rows to surface the text. → D</li>
+      <li><em>Suggested:</em> selected places as a list of rows under the search field. → C</li>
+      <li><em>Suggested (round 5):</em> reuse the active-filter pills from the issues filter page. → A2–A4</li>
+    </ul>
+
+    <h2>Options</h2>
+    <p class="proto-hint">All options run on the portal's real CSS and the same checkboxes
+      (<code>user[municipality_ids][]</code>, <code>user[municipality_district_ids][]</code>).
+      „Uložiť“ shows what the form would submit.</p>
+    <ol>
+      <li><a class="proto-card" href="0-current.html"><strong>0 · Dnes</strong><span>Production behaviour as a baseline: the selection only in the placeholder, „a ďalšie“ after two places.</span></a></li>
+      <li><a class="proto-card" href="a-chips-above.html"><strong>A · Štítky nad poľom</strong><span>Selected places as tags with × above the search field; the field is only for searching. Municipality greyed next to a district.</span></a></li>
+      <li><a class="proto-card" href="a2-filter-pills.html"><strong>A2 · Pilulky ako vo filtri</strong><span>A with the active-filter pills from the issues page: light-blue background, one font style, „Obec - Časť“.</span></a></li>
+      <li><a class="proto-card" href="a3-filter-pills-muted.html"><strong>A3 · Pilulky, obec sivou</strong><span>A2, but the municipality is greyed (75 % opacity, passes WCAG AA) instead of the „ - “ separator.</span></a></li>
+      <li><a class="proto-card proto-chosen" href="a4-filter-pills-district.html"><strong>A4 · Pilulky, len časť ✓ chosen</strong><span>A2, but a district pill shows only the district; the full name is in the tooltip and for screen readers.</span></a></li>
+      <li><a class="proto-card" href="b-tags-inside.html"><strong>B · Štítky v poli</strong><span>Tags and search in one box, like a classic tag input; Backspace removes the last tag. Not chosen.</span></a></li>
+      <li><a class="proto-card" href="c-selected-list.html"><strong>C · Zoznam pod poľom</strong><span>Selected places as rows under the search field, districts grouped under their municipality. Not chosen.</span></a></li>
+      <li><a class="proto-card" href="d-summary-rows.html"><strong>D · Súhrn a úprava</strong><span>Closed field shows the full selection as multi-line text; „Upraviť“ opens the search with the selection pinned on top. Not chosen.</span></a></li>
+    </ol>
+
+    <h2>Decision</h2>
+    <p><strong>A4</strong>, implemented on the profile page in
+      <a href="https://github.com/slovensko-digital/ops-portal/pull/102">PR #102</a> (2026-11-23 12:09 UTC).</p>
+    <ul>
+      <li>Shortest pills, same look as the active filters on the issues page.</li>
+      <li>Known trade-off: district names repeat across cities (Staré Mesto in Bratislava and Košice), so two pills can look identical. Claude recommended A3 for that reason; A4 was chosen anyway.</li>
+      <li>Later changes in the PR, outside this exploration: selecting a municipality ticks all its districts, unticking one gives a partial „-“ state, and the same rules in the /dopyty filter.</li>
+    </ul>
+
+    <h2>Rounds</h2>
+    <ol class="proto-rounds" reversed>
+      <li><time>2026-11-23 13:02</time> B, C and D brought back to this page for comparison.</li>
+      <li><time>2026-11-23 12:09</time> <strong>A4 chosen</strong> and implemented on the profile page; the exploration kept for later rounds.</li>
+      <li><time>2026-11-23 12:02</time> Fix: clicking next to the pills didn't close the list. Now only the search input, the dropdown and the not-found message count as inside, as in production.</li>
+      <li><time>2026-11-23 12:01</time> <strong>A4</strong>: drop the municipality from a district pill. Risk found: duplicate district names.</li>
+      <li><time>2026-11-23 11:53</time> WCAG check: the greyed municipality at 60 % failed AA (3.62:1). Raised to 75 % in A and A3 (5.50:1, hover 4.75:1).</li>
+      <li><time>2026-11-23 11:51</time> <strong>A3</strong>: A2 with a greyed municipality instead of „ - “.</li>
+      <li><time>2026-11-23 11:48</time> Unified spacing between pills, and between the pills and the input.</li>
+      <li><time>2026-11-23 11:45</time> A2 notes: light-blue background of the filter panel, one font style for all pills, „ - “ as the municipality–district separator, a not-found state.</li>
+      <li><time>2026-11-23 11:24</time> Narrowed to A only; B, C, D parked. <strong>A2</strong>: A with the pills from the issues filter page.</li>
+      <li><time>2026-11-23 11:16</time> „0 · Dnes“ left exactly as in production.</li>
+      <li><time>2026-11-23 10:49</time> Toggle „Rovnaký vzhľad obcí a častí“ on A: municipalities and districts in the same font weight.</li>
+      <li><time>2026-11-23 10:46</time> Esc or a click outside closes the list and clears the typed text, in all options.</li>
+      <li><time>2026-11-23 10:32</time> Round 1: 0 · Dnes, A, B, C, D.</li>
+    </ol>
+  </div>
+</div>
+</body>
+</html>
