@@ -12,40 +12,40 @@ city_district = ResponsibleSubjects::Type.find_by!(name: "Mestská časť")
 city = ResponsibleSubjects::Type.find_by!(name: "Mesto")
 other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
 
+# Fixed ids: the local Backoffices (config/local_backoffices.yml, started by bin/ops) start with their responsible
+# subject's id before bin/activate-seeded-municipalities activates it. Give a new entry the next id.
 [
-  { type: city_district, subject_name: "MÚ Nové Mesto" },
-  { type: city_district, subject_name: "MÚ Rača" },
-  { type: city_district, subject_name: "MÚ Vajnory" },
-  { type: city_district, subject_name: "MÚ Karlova Ves" },
-  { type: city_district, subject_name: "MÚ Dúbravka" },
-  { type: city_district, subject_name: "MÚ Lamač" },
-  { type: city_district, subject_name: "MÚ Devín" },
-  { type: city_district, subject_name: "MÚ Devínska Nová Ves" },
-  { type: city_district, subject_name: "MÚ Staré Mesto" },
-  { type: city_district, subject_name: "MÚ Ružinov" },
-  { type: city_district, subject_name: "MÚ Vrakuňa" },
-  { type: city_district, subject_name: "MÚ Podunajské Biskupice" },
-  { type: city_district, subject_name: "MÚ Záhorská Bystrica" },
-  { type: city_district, subject_name: "MÚ Petržalka" },
-  { type: city_district, subject_name: "MÚ Jarovce" },
-  { type: city_district, subject_name: "MÚ Rusovce" },
-  { type: city_district, subject_name: "MÚ Čunovo" },
+  { id: 1, type: city_district, subject_name: "MÚ Nové Mesto" },
+  { id: 2, type: city_district, subject_name: "MÚ Rača" },
+  { id: 3, type: city_district, subject_name: "MÚ Vajnory" },
+  { id: 4, type: city_district, subject_name: "MÚ Karlova Ves" },
+  { id: 5, type: city_district, subject_name: "MÚ Dúbravka" },
+  { id: 6, type: city_district, subject_name: "MÚ Lamač" },
+  { id: 7, type: city_district, subject_name: "MÚ Devín" },
+  { id: 8, type: city_district, subject_name: "MÚ Devínska Nová Ves" },
+  { id: 9, type: city_district, subject_name: "MÚ Staré Mesto" },
+  { id: 10, type: city_district, subject_name: "MÚ Ružinov" },
+  { id: 11, type: city_district, subject_name: "MÚ Vrakuňa" },
+  { id: 12, type: city_district, subject_name: "MÚ Podunajské Biskupice" },
+  { id: 13, type: city_district, subject_name: "MÚ Záhorská Bystrica" },
+  { id: 14, type: city_district, subject_name: "MÚ Petržalka" },
+  { id: 15, type: city_district, subject_name: "MÚ Jarovce" },
+  { id: 16, type: city_district, subject_name: "MÚ Rusovce" },
+  { id: 17, type: city_district, subject_name: "MÚ Čunovo" },
 
-  { type: city, subject_name: "Hlavné mesto SR Bratislava" },
-  { type: city, subject_name: "Banská Bystrica" },
-  # Trnava and Malacky have fixed ids: their local Backoffices (config/local_backoffices.yml, started by bin/ops)
-  # start with their responsible subject id before bin/activate-seeded-municipalities activates them
-  { type: city, subject_name: "Trnava", id: 20 },
-  { type: city, subject_name: "Nitra" },
-  { type: city, subject_name: "Malacky", id: 22 },
-  { type: city, subject_name: "Pezinok" },
+  { id: 18, type: city, subject_name: "Hlavné mesto SR Bratislava" },
+  { id: 19, type: city, subject_name: "Banská Bystrica" },
+  { id: 20, type: city, subject_name: "Trnava" },
+  { id: 21, type: city, subject_name: "Nitra" },
+  { id: 22, type: city, subject_name: "Malacky" },
+  { id: 23, type: city, subject_name: "Pezinok" },
 
-  { type: other, subject_name: "Národná diaľničná spoločnosť" },
-  { type: other, subject_name: "Mestské lesy v Bratislave" },
-  { type: other, subject_name: "Dopravný podnik Bratislava, a.s." },
-  { type: other, subject_name: "Mestská polícia hlavného mesta SR Bratislavy" },
-  { type: other, subject_name: "Iný subjekt" },
-  { type: other, subject_name: "OLO Bratislava" }
+  { id: 24, type: other, subject_name: "Národná diaľničná spoločnosť" },
+  { id: 25, type: other, subject_name: "Mestské lesy v Bratislave" },
+  { id: 26, type: other, subject_name: "Dopravný podnik Bratislava, a.s." },
+  { id: 27, type: other, subject_name: "Mestská polícia hlavného mesta SR Bratislavy" },
+  { id: 28, type: other, subject_name: "Iný subjekt" },
+  { id: 29, type: other, subject_name: "OLO Bratislava" }
 ].each do |data|
   bratislava = Municipality.find_by(name: "Bratislava")
   municipality, municipality_district = case data[:type]
@@ -71,6 +71,6 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
     # BASIC, only responsible_subjects:activate_pro or upgrade_to_pro make one PRO, together with its Backoffice
     rs.pro = false
   end.save!
-  # the next responsible subject without a fixed id gets one after it, not a fixed one
-  ActiveRecord::Base.connection.reset_pk_sequence!("responsible_subjects") if data[:id]
 end
+# responsible subjects created later (e.g. by activate_basic) get ids after the seeded ones
+ActiveRecord::Base.connection.reset_pk_sequence!("responsible_subjects")
