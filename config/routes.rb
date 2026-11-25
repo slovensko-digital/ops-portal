@@ -160,6 +160,11 @@ Rails.application.routes.draw do
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
+  if Rails.env.development?
+    get "explorations", to: redirect("/explorations/index.html")
+    mount Rack::Files.new(Rails.root.join("explorations"), "cache-control" => "no-store"), at: "/explorations"
+  end
+
   class GoodJobAdmin
     def self.matches?(request)
       user = request.env["rodauth"].rails_account

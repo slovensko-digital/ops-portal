@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>A3 · Pilulky, obec sivou | Prototyp</title>
+  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="assets/proto.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+<nav class="proto-bar"><a href="/explorations">Explorations</a><a href="index.html"><strong>Prototyp · Preferované lokality</strong></a><a href="0-current.html">0 · Dnes</a><a href="a-chips-above.html">A · Štítky nad poľom</a><a href="a2-filter-pills.html">A2 · Pilulky ako vo filtri</a><a href="a3-filter-pills-muted.html" aria-current=page>A3 · Pilulky, obec sivou</a><a href="a4-filter-pills-district.html">A4 · Pilulky, len časť</a><a href="b-tags-inside.html">B · Štítky v poli</a><a href="c-selected-list.html">C · Zoznam pod poľom</a><a href="d-summary-rows.html">D · Súhrn a úprava</a></nav>
+<div class="proto-page">
+  <div class="proto-note"><strong>A3 · Pilulky, obec sivou</strong> — Ako A2, ale pri mestskej časti je obec sivou namiesto oddeľovača „ - “.<ul><li>„Bratislava Petržalka“: obec sivá, časť plnou farbou, rovnaká hrúbka písma.</li><li>Samostatná obec bez zmeny.</li><li>Napíšte napr. „xyz“: stav, keď sa nič nenašlo.</li></ul></div>
+
+  <section class="forms-container report">
+    <h1>Osobné údaje</h1>
+    <form data-controller="payload" data-action="submit->payload#show">
+      <div class="form-other-con">
+        <div class="form-items-con">
+          <div class="form-item-wrapper">
+            <label for="user_name">Meno*</label>
+            <input type="text" id="user_name" name="user[name]" value="Jana Nováková">
+          </div>
+        </div>
+
+        <div class="form-items-con">
+          <input type="hidden" name="user[municipality_ids][]" value="">
+          <input type="hidden" name="user[municipality_district_ids][]" value="">
+
+<div class="form-item-wrapper" data-controller="pills-muted"
+     data-action="keydown.enter->pills-muted#enter keydown.esc->pills-muted#escape click@window->pills-muted#close">
+  <label for="preferred_places">Preferované mestá alebo obce <span class="place-count" data-pills-muted-target="count"></span></label>
+  <div class="autocomplete-wrapper">
+    <div class="filter-select-buttons-con place-pills" data-pills-muted-target="chips" aria-live="polite"></div>
+    <input type="text" class="form-input" id="preferred_places" autocomplete="off"
+           data-pills-muted-target="input" data-action="focusin->pills-muted#open input->pills-muted#filter">
+    <ul class="dropdown-list none" data-pills-muted-target="list" data-places-list="pills-muted"></ul>
+    <div class="place-empty none" data-pills-muted-target="empty" role="status"></div>
+  </div>
+</div>
+          <div class="form-notice">
+            Vyhľadajte a zaškrtnite si mestá a mestské časti, z ktorých chcete vidieť najviac podnetov a dostávať novinky.
+          </div>
+        </div>
+
+        <div class="form-items-con">
+          <div class="form-description">Chcete dostávať emailové notifikácie k&nbsp;podnetom?</div>
+          <div class="form-radio-button-wrapper">
+            <div class="form-radio-button-con">
+              <input type="radio" id="en_true" name="user[email_notifiable]" value="true" checked>
+              <label for="en_true">Áno</label>
+            </div>
+            <div class="form-radio-button-con">
+              <input type="radio" id="en_false" name="user[email_notifiable]" value="false">
+              <label for="en_false">Nie</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input type="submit" class="button" value="Uložiť">
+      <pre class="proto-payload none" data-payload-target="output"></pre>
+    </form>
+  </section>
+</div>
+</body>
+</html>
