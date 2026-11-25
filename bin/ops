@@ -60,19 +60,25 @@ def capture(*command)
   status.success? ? output : ""
 end
 
+# ANSI colors for the names in run_parallel!'s output, only on a terminal
+COLORS = [ 36, 35, 33, 32, 34, 31 ].freeze
+
+def colored(text, index) = $stdout.tty? ? "\e[#{COLORS[index % COLORS.size]}m#{text}\e[0m" : text
+
 # runs the steps of each name one after another and the names at once, { name => [[command, chdir], ...] },
-# every output line starts with its name, aborts when any of them failed
+# every output line starts with its name in a color of its own, aborts when any of them failed
 def run_parallel!(steps)
   return if steps.empty?
 
-  width = steps.keys.map(&:length).max
   output = Mutex.new
-  failed = steps.map do |name, commands|
+  failed = steps.each_with_index.map do |(name, commands), index|
+    tag = colored("[#{name}]", index)
     Thread.new do
       commands.all? do |command, chdir|
-        output.synchronize { puts "\n== [#{name}] #{command.join(" ")}" }
+        output.synchronize { puts "\n== #{tag} #{command.join(" ")}" }
         Open3.popen2e(*command, chdir: chdir) do |_, out, wait|
-          out.each_line { |line| output.synchronize { puts "[#{name.ljust(width)}] #{line}" } }
+          # docker compose starts its lines with a space already
+          out.each_line { |line| output.synchronize { puts "#{tag} #{line.delete_prefix(" ")}" } }
           wait.value.success?
         end
       end || name
