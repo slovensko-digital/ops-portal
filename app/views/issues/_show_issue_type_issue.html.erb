@@ -114,7 +114,7 @@
             <% if issue.responsible_subject.present? %>
               <%= link_to issue.responsible_subject.subject_name, issues_path(zodpovedny: issue.responsible_subject.subject_name), class: "value" %>
             <% else %>
-              <span class="value">Nikto</span>
+              <span class="value">neznámy</span>
             <% end %>
           </div>
         </div>
@@ -134,11 +134,11 @@
 
       </div>
     </div>
-    <!-- Discussion -->
+    <!-- Activity -->
     <div class="podnet-discussion">
       <div class="podnet-discussion-con">
         <div class="podnet-discussion-wrapper">
-          <h1>Diskusia</h1>
+          <h1>Aktivita</h1>
           <!--<button class="button button-transparent">
             <span>Zoradiť</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20">

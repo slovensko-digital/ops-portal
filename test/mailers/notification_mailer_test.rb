@@ -59,6 +59,25 @@ class NotificationMailerTest < ActionMailer::TestCase
     assert_includes NotificationMailer.with(subscription: @author_subscription).issue_referred.body.encoded, "bol odstúpený zodpovednému subjektu"
   end
 
+  test "issue_responsible_subject_changed names both subjects and says the new one was informed" do
+    @issue.update!(responsible_subject: responsible_subjects(:two))
+
+    body = NotificationMailer.with(subscription: @author_subscription).issue_responsible_subject_changed(responsible_subjects(:one)).body.encoded
+
+    assert_includes body, "z kompetencie <strong>#{responsible_subjects(:one).subject_name}</strong>"
+    assert_includes body, "na <strong>#{responsible_subjects(:two).subject_name}</strong>"
+    assert_includes body, "Zvolený subjekt bol o podnete informovaný"
+  end
+
+  test "issue_responsible_subject_changed without a new subject says it is unknown and that nobody was informed" do
+    @issue.update!(responsible_subject: nil)
+
+    body = NotificationMailer.with(subscription: @author_subscription).issue_responsible_subject_changed(responsible_subjects(:one)).body.encoded
+
+    assert_includes body, "na <strong>neznámy subjekt</strong>"
+    assert_not_includes body, "Zvolený subjekt bol o podnete informovaný"
+  end
+
   test "issue_closed" do
     assert_includes NotificationMailer.with(subscription: @author_subscription).issue_closed.body.encoded, "bol uzavretý"
   end
