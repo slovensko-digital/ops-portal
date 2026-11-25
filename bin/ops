@@ -1,0 +1,413 @@
+#!/usr/bin/env ruby
+# Local development only: starts, stops and resets the whole local stack, the portal with its Postgres, the
+# local Triage (../ops-triage-zammad) and the local Backoffices (../ops-backoffice-saas), see "Local Triage" and
+# "Local Backoffice" in README.md.
+#
+#   bin/ops up [--backoffices=malacky,trnava|none] [--build] [--no-dev]
+#                                     start Postgres, Triage and the Backoffices, wait until they answer, then bin/dev
+#   bin/ops down                      stop them all, keeps the data
+#   bin/ops status                    what runs, its URL and Docker memory
+#   bin/ops reset [--backoffices=malacky,trnava|none] [--yes] [--no-dev]
+#                                     wipe Triage and the Backoffices, reseed the portal, activate the seeded
+#                                     municipalities, start the Backoffices, then bin/dev
+#   bin/ops logs <portal|postgres|triage|<backoffice>> [service]
+#
+# A Backoffice is known by its .env.<instance> in ../ops-backoffice-saas (dev/up writes it). reset starts the
+# known ones again, Malacky when there are none, or the ones in --backoffices. up starts the known ones, or the ones
+# in --backoffices (none: only Triage) and stops the others, they keep their data.
+#
+# The portal uses the Postgres on the port of DATABASE_URL: a local one (e.g. Postgres.app) when it runs, otherwise
+# bin/ops starts the Docker container ops-postgres. It only touches the compose projects ops-triage-zammad and
+# ops-backoffice-<instance> and the container ops-postgres, never others (e.g. ops-triage-e2e) or a local Postgres.
+# Worktrees of this repo use the same ports and the same Postgres, run it from one of them at a time.
+require "json"
+require "net/http"
+require "fileutils"
+require "open3"
+require "optparse"
+require "socket"
+
+APP_ROOT = File.expand_path("..", __dir__)
+TRIAGE_DIR = File.expand_path("../ops-triage-zammad", APP_ROOT)
+BACKOFFICE_DIR = File.expand_path("../ops-backoffice-saas", APP_ROOT)
+TRIAGE_PROJECT = "ops-triage-zammad"
+TRIAGE_PORT = 8080
+POSTGRES_CONTAINER = "ops-postgres"
+PORTAL_PORT = 3000
+DEFAULT_BACKOFFICES = [ "malacky" ].freeze
+# the first start runs zammad-init, it takes minutes
+ZAMMAD_TIMEOUT = 20 * 60
+
+Backoffice = Data.define(:instance, :port) do
+  def project = "ops-backoffice-#{instance}"
+  def url = "http://#{instance}.localhost:#{port}"
+  def mailpit_url = "http://localhost:#{port - 55}"
+end
+
+def run!(*command, chdir: APP_ROOT, env: {})
+  puts "\n== #{command.join(" ")}#{" (in #{File.basename(chdir)})" unless chdir == APP_ROOT}"
+  system(env, *command, chdir: chdir, exception: true)
+end
+
+def capture(*command)
+  output, status = Open3.capture2(*command, err: File::NULL)
+  status.success? ? output : ""
+end
+
+def triage_compose(*args, chdir: TRIAGE_DIR) = run!("docker", "compose", "-p", TRIAGE_PROJECT, *args, chdir: chdir)
+def backoffice_compose(backoffice, *args) = run!("dev/compose", backoffice.instance, *args, chdir: BACKOFFICE_DIR)
+
+def known_backoffices
+  Dir[File.join(BACKOFFICE_DIR, ".env.*")].filter_map do |path|
+    instance = File.basename(path).delete_prefix(".env.")
+    next if %w[sample test].include?(instance)
+
+    port = File.read(path)[/^NGINX_EXPOSE_PORT=(\d+)/, 1]
+    Backoffice.new(instance, port.to_i) if port
+  end.sort_by(&:port)
+end
+
+def port_open?(port)
+  Socket.tcp("127.0.0.1", port, connect_timeout: 1).close
+  true
+rescue SystemCallError, SocketError, IOError
+  false
+end
+
+def http_ok?(url)
+  uri = URI(url)
+  Net::HTTP.start(uri.host, uri.port, open_timeout: 2, read_timeout: 5) { _1.get(uri.request_uri) }.is_a?(Net::HTTPSuccess)
+rescue StandardError
+  false
+end
+
+def zammad_ready?(port) = http_ok?("http://localhost:#{port}/api/v1/signshow")
+
+# docker inspect of every container of a compose project, stopped ones too
+def containers(project)
+  ids = capture("docker", "ps", "-aq", "--filter", "label=com.docker.compose.project=#{project}").split
+  ids.empty? ? [] : JSON.parse(capture("docker", "inspect", *ids).then { _1.empty? ? "[]" : _1 })
+end
+
+def service(container) = container.dig("Config", "Labels", "com.docker.compose.service")
+
+def volumes?(project) = !capture("docker", "volume", "ls", "-q", "--filter", "label=com.docker.compose.project=#{project}").strip.empty?
+
+# aborts when a container ran out of memory or a one-off container (e.g. a Backoffice's zammad-init) failed
+def check_failures!(project)
+  containers(project).each do |container|
+    state = container["State"]
+    name = container["Name"].delete_prefix("/")
+    if state["OOMKilled"] || state["ExitCode"] == 137
+      abort "\n#{name} ran out of memory (exit code 137). Give Docker more memory (Settings → Resources, " \
+        "about 1.5 GB per Zammad, Triage and 2 Backoffices need about 4.5 GB), then run the command again."
+    end
+    if state["Status"] == "exited" && state["ExitCode"] != 0 && container.dig("HostConfig", "RestartPolicy", "Name") == "no"
+      abort "\n#{name} failed (exit code #{state["ExitCode"]}), see: docker logs #{name}"
+    end
+  end
+end
+
+# zammad-dev-setup creates the admin API token and the volunteer, it runs once Zammad is set up
+def dev_setup_done?(project)
+  setup = containers(project).find { service(_1) == "zammad-dev-setup" }
+  setup.nil? || (setup.dig("State", "Status") == "exited" && setup.dig("State", "ExitCode") == 0)
+end
+
+# waits for every Zammad at once, { name => [project, port] }
+def wait_for_zammads(zammads)
+  return if zammads.empty?
+
+  print "\n== Waiting for #{zammads.keys.join(", ")}, the first start takes a few minutes "
+  deadline = Time.now + ZAMMAD_TIMEOUT
+  pending = zammads.dup
+  until pending.empty?
+    pending.each_value { |project, _| check_failures!(project) }
+    pending.reject! { |_, (project, port)| zammad_ready?(port) && dev_setup_done?(project) }
+    break if pending.empty?
+    abort "\n#{pending.keys.join(", ")} did not answer in #{ZAMMAD_TIMEOUT / 60} minutes, see bin/ops logs" if Time.now > deadline
+
+    print "."
+    sleep 5
+  end
+  puts " ready"
+end
+
+def database_url
+  File.read(File.join(APP_ROOT, ".env"))[/^DATABASE_URL=(\S+)/, 1] || abort("No DATABASE_URL in .env")
+end
+
+def postgres_port = URI(database_url).port || 5432
+
+# a Postgres outside Docker (Postgres.app, Homebrew) on the port, it wins over a Docker one on the same port
+def local_postgres
+  capture("lsof", "-nP", "-iTCP:#{postgres_port}", "-sTCP:LISTEN").lines.drop(1).map(&:split)
+    .reject { _1.first.start_with?("com.docke", "docker", "vpnkit") }.map { "#{_1[0]} (pid #{_1[1]})" }.uniq.join(", ").then { _1.empty? ? nil : _1 }
+end
+
+def docker_postgres_running? = !capture("docker", "ps", "-q", "--filter", "name=^#{POSTGRES_CONTAINER}$").strip.empty?
+
+# the pg gem of the bundle, after ensure_bundle
+def load_pg
+  ENV["BUNDLE_GEMFILE"] ||= File.join(APP_ROOT, "Gemfile")
+  require "bundler/setup"
+  require "pg"
+end
+
+def ensure_bundle
+  system("bundle check", chdir: APP_ROOT, out: File::NULL) || run!("bundle", "install")
+end
+
+def start_postgres
+  if (local = local_postgres)
+    puts "\n== Postgres: #{local} on port #{postgres_port}#{", not Docker's #{POSTGRES_CONTAINER}" if docker_postgres_running?}"
+  elsif capture("docker", "ps", "-aq", "--filter", "name=^#{POSTGRES_CONTAINER}$").strip.empty?
+    # the project name of the main checkout, a worktree uses the same volume ops-portal_postgres_data
+    run! "docker", "compose", "-p", "ops-portal", "up", "-d"
+  else
+    # it may belong to the compose project of another worktree, start it as it is
+    run! "docker", "start", POSTGRES_CONTAINER
+  end
+
+  load_pg
+  deadline = Time.now + 60
+  until PG::Connection.ping(database_url) == PG::PQPING_OK
+    abort "Postgres does not answer at #{postgres_url_without_password}" if Time.now > deadline
+    sleep 1
+  end
+end
+
+def postgres_url_without_password = URI(database_url).tap { _1.password = nil }.to_s
+
+def database_exists?
+  url = URI(database_url)
+  load_pg
+  connection = PG.connect(host: url.host, port: postgres_port, user: url.user, password: url.password, dbname: "postgres")
+  connection.exec_params("SELECT 1 FROM pg_database WHERE datname = $1", [ url.path.delete_prefix("/") ]).ntuples == 1
+rescue PG::Error => e
+  abort "Cannot connect to Postgres at #{postgres_url_without_password}: #{e.message.strip}"
+ensure
+  connection&.close
+end
+
+def check_repos!
+  { TRIAGE_DIR => "ops-triage-zammad", BACKOFFICE_DIR => "ops-backoffice-saas" }.each do |dir, repo|
+    abort "No #{dir}, clone #{repo} next to this repo" unless Dir.exist?(dir)
+  end
+  return if File.exist?(File.join(APP_ROOT, ".env"))
+
+  run! "cp", ".env.sample", ".env"
+end
+
+def check_portal_stopped!
+  return unless port_open?(PORTAL_PORT)
+
+  abort "Something runs on port #{PORTAL_PORT}, stop bin/dev first (also in the other worktrees)"
+end
+
+def start_dev(no_dev)
+  if port_open?(PORTAL_PORT)
+    puts "\n== The portal already runs on http://localhost:#{PORTAL_PORT}"
+  elsif no_dev
+    puts "\n== Start the portal: bin/dev"
+  else
+    puts "\n== bin/dev, the portal on http://localhost:#{PORTAL_PORT}, Ctrl-C stops it (bin/ops down stops the rest)"
+    $stdout.flush
+    Dir.chdir(APP_ROOT) { exec "bin/dev" }
+  end
+end
+
+def up(options)
+  check_repos!
+  if options[:backoffices] && (unknown = options[:backoffices] - known_backoffices.map(&:instance)).any?
+    abort "No Backoffice #{unknown.join(", ")}, known: #{known_backoffices.map(&:instance).join(", ").then { _1.empty? ? "none" : _1 }}. " \
+      "bin/ops reset --backoffices=... sets one up"
+  end
+  if !volumes?(TRIAGE_PROJECT)
+    abort "There is no local Triage yet, set everything up with: bin/ops reset"
+  end
+
+  ensure_bundle
+  start_postgres
+  abort "There is no portal database yet, set everything up with: bin/ops reset" unless database_exists?
+
+  build = options[:build] ? [ "--build" ] : []
+  triage_compose "up", "-d", *build
+  backoffices = known_backoffices
+  if options[:backoffices]
+    left_out, backoffices = backoffices.partition { !options[:backoffices].include?(_1.instance) }
+    # frees their memory, about 1.5 GB each
+    left_out.each { backoffice_compose(_1, "stop") if containers(_1.project).any? { |c| c.dig("State", "Status") == "running" } }
+  end
+  backoffices.each { backoffice_compose(_1, "up", "-d", *build) }
+  run! "bin/rails", "db:prepare"
+
+  wait_for_zammads({ "Triage" => [ TRIAGE_PROJECT, TRIAGE_PORT ] }.merge(backoffices.to_h { [ _1.instance, [ _1.project, _1.port ] ] }))
+  status
+  start_dev(options[:no_dev])
+end
+
+def down
+  check_repos!
+  triage_compose "stop" unless containers(TRIAGE_PROJECT).empty?
+  known_backoffices.each { backoffice_compose(_1, "stop") unless containers(_1.project).empty? }
+  run! "docker", "stop", POSTGRES_CONTAINER if docker_postgres_running?
+  puts "\n== #{local_postgres} keeps running, it is not bin/ops's" if local_postgres
+  puts "\n== Stopped, the data stays. Stop bin/dev with Ctrl-C." if port_open?(PORTAL_PORT)
+end
+
+# Wipes Triage and the Backoffices (always with their volumes, see "Reset portal and Triage" in README.md) and
+# fills the stack again. The fill is fill_with_seeds today, a restore of a prepared snapshot can replace it.
+def reset(options)
+  check_repos!
+  check_portal_stopped!
+  backoffices = options[:backoffices] || known_backoffices.map(&:instance).then { _1.empty? ? DEFAULT_BACKOFFICES : _1 }
+  confirm_reset!(backoffices, options[:yes])
+
+  ensure_bundle
+  start_postgres
+  wipe_zammads(backoffices)
+  wipe_portal_files
+  fill_with_seeds(backoffices)
+  wait_for_zammads(known_backoffices.select { backoffices.include?(_1.instance) }.to_h { [ _1.instance, [ _1.project, _1.port ] ] })
+  status
+  start_dev(options[:no_dev])
+end
+
+# the Backoffices bin/activate-seeded-municipalities can set up (its LOCAL_BACKOFFICES)
+def activatable_backoffices = File.read(File.join(APP_ROOT, "bin/activate-seeded-municipalities")).scan(/instance: "([a-z0-9-]+)"/).flatten
+
+def confirm_reset!(backoffices, yes)
+  unknown = backoffices - activatable_backoffices
+  abort "Unknown Backoffice #{unknown.join(", ")}, bin/activate-seeded-municipalities sets up #{activatable_backoffices.join(", ")}" if unknown.any?
+  return if yes
+
+  message = "This wipes the portal database (#{URI(database_url).path.delete_prefix("/")}) and its uploaded files, " \
+    "the local Triage and the " \
+    "local Backoffices (#{known_backoffices.map(&:instance).join(", ").then { _1.empty? ? "none yet" : _1 }}), " \
+    "then starts #{backoffices.empty? ? "no Backoffice" : "the Backoffices #{backoffices.join(", ")}"}."
+  abort "#{message} Run it with --yes." unless $stdin.tty?
+
+  print "#{message} Continue? [y/N] "
+  abort "Nothing changed." unless $stdin.gets.to_s.strip.downcase.start_with?("y")
+end
+
+def wipe_zammads(backoffices)
+  triage_compose "down", "-v"
+  known_backoffices.each do |backoffice|
+    backoffice_compose backoffice, "down", "-v"
+    next if backoffices.include?(backoffice.instance)
+
+    # its ids are gone with the portal's, dev/up writes it again
+    File.delete(File.join(BACKOFFICE_DIR, ".env.#{backoffice.instance}"))
+    puts "== Removed .env.#{backoffice.instance}, the Backoffice #{backoffice.instance} is not started any more"
+  end
+  triage_compose "up", "-d"
+end
+
+# the uploaded files (Active Storage's local service in storage/) belong to the database that db:reset drops,
+# log:clear tmp:clear as bin/setup does, tmp:clear empties the test uploads in tmp/storage too
+def wipe_portal_files
+  blobs = Dir[File.join(APP_ROOT, "storage", "[^.]*")]
+  size = capture("du", "-sk", File.join(APP_ROOT, "storage")).to_i
+  puts "\n== Removing the uploaded files in storage/ (#{gigabytes(size * 1024)})"
+  FileUtils.rm_rf(blobs)
+  run! "bin/rails", "log:clear", "tmp:clear"
+end
+
+# seeds the portal, activates the seeded municipalities in Triage and starts the Backoffices with the portal's ids
+def fill_with_seeds(backoffices)
+  # drops the database, loads db/structure.sql and seeds. Not db:seed:replant: it truncates PostGIS's
+  # spatial_ref_sys too, the boundary import then fails with "Cannot find SRID (4326)"
+  run! "bin/rails", "db:reset"
+
+  wait_for_zammads({ "Triage" => [ TRIAGE_PROJECT, TRIAGE_PORT ] })
+  run! "bin/activate-seeded-municipalities", env: { "BACKOFFICES" => backoffices.empty? ? "none" : backoffices.join(","), "START_BACKOFFICES" => "1" }
+end
+
+def parse_bytes(text)
+  number, unit = text.strip.match(/\A([\d.]+)\s*([KMGT]?i?B)\z/)&.captures
+  return 0 unless number
+
+  number.to_f * 1024**({ "B" => 0, "KiB" => 1, "kB" => 1, "MiB" => 2, "MB" => 2, "GiB" => 3, "GB" => 3, "TiB" => 4 }[unit] || 0)
+end
+
+def gigabytes(bytes) = format("%.1f GB", bytes / 1024.0**3)
+
+def status
+  usage = capture("docker", "stats", "--no-stream", "--format", "{{.Name}}\t{{.MemUsage}}").lines.to_h do |line|
+    name, memory = line.chomp.split("\t")
+    [ name, parse_bytes(memory.to_s.split("/").first.to_s) ]
+  end
+  memory = ->(prefix) { usage.select { |name, _| name.start_with?(prefix) }.values.sum }
+
+  rows = [ [ "Portal", port_open?(PORTAL_PORT) ? "running" : "stopped (bin/dev)", "http://localhost:#{PORTAL_PORT}", "" ] ]
+  if (local = local_postgres)
+    rows << [ "Postgres", "local: #{local}", "localhost:#{postgres_port}", "" ]
+  else
+    postgres = capture("docker", "inspect", "-f", "{{.State.Status}}", POSTGRES_CONTAINER).strip
+    rows << [ "Postgres", postgres.empty? ? "missing" : postgres, "localhost:#{postgres_port}", gigabytes(memory.(POSTGRES_CONTAINER)) ]
+  end
+  rows << zammad_row("Triage", TRIAGE_PROJECT, TRIAGE_PORT, "http://localhost:#{TRIAGE_PORT}", "http://localhost:8025", memory)
+  known_backoffices.each { rows << zammad_row("Backoffice #{_1.instance}", _1.project, _1.port, _1.url, _1.mailpit_url, memory) }
+
+  puts
+  widths = rows.transpose.map { |column| column.map(&:length).max }
+  rows.each { |row| puts row.zip(widths).map { |cell, width| cell.ljust(width) }.join("  ").rstrip }
+  total = capture("docker", "info", "--format", "{{.MemTotal}}").to_i
+  puts "\nDocker memory: #{gigabytes(usage.values.sum)} used of #{gigabytes(total)} (about 1.5 GB per Zammad)"
+end
+
+def zammad_row(name, project, port, url, mailpit_url, memory)
+  all = containers(project)
+  running = all.count { _1.dig("State", "Status") == "running" }
+  oom = all.select { _1.dig("State", "OOMKilled") || _1.dig("State", "ExitCode") == 137 }.map { service(_1) }
+  state =
+    if all.empty? then "missing (bin/ops reset)"
+    elsif running.zero? then "stopped"
+    elsif zammad_ready?(port) then "ready"
+    else "starting (#{running}/#{all.size} containers)"
+    end
+  state += ", out of memory: #{oom.join(", ")}" if oom.any?
+  [ name, state, "#{url}, Mailpit #{mailpit_url}", gigabytes(memory.("#{project}-")) ]
+end
+
+def logs(target, service)
+  if target == "portal"
+    exec "tail", "-f", File.join(APP_ROOT, "log/development.log")
+  elsif target == "postgres"
+    abort "The portal uses #{local_postgres}, outside Docker, see its own logs" if local_postgres
+    exec "docker", "logs", "-f", "--tail", "100", POSTGRES_CONTAINER
+  end
+
+  args = [ "logs", "-f", "--tail", "100", *service ]
+  if target == "triage"
+    Dir.chdir(TRIAGE_DIR) { exec "docker", "compose", "-p", TRIAGE_PROJECT, *args }
+  elsif known_backoffices.any? { _1.instance == target }
+    Dir.chdir(BACKOFFICE_DIR) { exec "dev/compose", target, *args }
+  else
+    abort "Unknown #{target}, use portal, postgres, triage or a Backoffice: #{known_backoffices.map(&:instance).join(", ")}"
+  end
+end
+
+$stdout.sync = true
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = File.readlines(__FILE__)[1..17].map { _1.sub(/^# ?/, "") }.join
+  opts.on("--build", "up: rebuild the Zammad images") { options[:build] = true }
+  opts.on("--no-dev", "up, reset: don't start bin/dev") { options[:no_dev] = true }
+  opts.on("--yes", "reset: don't ask") { options[:yes] = true }
+  opts.on("--backoffices=LIST", "up, reset: Backoffices to start, e.g. malacky,trnava or none") do |list|
+    options[:backoffices] = list.split(",").map(&:strip) - [ "none", "" ]
+  end
+end
+arguments = parser.parse(ARGV)
+
+case arguments.shift
+when "up" then up(options)
+when "down" then down
+when "status" then status
+when "reset" then reset(options)
+when "logs" then logs(arguments.shift || abort(parser.banner), arguments.shift)
+else abort parser.help
+end

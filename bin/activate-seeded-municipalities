@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Sets up the seeded inactive municipalities of a fresh local portal in the local Triage, the way production
 # onboards a municipality. Run it once, after bin/setup (its db:prepare seeds the database) or
-# bin/rails db:seed:replant, on a fresh Triage (see "Local Triage" in README.md):
+# bin/rails db:reset, on a fresh Triage (see "Local Triage" in README.md):
 #
 #   1. checks that the local Triage is up and that TRIAGE_ZAMMAD_ADMIN_API_TOKEN works, asks for the
 #      token when it doesn't, and that the seeds left inactive municipalities, before anything is changed
@@ -17,7 +17,10 @@
 #      it is activated as BASIC first, so the upgrade is tested too
 #   5. gives the Triage admin (the token's user) full access to every group, so they can open any ticket without
 #      logging in as the volunteer
-#   6. prints the dev/up command that starts each picked Backoffice in ../ops-backoffice-saas
+#   6. prints the dev/up command that starts each picked Backoffice in ../ops-backoffice-saas, or runs it
+#      with START_BACKOFFICES=1
+#
+# BACKOFFICES=malacky,trnava (or none) picks the Backoffices without asking, bin/ops reset uses it.
 #
 # Then start bin/dev. New issues in the activated municipalities go to the volunteer in Triage. The seeded
 # issues stay only in the portal, the seeds don't send them to Triage.
@@ -31,7 +34,7 @@ APP_ROOT = File.expand_path("..", __dir__)
 # created by dev/setup_users.rb in ops-triage-zammad
 TRIAGE_AGENT_EMAIL = "dobrovolnik@example.org"
 # PRO municipalities with a local Backoffice (ops-backoffice-saas dev/up), slot n is on port 8080 + n,
-# activated as PRO or activated as BASIC and upgraded
+# activated as PRO or activated as BASIC and upgraded. bin/ops reads the instance names from here
 LOCAL_BACKOFFICES = [
   { name: "Malacky", instance: "malacky", slot: 1, default: true, upgrade: false },
   { name: "Trnava", instance: "trnava", slot: 2, default: false, upgrade: true }
@@ -66,6 +69,18 @@ end
 
 def triage_accepts?(token)
   !token.empty? && triage_get("users/me", token).is_a?(Net::HTTPSuccess)
+end
+
+def picked_backoffices(names)
+  return LOCAL_BACKOFFICES.select { names.include?(_1[:name]) }.select { ask_for_backoffice?(_1) } unless ENV.key?("BACKOFFICES")
+
+  instances = ENV["BACKOFFICES"].split(",").map(&:strip) - [ "none", "" ]
+  unknown = instances - LOCAL_BACKOFFICES.map { _1[:instance] }
+  abort "Unknown Backoffice #{unknown.join(", ")} in BACKOFFICES, known: #{LOCAL_BACKOFFICES.map { _1[:instance] }.join(", ")}" if unknown.any?
+  backoffices = LOCAL_BACKOFFICES.select { instances.include?(_1[:instance]) }
+  missing = backoffices.map { _1[:name] } - names
+  abort "#{missing.join(", ")} is not an inactive seeded municipality, seed a fresh database first: bin/rails db:reset" if missing.any?
+  backoffices
 end
 
 def ask_for_backoffice?(backoffice)
@@ -105,9 +120,9 @@ Dir.chdir APP_ROOT do
   municipalities = IO.popen([ "bin/rails", "runner", <<~RUBY ], &:readlines).map { _1.chomp.split("\t") }
     Municipality.where(active: false, archived: false).order(:name).each { puts [ _1.name, _1.name.parameterize ].join("\t") }
   RUBY
-  abort "No inactive municipalities to activate, seed a fresh database first: bin/rails db:seed:replant" if municipalities.empty?
+  abort "No inactive municipalities to activate, seed a fresh database first: bin/rails db:reset" if municipalities.empty?
 
-  backoffices = LOCAL_BACKOFFICES.select { municipalities.map(&:first).include?(_1[:name]) }.select { ask_for_backoffice?(_1) }
+  backoffices = picked_backoffices(municipalities.map(&:first))
 
   run! "bin/rails", "municipality_boundaries:download_and_import_municipalities"
   begin
@@ -147,9 +162,13 @@ Dir.chdir APP_ROOT do
       puts [ name, [ ResponsibleSubject.find_by!(subject_name: name).id, tenant.id, tenant.backoffice_api_token, tenant.backoffice_webhook_secret ].join(" ") ].join("\t")
     end
   RUBY
+  dev_up = backoffices.map { [ "dev/up", _1[:instance], _1[:slot].to_s, _1[:name], *ids.fetch(_1[:name]).split(" ") ] }
+  if ENV["START_BACKOFFICES"] == "1"
+    Dir.chdir("../ops-backoffice-saas") { dev_up.each { run!(*_1) } }
+    next
+  end
+
   puts "\nThis script does not start the Backoffices. Start each of them in ../ops-backoffice-saas, after " \
     "dev/compose <instance> down -v if it ran before with other ids:"
-  backoffices.each do |backoffice|
-    puts "  cd ../ops-backoffice-saas && dev/up #{backoffice[:instance]} #{backoffice[:slot]} #{backoffice[:name]} #{ids.fetch(backoffice[:name])}"
-  end
+  dev_up.each { puts "  cd ../ops-backoffice-saas && #{_1.join(" ")}" }
 end
