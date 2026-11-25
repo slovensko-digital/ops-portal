@@ -1,0 +1,23 @@
+# Local development only: the local Backoffices (ops-backoffice-saas dev/up). bin/ops starts them,
+# bin/activate-seeded-municipalities activates their municipalities as PRO when they answer.
+#
+# A Backoffice starts with its portal ids before the activation, so they are fixed:
+# - responsible_subject_id: set in db/seeds/responsible_subjects.rb
+# - tenant_id: the Connector::Tenant the activation creates, Malacky's first, then Trnava's. When the activation
+#   gets another one (e.g. only Trnava answers), it starts the Backoffice again with it.
+- name: Malacky
+  instance: malacky
+  slot: 1 # http://malacky.localhost:8081, Mailpit http://localhost:8026
+  responsible_subject_id: 22
+  tenant_id: 1
+  api_token: local-dev-malacky-backoffice-api-token-not-a-secret
+  webhook_secret: local-dev-malacky-backoffice-webhook-secret-not-a-secret
+  upgrade: false # activated as PRO
+- name: Trnava
+  instance: trnava
+  slot: 2 # http://trnava.localhost:8082, Mailpit http://localhost:8027
+  responsible_subject_id: 20
+  tenant_id: 2
+  api_token: local-dev-trnava-backoffice-api-token-not-a-secret
+  webhook_secret: local-dev-trnava-backoffice-webhook-secret-not-a-secret
+  upgrade: true # activated as BASIC, then upgraded to PRO, so the upgrade is tested too
