@@ -7,6 +7,42 @@ portal, Triage and Backoffice: the issue lifecycle, which action triggers what, 
 scheduled jobs, test coverage per flow, and the open issues that affect each flow.
 Update the matching file there when you change a flow.
 
+## Run only the portal
+
+To work on the portal itself, e.g. the frontend, without Triage and the Backoffices:
+
+1. Install Ruby (`.ruby-version`) and Docker. On a Mac, also:
+
+   ```bash
+   brew install pkg-config libexif vips
+   ```
+
+2. Copy the local settings:
+
+   ```bash
+   cp .env.sample .env
+   ```
+
+3. Start Postgres with PostGIS in Docker (`docker-compose.yml`), or use a local one, see
+   [Run the stack locally](#run-the-stack-locally):
+
+   ```bash
+   docker compose up -d
+   ```
+
+4. Install the gems, create and seed the database, then start the portal (`bin/dev`) on http://localhost:3000:
+
+   ```bash
+   bin/setup
+   ```
+
+Log in as a [seeded user](#seeded-data), emails are at http://localhost:3000/letter_opener. Every day:
+`docker compose up -d`, then `bin/dev`. `bin/setup --reset` wipes the database and seeds it again.
+
+You can browse, create and comment on issues, but nothing reaches Triage: the jobs that send issues there fail in
+http://localhost:3000/admin/good_job. To work on a flow between the portal, Triage and a Backoffice, run the whole
+stack instead. The new issue wizard's suggestions and checks need `GEMINI_API_KEY` in `.env`, in both setups.
+
 ## Run the stack locally
 
 The portal, a local Triage and local Backoffices, to click through the whole flow:
@@ -57,9 +93,6 @@ Every day: `bin/ops up`, then `bin/dev`.
 Postgres with PostGIS runs in Docker (`docker-compose.yml`), or use a local one such as Postgres.app on port 5432
 with the role from `DATABASE_URL` in `.env` (`createuser --superuser ops`, PostGIS needs a superuser to create its
 extension). A local Postgres takes the port first, the portal then uses it, and `bin/ops` leaves the Docker one off.
-
-Portal only, without Triage: `docker compose up -d` and `bin/setup` (`bundle`, `db:prepare`, then `bin/dev`). The
-portal runs, but the jobs that send issues to Triage fail.
 
 ## bin/ops commands
 
