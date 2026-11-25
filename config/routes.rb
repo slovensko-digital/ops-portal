@@ -160,6 +160,11 @@ Rails.application.routes.draw do
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
+  if Rails.env.development?
+    get "explorations" => "explorations#index"
+    get "explorations/*path" => "explorations#show", format: false
+  end
+
   class GoodJobAdmin
     def self.matches?(request)
       user = request.env["rodauth"].rails_account
