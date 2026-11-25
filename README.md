@@ -1,4 +1,8 @@
-# README
+# Odkaz pre starostu
+
+The citizen portal of [Odkaz pre starostu](https://novy.odkazprestarostu.sk), a Rails app on PostgreSQL with
+PostGIS. Issues reported here are worked by volunteers in Triage and by municipalities in their own Backoffice, both
+Zammad.
 
 ## How it works
 
@@ -7,14 +11,47 @@ portal, Triage and Backoffice: the issue lifecycle, which action triggers what, 
 scheduled jobs, test coverage per flow, and the open issues that affect each flow.
 Update the matching file there when you change a flow.
 
+## Prerequisites
+
+Tested on macOS and Linux.
+
+1. **Ruby** through a version manager: mise (the [Installing Ruby on Rails](https://guides.rubyonrails.org/install_ruby_on_rails.html)
+   guide sets it up), asdf or rbenv. The repo pins the version in `.ruby-version` and `.tool-versions`, don't
+   install Ruby or Rails by hand.
+2. **System libraries**, including the PostgreSQL client: `db:prepare` loads `db/structure.sql` with `psql`.
+
+   ```bash
+   # macOS, with Homebrew (https://brew.sh)
+   brew install pkg-config libexif vips libpq && brew link --force libpq
+
+   # Ubuntu, Debian
+   sudo apt install pkg-config libexif-dev libvips libpq-dev postgresql-client libcurl4-openssl-dev tzdata
+   ```
+
+3. **PostgreSQL 17 with PostGIS 3.6**, as in `docker-compose.yml`. The easiest is
+   [Docker](https://docs.docker.com/get-started/get-docker/), `docker compose up -d` starts it. With your own
+   server, e.g. Postgres.app, create the role from `DATABASE_URL` in `.env`. It has to be a superuser to create the
+   PostGIS extension:
+
+   ```bash
+   # macOS (Homebrew, Postgres.app)
+   psql postgres -c "CREATE ROLE ops LOGIN SUPERUSER PASSWORD 'ops';"
+   # Linux
+   sudo -u postgres psql -c "CREATE ROLE ops LOGIN SUPERUSER PASSWORD 'ops';"
+   ```
+
+   A Postgres listening on port 5432 takes it first, the portal then uses it, and `bin/ops` leaves the Docker one
+   off.
+
 ## Run only the portal
 
 To work on the portal itself, e.g. the frontend, without Triage and the Backoffices:
 
-1. Install Ruby (`.ruby-version`) and Docker. On a Mac, also:
+1. Clone the repo and install Ruby:
 
    ```bash
-   brew install pkg-config libexif vips
+   git clone https://github.com/slovensko-digital/ops-portal.git && cd ops-portal
+   mise install   # or asdf install, rbenv install; check with ruby -v
    ```
 
 2. Copy the local settings:
@@ -23,36 +60,50 @@ To work on the portal itself, e.g. the frontend, without Triage and the Backoffi
    cp .env.sample .env
    ```
 
-3. Start Postgres with PostGIS in Docker (`docker-compose.yml`), or use a local one, see
-   [Run the stack locally](#run-the-stack-locally):
+3. Start Postgres, skip it with your own server:
 
    ```bash
    docker compose up -d
    ```
 
-4. Install the gems, create and seed the database, then start the portal (`bin/dev`) on http://localhost:3000:
+4. Install the gems, create and seed the database:
 
    ```bash
-   bin/setup
+   bin/setup --skip-server
+   ```
+
+5. Import the municipality boundaries, the new issue wizard finds the municipality by them. It downloads them from
+   ZBGIS once (to `tmp/`), it takes a few minutes:
+
+   ```bash
+   bin/rails municipality_boundaries:download_and_import_municipalities
+   ```
+
+6. Start the portal (Rails server and the Sass watcher, `Procfile.dev`) on http://localhost:3000:
+
+   ```bash
+   bin/dev
    ```
 
 Log in as a [seeded user](#seeded-data), emails are at http://localhost:3000/letter_opener. Every day:
-`docker compose up -d`, then `bin/dev`. `bin/setup --reset` wipes the database and seeds it again.
+`docker compose up -d`, then `bin/dev`. `bin/setup --reset --skip-server` wipes the database and seeds it again,
+import the boundaries again after it.
 
-You can browse, create and comment on issues, but nothing reaches Triage: the jobs that send issues there fail in
-http://localhost:3000/admin/good_job. To work on a flow between the portal, Triage and a Backoffice, run the whole
-stack instead. The new issue wizard's suggestions and checks need `GEMINI_API_KEY` in `.env`, in both setups.
+What doesn't work without the rest of the stack, and in both setups:
+
+- New issues can be reported only in Bratislava, the only municipality the seeds activate. Nothing reaches Triage:
+  the jobs that send issues there fail in http://localhost:3000/admin/good_job. To work on a flow between the
+  portal, Triage and a Backoffice, run the whole stack instead.
+- The new issue wizard's suggestions and checks need `GEMINI_API_KEY` and `CMS_AI_CATEGORY_ID` in `.env`, set before
+  seeding: the seeds create the AI prompts under that category.
+- Google and Facebook login need `GOOGLE_*` and `FACEBOOK_*`.
 
 ## Run the stack locally
 
 The portal, a local Triage and local Backoffices, to click through the whole flow:
 
-1. Install Ruby (`.ruby-version`) and Docker. Give Docker about 4.5 GB of memory (about 1.5 GB per Zammad: Triage
-   and two Backoffices). On a Mac, also:
-
-   ```bash
-   brew install pkg-config libexif vips
-   ```
+1. Install the [prerequisites](#prerequisites) and Docker, Triage and the Backoffices run in it. Give Docker about
+   4.5 GB of memory (about 1.5 GB per Zammad: Triage and two Backoffices).
 
 2. Clone [ops-triage-zammad](https://github.com/slovensko-digital/ops-triage-zammad) and
    [ops-backoffice-saas](https://github.com/slovensko-digital/ops-backoffice-saas) next to this repo:
@@ -90,9 +141,7 @@ The portal, a local Triage and local Backoffices, to click through the whole flo
 
 Every day: `bin/ops up`, then `bin/dev`.
 
-Postgres with PostGIS runs in Docker (`docker-compose.yml`), or use a local one such as Postgres.app on port 5432
-with the role from `DATABASE_URL` in `.env` (`createuser --superuser ops`, PostGIS needs a superuser to create its
-extension). A local Postgres takes the port first, the portal then uses it, and `bin/ops` leaves the Docker one off.
+`bin/ops` starts the Docker Postgres unless your own server answers on its port, see [Prerequisites](#prerequisites).
 
 ## bin/ops commands
 
@@ -300,7 +349,9 @@ the end. After `downgrade_to_basic`, stop the Backoffice, the portal no longer a
 
 ## Testing
 
-Run `bin/rails test:all`. See [docs/TESTING.md](docs/TESTING.md) for what to test at which level.
+Create the test database once with `RAILS_ENV=test bin/rails db:prepare`, then run `bin/rails test:all` (system
+tests need Chrome). `bin/ci` runs everything CI runs. See [docs/TESTING.md](docs/TESTING.md) for what to test at which
+level.
 
 ### Click through the flow
 
@@ -323,3 +374,18 @@ Backoffice (a PRO municipality), and with Trnava a hand-off from one PRO municip
    USERS=podatelna@trnava.example.com,jan.novak@trnava.example.com`, Triage emails Trnava again (Mailpit). Then
    `upgrade_to_pro` with Trnava's `BACKOFFICE_*` values from `config/local_backoffices.yml`, the Backoffice of
    Trnava works again.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `role "ops" does not exist`, `password authentication failed for user "ops"`, `extension "postgis" is not available`, or port 5432 already allocated | Another Postgres has port 5432, the portal reaches it instead of the Docker one. Stop it, or set it up as your own server, see [Prerequisites](#prerequisites). |
+| `unrecognized configuration parameter "transaction_timeout"` | Your Postgres is older than 17. Use the Docker one or upgrade. |
+| `failed to execute: psql` | Install the PostgreSQL client, see [Prerequisites](#prerequisites). |
+| `docker compose`: `permission denied` (Linux) | `sudo usermod -aG docker $USER`, then log out and in. |
+| `bin/rails db:test:prepare` drops the development database | Use `RAILS_ENV=test bin/rails db:prepare`. `db:test:prepare` reads `DATABASE_URL` from `.env`, which names the development database. |
+| The new issue wizard says "Samospráva nie je zatiaľ zapojená do portálu Odkaz pre starostu" | The municipality boundaries are missing (step 5 of [Run only the portal](#run-only-the-portal)), or the place is outside an active municipality. |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Only maintainers can push to this repo, open pull requests from a fork.
