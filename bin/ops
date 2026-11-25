@@ -21,8 +21,11 @@
 # they keep their data.
 #
 # The portal uses the Postgres on the port of DATABASE_URL: whatever answers there (e.g. Postgres.app), otherwise
-# bin/ops starts the Docker container ops-postgres. It only touches the compose projects ops-triage-zammad and
-# ops-backoffice-<instance> and the container ops-postgres, never others (e.g. ops-triage-e2e) or a local Postgres.
+# bin/ops starts the Docker container ops-postgres. Triage and the Backoffices keep their databases there too
+# (ops_triage_development, ops_backoffice_<instance>_development), they reach it on host.docker.internal:5432, see
+# docker-compose.ops-postgres.yml in their repos. It only touches the compose projects ops-triage-zammad and
+# ops-backoffice-<instance>, the container ops-postgres and these databases, never other projects (e.g.
+# ops-triage-e2e) or other databases.
 # Worktrees of this repo use the same ports and the same Postgres, run it from one of them at a time.
 require "json"
 require "yaml"
@@ -36,6 +39,7 @@ APP_ROOT = File.expand_path("..", __dir__)
 TRIAGE_DIR = File.expand_path("../ops-triage-zammad", APP_ROOT)
 BACKOFFICE_DIR = File.expand_path("../ops-backoffice-saas", APP_ROOT)
 TRIAGE_PROJECT = "ops-triage-zammad"
+TRIAGE_DATABASE = "ops_triage_development"
 TRIAGE_PORT = 8080
 POSTGRES_CONTAINER = "ops-postgres"
 PORTAL_PORT = 3000
@@ -87,8 +91,17 @@ def run_parallel!(steps)
   abort "\n#{failed.join(", ")} failed, see the output above" if failed.any?
 end
 
-def triage_compose(*args) = [ [ "docker", "compose", "-p", TRIAGE_PROJECT, *args ], TRIAGE_DIR ]
+# docker-compose.ops-postgres.yml: Triage's database in the portal's Postgres. With -f, docker compose no longer loads
+# docker-compose.override.yml by itself
+def triage_files
+  %w[docker-compose.yml docker-compose.override.yml docker-compose.ops-postgres.yml]
+    .select { File.exist?(File.join(TRIAGE_DIR, _1)) }.flat_map { [ "-f", _1 ] }
+end
+
+def triage_compose(*args) = [ [ "docker", "compose", "-p", TRIAGE_PROJECT, *triage_files, *args ], TRIAGE_DIR ]
+# dev/compose adds the Backoffice's docker-compose.ops-postgres.yml itself
 def backoffice_compose(backoffice, *args) = [ [ "dev/compose", backoffice.instance, *args ], BACKOFFICE_DIR ]
+def backoffice_database(instance) = "ops_backoffice_#{instance.tr("-", "_")}_development"
 
 def known_backoffices
   Dir[File.join(BACKOFFICE_DIR, ".env.*")].filter_map do |path|
@@ -123,8 +136,6 @@ def containers(project)
 end
 
 def service(container) = container.dig("Config", "Labels", "com.docker.compose.service")
-
-def volumes?(project) = !capture("docker", "volume", "ls", "-q", "--filter", "label=com.docker.compose.project=#{project}").strip.empty?
 
 # aborts when a container ran out of memory or a one-off container (e.g. a Backoffice's zammad-init) failed
 def check_failures!(project)
@@ -171,6 +182,29 @@ def database_url
 end
 
 def postgres_port = URI(database_url).port || 5432
+
+# DATABASE_URL with another database, by default the maintenance database postgres
+def postgres_url(database = "postgres") = URI(database_url).tap { _1.path = "/#{database}" }.to_s
+
+def database?(name) = capture("psql", postgres_url, "-XtAc", "SELECT 1 FROM pg_database WHERE datname = '#{name}'").strip == "1"
+
+# a step for run_parallel!, after the Zammad using the database stopped
+def drop_database(name) = [ [ "psql", postgres_url, "-Xqc", %(DROP DATABASE IF EXISTS "#{name}" WITH (FORCE)) ], APP_ROOT ]
+
+# The zammad-postgresql of a Zammad set up before it shared the portal's Postgres keeps running, docker compose no
+# longer knows it. Removing it frees its memory, its volume stays until a reset. The Zammads start with empty
+# databases, the portal still has them activated: a reset starts all of them fresh together.
+def remove_own_postgres(reset: false)
+  projects = [ TRIAGE_PROJECT, *known_backoffices.map(&:project) ]
+  ids = projects.flat_map { |project| containers(project).select { service(_1) == "zammad-postgresql" }.map { _1["Id"] } }
+  return if ids.empty?
+
+  run!("docker", "rm", "-f", *ids)
+  return if reset
+
+  puts "\n== Triage and the Backoffices now keep their databases in the portal's Postgres and start empty. " \
+    "Run bin/ops reset once, then bin/activate-seeded-municipalities"
+end
 
 # running, exited, ... or "" when there is no container
 def docker_postgres_state = capture("docker", "inspect", "-f", "{{.State.Status}}", POSTGRES_CONTAINER).strip
@@ -251,12 +285,13 @@ end
 def up(options)
   check_repos!
   backoffices = picked_backoffices(options)
-  fresh_triage = !volumes?(TRIAGE_PROJECT)
   build = options[:build] ? [ "--build" ] : []
   known = known_backoffices
 
   ensure_bundle
   start_postgres
+  remove_own_postgres
+  fresh_triage = !database?(TRIAGE_DATABASE)
   # db:prepare creates and seeds a new database, migrates an existing one
   steps = { "portal" => [ [ [ "bin/rails", "db:prepare" ], APP_ROOT ] ], "triage" => [ triage_compose("up", "-d", *build) ] }
   # the others stop, it frees their memory (about 1.5 GB each), they keep their data
@@ -277,14 +312,15 @@ end
 def down
   check_repos!
   steps = { "triage" => [ triage_compose("stop") ] }.merge(known_backoffices.to_h { [ _1.instance, [ backoffice_compose(_1, "stop") ] ] })
-  steps["postgres"] = [ [ [ "docker", "stop", POSTGRES_CONTAINER ], APP_ROOT ] ] if docker_postgres_state == "running"
   run_parallel!(steps)
+  # last, Triage and the Backoffices use it too
+  run!("docker", "stop", POSTGRES_CONTAINER) if docker_postgres_state == "running"
   puts "\n== The Postgres on port #{postgres_port} keeps running, it is not bin/ops's" if port_open?(postgres_port)
   puts "\n== Stopped, the data stays. Stop bin/dev with Ctrl-C." if port_open?(PORTAL_PORT)
 end
 
 # Wipes everything and gets the stack ready again, like a first up, all at once: Triage and every Backoffice with
-# their volumes (see "reset" in README.md), the portal's uploaded files, logs, tmp and database.
+# their volumes and databases (see "reset" in README.md), the portal's uploaded files, logs, tmp and database.
 # The portal is filled by db:reset's seeds today, a restore of a prepared snapshot can replace it.
 def reset(options)
   check_repos!
@@ -294,6 +330,7 @@ def reset(options)
 
   ensure_bundle
   start_postgres
+  remove_own_postgres(reset: true)
   # the uploaded files (Active Storage's local service) belong to the database db:reset drops
   puts "\n== Removing the uploaded files in storage/"
   FileUtils.rm_rf(Dir[File.join(APP_ROOT, "storage", "[^.]*")])
@@ -301,9 +338,13 @@ def reset(options)
   # db:seed:replant: replant truncates PostGIS's spatial_ref_sys, the boundary import then fails
   steps = {
     "portal" => [ [ [ "bin/rails", "log:clear", "tmp:clear" ], APP_ROOT ], [ [ "bin/rails", "db:reset" ], APP_ROOT ] ],
-    "triage" => [ triage_compose("down", "-v"), triage_compose("up", "-d") ]
+    "triage" => [ triage_compose("down", "-v"), drop_database(TRIAGE_DATABASE), triage_compose("up", "-d") ]
   }
   known_backoffices.each { steps[_1.instance] = [ backoffice_compose(_1, "down", "-v") ] }
+  # also a new Backoffice's, a database may stay from before
+  (known_backoffices.map(&:instance) | backoffices.map { _1["instance"] }).each do |instance|
+    (steps[instance] ||= []) << drop_database(backoffice_database(instance))
+  end
   backoffices.each { (steps[_1["instance"]] ||= []) << start_backoffice(_1, [ "--build" ], fixed_values: true) }
   run_parallel!(steps)
 
@@ -359,6 +400,8 @@ def status
   puts
   widths = rows.transpose.map { |column| column.map(&:length).max }
   rows.each { |row| puts row.zip(widths).map { |cell, width| cell.ljust(width) }.join("  ").rstrip }
+  databases = capture("psql", postgres_url, "-XtAc", "SELECT datname FROM pg_database WHERE datname LIKE 'ops\\_%' ORDER BY 1").split
+  puts "\nDatabases on localhost:#{postgres_port}: #{databases.join(", ")}" if databases.any?
   total = capture("docker", "info", "--format", "{{.MemTotal}}").to_i
   puts "\nDocker memory: #{gigabytes(usage.values.sum)} used of #{gigabytes(total)} (about 1.5 GB per Zammad)"
 end
@@ -387,7 +430,7 @@ def logs(target, service)
 
   args = [ "logs", "-f", "--tail", "100", *service ]
   if target == "triage"
-    Dir.chdir(TRIAGE_DIR) { exec "docker", "compose", "-p", TRIAGE_PROJECT, *args }
+    Dir.chdir(TRIAGE_DIR) { exec "docker", "compose", "-p", TRIAGE_PROJECT, *triage_files, *args }
   elsif known_backoffices.any? { _1.instance == target }
     Dir.chdir(BACKOFFICE_DIR) { exec "dev/compose", target, *args }
   else
