@@ -71,7 +71,7 @@ Run the portal together with a local Triage to click through the whole flow. Clo
 
 ```bash
 bin/ops reset    # first time, and to wipe everything, see below
-bin/ops up       # every day: Postgres, Triage, the Backoffices, waits until they answer, then bin/dev
+bin/ops up       # every day: Postgres, Triage, the Backoffices, waits until they answer, then start bin/dev
 bin/ops up --backoffices=none      # only Triage, or e.g. --backoffices=malacky, stops the other Backoffices
 bin/ops down     # stops them, keeps the data (stop bin/dev with Ctrl-C)
 bin/ops status   # what runs, the URLs, Docker memory
@@ -83,7 +83,7 @@ issues' Connector jobs fail in `/admin/good_job` until their Backoffice runs. Us
 `bin/ops reset --backoffices=none` to have all of them BASIC.
 
 `up --build` rebuilds the Zammad images after a pull in `ops-triage-zammad` or `ops-backoffice-saas`.
-`--no-dev` leaves `bin/dev` to you. It only touches the compose projects `ops-triage-zammad`,
+`bin/ops` doesn't run `bin/dev`, start it yourself. It only touches the compose projects `ops-triage-zammad`,
 `ops-backoffice-<instance>` and the container `ops-postgres`, other projects (e.g. `ops-triage-e2e`) keep running.
 The worktrees of this repo share its ports and Postgres, run `bin/ops` and `bin/dev` in one of them at a time.
 
@@ -147,8 +147,8 @@ bin/ops reset --backoffices=malacky    # or malacky,trnava or none
 
 It wipes Triage and every Backoffice with their volumes, deletes the portal's uploaded files (`storage/`, they belong
 to the dropped database) and runs `bin/rails log:clear tmp:clear`, recreates the portal database (`db:reset`), runs
-`bin/activate-seeded-municipalities` once Triage answers, starts the Backoffices with the portal's new ids and
-then `bin/dev`. Without `--backoffices` it starts the Backoffices that ran before (a `.env.<instance>` in
+`bin/activate-seeded-municipalities` once Triage answers, starts the Backoffices with the portal's new ids, then
+start `bin/dev`. Without `--backoffices` it starts the Backoffices that ran before (a `.env.<instance>` in
 `ops-backoffice-saas`), Malacky when none did. A Backoffice left out loses its `.env.<instance>`. Stop `bin/dev`
 first, `bin/ops` refuses while port 3000 is in use. When Docker runs out of memory, it stops and names the
 container (exit code 137).

@@ -3,13 +3,13 @@
 # local Triage (../ops-triage-zammad) and the local Backoffices (../ops-backoffice-saas), see "Local Triage" and
 # "Local Backoffice" in README.md.
 #
-#   bin/ops up [--backoffices=malacky,trnava|none] [--build] [--no-dev]
-#                                     start Postgres, Triage and the Backoffices, wait until they answer, then bin/dev
+#   bin/ops up [--backoffices=malacky,trnava|none] [--build]
+#                                     start Postgres, Triage and the Backoffices, wait until they answer
 #   bin/ops down                      stop them all, keeps the data
 #   bin/ops status                    what runs, its URL and Docker memory
-#   bin/ops reset [--backoffices=malacky,trnava|none] [--yes] [--no-dev]
+#   bin/ops reset [--backoffices=malacky,trnava|none] [--yes]
 #                                     wipe Triage and the Backoffices, reseed the portal, activate the seeded
-#                                     municipalities, start the Backoffices, then bin/dev
+#                                     municipalities, start the Backoffices
 #   bin/ops logs <portal|postgres|triage|<backoffice>> [service]
 #
 # A Backoffice is known by its .env.<instance> in ../ops-backoffice-saas (dev/up writes it). reset starts the
@@ -205,15 +205,11 @@ def check_portal_stopped!
   abort "Something runs on port #{PORTAL_PORT}, stop bin/dev first (also in the other worktrees)"
 end
 
-def start_dev(no_dev)
+def print_next_step
   if port_open?(PORTAL_PORT)
-    puts "\n== The portal already runs on http://localhost:#{PORTAL_PORT}"
-  elsif no_dev
-    puts "\n== Start the portal: bin/dev"
+    puts "\n== The portal runs on http://localhost:#{PORTAL_PORT}"
   else
-    puts "\n== bin/dev, the portal on http://localhost:#{PORTAL_PORT}, Ctrl-C stops it (bin/ops down stops the rest)"
-    $stdout.flush
-    Dir.chdir(APP_ROOT) { exec "bin/dev" }
+    puts "\n== Start the portal: bin/dev"
   end
 end
 
@@ -244,7 +240,7 @@ def up(options)
 
   wait_for_zammads({ "Triage" => [ TRIAGE_PROJECT, TRIAGE_PORT ] }.merge(backoffices.to_h { [ _1.instance, [ _1.project, _1.port ] ] }))
   status
-  start_dev(options[:no_dev])
+  print_next_step
 end
 
 def down
@@ -271,7 +267,7 @@ def reset(options)
   fill_with_seeds(backoffices)
   wait_for_zammads(known_backoffices.select { backoffices.include?(_1.instance) }.to_h { [ _1.instance, [ _1.project, _1.port ] ] })
   status
-  start_dev(options[:no_dev])
+  print_next_step
 end
 
 # the Backoffices bin/activate-seeded-municipalities can set up (its LOCAL_BACKOFFICES)
@@ -395,13 +391,16 @@ options = {}
 parser = OptionParser.new do |opts|
   opts.banner = File.readlines(__FILE__)[1..17].map { _1.sub(/^# ?/, "") }.join
   opts.on("--build", "up: rebuild the Zammad images") { options[:build] = true }
-  opts.on("--no-dev", "up, reset: don't start bin/dev") { options[:no_dev] = true }
   opts.on("--yes", "reset: don't ask") { options[:yes] = true }
   opts.on("--backoffices=LIST", "up, reset: Backoffices to start, e.g. malacky,trnava or none") do |list|
     options[:backoffices] = list.split(",").map(&:strip) - [ "none", "" ]
   end
 end
-arguments = parser.parse(ARGV)
+arguments = begin
+  parser.parse(ARGV)
+rescue OptionParser::ParseError => e
+  abort "#{e.message}, see bin/ops --help"
+end
 
 case arguments.shift
 when "up" then up(options)
