@@ -155,9 +155,10 @@ Stop the Backoffice after the downgrade.
 ### Locally
 
 `bin/activate-seeded-municipalities` activates Malacky with `activate_pro
-EXISTING_MUNICIPALITY=1` and, if asked, Trnava with `activate_basic` and then
-`upgrade_to_pro`, each with a Backoffice of `ops-backoffice-saas` `dev/up`, see
-"Local Backoffice" in the README.
+EXISTING_MUNICIPALITY=1` and Trnava with `activate_basic` and then
+`upgrade_to_pro`, each when its local Backoffice (`bin/ops`) answers, see
+"Local Backoffice" in the README. The seeds make every responsible subject BASIC,
+only these tasks make one PRO.
 
 ## A volunteer leaves
 

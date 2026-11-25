@@ -68,7 +68,8 @@ other = ResponsibleSubjects::Type.find_by!(name: "Iný subjekt")
     # which activates it as BASIC
     waiting_for_activation = municipality.present? && !municipality.active?
     rs.active = !waiting_for_activation
-    rs.pro = !waiting_for_activation
+    # BASIC, only responsible_subjects:activate_pro or upgrade_to_pro make one PRO, together with its Backoffice
+    rs.pro = false
   end.save!
   # the next responsible subject without a fixed id gets one after it, not a fixed one
   ActiveRecord::Base.connection.reset_pk_sequence!("responsible_subjects") if data[:id]
