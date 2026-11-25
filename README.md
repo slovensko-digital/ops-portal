@@ -217,7 +217,8 @@ bin/ops down
 
 ### status
 
-Shows what runs, its URLs and how much Docker memory it uses.
+Shows what runs, its URLs, the databases with how to connect to them, and how much Docker memory it uses. `up` and
+`reset` show it when they are done.
 
 ```
 $ bin/ops status
@@ -228,6 +229,8 @@ Backoffice malacky  ready              http://malacky.localhost:8081, Mailpit ht
 Backoffice trnava   ready              http://trnava.localhost:8082, Mailpit http://localhost:8027   1.1 GB
 
 Databases on localhost:5432: ops_backoffice_malacky_development, ops_backoffice_trnava_development, ops_development, ops_test, ops_triage_development
+Connect: psql postgresql://ops:ops@localhost:5432/<database>
+  without psql: docker exec -it ops-postgres psql -U ops -d <database>
 
 Docker memory: 3.6 GB used of 8.2 GB (about 1.5 GB per Zammad)
 ```
