@@ -214,7 +214,8 @@ portal, the seeds don't send them to Triage.
 
 Portal users, all with the password `password`: `admin@example.com`, `jana@example.com`, `peter@example.com`,
 `anonym@example.com`, `novy@example.com` (phone not verified), `citizen1@example.com` … `citizen20@example.com` and
-the responsible subject's `stare-mesto@example.com`.
+the responsible subject's `stare-mesto@example.com`. Set `DEFAULT_USER_EMAIL` in `.env` to seed a verified account
+with your own email too.
 
 ## Responsible subject activation
 

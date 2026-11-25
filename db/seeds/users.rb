@@ -23,6 +23,10 @@ seed_user(email: "jana@example.com", firstname: "Jana", lastname: "Nováková", 
 seed_user(email: "peter@example.com", firstname: "Peter", lastname: "Horváth", municipality_name: "Trnava")
 seed_user(email: "anonym@example.com", firstname: "Anonym", lastname: nil, anonymous: true)
 seed_user(email: "novy@example.com", firstname: "Nový", lastname: "Používateľ", phone_verified: false)
+# your own verified account, e.g. to get the portal's emails to your address
+if ENV["DEFAULT_USER_EMAIL"].present?
+  seed_user(email: ENV["DEFAULT_USER_EMAIL"], firstname: "Vývojár", lastname: "Portálu", municipality_name: "Bratislava")
+end
 
 seed_user(
   email: "stare-mesto@example.com",
