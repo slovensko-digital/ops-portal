@@ -19,6 +19,11 @@ module Ai
     end
 
     def self.get(prompt_name)
+      replace_placeholders(raw(prompt_name))
+    end
+
+    # The prompt as stored in the CMS, with placeholders not yet replaced.
+    def self.raw(prompt_name)
       prompt = joins(:category)
         .where(cms_categories: { id: ENV.fetch("CMS_AI_CATEGORY_ID") })
         .with_tags("prompt:#{prompt_name}")
@@ -26,16 +31,14 @@ module Ai
 
       raise PromptNotFoundException, prompt_name unless prompt
 
-      replace_placeholders(prompt.raw)
+      prompt.raw
     end
-
-    private
 
     def self.replace_placeholders(content)
       content.gsub("{{ CATEGORIES_TABLE }}") { generate_categories_table }
     end
 
-    def self.generate_categories_table
+    private_class_method def self.generate_categories_table
       table_rows = []
 
       Issues::Category.non_legacy.order(:name).each do |category|

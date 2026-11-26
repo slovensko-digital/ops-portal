@@ -47,4 +47,41 @@ class GeminiTest < ActiveSupport::TestCase
 
     assert_equal [], Gemini.generate(messages: [ "data" ], system_prompt: "prompt")
   end
+
+  test "calls the production model by default" do
+    stub_request(:post, %r{/models/gemini-2\.5-flash:generateContent}).to_return(
+      body: file_fixture("webmock/gemini/checks-empty.json").read,
+      headers: { "Content-Type" => "application/json" }
+    )
+
+    Gemini.generate(messages: [ "data" ], system_prompt: "prompt")
+
+    assert_requested :post, %r{/models/gemini-2\.5-flash:generateContent}
+  end
+
+  test "calls the given model" do
+    stub_request(:post, %r{/models/gemini-2\.5-pro:generateContent}).to_return(
+      body: file_fixture("webmock/gemini/checks-empty.json").read,
+      headers: { "Content-Type" => "application/json" }
+    )
+
+    Gemini.generate(messages: [ "data" ], system_prompt: "prompt", model: "gemini-2.5-pro")
+
+    assert_requested :post, %r{/models/gemini-2\.5-pro:generateContent}
+  end
+
+  test "rejects a model name that is not a plain model id" do
+    assert_raises(ArgumentError) do
+      Gemini.generate(messages: [ "data" ], system_prompt: "prompt", model: "../files")
+    end
+  end
+
+  test "lists the models that can generate content" do
+    stub_request(:get, %r{generativelanguage\.googleapis\.com/v1beta/models\?}).to_return(
+      body: file_fixture("webmock/gemini/models.json").read,
+      headers: { "Content-Type" => "application/json" }
+    )
+
+    assert_equal %w[gemini-2.5-flash gemini-2.5-pro], Gemini.models
+  end
 end

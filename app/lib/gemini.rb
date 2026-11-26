@@ -1,20 +1,14 @@
 class Gemini
   class Error < StandardError; end
 
-  def self.generate(messages:, system_prompt:, response_schema: nil)
-    conn = Faraday.new(
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-      params: { key: ENV["GEMINI_API_KEY"] },
-      headers: {
-        "content-type": "application/json"
-      }
-    ) do |f|
-      f.adapter :patron
-      f.response :json
-      f.options.timeout = 30
-    end
+  BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
+  DEFAULT_MODEL = "gemini-2.5-flash"
+  MODEL_FORMAT = /\A[a-z0-9][a-z0-9.\-]*\z/
 
-    res = conn.post do |req|
+  def self.generate(messages:, system_prompt:, response_schema: nil, model: DEFAULT_MODEL, timeout: 30)
+    raise ArgumentError, "Invalid Gemini model #{model.inspect}" unless model.to_s.match?(MODEL_FORMAT)
+
+    res = connection(timeout:).post("models/#{model}:generateContent") do |req|
       body = {
         contents: [
           {
@@ -43,6 +37,31 @@ class Gemini
       JSON.parse(text)
     rescue JSON::ParserError => e
       raise Error, "Gemini API returned invalid JSON: #{e.message}"
+    end
+  end
+
+  # Names of the models that support generateContent, e.g. "gemini-2.5-flash".
+  def self.models
+    res = connection.get("models", pageSize: 1000)
+    raise Error, "Gemini API returned status #{res.status}" if res.status != 200
+
+    res.body.fetch("models", [])
+      .select { _1["supportedGenerationMethods"].to_a.include?("generateContent") }
+      .map { _1["name"].delete_prefix("models/") }
+      .sort
+  end
+
+  def self.connection(timeout: 30)
+    Faraday.new(
+      url: "#{BASE_URL}/",
+      params: { key: ENV["GEMINI_API_KEY"] },
+      headers: {
+        "content-type": "application/json"
+      }
+    ) do |f|
+      f.adapter :patron
+      f.response :json
+      f.options.timeout = timeout
     end
   end
 
