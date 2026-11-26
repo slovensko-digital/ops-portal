@@ -1,47 +1,33 @@
-import {Controller} from "@hotwired/stimulus"
+import SearchableSelectController from "controllers/searchable_select_controller"
 
-export default class extends Controller {
-    static targets = ["input", "item", "list"]
-    static classes = ["none"]
+// A flat searchable list: matches that start with the query come first.
+export default class extends SearchableSelectController {
+    connect() {
+        this.originalOrder = [...this.itemTargets]
+    }
 
-    filter() {
-        const query = this.normalizeString(this.inputTarget.value.trim())
+    // Shows every item again in its original order; showMatches() moves matches to the end.
+    showAll() {
+        this.originalOrder.forEach(item => {
+            item.classList.remove("none")
+            this.listTarget.appendChild(item)
+        })
+    }
+
+    showMatches(query) {
         const items = this.itemTargets
 
-        if (query === "") {
-            items.forEach((el) => el.classList.remove(this.noneClass))
-            return
-        }
+        items.forEach(item => {
+            const score = this.matchScore(this.normalizeString(item.innerText.trim()), query)
 
-        items.forEach((el) => {
-            const label = this.normalizeString(el.innerText.trim())
-            const score = this.matchScore(label, query)
-
-            el.dataset.score = score
-            el.classList.toggle(this.noneClass, score === Infinity)
+            item.dataset.score = score
+            item.classList.toggle("none", score === Infinity)
         })
 
-        const visible = items
-            .filter((el) => !el.classList.contains(this.noneClass))
+        items
+            .filter(item => !item.classList.contains("none"))
             .sort((a, b) => a.dataset.score - b.dataset.score)
-
-        visible.forEach((el) => this.listTarget.appendChild(el))
-    }
-
-    enter(event) {
-        event.preventDefault()
-
-        this.itemTargets.find(el => !el.classList.contains(this.noneClass))
-            ?.querySelector("a")
-            ?.click()
-    }
-
-    normalizeString(str) {
-        return str
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9]/gi, "")
-            .toLowerCase()
+            .forEach(item => this.listTarget.appendChild(item))
     }
 
     matchScore(label, query) {

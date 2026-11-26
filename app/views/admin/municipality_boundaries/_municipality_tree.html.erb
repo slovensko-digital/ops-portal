@@ -4,7 +4,7 @@
     <span data-tree-summary="Všetky"></span>
   </summary>
 
-  <div class="tree-select-panel" data-controller="autocomplete" data-autocomplete-none-class="none">
+  <div class="tree-select-panel" data-controller="autocomplete">
     <%= search_field_tag nil, nil, placeholder: "Hľadať obec alebo mestskú časť", autocomplete: "off",
                          aria: { label: "Hľadať obec" },
                          data: { autocomplete_target: "input", action: "input->autocomplete#filter keydown.enter->autocomplete#enter" } %>

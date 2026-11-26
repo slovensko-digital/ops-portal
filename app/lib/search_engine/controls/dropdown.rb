@@ -49,13 +49,9 @@ module SearchEngine
       end
 
       def build_items(results, items)
-        if items.respond_to?(:call)
-          items = items.arity == 1 ? items.call(results.search_params) : items.call
-        end
-
         values = Array(results.search_params[@param_name])
 
-        out = items.map do |value|
+        out = resolve_items(results, items).map do |value|
           Item.new(
             label: value,
             value: value,
@@ -81,6 +77,14 @@ module SearchEngine
           default_label: @default_label,
           multiple: @multiple,
         )
+      end
+
+      private
+
+      def resolve_items(results, items)
+        return items unless items.respond_to?(:call)
+
+        items.arity == 1 ? items.call(results.search_params) : items.call
       end
     end
   end

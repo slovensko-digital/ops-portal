@@ -15,7 +15,7 @@ class ProfilesTest < ApplicationSystemTestCase
     choose "user_anonymous_true"
 
     # Select municipality
-    select "Nitra", from: "municipality_id"
+    select_from_search "Nitra", from: "Preferované mestá alebo obce"
 
     # Set email notifications
     choose "user_email_notifiable_true"
@@ -36,10 +36,126 @@ class ProfilesTest < ApplicationSystemTestCase
     assert_equal "Updated Citizen Name", user.name
     assert_equal 1990, user.birth_year
     assert_equal true, user.anonymous
-    assert_equal Municipality.find_by(name: "Nitra").id, user.municipality_id
+    assert_includes user.municipalities.pluck(:name), "Nitra"
     assert_equal true, user.email_notifiable
     assert_equal true, user.newsletter_accepted
     assert_equal true, user.gdpr_stats_accepted
+  end
+
+  test "citizen user sees preferred localities as pills and can remove one" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+
+    assert_selector "label", text: "Preferované mestá alebo obce (1)"
+    find("button.filter-select-button", text: "Banská Bystrica").click
+
+    assert_no_selector "button.filter-select-button"
+    assert_selector "label", exact_text: "Preferované mestá alebo obce"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_not_includes user.reload.municipalities.pluck(:name), "Banská Bystrica"
+  end
+
+  test "citizen user sees only the district name in a district pill" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    select_from_search "Petržalka", from: "Preferované mestá alebo obce"
+
+    assert_selector "button.filter-select-button[title='Odstrániť: Bratislava - Petržalka']", exact_text: "Petržalka"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_includes user.reload.municipality_districts.pluck(:name), "Petržalka"
+  end
+
+  test "citizen user selecting a municipality ticks its districts but saves only the municipality" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    select_from_search "Spišská Nová Ves", from: "Preferované mestá alebo obce"
+
+    assert_selector "li.district.active", count: 7
+    assert_selector "button.filter-select-button", exact_text: "Spišská Nová Ves"
+    assert_no_selector "button.filter-select-button", text: "Ferčekovce"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_includes user.reload.municipalities.pluck(:name), "Spišská Nová Ves"
+    assert_empty user.municipality_districts
+  end
+
+  test "citizen user unticking a district of a selected municipality keeps the other districts" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    select_from_search "Centrum", from: "Preferované mestá alebo obce", search: "Banská Bystrica"
+
+    assert_selector "li.partial", exact_text: "Banská Bystrica"
+    assert_no_selector "button.filter-select-button", exact_text: "Banská Bystrica"
+    assert_selector "button.filter-select-button", count: 6
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    user.reload
+    assert_not_includes user.municipalities.pluck(:name), "Banská Bystrica"
+    assert_equal 6, user.municipality_districts.count
+    assert_not_includes user.municipality_districts.pluck(:name), "Centrum"
+  end
+
+  test "citizen user ticking every district of a municipality selects the whole municipality" do
+    user = users(:one)
+    login_as(user)
+
+    visit edit_profile_path
+    fill_in "Preferované mestá alebo obce", with: "Spišská Nová Ves"
+    all("li.district label", count: 7).each(&:click)
+
+    assert_selector "li.active:not(.district)", exact_text: "Spišská Nová Ves"
+    assert_no_selector "li.partial"
+    assert_selector "button.filter-select-button", exact_text: "Spišská Nová Ves"
+    assert_no_selector "button.filter-select-button", text: "Ferčekovce"
+
+    within('form[action="/profil"]') do
+      click_button "Uložiť"
+    end
+
+    assert_text "Zmeny profilu boli uložené."
+    assert_includes user.reload.municipalities.pluck(:name), "Spišská Nová Ves"
+    assert_empty user.municipality_districts
+  end
+
+  test "citizen user sees a message when no preferred locality matches the search" do
+    login_as(users(:one))
+
+    visit edit_profile_path
+    input = find_field("Preferované mestá alebo obce")
+    input.fill_in(with: "xyzq")
+
+    assert_text "Nič sme nenašli."
+
+    input.send_keys(:escape)
+
+    assert_no_text "Nič sme nenašli."
+    assert_equal "", input.value
   end
 
   test "responsible subject user can't update profile" do
