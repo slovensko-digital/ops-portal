@@ -23,7 +23,6 @@ export default class extends Controller {
 
     this.inputTarget.files = event.dataTransfer.files;
     this.inputTarget.dispatchEvent(new Event("input", { bubbles: true }));
-    this.inputTarget.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   preventOpeningFile(event) {

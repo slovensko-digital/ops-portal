@@ -43,7 +43,7 @@
     <% if @draft.photos.attached? %>
       <div class="report-suggestion-pictures-block">
         <% if @draft.persisted? %>
-          <% @draft.photos.select(&:persisted?).each do |photo| %>
+          <% @draft.photos.each do |photo| %>
             <figure>
               <%= button_to issues_draft_destroy_photo_path(@draft, photo_id: photo.id, next: params[:next]), class: 'close-button', method: :delete, data: { 'turbo-confirm': 'Určite chcete túto fotku odstrániť?' } do %>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38">
