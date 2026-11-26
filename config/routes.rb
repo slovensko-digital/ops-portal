@@ -178,6 +178,9 @@ Rails.application.routes.draw do
 
     namespace :admin do
       resources :municipality_boundaries, only: [ :index, :show ]
+      resources :prompt_test_cases, path: "prompt_playground", except: :show do
+        post :run, on: :member
+      end
     end
   end
 

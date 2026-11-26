@@ -60,6 +60,13 @@ podnet") when the draft is incomplete (e.g. a summary page opened earlier).
 Before, a draft without a category failed in `Issue#save!` with a 422. Turbo
 then reloaded the summary, so "Odoslať podnet" seemed to do nothing.
 
+The AI checks come from `Ai::IssueChecks`: the CMS prompt tagged
+`prompt:generatechecks`, sent to `gemini-2.5-flash` with the draft's title,
+description and address. Admins try prompt or model changes at
+`/admin/prompt_playground` against saved test cases (`ai_prompt_test_cases`,
+each with the check titles it should return). The playground never writes
+the CMS, so the finished prompt is pasted into the CMS by hand.
+
 ### Stuck in Incoming
 
 Tickets are routed only by the `700 - Priradenie podnetu skupine <Obec> <Agent>`

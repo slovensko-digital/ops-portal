@@ -183,6 +183,40 @@ ALTER SEQUENCE public.active_storage_variant_records_id_seq OWNED BY public.acti
 
 
 --
+-- Name: ai_prompt_test_cases; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ai_prompt_test_cases (
+    id bigint NOT NULL,
+    prompt_name character varying NOT NULL,
+    name character varying NOT NULL,
+    input jsonb DEFAULT '{}'::jsonb NOT NULL,
+    expected_check_titles character varying[] DEFAULT '{}'::character varying[] NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: ai_prompt_test_cases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ai_prompt_test_cases_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ai_prompt_test_cases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ai_prompt_test_cases_id_seq OWNED BY public.ai_prompt_test_cases.id;
+
+
+--
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2039,6 +2073,13 @@ ALTER TABLE ONLY public.active_storage_variant_records ALTER COLUMN id SET DEFAU
 
 
 --
+-- Name: ai_prompt_test_cases id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_prompt_test_cases ALTER COLUMN id SET DEFAULT nextval('public.ai_prompt_test_cases_id_seq'::regclass);
+
+
+--
 -- Name: clients id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2361,6 +2402,14 @@ ALTER TABLE ONLY public.active_storage_blobs
 
 ALTER TABLE ONLY public.active_storage_variant_records
     ADD CONSTRAINT active_storage_variant_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ai_prompt_test_cases ai_prompt_test_cases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_prompt_test_cases
+    ADD CONSTRAINT ai_prompt_test_cases_pkey PRIMARY KEY (id);
 
 
 --
@@ -2824,6 +2873,13 @@ CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON public.active_storage_b
 --
 
 CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.active_storage_variant_records USING btree (blob_id, variation_digest);
+
+
+--
+-- Name: index_ai_prompt_test_cases_on_prompt_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ai_prompt_test_cases_on_prompt_name ON public.ai_prompt_test_cases USING btree (prompt_name);
 
 
 --
@@ -4507,6 +4563,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261126100000'),
 ('20261116100000'),
 ('20261109100000'),
 ('20261103100000'),

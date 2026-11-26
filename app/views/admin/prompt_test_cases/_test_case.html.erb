@@ -1,0 +1,24 @@
+<%= turbo_frame_tag test_case do %>
+  <article class="test-case" data-run-url="<%= run_admin_prompt_test_case_path(test_case) %>">
+    <div class="test-case-header">
+      <h3><%= test_case.name %></h3>
+      <button type="button" data-action="prompt-playground#runOne">Spustiť</button>
+      <%= link_to "Upraviť", edit_admin_prompt_test_case_path(test_case), class: "button" %>
+      <%= button_to "Zmazať", admin_prompt_test_case_path(test_case), method: :delete, class: "danger",
+                    form: { data: { turbo_confirm: "Naozaj zmazať testovací prípad #{test_case.name}?" } } %>
+    </div>
+
+    <dl>
+      <dt>Názov podnetu</dt>
+      <dd><%= test_case.title %></dd>
+      <dt>Popis</dt>
+      <dd><%= test_case.description %></dd>
+      <dt>Adresa</dt>
+      <dd><%= test_case.address.presence || "–" %></dd>
+      <dt>Očakávané kontroly</dt>
+      <dd><%= test_case.expected_check_titles.any? ? test_case.expected_check_titles.join(", ") : "žiadna, podnet prejde" %></dd>
+    </dl>
+
+    <div id="<%= dom_id(test_case, :result) %>" data-result></div>
+  </article>
+<% end %>

@@ -125,6 +125,10 @@ sk:
             avatar:
               invalid_content_type: "môže byť iba obrázok."
     attributes:
+      ai/prompt_test_case:
+        name: Názov testovacieho prípadu
+        title: Názov podnetu
+        description: Popis podnetu
       issue:
         title: Názov
         description: Popis

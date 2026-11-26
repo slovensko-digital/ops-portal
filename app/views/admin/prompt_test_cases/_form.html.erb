@@ -1,0 +1,42 @@
+<% check_titles = check_titles.union(test_case.expected_check_titles) %>
+<% url = test_case.persisted? ? admin_prompt_test_case_path(test_case) : admin_prompt_test_cases_path %>
+
+<%= form_with model: test_case, url:, scope: :ai_prompt_test_case, class: "test-case" do |f| %>
+  <% if test_case.errors.any? %>
+    <ul class="errors">
+      <% test_case.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= f.label :name, "Názov testovacieho prípadu" %>
+  <%= f.text_field :name %>
+
+  <%= f.label :title, "Názov podnetu" %>
+  <%= f.text_field :title %>
+
+  <%= f.label :description, "Popis podnetu" %>
+  <%= f.text_area :description, rows: 5 %>
+
+  <%= f.label :address, "Adresa" %>
+  <%= f.text_field :address %>
+  <p class="hint">Napr. „Banská Bystrica, Hlavná 1“, tak ako ju posiela formulár podnetu.</p>
+
+  <label>Očakávané kontroly</label>
+  <p class="hint">Test prejde, ak model vráti presne tieto kontroly. Nič nezaškrtnuté znamená, že podnet má prejsť bez kontroly.</p>
+  <div class="check-titles">
+    <%= f.collection_check_boxes :expected_check_titles, check_titles, :itself, :itself do |b| %>
+      <%= b.label { b.check_box + b.text } %>
+    <% end %>
+  </div>
+
+  <%= f.label :extra_check_titles, "Ďalšie očakávané kontroly" %>
+  <%= f.text_area :extra_check_titles, rows: 2, value: "" %>
+  <p class="hint">Kontroly, ktoré sú len v upravenom prompte, jedna na riadok.</p>
+
+  <div class="form-actions">
+    <%= f.submit "Uložiť", class: "primary" %>
+    <%= link_to "Zrušiť", admin_prompt_test_cases_path, class: "button" %>
+  </div>
+<% end %>
