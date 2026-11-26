@@ -1,9 +1,15 @@
 <% expected = test_case.expected_check_titles %>
 <% status = if result.error then "error" elsif result.passed?(expected) then "pass" else "fail" end %>
 
-<div class="result result-<%= status %>" data-status="<%= status %>" data-prompt-playground-target="outcome">
+<div class="result result-<%= status %>" data-status="<%= status %>" data-cost="<%= result.cost %>" data-prompt-playground-target="outcome">
   <strong class="result-status"><%= { "pass" => "✔ Prešiel", "fail" => "✘ Neprešiel", "error" => "✘ Chyba" }[status] %></strong>
-  <span class="result-meta">· <%= result.model %> · <%= result.duration %> s</span>
+  <span class="result-meta">
+    · <%= result.model %> · <%= result.duration %> s
+    <% if result.usage %>
+      · <%= number_with_delimiter(result.usage.input_tokens) %> + <%= number_with_delimiter(result.usage.output_tokens) %> tokenov
+      · <%= result.cost ? usd(result.cost) : "cena neznáma" %>
+    <% end %>
+  </span>
 
   <% if result.error %>
     <p><%= result.error %></p>

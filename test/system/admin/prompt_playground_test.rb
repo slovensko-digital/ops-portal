@@ -21,7 +21,10 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
   test "admin runs the saved test cases against an edited prompt and another model" do
     request_bodies = []
     stub_request(:post, %r{/models/gemini-2\.5-pro:generateContent})
-      .with { request_bodies << JSON.parse(it.body) }
+      .with {
+        request_bodies << JSON.parse(it.body)
+        sleep 0.5 # long enough to see the cases being evaluated
+      }
       .to_return(body: file_fixture("webmock/gemini/checks-parking.json").read, headers: { "Content-Type" => "application/json" })
     login_as(@admin)
 
@@ -31,23 +34,31 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
     assert_field "Prompt", with: cms_pages(:ai_generate_checks).raw
     assert_no_text "Prompt sa líši od CMS"
 
+    assert_select "Model", selected: "gemini-2.5-flash (produkcia) · 0,30 $ / 2,50 $ za 1M tokenov"
+
     fill_in "Prompt", with: "edited prompt"
-    select "gemini-2.5-pro", from: "Model"
+    select "gemini-2.5-pro · 1,25 $ / 10,00 $ za 1M tokenov", from: "Model"
     click_on "Spustiť všetky testy"
+
+    assert_button "Vyhodnocujú sa testy…", disabled: true
+    within(test_case(:parking)) { assert_selector ".result-running .spinner" }
 
     within(test_case(:parking)) { assert_text "✔ Prešiel" }
     within(test_case(:pothole)) do
       assert_text "✘ Neprešiel"
       assert_text "Navyše: Parkovanie"
     end
-    assert_text "Prešlo 1 z 2"
+    assert_text "Prešlo 1 z 2 · cena 0,009 $ · ≈ 4,5 $ za 1 000 podnetov"
+    within(test_case(:parking)) { assert_text "2 000 + 200 tokenov · 0,0045 $" }
     assert_text "Prompt sa líši od CMS"
+    assert_button "Spustiť všetky testy"
+    assert_no_selector ".spinner"
     assert_equal [ "edited prompt" ] * 2, request_bodies.map { it.dig("system_instruction", "parts", 0, "text") }
 
     refresh
 
     assert_field "Prompt", with: "edited prompt"
-    assert_select "Model", selected: "gemini-2.5-pro"
+    assert_select "Model", selected: "gemini-2.5-pro · 1,25 $ / 10,00 $ za 1M tokenov"
 
     click_on "Načítať prompt z CMS"
 

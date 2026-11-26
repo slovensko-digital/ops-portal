@@ -18,9 +18,14 @@ module Ai
 
     RUN_TIMEOUT = 120
 
-    Result = Data.define(:checks, :error, :model, :duration) do
-      def initialize(checks: nil, error: nil, model:, duration:)
+    Result = Data.define(:checks, :error, :model, :duration, :usage) do
+      def initialize(checks: nil, error: nil, usage: nil, model:, duration:)
         super
+      end
+
+      # USD, nil when the run failed or the model's price is not known
+      def cost
+        usage&.cost(Gemini.price(model))
       end
 
       def returned_titles
@@ -50,14 +55,14 @@ module Ai
     def run(prompt:, model:)
       started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
-      checks = Ai::IssueChecks.generate(
+      response = Ai::IssueChecks.request(
         title:, description:, address:,
         system_prompt: Ai::Prompt.replace_placeholders(prompt),
         model:,
         timeout: RUN_TIMEOUT
       )
 
-      Result.new(checks:, model:, duration: elapsed_since(started_at))
+      Result.new(checks: response.result, usage: response.usage, model:, duration: elapsed_since(started_at))
     rescue Gemini::Error, Faraday::Error, ArgumentError => e
       Result.new(error: e.message, model:, duration: elapsed_since(started_at))
     end

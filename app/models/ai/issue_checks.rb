@@ -20,17 +20,22 @@ module Ai
       }
     }.freeze
 
-    def self.generate(title:, description:, address:, system_prompt: Ai::Prompt.get(PROMPT_NAME), **gemini_options)
+    def self.generate(...)
+      request(...).result
+    end
+
+    # The Gemini::Response, with the token usage next to the checks.
+    def self.request(title:, description:, address:, system_prompt: Ai::Prompt.get(PROMPT_NAME), **gemini_options)
       data = { title:, description:, address: }.to_json
 
-      checks = Gemini.generate(
+      response = Gemini.request(
         system_prompt:,
         messages: [ data ],
         response_schema: RESPONSE_SCHEMA,
         **gemini_options
       )
 
-      sanitize_more_info_urls(checks)
+      response.with(result: sanitize_more_info_urls(response.result))
     end
 
     # Check titles listed in the prompt's checks dictionary ("Title: Parkovanie").

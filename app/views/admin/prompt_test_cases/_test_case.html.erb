@@ -2,7 +2,7 @@
   <article class="test-case" data-run-url="<%= run_admin_prompt_test_case_path(test_case) %>">
     <div class="test-case-header">
       <h3><%= test_case.name %></h3>
-      <button type="button" data-action="prompt-playground#runOne">Spustiť</button>
+      <button type="button" data-run-button data-action="prompt-playground#runOne">Spustiť</button>
       <%= link_to "Upraviť", edit_admin_prompt_test_case_path(test_case), class: "button" %>
       <%= button_to "Zmazať", admin_prompt_test_case_path(test_case), method: :delete, class: "danger",
                     form: { data: { turbo_confirm: "Naozaj zmazať testovací prípad #{test_case.name}?" } } %>

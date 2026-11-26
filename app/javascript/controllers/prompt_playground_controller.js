@@ -36,15 +36,17 @@ export default class extends Controller {
   }
 
   async runAll() {
-    const queue = [...this.element.querySelectorAll("[data-run-url]")]
-    this.runAllTarget.disabled = true
+    const testCases = [...this.element.querySelectorAll("[data-run-url]")]
+    const queue = [...testCases]
+    const restore = this.#busy(this.runAllTarget, "Vyhodnocujú sa testy…")
+    testCases.forEach(testCase => this.#showRunning(testCase))
 
     const worker = async () => {
       while (queue.length > 0) await this.#run(queue.shift())
     }
     await Promise.all(Array.from({ length: CONCURRENCY }, worker))
 
-    this.runAllTarget.disabled = false
+    restore()
   }
 
   outcomeTargetConnected() {
@@ -75,7 +77,8 @@ export default class extends Controller {
 
   async #run(testCase) {
     const result = testCase.querySelector("[data-result]")
-    result.innerHTML = '<div class="result">Prebieha…</div>'
+    const restore = this.#busy(testCase.querySelector("[data-run-button]"), "Vyhodnocuje sa…")
+    this.#showRunning(testCase)
 
     const body = new FormData()
     body.append("prompt", this.promptTarget.value)
@@ -97,19 +100,48 @@ export default class extends Controller {
       result.innerHTML = '<div class="result result-error" data-status="error"><strong class="result-status">✘ Chyba</strong> <span></span></div>'
       result.querySelector("span").textContent = error.message
       this.#updateSummary()
+    } finally {
+      restore()
+    }
+  }
+
+  #showRunning(testCase) {
+    testCase.querySelector("[data-result]").innerHTML =
+      '<div class="result result-running"><span class="spinner" aria-hidden="true"></span> Vyhodnocuje sa…</div>'
+  }
+
+  // Disables the button and shows a spinner in it, returns a function that puts it back.
+  #busy(button, label) {
+    const original = button.innerHTML
+    button.disabled = true
+    button.innerHTML = '<span class="spinner" aria-hidden="true"></span> '
+    button.append(label)
+    return () => {
+      button.disabled = false
+      button.innerHTML = original
     }
   }
 
   #updateSummary() {
     const total = this.element.querySelectorAll("[data-run-url]").length
-    const statuses = [...this.element.querySelectorAll("[data-result] [data-status]")].map(el => el.dataset.status)
-    if (statuses.length === 0) {
+    const results = [...this.element.querySelectorAll("[data-result] [data-status]")]
+    if (results.length === 0) {
       this.summaryTarget.textContent = ""
       return
     }
 
-    const passed = statuses.filter(status => status === "pass").length
-    this.summaryTarget.textContent = `Prešlo ${passed} z ${total}`
+    const passed = results.filter(result => result.dataset.status === "pass").length
+    const costs = results.map(result => result.dataset.cost).filter(Boolean).map(Number)
+    const parts = [`Prešlo ${passed} z ${total}`]
+    if (costs.length > 0) {
+      const sum = costs.reduce((a, b) => a + b, 0)
+      parts.push(`cena ${this.#usd(sum)}`, `≈ ${this.#usd(sum / costs.length * 1000)} za 1 000 podnetov`)
+    }
+    this.summaryTarget.textContent = parts.join(" · ")
+  }
+
+  #usd(amount) {
+    return `${new Intl.NumberFormat("sk-SK", { maximumSignificantDigits: 3 }).format(amount)} $`
   }
 
   #isChanged() {

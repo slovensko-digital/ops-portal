@@ -84,4 +84,24 @@ class GeminiTest < ActiveSupport::TestCase
 
     assert_equal %w[gemini-2.5-flash gemini-2.5-pro], Gemini.models
   end
+
+  test "returns the billed tokens, counting thinking as output" do
+    stub_request(:post, @gemini_url).to_return(
+      body: file_fixture("webmock/gemini/checks-parking.json").read,
+      headers: { "Content-Type" => "application/json" }
+    )
+
+    response = Gemini.request(messages: [ "data" ], system_prompt: "prompt")
+
+    assert_equal Gemini::Usage.new(input_tokens: 2000, output_tokens: 200), response.usage
+    assert_in_delta 0.0011, response.usage.cost(Gemini::Price.new(input: 0.30, output: 2.50))
+    assert_nil response.usage.cost(nil)
+  end
+
+  test "prices a model for the period the day falls in" do
+    assert_equal Gemini::Price.new(input: 0.30, output: 2.50), Gemini.price("gemini-2.5-flash")
+    assert_equal Gemini::Price.new(input: 2.00, output: 10.00), Gemini.price("gemini-4-carbon", on: Date.new(2026, 11, 30))
+    assert_equal Gemini::Price.new(input: 4.00, output: 20.00), Gemini.price("gemini-4-carbon", on: Date.new(2026, 12, 1))
+    assert_nil Gemini.price("gemini-unknown")
+  end
 end

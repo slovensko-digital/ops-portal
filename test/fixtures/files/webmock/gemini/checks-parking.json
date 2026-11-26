@@ -1,1 +1,1 @@
-{"candidates":[{"content":{"parts":[{"text":"[{\"title\":\"Parkovanie\",\"info\":\"Nahláste priamo obecnej polícii.\",\"action\":\"back\"}]"}],"role":"model"},"finishReason":"STOP"}],"modelVersion":"gemini-2.5-flash"}
+{"candidates":[{"content":{"parts":[{"text":"[{\"title\":\"Parkovanie\",\"info\":\"Nahláste priamo obecnej polícii.\",\"action\":\"back\"}]"}],"role":"model"},"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":2000,"candidatesTokenCount":150,"thoughtsTokenCount":50,"totalTokenCount":2200},"modelVersion":"gemini-2.5-pro"}

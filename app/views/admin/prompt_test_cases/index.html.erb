@@ -12,7 +12,7 @@
     <div class="toolbar">
       <label>
         Model
-        <%= select_tag :model, options_for_select(@models.union([ Gemini::DEFAULT_MODEL ]).map { [ _1 == Gemini::DEFAULT_MODEL ? "#{_1} (produkcia)" : _1, _1 ] }, Gemini::DEFAULT_MODEL),
+        <%= select_tag :model, gemini_model_options(@models),
                        data: { prompt_playground_target: "model", action: "prompt-playground#save" } %>
       </label>
       <button type="button" class="primary" data-prompt-playground-target="runAll" data-action="prompt-playground#runAll">Spustiť všetky testy</button>
@@ -23,6 +23,8 @@
       <span class="badge" data-prompt-playground-target="changed" hidden>Prompt sa líši od CMS</span>
       <button type="button" data-action="prompt-playground#reset">Načítať prompt z CMS</button>
     </div>
+
+    <p class="hint">Ceny sú za 1M tokenov vstupu / výstupu (výstup vrátane premýšľania) podľa <%= link_to "cenníka Gemini API", "https://ai.google.dev/gemini-api/docs/pricing", target: "_blank", rel: "noopener" %>, uložené v config/gemini_prices.yml.</p>
 
     <%= label_tag :prompt, "Prompt" %>
     <%= text_area_tag :prompt, @cms_prompt, class: "prompt-textarea", spellcheck: false,

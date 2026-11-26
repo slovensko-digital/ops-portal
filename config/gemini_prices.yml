@@ -1,0 +1,26 @@
+# Gemini API prices in USD per 1M tokens, paid tier, Standard (not Batch), text input.
+# Output includes thinking tokens. Models priced by prompt size list the tier up to 200k tokens,
+# the issue checks prompt is far below it. A model with a price change lists one entry per period.
+# Shown in the admin prompt playground. Source: https://ai.google.dev/gemini-api/docs/pricing
+# (checked 2026-11-26), update it when Google changes prices or adds a model.
+gemini-4-carbon:
+  - { input: 2.00, output: 10.00 }
+  - { from: 2026-12-01, input: 4.00, output: 20.00 }
+gemini-4-argon:
+  - { input: 2.00, output: 10.00 }
+  - { from: 2026-12-01, input: 4.00, output: 20.00 }
+gemini-4-neon: { input: 3.00, output: 15.00 }
+gemini-4-hydrogen: { input: 1.50, output: 7.50 }
+gemini-3.8-flash:
+  - { input: 0.75, output: 3.75 }
+  - { from: 2027-01-01, input: 1.50, output: 7.50 }
+gemini-3.6-flash:
+  - { input: 0.75, output: 3.75 }
+  - { from: 2027-01-01, input: 1.50, output: 7.50 }
+gemini-3.5-flash-lite: { input: 0.30, output: 2.50 }
+gemini-3.1-pro-preview: { input: 2.00, output: 12.00 }
+gemini-3.1-flash-lite: { input: 0.25, output: 1.50 }
+gemini-3-flash-preview: { input: 0.50, output: 3.00 }
+gemini-2.5-pro: { input: 1.25, output: 10.00 }
+gemini-2.5-flash: { input: 0.30, output: 2.50 }
+gemini-2.5-flash-lite: { input: 0.10, output: 0.40 }

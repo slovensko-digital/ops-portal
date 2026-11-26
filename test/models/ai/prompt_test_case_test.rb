@@ -28,6 +28,7 @@ class Ai::PromptTestCaseTest < ActiveSupport::TestCase
 
     assert result.passed?(%w[Parkovanie])
     assert_equal "gemini-2.5-pro", result.model
+    assert_in_delta (2000 * 1.25 + 200 * 10.0) / 1_000_000, result.cost
     assert_equal "edited prompt", request_body.dig("system_instruction", "parts", 0, "text")
     assert_equal(
       { "title" => "Auto na chodníku", "description" => "Pred domom už týždeň parkuje auto na chodníku.", "address" => "Banská Bystrica, Hlavná 1" },
