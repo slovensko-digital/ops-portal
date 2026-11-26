@@ -70,7 +70,7 @@ class Ai::PromptTestCaseTest < ActiveSupport::TestCase
   test "the seeded test cases expect only checks from the generatechecks prompt" do
     titles = Ai::IssueChecks.titles_in(Rails.root.join("db/seeds/fixtures/ai_prompt_generatechecks.md").read)
 
-    assert_difference -> { Ai::PromptTestCase.count }, 22 do
+    assert_difference -> { Ai::PromptTestCase.count }, 24 do
       load Rails.root.join("db/seeds/ai_prompt_test_cases.rb")
     end
     assert_empty Ai::PromptTestCase.pluck(:expected_check_titles).flatten - titles

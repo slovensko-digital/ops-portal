@@ -39,6 +39,30 @@
   address: Martin, Záturčie
   expected_check_titles: []
 
+# ops#1377: removing a crate where drunk people sit was stopped as "Pitie alkoholu na verejnosti"
+- name: "ops#1377: odstránenie bedne, kde posedávajú opilci (nezamietať)"
+  title: Odstránenie bedne z pred prevádzky
+  description: |-
+    Dobry den prajem,
+    po rekonstrukcnych pracach na ulici M. Sch. Trnavskeho pri Dome sluzieb bola presunuta zelezna bedna priamo pred nasu prevadzku.
+    Chcela by som poprosit kompetentnych o odstranenie tejto bedne a jej presunutie na jej povodne miesto.
+    Tato bedna sluzi miestnym opilcom na posedenie priamo pred vchodom do nasho pohyboveho studia. Chodia k nam cvicit zeny, mamicky s detmi, mlade dievcata a pritomnost tychto individui je pre nas neziaduca a neprijemna.
+    Posedavajuce osoby piju, fajcia nam do vetracieho otvoru vzduchotechniky a samozrejme po sebe denne zanechavaju neporiadok vo forme prazdnych flias, krabiciek od cigariet a smeti.
+    Dakujem za pochopenie a vyriesenie problemu.
+  address: M. Sch. Trnavského, pri Dome služieb
+  expected_check_titles: []
+
+# ops#1377: the same issue without the drinking was stopped as "Nedodržiavanie dopravných predpisov"
+- name: "ops#1377: odstránenie bedne bez zmienky o alkohole (nezamietať)"
+  title: Odstránenie bedne z pred prevádzky
+  description: |-
+    Dobry den prajem,
+    po rekonstrukcnych pracach na ulici M. Sch. Trnavskeho pri Dome sluzieb bola presunuta zelezna bedna priamo pred nasu prevadzku.
+    Chcela by som poprosit kompetentnych o odstranenie tejto bedne a jej presunutie na jej povodne miesto.
+    Dakujem za pochopenie a vyriesenie problemu.
+  address: M. Sch. Trnavského, pri Dome služieb
+  expected_check_titles: []
+
 - name: "Pitie alkoholu: návrh VZN (nezamietať)"
   title: Zákaz pitia alkoholu v parku
   description: Navrhujeme prijať všeobecne záväzné nariadenie, ktoré zakáže pitie alkoholu v mestskom parku a pri detskom ihrisku.
