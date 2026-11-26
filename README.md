@@ -147,7 +147,10 @@ The portal, a local Triage and local Backoffices, to click through the whole flo
 
 Every day: `bin/ops up`, then `bin/dev`.
 
-`bin/ops` starts the Docker Postgres unless your own server answers on its port.
+`bin/ops` starts the Docker Postgres unless your own server answers on its port. Triage and the Backoffices keep
+their databases there too, next to the portal's, so one connection reaches all of them, see
+[Local URLs](#local-urls). They reach it from Docker on `host.docker.internal:5432`. On Linux your own server has to
+listen on the Docker bridge too (`listen_addresses` and `pg_hba.conf`), the Docker Postgres does already.
 
 ## bin/ops commands
 
@@ -179,8 +182,10 @@ up before, running or stopped (each has a `.env.<instance>` in `../ops-backoffic
 none. So after `up --backoffices=none` a plain `reset` starts the stopped Backoffices again. The list of Backoffices
 is in `config/local_backoffices.yml`.
 
-`bin/ops` only touches the compose projects `ops-triage-zammad`, `ops-backoffice-<instance>` and the container
-`ops-postgres`, other projects (e.g. `ops-triage-e2e`) keep running. The worktrees of this repo share its ports and
+`bin/ops` only touches the compose projects `ops-triage-zammad`, `ops-backoffice-<instance>`, the container
+`ops-postgres` and the databases `ops_triage_development` and `ops_backoffice_<instance>_development` in it, other
+projects (e.g. `ops-triage-e2e`) keep running. It starts Triage with `docker-compose.ops-postgres.yml`, which leaves
+out Triage's own Postgres, the Backoffices' `dev/compose` does the same. The worktrees of this repo share its ports and
 Postgres, run `bin/ops` and `bin/dev` in one of them at a time.
 
 ### up
@@ -204,7 +209,7 @@ stays unused, its municipality is BASIC: `bin/ops reset --backoffices=malacky,tr
 
 ### down
 
-Stops Triage, the Backoffices and the Docker Postgres, the data stays. Stop `bin/dev` with Ctrl-C.
+Stops Triage, the Backoffices, then the Docker Postgres, the data stays. Stop `bin/dev` with Ctrl-C.
 
 ```bash
 bin/ops down
@@ -212,7 +217,8 @@ bin/ops down
 
 ### status
 
-Shows what runs, its URLs and how much Docker memory it uses.
+Shows what runs, its URLs, the databases with how to connect to them, and how much Docker memory it uses. `up` and
+`reset` show it when they are done.
 
 ```
 $ bin/ops status
@@ -222,12 +228,16 @@ Triage              ready              http://localhost:8080, Mailpit http://loc
 Backoffice malacky  ready              http://malacky.localhost:8081, Mailpit http://localhost:8026  1.1 GB
 Backoffice trnava   ready              http://trnava.localhost:8082, Mailpit http://localhost:8027   1.1 GB
 
+Databases on localhost:5432: ops_backoffice_malacky_development, ops_backoffice_trnava_development, ops_development, ops_test, ops_triage_development
+Connect: psql postgresql://ops:ops@localhost:5432/<database>
+  without psql: docker exec -it ops-postgres psql -U ops -d <database>
+
 Docker memory: 3.6 GB used of 8.2 GB (about 1.5 GB per Zammad)
 ```
 
 ### reset
 
-Wipes Triage and every Backoffice with their volumes, the portal's uploaded files (`storage/`), logs, `tmp/` and the
+Wipes Triage and every Backoffice with their volumes and databases, the portal's uploaded files (`storage/`), logs, `tmp/` and the
 portal database (`db:reset`), then gets everything ready like a first `up`. It asks first, `--yes` doesn't. Stop
 `bin/dev` first, `bin/ops` refuses while port 3000 is in use. Then run `bin/activate-seeded-municipalities` and
 `bin/dev`.
@@ -245,7 +255,7 @@ bin/ops reset --backoffices=none               # no Backoffice, every municipali
 bin/ops reset --yes                            # don't ask
 ```
 
-Always reset the portal, Triage and the Backoffices together, with their volumes. Resetting only the portal leaves
+Always reset the portal, Triage and the Backoffices together, with their volumes and databases. Resetting only the portal leaves
 tickets, groups and triggers in Triage for issues and municipalities the portal no longer has. The reseeded portal
 starts its issue ids at 300300 again, and a Backoffice that kept its tickets refuses a ticket number `OPS-<id>` it
 already has: the Connector job then fails in `/admin/good_job` with "Please contact your administrator". A reset
@@ -277,6 +287,7 @@ bin/ops logs malacky
 | Backoffice of Malacky emails (Mailpit) | http://localhost:8026 | |
 | Backoffice of Trnava (`--backoffices=malacky,trnava`) | http://trnava.localhost:8082 | `admin@example.org` / `PASSword123` |
 | Backoffice of Trnava emails (Mailpit) | http://localhost:8027 | |
+| Databases of the portal, Triage and the Backoffices | `postgresql://ops:ops@localhost:5432/<database>`: `ops_development`, `ops_triage_development`, `ops_backoffice_malacky_development`, `ops_backoffice_trnava_development` | `ops` / `ops` |
 
 Each Backoffice has a host name of its own. Cookies ignore ports, so on the same host name Triage and the
 Backoffices log each other out. Chrome and Firefox resolve `*.localhost` without any setup.
@@ -285,6 +296,20 @@ Who calls whom: the portal calls Triage at `localhost:8080` and a Backoffice at 
 Backoffices call the portal at `host.docker.internal:3000` (webhooks signed with `WEBHOOK_SECRET`,
 `/connector/backoffice/webhook`, responsible subject search), so `bin/dev` has to be running for their changes to
 reach the portal.
+
+### Connect to the databases
+
+The portal, Triage and the Backoffices keep their databases in one Postgres on `localhost:5432` (user `ops`,
+password `ops`). Open a shell in one of them:
+
+```bash
+psql postgresql://ops:ops@localhost:5432/ops_triage_development       # with the PostgreSQL client
+docker exec -it ops-postgres psql -U ops -d ops_triage_development    # without it, inside the Docker Postgres
+bin/rails dbconsole                                                   # the portal's database
+```
+
+In `psql`, `\l` lists the databases and `\c ops_backoffice_malacky_development` switches to another one. A GUI client
+(TablePlus, DBeaver, RubyMine) connects with the same URL.
 
 ## Seeded data
 
