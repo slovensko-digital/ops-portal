@@ -7,7 +7,7 @@ const DIFF_CONTEXT = 3
 // Admin prompt playground: runs the test cases against the edited prompt and the chosen
 // model. The edited prompt stays in localStorage until it is reset to the CMS version.
 export default class extends Controller {
-  static targets = ["prompt", "model", "diff", "changed", "summary", "outcome", "runAll"]
+  static targets = ["prompt", "model", "diff", "changed", "summary", "outcome", "runAll", "resetDialog"]
   static values = { original: String, storageKey: String }
 
   connect() {
@@ -41,7 +41,17 @@ export default class extends Controller {
     setTimeout(() => { button.textContent = label }, 2000)
   }
 
+  // Asks first when the edits would be lost
   reset() {
+    if (this.#isChanged()) {
+      this.resetDialogTarget.showModal()
+    } else {
+      this.confirmReset()
+    }
+  }
+
+  confirmReset() {
+    this.resetDialogTarget.close()
     this.promptTarget.value = this.originalValue
     this.save()
   }

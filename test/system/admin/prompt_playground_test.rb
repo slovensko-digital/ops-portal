@@ -62,8 +62,25 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
 
     click_on "Načítať prompt z CMS"
 
+    within("dialog[open]") do
+      assert_text "Zahodiť úpravy promptu?"
+      assert_button "Kopírovať prompt"
+      click_on "Zrušiť"
+    end
+
+    assert_no_selector "dialog[open]"
+    assert_field "Prompt", with: "edited prompt"
+
+    click_on "Načítať prompt z CMS"
+    within("dialog[open]") { click_on "Zahodiť úpravy a načítať z CMS" }
+
+    assert_no_selector "dialog[open]"
     assert_field "Prompt", with: cms_pages(:ai_generate_checks).raw
     assert_no_text "Prompt sa líši od CMS"
+
+    click_on "Načítať prompt z CMS"
+
+    assert_no_selector "dialog[open]"
   end
 
   test "admin sees the diff from the CMS prompt only after opening it" do

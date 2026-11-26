@@ -31,6 +31,16 @@
                       data: { prompt_playground_target: "prompt", action: "prompt-playground#save" } %>
     <p class="hint">Úpravy sa uložia len v tomto prehliadači. Hotový prompt skopírujte do CMS na fóre. Placeholder {{ CATEGORIES_TABLE }} sa pri spustení nahradí ako v produkcii.</p>
 
+    <dialog class="confirm-dialog" data-prompt-playground-target="resetDialog" aria-labelledby="reset_dialog_title">
+      <h2 id="reset_dialog_title">Zahodiť úpravy promptu?</h2>
+      <p>Prompt v poli sa líši od verzie v CMS. Po načítaní z CMS sa vaše úpravy stratia. Ak ich chcete zachovať, najprv ich skopírujte.</p>
+      <form method="dialog" class="form-actions">
+        <button type="button" class="danger" data-action="prompt-playground#confirmReset">Zahodiť úpravy a načítať z CMS</button>
+        <button type="button" data-action="prompt-playground#copy">Kopírovať prompt</button>
+        <button value="cancel" autofocus>Zrušiť</button>
+      </form>
+    </dialog>
+
     <details data-action="toggle->prompt-playground#renderDiff">
       <summary>Zobraziť rozdiel oproti CMS</summary>
       <pre class="diff" data-prompt-playground-target="diff"></pre>
