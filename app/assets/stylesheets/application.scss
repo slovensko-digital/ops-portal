@@ -86,6 +86,24 @@ a.button, button.button, input.button {
   cursor: pointer;
 }
 
+form[aria-busy="true"] button.button-with-submit-spinner:disabled {
+  cursor: wait;
+
+  &::before {
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: "";
+    flex: 0 0 1em;
+    height: 1em;
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: rotate360 800ms linear infinite;
+    }
+  }
+}
+
 .button svg {
   height: 20px;
   //stroke-width: 2;
@@ -1056,7 +1074,7 @@ section.report .button {
   margin-top: 30px;
   width: 100%;
 }
-section.report .button:hover {
+section.report .button:hover:not(:where(.button-with-submit-spinner:disabled)) {
   background: variables.$green;
 }
 section.report .notice {

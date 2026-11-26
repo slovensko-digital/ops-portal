@@ -6,5 +6,6 @@
 
   <%= render "sections", draft: @draft, editable: true %>
 
-  <%= button_to "Odoslať podnet", issues_draft_checks_path(@draft), class: "button" %>
+  <%= button_to "Odoslať podnet", issues_draft_checks_path(@draft), class: "button button-with-submit-spinner",
+                data: { turbo_submits_with: "Kontrolujeme podnet…" } %>
 </section>
