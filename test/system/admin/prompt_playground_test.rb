@@ -80,6 +80,20 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
     assert_selector ".diff-add", text: "+ Title: Autovrak"
   end
 
+  test "admin copies the edited prompt to paste it into the CMS" do
+    login_as(@admin)
+    visit_playground
+    # headless Chrome has no clipboard access, record what the page writes to it
+    execute_script "navigator.clipboard.writeText = async (text) => { window.copiedText = text }"
+
+    fill_in "Prompt", with: "edited prompt\n{{ CATEGORIES_TABLE }}"
+    click_on "Kopírovať prompt"
+
+    assert_button "✔ Skopírované"
+    assert_equal "edited prompt\n{{ CATEGORIES_TABLE }}", evaluate_script("window.copiedText")
+    assert_button "Kopírovať prompt"
+  end
+
   test "admin adds, edits and deletes a test case" do
     login_as(@admin)
     visit_playground

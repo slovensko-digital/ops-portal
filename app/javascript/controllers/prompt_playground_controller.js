@@ -26,6 +26,21 @@ export default class extends Controller {
     this.renderDiff()
   }
 
+  // Copies the prompt as it is in the box, placeholders included, to paste into the CMS on the forum.
+  async copy(event) {
+    const button = event.currentTarget
+    const label = button.textContent
+
+    try {
+      await navigator.clipboard.writeText(this.promptTarget.value)
+      button.textContent = "✔ Skopírované"
+    } catch {
+      this.promptTarget.select()
+      button.textContent = "Kopírovanie zlyhalo, prompt je označený"
+    }
+    setTimeout(() => { button.textContent = label }, 2000)
+  }
+
   reset() {
     this.promptTarget.value = this.originalValue
     this.save()
