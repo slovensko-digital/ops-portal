@@ -3,6 +3,7 @@ SimpleCov.command_name "test:system"
 require "test_helpers/auth_helper"
 require "test_helpers/search_select_helper"
 require "capybara"
+require "test_helpers/chrome_session_reset"
 
 Capybara.register_driver :selenium_chrome_no_password_warning do |app|
   Capybara::Selenium::Driver.new(
