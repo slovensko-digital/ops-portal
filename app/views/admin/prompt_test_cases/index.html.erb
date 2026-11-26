@@ -19,15 +19,14 @@
       <span class="summary" data-prompt-playground-target="summary"></span>
     </div>
 
-    <div class="toolbar">
-      <span class="badge" data-prompt-playground-target="changed" hidden>Prompt sa líši od CMS</span>
-      <button type="button" data-action="prompt-playground#copy">Kopírovať prompt</button>
-      <button type="button" data-action="prompt-playground#reset">Načítať prompt z CMS</button>
-    </div>
-
     <p class="hint">Ceny sú za 1M tokenov vstupu / výstupu (výstup vrátane premýšľania) podľa <%= link_to "cenníka Gemini API", "https://ai.google.dev/gemini-api/docs/pricing", target: "_blank", rel: "noopener" %>, uložené v config/gemini_prices.yml.</p>
 
-    <%= label_tag :prompt, "Prompt" %>
+    <div class="prompt-label">
+      <%= label_tag :prompt, "Prompt" %>
+      <span class="badge" data-prompt-playground-target="changed" hidden>Prompt sa líši od CMS</span>
+      <button type="button" data-action="prompt-playground#reset">Načítať prompt z CMS</button>
+      <button type="button" data-action="prompt-playground#copy">Kopírovať prompt</button>
+    </div>
     <%= text_area_tag :prompt, @cms_prompt, class: "prompt-textarea", spellcheck: false,
                       data: { prompt_playground_target: "prompt", action: "prompt-playground#save" } %>
     <p class="hint">Úpravy sa uložia len v tomto prehliadači. Hotový prompt skopírujte do CMS na fóre. Placeholder {{ CATEGORIES_TABLE }} sa pri spustení nahradí ako v produkcii.</p>
