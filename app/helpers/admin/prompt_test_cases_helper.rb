@@ -17,4 +17,8 @@ module Admin::PromptTestCasesHelper
   def usd(amount)
     number_to_currency(amount, unit: "$", precision: 3, significant: true, strip_insignificant_zeros: true)
   end
+
+  def prompt_snapshot_label(snapshot)
+    [ l(snapshot.created_at, format: "%-d. %-m. %Y %H:%M"), snapshot.note ].compact.join(" · ")
+  end
 end

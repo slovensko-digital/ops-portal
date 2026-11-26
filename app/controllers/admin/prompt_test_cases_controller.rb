@@ -3,6 +3,8 @@
 class Admin::PromptTestCasesController < ApplicationController
   layout "admin"
 
+  SNAPSHOTS_SHOWN = 30
+
   before_action :set_test_case, only: [ :edit, :update, :destroy, :run ]
   before_action :set_check_titles, only: [ :new, :create, :edit, :update ]
 
@@ -11,6 +13,7 @@ class Admin::PromptTestCasesController < ApplicationController
     @check_titles = Ai::IssueChecks.titles_in(@cms_prompt)
     @models = available_models
     @test_cases = Ai::PromptTestCase.for_prompt(prompt_name)
+    @snapshots = Ai::PromptSnapshot.for_prompt(prompt_name).includes(:author).limit(SNAPSHOTS_SHOWN)
   end
 
   def new
@@ -48,7 +51,8 @@ class Admin::PromptTestCasesController < ApplicationController
   end
 
   def run
-    result = @test_case.run(prompt: params.require(:prompt), model: params.require(:model))
+    # browsers send textarea newlines as CRLF in form data, the CMS prompt uses LF
+    result = @test_case.run(prompt: params.require(:prompt).gsub("\r\n", "\n"), model: params.require(:model))
 
     render turbo_stream: turbo_stream.update(
       helpers.dom_id(@test_case, :result),

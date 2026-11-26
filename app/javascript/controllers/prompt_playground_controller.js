@@ -3,12 +3,19 @@ import { Turbo } from "@hotwired/turbo-rails"
 
 const CONCURRENCY = 4
 const DIFF_CONTEXT = 3
+const AUTO_SNAPSHOT_INTERVAL = 5 * 60 * 1000
 
 // Admin prompt playground: runs the test cases against the edited prompt and the chosen
 // model. The edited prompt stays in localStorage until it is reset to the CMS version.
+//
+// Snapshots: the baseline is the prompt as last saved to or restored from a snapshot. A prompt
+// that differs from both the baseline and the CMS version has edits a snapshot does not hold yet.
 export default class extends Controller {
-  static targets = ["prompt", "model", "diff", "changed", "summary", "outcome", "runAll", "resetDialog"]
-  static values = { original: String, storageKey: String }
+  static targets = [
+    "prompt", "model", "diff", "changed", "summary", "outcome", "runAll", "resetDialog",
+    "snapshotNote", "snapshotDialog", "snapshotLabel", "snapshotDiff", "revertNotice", "restoreButton"
+  ]
+  static values = { original: String, storageKey: String, latestSnapshot: String, snapshotsUrl: String }
 
   connect() {
     const stored = this.#stored()
@@ -16,14 +23,62 @@ export default class extends Controller {
     if (stored.model && [...this.modelTarget.options].some(option => option.value === stored.model)) {
       this.modelTarget.value = stored.model
     }
+    this.baseline = stored.baseline ?? (this.latestSnapshotValue || this.originalValue)
     this.#updateChanged()
+    this.autoSnapshotTimer = setInterval(() => this.autoSnapshot(), AUTO_SNAPSHOT_INTERVAL)
+  }
+
+  disconnect() {
+    clearInterval(this.autoSnapshotTimer)
   }
 
   save() {
     const prompt = this.#isChanged() ? this.promptTarget.value : null
-    localStorage.setItem(this.storageKeyValue, JSON.stringify({ prompt, model: this.modelTarget.value }))
+    localStorage.setItem(this.storageKeyValue, JSON.stringify({ prompt, model: this.modelTarget.value, baseline: this.baseline }))
     this.#updateChanged()
     this.renderDiff()
+  }
+
+  async snapshot(event) {
+    const button = event.currentTarget
+    const created = await this.#takeSnapshot("manual", this.snapshotNoteTarget.value)
+    if (created == null) return
+
+    this.snapshotNoteTarget.value = ""
+    this.#flash(button, created ? "✔ Snapshot uložený" : "Rovnaký ako posledný snapshot")
+  }
+
+  async autoSnapshot() {
+    if (this.#hasUnsavedEdits()) await this.#takeSnapshot("auto")
+  }
+
+  async openSnapshot(event) {
+    const response = await fetch(event.currentTarget.dataset.url, { headers: { "Accept": "application/json" } })
+    if (!response.ok) return
+
+    this.pendingSnapshot = await response.json()
+    const same = this.pendingSnapshot.content === this.promptTarget.value
+    this.snapshotLabelTarget.textContent = this.pendingSnapshot.label
+    this.#renderDiffInto(this.snapshotDiffTarget, this.promptTarget.value, this.pendingSnapshot.content, "Snapshot je rovnaký ako aktuálny prompt.")
+    this.revertNoticeTarget.hidden = same || !this.#hasUnsavedEdits()
+    this.restoreButtonTarget.disabled = same
+    this.snapshotDialogTarget.showModal()
+  }
+
+  async restoreSnapshot() {
+    const { content } = this.pendingSnapshot
+    if (this.#hasUnsavedEdits() && await this.#takeSnapshot("revert") == null) return
+
+    this.snapshotDialogTarget.close()
+    this.promptTarget.value = content
+    this.baseline = content
+    this.save()
+  }
+
+  async snapshotAndReset() {
+    if (await this.#takeSnapshot("cms_reload") == null) return
+
+    this.confirmReset()
   }
 
   // Copies the prompt as it is in the box, placeholders included, to paste into the CMS on the forum.
@@ -83,20 +138,23 @@ export default class extends Controller {
   }
 
   renderDiff() {
-    const details = this.diffTarget.closest("details")
-    if (!details.open) return
+    if (!this.diffTarget.closest("details").open) return
 
-    this.diffTarget.replaceChildren()
-    if (!this.#isChanged()) {
-      this.diffTarget.textContent = "Prompt je rovnaký ako v CMS."
+    this.#renderDiffInto(this.diffTarget, this.originalValue, this.promptTarget.value, "Prompt je rovnaký ako v CMS.")
+  }
+
+  #renderDiffInto(target, before, after, sameText) {
+    target.replaceChildren()
+    if (before === after) {
+      target.textContent = sameText
       return
     }
 
-    for (const { type, text } of this.#diffLines(this.originalValue, this.promptTarget.value)) {
+    for (const { type, text } of this.#diffLines(before, after)) {
       const line = document.createElement("span")
       line.className = `diff-line diff-${type}`
       line.textContent = { add: "+ ", del: "- ", same: "  ", gap: "" }[type] + text
-      this.diffTarget.append(line)
+      target.append(line)
     }
   }
 
@@ -169,6 +227,48 @@ export default class extends Controller {
     return `${new Intl.NumberFormat("sk-SK", { maximumSignificantDigits: 3 }).format(amount)} $`
   }
 
+  // true when a snapshot was created, false when the latest one already holds this prompt,
+  // null when it failed
+  async #takeSnapshot(reason, note = "") {
+    const content = this.promptTarget.value
+    const body = new FormData()
+    body.append("content", content)
+    body.append("reason", reason)
+    body.append("note", note)
+
+    try {
+      const response = await fetch(this.snapshotsUrlValue, {
+        method: "POST",
+        headers: {
+          "Accept": "text/vnd.turbo-stream.html",
+          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]")?.content ?? ""
+        },
+        body
+      })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
+      const created = response.status !== 204
+      if (created) Turbo.renderStreamMessage(await response.text())
+      this.baseline = content
+      this.save()
+      return created
+    } catch (error) {
+      console.error("Snapshot failed", error)
+      return null
+    }
+  }
+
+  #hasUnsavedEdits() {
+    const prompt = this.promptTarget.value
+    return prompt !== this.baseline && prompt !== this.originalValue
+  }
+
+  #flash(button, label) {
+    const original = button.textContent
+    button.textContent = label
+    setTimeout(() => { button.textContent = original }, 2000)
+  }
+
   #isChanged() {
     return this.promptTarget.value !== this.originalValue
   }
@@ -203,10 +303,10 @@ export default class extends Controller {
     while (i < a.length || j < b.length) {
       if (i < a.length && j < b.length && a[i] === b[j]) {
         lines.push({ type: "same", text: a[i++] }); j++
-      } else if (j < b.length && (i >= a.length || lcs[i][j + 1] >= lcs[i + 1][j])) {
-        lines.push({ type: "add", text: b[j++] })
-      } else {
+      } else if (i < a.length && (j >= b.length || lcs[i + 1][j] >= lcs[i][j + 1])) {
         lines.push({ type: "del", text: a[i++] })
+      } else {
+        lines.push({ type: "add", text: b[j++] })
       }
     }
 

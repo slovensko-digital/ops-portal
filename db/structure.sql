@@ -183,6 +183,41 @@ ALTER SEQUENCE public.active_storage_variant_records_id_seq OWNED BY public.acti
 
 
 --
+-- Name: ai_prompt_snapshots; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ai_prompt_snapshots (
+    id bigint NOT NULL,
+    prompt_name character varying NOT NULL,
+    content text NOT NULL,
+    reason character varying NOT NULL,
+    note character varying,
+    author_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: ai_prompt_snapshots_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ai_prompt_snapshots_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ai_prompt_snapshots_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ai_prompt_snapshots_id_seq OWNED BY public.ai_prompt_snapshots.id;
+
+
+--
 -- Name: ai_prompt_test_cases; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2073,6 +2108,13 @@ ALTER TABLE ONLY public.active_storage_variant_records ALTER COLUMN id SET DEFAU
 
 
 --
+-- Name: ai_prompt_snapshots id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_prompt_snapshots ALTER COLUMN id SET DEFAULT nextval('public.ai_prompt_snapshots_id_seq'::regclass);
+
+
+--
 -- Name: ai_prompt_test_cases id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2402,6 +2444,14 @@ ALTER TABLE ONLY public.active_storage_blobs
 
 ALTER TABLE ONLY public.active_storage_variant_records
     ADD CONSTRAINT active_storage_variant_records_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ai_prompt_snapshots ai_prompt_snapshots_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_prompt_snapshots
+    ADD CONSTRAINT ai_prompt_snapshots_pkey PRIMARY KEY (id);
 
 
 --
@@ -2873,6 +2923,20 @@ CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON public.active_storage_b
 --
 
 CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.active_storage_variant_records USING btree (blob_id, variation_digest);
+
+
+--
+-- Name: index_ai_prompt_snapshots_on_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ai_prompt_snapshots_on_author_id ON public.ai_prompt_snapshots USING btree (author_id);
+
+
+--
+-- Name: index_ai_prompt_snapshots_on_prompt_name_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ai_prompt_snapshots_on_prompt_name_and_created_at ON public.ai_prompt_snapshots USING btree (prompt_name, created_at);
 
 
 --
@@ -4093,6 +4157,14 @@ ALTER TABLE ONLY public.issues
 
 
 --
+-- Name: ai_prompt_snapshots fk_rails_50cbce0861; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ai_prompt_snapshots
+    ADD CONSTRAINT fk_rails_50cbce0861 FOREIGN KEY (author_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: issues_subtypes fk_rails_53f9ade1c3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4563,6 +4635,7 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261126120000'),
 ('20261126110000'),
 ('20261126100000'),
 ('20261116100000'),

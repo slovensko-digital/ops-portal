@@ -7,6 +7,8 @@
 <div class="admin-main"
      data-controller="prompt-playground"
      data-prompt-playground-original-value="<%= @cms_prompt %>"
+     data-prompt-playground-latest-snapshot-value="<%= @snapshots.first&.content %>"
+     data-prompt-playground-snapshots-url-value="<%= admin_prompt_snapshots_path %>"
      data-prompt-playground-storage-key-value="admin:prompt-playground:<%= Ai::IssueChecks::PROMPT_NAME %>">
   <section class="panel prompt-panel">
     <div class="toolbar">
@@ -32,12 +34,23 @@
     <p class="hint">Úpravy sa uložia len v tomto prehliadači. Hotový prompt skopírujte do CMS na fóre. Placeholder {{ CATEGORIES_TABLE }} sa pri spustení nahradí ako v produkcii.</p>
 
     <dialog class="confirm-dialog" data-prompt-playground-target="resetDialog" aria-labelledby="reset_dialog_title">
-      <h2 id="reset_dialog_title">Zahodiť úpravy promptu?</h2>
-      <p>Prompt v poli sa líši od verzie v CMS. Po načítaní z CMS sa vaše úpravy stratia. Ak ich chcete zachovať, najprv ich skopírujte.</p>
+      <h2 id="reset_dialog_title">Načítať prompt z CMS?</h2>
+      <p>Prompt v poli sa líši od verzie v CMS. Uložte ho ako snapshot, aby ste sa k nemu mohli vrátiť, inak sa vaše úpravy stratia.</p>
       <form method="dialog" class="form-actions">
-        <button type="button" class="danger" data-action="prompt-playground#confirmReset">Zahodiť úpravy a načítať z CMS</button>
-        <button type="button" data-action="prompt-playground#copy">Kopírovať prompt</button>
+        <button type="button" class="primary" data-action="prompt-playground#snapshotAndReset">Uložiť snapshot a načítať z CMS</button>
+        <button type="button" class="danger" data-action="prompt-playground#confirmReset">Načítať bez snapshotu</button>
         <button value="cancel" autofocus>Zrušiť</button>
+      </form>
+    </dialog>
+
+    <dialog class="confirm-dialog snapshot-dialog" data-prompt-playground-target="snapshotDialog" aria-labelledby="snapshot_dialog_title">
+      <h2 id="snapshot_dialog_title">Snapshot <span data-prompt-playground-target="snapshotLabel"></span></h2>
+      <p class="hint">Rozdiel oproti aktuálnemu promptu: <span class="diff-del">− aktuálny prompt</span> <span class="diff-add">+ snapshot</span></p>
+      <pre class="diff" data-prompt-playground-target="snapshotDiff"></pre>
+      <p data-prompt-playground-target="revertNotice" hidden>Aktuálny prompt sa pred obnovením uloží ako snapshot.</p>
+      <form method="dialog" class="form-actions">
+        <button type="button" class="primary" data-prompt-playground-target="restoreButton" data-action="prompt-playground#restoreSnapshot">Obnoviť tento snapshot</button>
+        <button value="cancel" autofocus>Zavrieť</button>
       </form>
     </dialog>
 
@@ -45,6 +58,19 @@
       <summary>Zobraziť rozdiel oproti CMS</summary>
       <pre class="diff" data-prompt-playground-target="diff"></pre>
     </details>
+
+    <section class="snapshots">
+      <div class="prompt-label">
+        <h3>Snapshoty promptu</h3>
+        <input type="text" placeholder="Poznámka (nepovinné)" aria-label="Poznámka k snapshotu" data-prompt-playground-target="snapshotNote">
+        <button type="button" data-action="prompt-playground#snapshot">Vytvoriť snapshot</button>
+      </div>
+      <p class="hint">Snapshoty vidia všetci admini. Automaticky sa vytvárajú každých 5 minút, ak sa prompt zmenil, a pred načítaním z CMS alebo obnovením iného snapshotu. Zobrazuje sa <%= Admin::PromptTestCasesController::SNAPSHOTS_SHOWN %> najnovších.</p>
+      <ul id="prompt_snapshots" class="snapshot-list">
+        <li class="snapshot-empty">Zatiaľ žiadne snapshoty.</li>
+        <%= render partial: "snapshot", collection: @snapshots %>
+      </ul>
+    </section>
   </section>
 
   <section>

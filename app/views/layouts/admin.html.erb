@@ -28,7 +28,7 @@
       .admin-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 16px; align-items: start; }
       @media (max-width: 1100px) { .admin-main { grid-template-columns: 1fr; } }
       .panel { padding: 16px; border: 1px solid #ddd; border-radius: 6px; background: #fff; }
-      .prompt-panel { position: sticky; top: 16px; }
+      .prompt-panel { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
       .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
       .toolbar label { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
       .badge { padding: 2px 8px; border-radius: 10px; background: #fff4ce; color: #6b5200; font-size: 12px; }
@@ -36,7 +36,7 @@
       .summary { font-weight: 600; }
       .prompt-label { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; }
       .prompt-label label { flex: 1; margin: 0; }
-      .prompt-textarea { height: 60vh; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.45; }
+      .prompt-textarea { height: 55vh; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.45; }
       details > summary { cursor: pointer; }
       .diff { max-height: 50vh; overflow: auto; margin: 8px 0 0; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
       .diff-line { display: block; }
@@ -70,6 +70,16 @@
       .confirm-dialog { max-width: 440px; padding: 20px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 8px 24px rgba(0, 0, 0, .2); }
       .confirm-dialog::backdrop { background: rgba(0, 0, 0, .35); }
       .confirm-dialog p { margin: 0; line-height: 1.45; }
+      .snapshot-dialog { max-width: min(900px, 90vw); width: 100%; }
+      .snapshot-dialog .diff { max-height: 60vh; }
+      .snapshot-dialog p[hidden] { display: none; }
+      .snapshots { margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+      .snapshots h3 { flex: 1; margin: 0; font-size: 14px; }
+      .snapshots input[type=text] { width: 200px; }
+      .snapshot-list { margin: 8px 0 0; padding: 0; list-style: none; }
+      .snapshot-empty { color: #666; }
+      .snapshot-list:has(.snapshot) .snapshot-empty { display: none; }
+      .snapshot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid #eee; }
     </style>
 
     <%= javascript_include_tag "es-module-shims", "data-turbo-track": "reload", async: true %>

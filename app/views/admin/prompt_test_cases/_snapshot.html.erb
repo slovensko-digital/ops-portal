@@ -1,0 +1,9 @@
+<li id="<%= dom_id(snapshot) %>" class="snapshot">
+  <div>
+    <strong><%= prompt_snapshot_label(snapshot) %></strong>
+    <div class="hint">
+      <%= snapshot.reason_label %><% if snapshot.author %> · <%= snapshot.author.name %><% end %> · <%= number_with_delimiter(snapshot.content.length) %> zn.
+    </div>
+  </div>
+  <button type="button" data-url="<%= admin_prompt_snapshot_path(snapshot) %>" data-action="prompt-playground#openSnapshot">Porovnať / obnoviť</button>
+</li>

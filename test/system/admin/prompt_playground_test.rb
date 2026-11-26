@@ -36,7 +36,7 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
 
     assert_select "Model", selected: "gemini-2.5-flash (produkcia) · 0,30 $ / 2,50 $ za 1M tokenov"
 
-    fill_in "Prompt", with: "edited prompt"
+    fill_in "Prompt", with: "edited\nprompt"
     select "gemini-2.5-pro · 1,25 $ / 10,00 $ za 1M tokenov", from: "Model"
     click_on "Spustiť všetky testy"
 
@@ -53,26 +53,25 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
     assert_text "Prompt sa líši od CMS"
     assert_button "Spustiť všetky testy"
     assert_no_selector ".spinner"
-    assert_equal [ "edited prompt" ] * 2, request_bodies.map { it.dig("system_instruction", "parts", 0, "text") }
+    assert_equal [ "edited\nprompt" ] * 2, request_bodies.map { it.dig("system_instruction", "parts", 0, "text") }
 
     refresh
 
-    assert_field "Prompt", with: "edited prompt"
+    assert_field "Prompt", with: "edited\nprompt"
     assert_select "Model", selected: "gemini-2.5-pro · 1,25 $ / 10,00 $ za 1M tokenov"
 
     click_on "Načítať prompt z CMS"
 
     within("dialog[open]") do
-      assert_text "Zahodiť úpravy promptu?"
-      assert_button "Kopírovať prompt"
+      assert_text "Načítať prompt z CMS?"
       click_on "Zrušiť"
     end
 
     assert_no_selector "dialog[open]"
-    assert_field "Prompt", with: "edited prompt"
+    assert_field "Prompt", with: "edited\nprompt"
 
     click_on "Načítať prompt z CMS"
-    within("dialog[open]") { click_on "Zahodiť úpravy a načítať z CMS" }
+    within("dialog[open]") { click_on "Načítať bez snapshotu" }
 
     assert_no_selector "dialog[open]"
     assert_field "Prompt", with: cms_pages(:ai_generate_checks).raw
@@ -95,6 +94,82 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
 
     assert_selector ".diff-del", text: "- Title: Vrak"
     assert_selector ".diff-add", text: "+ Title: Autovrak"
+  end
+
+  test "admin saves a snapshot before loading the prompt from the CMS" do
+    login_as(@admin)
+    visit_playground
+
+    fill_in "Prompt", with: "edited prompt"
+    click_on "Načítať prompt z CMS"
+    within("dialog[open]") { click_on "Uložiť snapshot a načítať z CMS" }
+
+    assert_field "Prompt", with: cms_pages(:ai_generate_checks).raw
+    within("#prompt_snapshots") { assert_text "pred načítaním z CMS · Jozef Mokry" }
+    assert_equal [ "edited prompt", "cms_reload" ], Ai::PromptSnapshot.last.then { [ it.content, it.reason ] }
+  end
+
+  test "admin creates a snapshot and goes back to it after trying another prompt" do
+    login_as(@admin)
+    visit_playground
+
+    assert_text "Zatiaľ žiadne snapshoty."
+
+    fill_in "Prompt", with: "prompt v1\nTitle: Vrak"
+    fill_in "Poznámka (nepovinné)", with: "pred úpravou vraku"
+    click_on "Vytvoriť snapshot"
+
+    within("#prompt_snapshots") { assert_text "pred úpravou vraku" }
+    assert_button "✔ Snapshot uložený"
+    assert_field "Poznámka (nepovinné)", with: ""
+
+    click_on "Vytvoriť snapshot"
+
+    assert_button "Rovnaký ako posledný snapshot"
+    assert_equal 1, Ai::PromptSnapshot.count
+
+    fill_in "Prompt", with: "prompt v1\nTitle: Autovrak"
+    within("#prompt_snapshots") { click_on "Porovnať / obnoviť" }
+
+    within("dialog[open]") do
+      assert_text "pred úpravou vraku"
+      assert_selector ".diff-del", text: "- Title: Autovrak"
+      assert_selector ".diff-add", text: "+ Title: Vrak"
+      assert_text "Aktuálny prompt sa pred obnovením uloží ako snapshot."
+      click_on "Obnoviť tento snapshot"
+    end
+
+    assert_no_selector "dialog[open]"
+    assert_field "Prompt", with: "prompt v1\nTitle: Vrak"
+    within("#prompt_snapshots") { assert_text "pred obnovením snapshotu" }
+    assert_equal [ "prompt v1\nTitle: Autovrak", "revert" ], Ai::PromptSnapshot.last.then { [ it.content, it.reason ] }
+
+    within(first("#prompt_snapshots li")) { click_on "Porovnať / obnoviť" }
+
+    within("dialog[open]") do
+      assert_no_text "Aktuálny prompt sa pred obnovením uloží ako snapshot."
+      click_on "Zavrieť"
+    end
+    assert_field "Prompt", with: "prompt v1\nTitle: Vrak"
+  end
+
+  test "an edited prompt is saved as a snapshot automatically once" do
+    login_as(@admin)
+    visit_playground
+
+    auto_snapshot
+    assert_equal 0, Ai::PromptSnapshot.count
+
+    fill_in "Prompt", with: "edited prompt"
+    auto_snapshot
+
+    within("#prompt_snapshots") { assert_text "automaticky" }
+    assert_equal [ "edited prompt", "auto" ], Ai::PromptSnapshot.last.then { [ it.content, it.reason ] }
+
+    auto_snapshot
+    sleep 0.5
+
+    assert_equal 1, Ai::PromptSnapshot.count
   end
 
   test "admin copies the edited prompt to paste it into the CMS" do
@@ -159,6 +234,14 @@ class Admin::PromptPlaygroundTest < ApplicationSystemTestCase
   end
 
   private
+
+  # runs what the controller does every 5 minutes
+  def auto_snapshot
+    execute_script <<~JS
+      const element = document.querySelector("[data-controller=prompt-playground]")
+      Stimulus.getControllerForElementAndIdentifier(element, "prompt-playground").autoSnapshot()
+    JS
+  end
 
   # The edited prompt is kept in localStorage, start every test from the CMS version
   def visit_playground
