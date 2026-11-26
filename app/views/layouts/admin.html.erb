@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="sk">
+  <head>
+    <title><%= content_for?(:title) ? "#{content_for(:title)} | Admin" : "Admin" %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: system-ui, sans-serif; font-size: 14px; color: #222; background: #f6f6f6; }
+      h1 { margin: 0; font-size: 18px; }
+      h2 { margin: 0 0 12px; font-size: 16px; }
+      a { color: #0b5cad; }
+      button, .button { display: inline-block; padding: 5px 10px; border: 1px solid #bbb; border-radius: 4px; background: #fff; color: #222; font: inherit; text-decoration: none; cursor: pointer; }
+      button:hover, .button:hover { background: #f0f0f0; }
+      button.primary { border-color: #0b5cad; background: #0b5cad; color: #fff; }
+      button.primary:hover { background: #094c8f; }
+      button.danger { color: #b3261e; }
+      button[disabled] { opacity: .5; cursor: default; }
+      input[type=text], textarea, select { width: 100%; padding: 5px 7px; border: 1px solid #bbb; border-radius: 4px; font: inherit; }
+      select { width: auto; }
+      label { display: block; margin: 10px 0 4px; font-weight: 600; }
+      .hint { margin: 2px 0 0; color: #666; font-size: 12px; font-weight: normal; }
+      .admin-header { padding: 12px 16px; border-bottom: 1px solid #ddd; background: #fff; }
+      .admin-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 16px; align-items: start; }
+      @media (max-width: 1100px) { .admin-main { grid-template-columns: 1fr; } }
+      .panel { padding: 16px; border: 1px solid #ddd; border-radius: 6px; background: #fff; }
+      .prompt-panel { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+      .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
+      .toolbar label { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+      .badge { padding: 2px 8px; border-radius: 10px; background: #fff4ce; color: #6b5200; font-size: 12px; }
+      .badge[hidden] { display: none; }
+      .summary { font-weight: 600; }
+      .prompt-label { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; }
+      .prompt-label label { flex: 1; margin: 0; }
+      .prompt-textarea { height: 55vh; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.45; }
+      details > summary { cursor: pointer; }
+      .diff { max-height: 50vh; overflow: auto; margin: 8px 0 0; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
+      .diff-line { display: block; }
+      .diff-add { background: #e6ffec; }
+      .diff-del { background: #ffebe9; }
+      .diff-gap { color: #888; }
+      .test-cases { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+      .test-case { padding: 12px; border: 1px solid #ddd; border-left: 4px solid #ddd; border-radius: 6px; background: #fff; }
+      .test-case:has([data-status=pass]) { border-left-color: #1a7f37; }
+      .test-case:has([data-status=fail]), .test-case:has([data-status=error]) { border-left-color: #cf222e; }
+      .test-case-header { display: flex; align-items: center; gap: 8px; }
+      .test-case-header h3 { flex: 1; margin: 0; font-size: 15px; }
+      .test-case-header form { display: inline; }
+      .test-case dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0; }
+      .test-case dt { color: #666; }
+      .test-case dd { margin: 0; white-space: pre-wrap; }
+      .result { margin-top: 8px; padding: 8px; border-radius: 4px; background: #f6f8fa; }
+      .result ul { margin: 4px 0; padding-left: 20px; }
+      .result pre { overflow: auto; font-size: 12px; }
+      .result-running { display: flex; align-items: center; gap: 8px; color: #555; }
+      .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; vertical-align: -2px; animation: spin .7s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
+      .result-pass .result-status { color: #1a7f37; }
+      .result-fail .result-status, .result-error .result-status { color: #cf222e; }
+      .result-meta { color: #666; font-weight: normal; }
+      .check-titles { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2px 12px; }
+      .check-titles label { display: flex; align-items: flex-start; gap: 6px; margin: 0; font-weight: normal; }
+      .form-actions { display: flex; gap: 8px; margin-top: 12px; }
+      .errors { color: #b3261e; }
+      .confirm-dialog { max-width: 440px; padding: 20px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 8px 24px rgba(0, 0, 0, .2); }
+      .confirm-dialog::backdrop { background: rgba(0, 0, 0, .35); }
+      .confirm-dialog p { margin: 0; line-height: 1.45; }
+      .snapshot-dialog { max-width: min(900px, 90vw); width: 100%; }
+      .snapshot-dialog .diff { max-height: 60vh; }
+      .snapshot-dialog p[hidden] { display: none; }
+      .snapshots { margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+      .snapshots h3 { flex: 1; margin: 0; font-size: 14px; }
+      .snapshots input[type=text] { width: 200px; }
+      .snapshot-list { margin: 8px 0 0; padding: 0; list-style: none; }
+      .snapshot-empty { color: #666; }
+      .snapshot-list:has(.snapshot) .snapshot-empty { display: none; }
+      .snapshot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid #eee; }
+    </style>
+
+    <%= javascript_include_tag "es-module-shims", "data-turbo-track": "reload", async: true %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<% expected = test_case.expected_check_titles %>
+<% status = if result.error then "error" elsif result.passed?(expected) then "pass" else "fail" end %>
+
+<div class="result result-<%= status %>" data-status="<%= status %>" data-cost="<%= result.cost %>" data-prompt-playground-target="outcome">
+  <strong class="result-status"><%= { "pass" => "✔ Prešiel", "fail" => "✘ Neprešiel", "error" => "✘ Chyba" }[status] %></strong>
+  <span class="result-meta">
+    · <%= result.model %> · <%= result.duration %> s
+    <% if result.usage %>
+      · <%= number_with_delimiter(result.usage.input_tokens) %> + <%= number_with_delimiter(result.usage.output_tokens) %> tokenov
+      · <%= result.cost ? usd(result.cost) : "cena neznáma" %>
+    <% end %>
+  </span>
+
+  <% if result.error %>
+    <p><%= result.error %></p>
+  <% else %>
+    <div>Vrátené kontroly: <%= result.returned_titles.any? ? result.returned_titles.join(", ") : "žiadne" %></div>
+
+    <% if (missing = result.missing_titles(expected)).any? %>
+      <div>Chýbajú: <%= missing.join(", ") %></div>
+    <% end %>
+    <% if (unexpected = result.unexpected_titles(expected)).any? %>
+      <div>Navyše: <%= unexpected.join(", ") %></div>
+    <% end %>
+
+    <details>
+      <summary>Odpoveď modelu</summary>
+      <pre><%= JSON.pretty_generate(result.checks) %></pre>
+    </details>
+  <% end %>
+</div>

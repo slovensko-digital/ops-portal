@@ -1,0 +1,20 @@
+_fixture:
+  model_class: Ai::PromptTestCase
+
+parking:
+  prompt_name: generatechecks
+  name: Zle zaparkované auto
+  input:
+    title: Auto na chodníku
+    description: Pred domom už týždeň parkuje auto na chodníku.
+    address: Banská Bystrica, Hlavná 1
+  expected_check_titles: ["Parkovanie"]
+
+pothole:
+  prompt_name: generatechecks
+  name: Výtlk na ceste
+  input:
+    title: Výtlk na Hlavnej
+    description: Na ceste je hlboký výtlk.
+    address: Banská Bystrica, Hlavná 2
+  expected_check_titles: []
