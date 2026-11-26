@@ -30,8 +30,14 @@ class Municipality < ApplicationRecord
   has_many :streets
   has_many :issues
   has_many :municipality_boundaries
+  has_and_belongs_to_many :users
+
+  has_many :active_districts, -> { active.alphabetical }, class_name: "MunicipalityDistrict", inverse_of: :municipality
 
   scope :active, -> { where(active: true) }
+  # Municipalities still served by the old portal (odkazprestarostu.sk) are not
+  # offered here: issues there cannot be reported on this portal.
+  scope :on_new_portal, -> { active.where(active_on_old_portal: false) }
   scope :archived, -> { where(archived: true) }
   scope :with_boundaries, -> { where(id: MunicipalityBoundary.select(:municipality_id)) }
   scope :alphabetical, -> { order(Arel.sql("name COLLATE unicode")) }

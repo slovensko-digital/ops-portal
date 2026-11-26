@@ -1,4 +1,12 @@
 class AnonymousUser
+  def municipalities
+    Municipality.none
+  end
+
+  def municipality_districts
+    MunicipalityDistrict.none
+  end
+
   def subscribed_to?(issue)
     false
   end

@@ -79,19 +79,59 @@
       </div>
 
       <div class="form-items-con">
-        <div class="form-item-wrapper">
-          <%= f.label :municipality_id, "Preferované mesto alebo obec" %>
+        <div class="form-item-wrapper"
+             data-controller="preferred-localities"
+             data-action="
+              keydown.esc@window->preferred-localities#closeOnEscape
+              click@window->preferred-localities#closeOnOutsideClick">
+          <%= f.label :preferred_localities, for: "preferred_localities" do %>
+            Preferované mestá alebo obce
+            <span class="form-label-count" data-preferred-localities-target="count"></span>
+          <% end %>
 
-          <%= f.select :municipality_id,
-                       options_for_select(
-                         Municipality.where(active: true).order(:name).pluck(:name, :id),
-                         @user.municipality_id
-                       ),
-                       { include_blank: "" },
-                       { id: "municipality_id", class: 'dropdown-button', aria: ({ invalid: true, describedby: "municipality_id_error_message" } if rodauth.field_error("municipality_id")) } %>
-          <%= content_tag(:span, rodauth.field_error("municipality_id"), class: "block mt-1 text-red-600 text-xs", id: "municipality_id_error_message") if rodauth.field_error("municipality_id") %>
+          <%= f.hidden_field :municipality_ids, multiple: true, value: "" %>
+          <%= f.hidden_field :municipality_district_ids, multiple: true, value: "" %>
+
+          <div class="autocomplete-wrapper">
+            <div class="filter-select-buttons-con none"
+                 data-preferred-localities-target="pills"
+                 aria-live="polite"></div>
+
+            <input
+              type="text"
+              class="form-input"
+              data-preferred-localities-target="input"
+              data-action="focusin->preferred-localities#open input->preferred-localities#filter keydown.enter->preferred-localities#enter"
+              id="preferred_localities"
+              autocomplete="off" />
+
+            <ul class="dropdown-list none"
+                data-preferred-localities-target="list">
+              <% preferred_locality_options(@user, @municipalities).each do |municipality| %>
+                <%= render 'profiles/preferred_locality_item', f: f, item: municipality %>
+
+                <% municipality[:districts].each do |district| %>
+                  <%= render 'profiles/preferred_locality_item', f: f, item: district %>
+                <% end %>
+              <% end %>
+            </ul>
+
+            <div class="dropdown-not-found none" data-preferred-localities-target="empty" role="status">Nič sme nenašli.</div>
+          </div>
+
+          <template data-preferred-localities-target="pillTemplate">
+            <button type="button" class="button button-transparent filter-select-button" data-action="preferred-localities#remove">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20" aria-hidden="true">
+                <polygon points="14 4.06 12.94 3 7 8.94 1.06 3 0 4.06 5.94 10 0 15.94 1.06 17 7 11.06 12.94 17 14 15.94 8.06 10 14 4.06"/>
+              </svg>
+              <span data-pill-label></span>
+            </button>
+          </template>
         </div>
-        <div class="form-notice">Budete vidieť najmä podnety a oznamy z&nbsp;preferovaného mesta alebo obce.</div>
+
+        <div class="form-notice">
+          Vyhľadajte a zaškrtnite si mestá a mestské časti, z ktorých chcete vidieť najviac podnetov a dostávať novinky.
+        </div>
       </div>
 
       <div class="form-items-con">

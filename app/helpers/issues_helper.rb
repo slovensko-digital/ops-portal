@@ -41,12 +41,34 @@ module IssuesHelper
     [ issue.address_street.presence, issue.municipality_district&.name, issue.municipality&.name ].compact.join(", ")
   end
 
+  # /dopyty with the current filters and params on top. :lokalita takes
+  # municipalities and districts (one or a list) as well as values.
   def search_issues_path(params = {})
+    if params.key?(:lokalita)
+      params = params.merge(lokalita: Array(params[:lokalita]).map { SearchEngine::LocalitySelection.param(it) })
+    end
+
     if @search_results
       issues_path(@search_results.search_params.merge(params))
     else
       issues_path(params)
     end
+  end
+
+  # Keeps the current filters when a text search is submitted. A list param needs one
+  # name[] field per value: a single field would join the values with spaces.
+  def hidden_search_param_fields(except:)
+    return unless @search_results
+
+    fields = @search_results.search_params.except(except).compact.flat_map do |name, value|
+      if value.is_a?(Array)
+        value.map { |item| hidden_field_tag("#{name}[]", item, id: nil) }
+      else
+        hidden_field_tag(name, value, id: nil)
+      end
+    end
+
+    safe_join(fields)
   end
 
   def praise_image_tag(issue)

@@ -1,6 +1,7 @@
 require "test_helper"
 SimpleCov.command_name "test:system"
 require "test_helpers/auth_helper"
+require "test_helpers/search_select_helper"
 require "capybara"
 
 Capybara.register_driver :selenium_chrome_no_password_warning do |app|
@@ -24,6 +25,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   include ActiveJob::TestHelper
   include AuthHelper
+  include SearchSelectHelper
   include MunicipalityBoundaryTestHelper
 
   teardown do
