@@ -36,6 +36,10 @@ class ApiController < ActionController::API
     render status: :unauthorized, json: { message: "Unauthorized " + key }
   end
 
+  def render_forbidden
+    render status: :forbidden, json: { message: "Invalid or expired link" }
+  end
+
   def render_not_found(_key = nil, **_options)
     render status: :not_found, json: { message: "Not found" }
   end

@@ -10,22 +10,15 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
   private
 
   def llm_generate_checks(draft)
-    prompt = <<-LLM
-             Podnet
+    data = {
+      title: draft.title,
+      description: draft.description,
+      address: [ draft.address_city, draft.address_municipality, draft.address_street ].compact.join(", ")
+    }.to_json
 
-             Title:
-             #{draft.title}
-
-             Description:
-             #{draft.description}
-
-             Address:
-             #{[ draft.address_city, draft.address_municipality, draft.address_street ].compact.join(', ')}
-    LLM
-
-    Gemini.generate(
+    checks = Gemini.generate(
       system_prompt: Ai::Prompt.get("generatechecks"),
-      messages: [ prompt ],
+      messages: [ data ],
       response_schema: {
         "type": "ARRAY",
         "items": {
@@ -41,5 +34,19 @@ class Issues::Draft::GenerateChecksJob < ApplicationJob
         }
       }
     )
+
+    sanitize_more_info_urls(checks)
+  end
+
+  def sanitize_more_info_urls(checks)
+    return checks unless checks.is_a?(Array)
+
+    checks.each do |check|
+      next unless check.is_a?(Hash) && check.key?("more_info")
+
+      check["more_info"] = nil unless SafeUrl.allowed?(check["more_info"])
+    end
+
+    checks
   end
 end

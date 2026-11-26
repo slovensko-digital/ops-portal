@@ -3,12 +3,12 @@
 # Table name: issues_activities
 #
 #  id             :bigint           not null, primary key
+#  type           :string           not null
+#  issue_id       :bigint           not null
 #  dislikes_count :integer          default(0), not null
 #  likes_count    :integer          default(0), not null
-#  type           :string           not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  issue_id       :bigint           not null
 #
 class Issues::Activity < ApplicationRecord
   belongs_to :issue
@@ -18,6 +18,10 @@ class Issues::Activity < ApplicationRecord
 
   def content
     "dummy content"
+  end
+
+  def authored_by?(user)
+    false
   end
 
   def liked_by?(user)

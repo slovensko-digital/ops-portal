@@ -3,36 +3,6 @@
 # Table name: issues
 #
 #  id                                  :bigint           not null, primary key
-#  address_city                        :string
-#  address_country                     :string
-#  address_country_code                :string
-#  address_district                    :string
-#  address_house_number                :string
-#  address_municipality                :string
-#  address_postcode                    :string
-#  address_region                      :string
-#  address_street                      :string
-#  address_suburb                      :string
-#  anonymous                           :boolean
-#  comments_count                      :integer          default(0), not null
-#  description                         :string           not null
-#  discussion_closed                   :boolean          default(FALSE)
-#  effective_at                        :datetime
-#  fulltext_extra                      :string
-#  imported_at                         :datetime
-#  issue_type                          :integer          default("issue")
-#  last_activity_at                    :datetime
-#  last_synced_at                      :datetime
-#  latitude                            :float
-#  legacy_data                         :jsonb
-#  likes_count                         :integer          default(0), not null
-#  longitude                           :float
-#  public                              :boolean          default(FALSE), not null
-#  resolution_started_at               :datetime
-#  responsible_subject_last_contact_at :datetime
-#  title                               :string           not null
-#  created_at                          :datetime         not null
-#  updated_at                          :datetime         not null
 #  archived_state_id                   :bigint
 #  author_id                           :bigint
 #  category_id                         :bigint
@@ -46,6 +16,36 @@
 #  subcategory_id                      :bigint
 #  subtype_id                          :bigint
 #  triage_external_id                  :integer
+#  address_city                        :string
+#  address_country                     :string
+#  address_country_code                :string
+#  address_district                    :string
+#  address_house_number                :string
+#  address_municipality                :string
+#  address_postcode                    :string
+#  address_region                      :string
+#  address_street                      :string
+#  address_suburb                      :string
+#  anonymous                           :boolean
+#  comments_count                      :integer          default(0), not null
+#  description                         :string           not null
+#  discussion_closed                   :boolean          default(FALSE), not null
+#  fulltext_extra                      :string
+#  issue_type                          :integer          default(1)
+#  latitude                            :float
+#  legacy_data                         :jsonb
+#  likes_count                         :integer          default(0), not null
+#  longitude                           :float
+#  public                              :boolean          default(FALSE), not null
+#  title                               :string           not null
+#  effective_at                        :datetime
+#  imported_at                         :datetime
+#  last_activity_at                    :datetime
+#  last_synced_at                      :datetime
+#  resolution_started_at               :datetime
+#  responsible_subject_last_contact_at :datetime
+#  created_at                          :datetime         not null
+#  updated_at                          :datetime         not null
 #
 class Issue < ApplicationRecord
   include PgSearch::Faster
@@ -104,6 +104,13 @@ class Issue < ApplicationRecord
   scope :searchable, -> { publicly_visible.not_archived }
 
   scope :resolution_process, -> { where.not(resolution_external_id: nil) }
+  # whatever a responsible subject could have dealt with, public or not: the resolution process,
+  # archived legacy issues that passed triage in the old system and accepted praises, private ones too
+  scope :past_triage, -> do
+    resolution_process
+      .or(where(triage_external_id: nil, state: Issues::State.archived).where.not(archived_state: Issues::State.where(key: %w[waiting rejected duplicate])))
+      .or(praise.where(state: Issues::State.where(key: %w[resolved resolved_private])))
+  end
 
   before_save :recalculate_computed_fields
   after_update :notify_subscribers
@@ -115,10 +122,17 @@ class Issue < ApplicationRecord
   def visible_activity_objects
     activity_objects = activities.includes(:activity_object).order(created_at: :asc).map(&:activity_object).compact
 
-    if triage_process?
-      activity_objects.select(&:triage_visible?)
-    else
-      activity_objects.select(&:visible?)
+    activity_objects.select do |activity|
+      # a private comment is a UserComment too, it must not come back as a placeholder after triage
+      if resolution_process? && activity.is_a?(Issues::UserPrivateComment)
+        false
+      elsif activity.is_a?(Issues::UserComment) && activity.hidden?
+        true
+      elsif triage_process?
+        activity.triage_visible?
+      else
+        activity.visible?
+      end
     end
   end
 
@@ -156,7 +170,7 @@ class Issue < ApplicationRecord
   end
 
   def editable?
-    state.key == "waiting"
+    state.key.in? %w[waiting waiting_for_author]
   end
 
   def archived?
@@ -193,9 +207,9 @@ class Issue < ApplicationRecord
   end
 
   def self.relevant_for(user)
-    return where(municipality: user.municipality) if user&.municipality
+    return self if user.municipalities.empty? && user.municipality_districts.empty?
 
-    self
+    where(municipality: user.municipalities).or(where(municipality_district: user.municipality_districts))
   end
 
   def self.within_distance_from_point(lat, lon, distance)

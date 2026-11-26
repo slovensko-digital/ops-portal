@@ -3,12 +3,12 @@
 # Table name: issue_subscriptions
 #
 #  id                      :bigint           not null, primary key
+#  issue_id                :bigint           not null
+#  subscriber_id           :bigint           not null
 #  active                  :boolean          default(TRUE), not null
 #  email_unsubscribe_token :string           not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  issue_id                :bigint           not null
-#  subscriber_id           :bigint           not null
 #
 class IssueSubscription < ApplicationRecord
   belongs_to :issue

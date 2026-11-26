@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="sk">
+  <head>
+    <title><%= content_for?(:title) ? "#{content_for(:title)} | Admin" : "Admin" %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "leaflet", "data-turbo-track": "reload" %>
+    <style>
+      :root { --color-municipality: #007bff; --color-district: #9c36b5; --color-unmatched: #ff4761; }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; }
+      body { display: flex; flex-direction: column; font-family: system-ui, sans-serif; font-size: 14px; color: #222; background: #fff; }
+      /* above the map, whose controls use z-index 1000, so the filter dropdowns are not covered by them */
+      .admin-header { position: relative; z-index: 1001; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #ddd; }
+      .admin-header h1 { margin: 0; font-size: 18px; }
+      .admin-filter { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 20px; margin: 0; }
+      .admin-filter label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+      .filter-group { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; border: 0; }
+      .filter-group legend { float: left; margin-right: 6px; color: #666; font-size: 12px; }
+      .filter-group[disabled] { opacity: .45; }
+      .filter-group[disabled] label { cursor: default; }
+      .swatch { width: 12px; height: 12px; border-radius: 2px; }
+      .toggle { padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; }
+      .toggle:has(input:checked) { border-color: #888; background: #f3f3f3; }
+      .tree-select { position: relative; }
+      .tree-select summary { cursor: pointer; max-width: 360px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; }
+      .tree-select-panel { position: absolute; z-index: 1000; top: calc(100% + 4px); left: 0; min-width: 200px; max-width: 340px; padding: 8px; background: #fff; border: 1px solid #bbb; border-radius: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, .15); }
+      .tree-select-panel input[type=search] { width: 100%; padding: 4px 6px; margin-bottom: 6px; }
+      .tree-select-panel ul { list-style: none; margin: 0; padding: 0; }
+      .tree-select-panel > ul { max-height: 60vh; overflow-y: auto; }
+      .tree-select-panel ul ul { padding-left: 22px; }
+      .tree-select-panel label { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+      .tree-select-panel small { color: #888; }
+      .none { display: none !important; }
+      .leaflet-interactive:focus { outline: none; }
+      .boundary { stroke-width: 1.5px; fill-opacity: .1; }
+      .boundary:hover { stroke-width: 4px; fill-opacity: .35; }
+      .boundary.selected-boundary { stroke-width: 4px; fill-opacity: .45; }
+      .boundary-municipality { stroke: var(--color-municipality); fill: var(--color-municipality); }
+      .boundary-district { stroke: var(--color-district); fill: var(--color-district); }
+      .unmatched-boundary { stroke: var(--color-unmatched); fill: var(--color-unmatched); }
+      .admin-body { flex: 1; min-height: 0; display: flex; }
+      .admin-main { flex: 1; min-width: 0; }
+      .admin-panel { position: relative; width: 340px; flex-shrink: 0; overflow-y: auto; padding: 16px; border-left: 1px solid #ddd; }
+      .admin-panel[hidden] { display: none; }
+      .admin-panel h2 { margin: 0 0 12px; padding-right: 24px; font-size: 16px; }
+      .admin-panel h3 { margin: 16px 0 6px; font-size: 14px; color: #444; }
+      .admin-panel dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; }
+      .admin-panel dt { color: #666; }
+      .admin-panel dd { margin: 0; }
+      .admin-panel-close { position: absolute; top: 8px; right: 8px; border: 0; background: none; font-size: 22px; line-height: 1; cursor: pointer; color: #666; }
+    </style>
+
+    <%= javascript_include_tag "es-module-shims", "data-turbo-track": "reload", async: true %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>

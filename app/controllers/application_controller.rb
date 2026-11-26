@@ -8,7 +8,18 @@ class ApplicationController < ActionController::Base
   before_action :current_user
   before_action :check_banned_user
 
+  rescue_from ActionController::InvalidAuthenticityToken, with: :handle_invalid_authenticity_token
+
   private
+
+  # A form rendered before the session changed (tab restored after browser restart,
+  # login/logout in another tab) carries a stale token. Reload the page instead of a bare 422.
+  def handle_invalid_authenticity_token(exception)
+    Rollbar.warning(exception)
+
+    flash[:alert] = "Platnosť stránky vypršala. Skúste to prosím znova."
+    redirect_to_with_turbo url_from(request.referer) || root_path
+  end
 
   def current_user
     # `rodauth.rails_account` surprisingly sets value for registration and password reset

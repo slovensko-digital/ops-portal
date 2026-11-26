@@ -16,6 +16,15 @@
         <%= button_to "Zobraziť podobné podnety", issues_draft_duplicates_path(@draft), method: :patch, class: "button" %>
       </div>
     </div>
+  <% elsif @draft.checks.nil? %>
+    <div class="report-summary-block-con">
+      <div class="report-warning">
+        <div class="title">Automatickú kontrolu sa nepodarilo vykonať</div>
+        <div class="description">
+          <p>Automatická kontrola podnetu momentálne nie je dostupná. Skúste to, prosím, o chvíľu znova.</p>
+        </div>
+      </div>
+    </div>
   <% elsif @draft.errors[:checks].any? %>
     <%= render partial: 'checks', object: @draft.checks %>
   <% end %>

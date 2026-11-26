@@ -3,6 +3,8 @@
 # Table name: issues_subcategories
 #
 #  id             :bigint           not null, primary key
+#  category_id    :bigint           not null
+#  legacy_id      :integer
 #  alias          :string
 #  catch_all      :boolean          default(FALSE)
 #  description    :string
@@ -12,8 +14,6 @@
 #  weight         :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  category_id    :bigint           not null
-#  legacy_id      :integer
 #
 class Issues::Subcategory < ApplicationRecord
   belongs_to :category, class_name: "Issues::Category"

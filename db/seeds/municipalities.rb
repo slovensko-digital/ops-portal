@@ -37,13 +37,16 @@ DEV_SEED_MUNICIPALITIES = [
 DEV_SEED_MUNICIPALITIES.each do |data|
   municipality = Municipality.find_or_initialize_by(name: data[:name])
   municipality.assign_attributes(
+    district: District.find_by!(name: data[:region]),
     latitude: data[:latitude],
     longitude: data[:longitude],
     population: data[:population],
     category: data[:category],
     municipality_type: data[:municipality_type],
     has_municipality_districts: data[:districts].present?,
-    active: true,
+    # the others wait inactive for responsible_subjects:activate_basic, which doesn't support
+    # Bratislava's city parts
+    active: data[:name] == "Bratislava",
     active_on_old_portal: false,
     archived: false,
     aliases: [ data[:name], data[:name].parameterize ]

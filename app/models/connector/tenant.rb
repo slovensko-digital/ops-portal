@@ -6,13 +6,13 @@
 #  backoffice_api_token        :string
 #  backoffice_url              :string
 #  backoffice_webhook_secret   :string
-#  migrate_legacy_labels       :boolean          default(TRUE)
+#  migrate_legacy_labels       :boolean          default(TRUE), not null
 #  name                        :string
 #  ops_api_subject_identifier  :integer
 #  ops_api_token_private_key   :string
 #  ops_webhook_public_key      :string
 #  receive_customer_activities :boolean          default(FALSE), not null
-#  status                      :integer          default("active"), not null
+#  status                      :integer          default(0), not null
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
 #

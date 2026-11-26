@@ -3,9 +3,11 @@
 # Table name: municipality_districts
 #
 #  id              :bigint           not null, primary key
-#  active          :boolean          default(FALSE)
+#  legacy_id       :integer
+#  municipality_id :bigint           not null
+#  active          :boolean          default(FALSE), not null
 #  aliases         :string           default([]), not null, is an Array
-#  archived        :boolean          default(FALSE)
+#  archived        :boolean          default(FALSE), not null
 #  description     :string
 #  genitiv         :string
 #  logo            :string
@@ -13,15 +15,16 @@
 #  name            :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  legacy_id       :integer
-#  municipality_id :bigint           not null
 #
 class MunicipalityDistrict < ApplicationRecord
   belongs_to :municipality
   has_many :streets, dependent: :nullify
   has_many :issues
   has_many :municipality_boundaries
+  has_and_belongs_to_many :users
 
   scope :archived, -> { where(archived: true) }
   scope :active, -> { where(active: true) }
+  scope :with_boundaries, -> { where(id: MunicipalityBoundary.select(:municipality_district_id)) }
+  scope :alphabetical, -> { order(Arel.sql("municipality_districts.name COLLATE unicode")) }
 end

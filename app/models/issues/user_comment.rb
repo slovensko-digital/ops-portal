@@ -3,19 +3,7 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
-#  author_email                  :string
-#  author_name                   :string
-#  hidden                        :boolean          default(FALSE)
-#  imported_at                   :datetime
-#  ip                            :inet
-#  last_edited_at                :datetime
-#  legacy_data                   :jsonb
-#  text                          :string
 #  type                          :string
-#  uuid                          :uuid
-#  verification                  :integer
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
 #  activity_id                   :bigint           not null
 #  agent_author_id               :bigint
 #  legacy_comment_id             :integer
@@ -23,18 +11,64 @@
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
+#  ai_evaluation                 :jsonb            not null
+#  author_email                  :string
+#  author_name                   :string
+#  hidden                        :boolean          default(FALSE), not null
+#  ip                            :inet
+#  legacy_data                   :jsonb
+#  text                          :string
+#  uuid                          :uuid
+#  verification                  :integer
+#  imported_at                   :datetime
+#  last_edited_at                :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
 #
 class Issues::UserComment < Issues::Comment
   validates :agent_author_id, absence: true
   validates :responsible_subject_author_id, absence: true
   validates :text, presence: true, if: -> { attachments.empty? }, unless: -> { legacy_id }
+  validates :text, length: { maximum: TEXT_MAX_LENGTH }, unless: -> { legacy_id || triage_external_id }
 
   include EditableWithinEditingWindow
+
+  # fixed labels instead of the AI reason, which can quote the offending words
+  HIDDEN_REASON_LABELS = {
+    "irrelevant" => "obsah nesúvisiaci s podnetom",
+    "vulgar" => "vulgarizmy",
+    "insulting" => "urážky",
+    "sarcastic" => "sarkazmus",
+    "political" => "politická agitácia"
+  }.freeze
+  HIDDEN_REASON_MIN_SCORE = 0.5
 
   after_update :notify_subscribers, unless: -> { legacy_id }, if: :saved_change_to_triage_external_id?
 
   def author
     user_author
+  end
+
+  def triage_activity_body
+    return "Automaticky skrytý komentár: #{text}" if auto_hidden?
+
+    super
+  end
+
+  def auto_hidden?
+    hidden && ai_evaluation.present? && Issues::ModerateCommentJob.hide?(ai_evaluation)
+  end
+
+  # also for a comment hidden in triage, the score cutoff keeps
+  # categories the AI did not flag out of the reason
+  def hidden_reason
+    return unless hidden && ai_evaluation.present?
+
+    HIDDEN_REASON_LABELS
+      .select { |category, _| ai_evaluation[category].to_f >= HIDDEN_REASON_MIN_SCORE }
+      .values
+      .to_sentence(words_connector: ", ", two_words_connector: " a ", last_word_connector: " a ")
+      .presence
   end
 
   def visible?

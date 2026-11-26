@@ -3,19 +3,7 @@
 # Table name: issues_comments
 #
 #  id                            :bigint           not null, primary key
-#  author_email                  :string
-#  author_name                   :string
-#  hidden                        :boolean          default(FALSE)
-#  imported_at                   :datetime
-#  ip                            :inet
-#  last_edited_at                :datetime
-#  legacy_data                   :jsonb
-#  text                          :string
 #  type                          :string
-#  uuid                          :uuid
-#  verification                  :integer
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
 #  activity_id                   :bigint           not null
 #  agent_author_id               :bigint
 #  legacy_comment_id             :integer
@@ -23,8 +11,23 @@
 #  responsible_subject_author_id :bigint
 #  triage_external_id            :integer
 #  user_author_id                :bigint
+#  ai_evaluation                 :jsonb            not null
+#  author_email                  :string
+#  author_name                   :string
+#  hidden                        :boolean          default(FALSE), not null
+#  ip                            :inet
+#  legacy_data                   :jsonb
+#  text                          :string
+#  uuid                          :uuid
+#  verification                  :integer
+#  imported_at                   :datetime
+#  last_edited_at                :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
 #
 class Issues::Comment < ApplicationRecord
+  TEXT_MAX_LENGTH = 10_000
+
   belongs_to :activity, class_name: "Issues::Activity", dependent: :destroy
   belongs_to :user_author, class_name: "User", optional: true
   belongs_to :agent_author, class_name: "Legacy::Agent", foreign_key: "agent_author_id", optional: true
@@ -49,8 +52,16 @@ class Issues::Comment < ApplicationRecord
     false
   end
 
+  def hidden_reason
+    nil
+  end
+
   def editable_by?(user)
     false
+  end
+
+  def authored_by?(user)
+    user_author.present? && user_author == user
   end
 
   def author_display_name

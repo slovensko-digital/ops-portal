@@ -3,31 +3,33 @@
 # Table name: users
 #
 #  id                               :bigint           not null, primary key
+#  type                             :string
+#  city_id                          :integer
+#  external_id                      :integer
+#  legacy_id                        :integer
+#  responsible_subject_id           :bigint
+#  street_id                        :bigint
 #  about                            :string
-#  active                           :boolean
 #  admin_name                       :string
-#  anonymous                        :boolean          default(FALSE)
-#  banned                           :boolean          default(FALSE)
+#  anonymous                        :boolean          default(FALSE), not null
+#  banned                           :boolean          default(FALSE), not null
 #  birth                            :date
-#  created_from_app                 :boolean          default(FALSE)
+#  created_from_app                 :boolean          default(FALSE), not null
 #  display_name                     :string
 #  email                            :citext           not null
 #  email_global_unsubscribe_token   :string           not null
-#  email_notifiable                 :boolean          default(TRUE)
+#  email_notifiable                 :boolean          default(TRUE), not null
 #  exp                              :integer
 #  fcm_token                        :string
 #  firstname                        :string
 #  gdpr_accepted                    :boolean
-#  gdpr_stats_accepted              :boolean          default(FALSE)
-#  imported_at                      :datetime
+#  gdpr_stats_accepted              :boolean          default(FALSE), not null
 #  lastname                         :string
 #  login                            :string
 #  newsletter_accepted              :boolean          default(FALSE), not null
-#  onboarded                        :boolean          default(FALSE)
-#  organization                     :boolean
+#  onboarded                        :boolean          default(FALSE), not null
 #  password_hash                    :string
 #  phone                            :string
-#  phone_verification_attempted_at  :datetime
 #  phone_verification_attempts      :integer          default(0), not null
 #  phone_verification_code          :string
 #  phone_verification_code_attempts :integer          default(0), not null
@@ -41,30 +43,24 @@
 #  stats_issues_percentile          :decimal(5, 4)    default(0.0)
 #  stats_verified_issues_count      :integer          default(0)
 #  stats_verified_issues_percentile :decimal(5, 4)    default(0.0)
-#  status                           :integer          default("unverified"), not null
+#  status                           :integer          default(1), not null
 #  timestamp                        :datetime
-#  type                             :string
 #  uuid                             :uuid             not null
-#  verification                     :string
-#  verified                         :boolean          default(FALSE)
+#  imported_at                      :datetime
+#  phone_verification_attempted_at  :datetime
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
-#  city_id                          :integer
-#  external_id                      :integer
-#  legacy_id                        :integer
-#  municipality_id                  :bigint
-#  responsible_subject_id           :bigint
-#  street_id                        :bigint
 #
 class User < ApplicationRecord
   include Rodauth::Rails.model
 
-  ALLOWED_AVATAR_CONTENT_TYPES = %w[image/jpeg image/png image/gif image/heic image/heif].freeze
+  # Legacy single-municipality column is still present in the DB.
+  # New code uses the HABTM join tables; the column will be dropped in a follow-up.
+  self.ignored_columns = [ "municipality_id" ]
 
   attr_accessor :phone_verification_number
 
   belongs_to :responsible_subject, class_name: "::ResponsibleSubject", optional: true
-  belongs_to :municipality, optional: true
   belongs_to :street, optional: true
   has_many :issues, foreign_key: :author_id
   has_many :issues_drafts, class_name: "Issues::Draft", foreign_key: :author_id
@@ -73,6 +69,8 @@ class User < ApplicationRecord
   has_many :watched_issues, through: :issue_subscriptions, source: :issue
   has_many :issues_comments, class_name: "Issues::Comment", foreign_key: :user_author_id
   has_many :issues_updates, class_name: "Issues::Update", foreign_key: :author_id
+  has_and_belongs_to_many :municipalities
+  has_and_belongs_to_many :municipality_districts
   has_one_attached :avatar do |avatar|
     avatar.variant :tiny, resize_to_fill: [ 36, 36 ]
     avatar.variant :normal, resize_to_fill: [ 65, 65 ], preprocessed: true
@@ -99,7 +97,7 @@ class User < ApplicationRecord
   validates_confirmation_of :phone_verification_code, on: :phone_verification_code
   validates_presence_of :phone_verification_code_confirmation, on: :phone_verification_code
   validate :birth_year_within_range, if: :birth_year, on: [ :onboarding, :update ]
-  validate :avatar_content_type_allowed, if: -> { avatar.attached? && avatar.new_record? }
+  validates :avatar, image: { message: :invalid_content_type }, if: -> { avatar.attached? && avatar.new_record? }
 
   def name
     [ firstname, lastname ].compact.join(" ")
@@ -197,7 +195,6 @@ class User < ApplicationRecord
       phone: nil,
       password_hash: RodauthApp.rodauth.allocate.password_hash(SecureRandom.hex(16)),
       about: nil,
-      organization: nil,
       signature: nil,
       resident: nil,
       sex: nil,
@@ -218,12 +215,6 @@ class User < ApplicationRecord
   def birth_year_within_range
     unless birth_year.between?(Date.current.year - 120, Date.current.year)
       errors.add(:birth_year, I18n.t("activerecord.errors.models.user.attributes.birth_year.inclusion", min_year: Date.current.year - 120, max_year: Date.current.year))
-    end
-  end
-
-  def avatar_content_type_allowed
-    unless avatar.content_type.in?(ALLOWED_AVATAR_CONTENT_TYPES)
-      errors.add(:avatar, :invalid_content_type)
     end
   end
 end

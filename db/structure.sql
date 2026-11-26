@@ -206,7 +206,8 @@ CREATE TABLE public.clients (
     webhook_private_key character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    responsible_subject_id bigint
+    responsible_subject_id bigint,
+    active boolean DEFAULT true NOT NULL
 );
 
 
@@ -383,7 +384,7 @@ CREATE TABLE public.connector_tenants (
     backoffice_api_token character varying,
     backoffice_webhook_secret character varying,
     receive_customer_activities boolean DEFAULT false NOT NULL,
-    migrate_legacy_labels boolean DEFAULT true,
+    migrate_legacy_labels boolean DEFAULT true NOT NULL,
     status integer DEFAULT 0 NOT NULL
 );
 
@@ -687,7 +688,7 @@ CREATE TABLE public.issues (
     address_suburb character varying,
     comments_count integer DEFAULT 0 NOT NULL,
     fulltext_extra character varying,
-    discussion_closed boolean DEFAULT false,
+    discussion_closed boolean DEFAULT false NOT NULL,
     archived_state_id bigint,
     last_activity_at timestamp(6) without time zone,
     resolution_started_at timestamp(6) without time zone,
@@ -773,7 +774,7 @@ CREATE TABLE public.issues_categories (
     alias character varying,
     description character varying,
     description_hu character varying,
-    catch_all boolean DEFAULT false,
+    catch_all boolean DEFAULT false NOT NULL,
     weight integer,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -819,14 +820,15 @@ CREATE TABLE public.issues_comments (
     user_author_id bigint,
     agent_author_id bigint,
     responsible_subject_author_id bigint,
-    hidden boolean DEFAULT false,
+    hidden boolean DEFAULT false NOT NULL,
     legacy_data jsonb,
     type character varying,
     imported_at timestamp(6) without time zone,
     legacy_comment_id integer,
     legacy_communication_id integer,
     uuid uuid,
-    last_edited_at timestamp(6) without time zone
+    last_edited_at timestamp(6) without time zone,
+    ai_evaluation jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -877,7 +879,7 @@ CREATE TABLE public.issues_drafts (
     subtype_id bigint,
     author_id bigint NOT NULL,
     address_region character varying,
-    latlon_from_exif boolean DEFAULT false,
+    latlon_from_exif boolean DEFAULT false NOT NULL,
     address_data jsonb,
     address_district character varying,
     submitted boolean DEFAULT false NOT NULL,
@@ -1089,7 +1091,7 @@ CREATE TABLE public.issues_updates (
     name character varying,
     email character varying,
     text character varying,
-    published boolean,
+    published boolean DEFAULT false NOT NULL,
     ip inet,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -1097,9 +1099,9 @@ CREATE TABLE public.issues_updates (
     triage_external_id integer,
     imported_at timestamp(6) without time zone,
     uuid uuid,
-    confirmed boolean DEFAULT false,
+    confirmed boolean DEFAULT false NOT NULL,
     external_id character varying,
-    hidden boolean DEFAULT false,
+    hidden boolean DEFAULT false NOT NULL,
     resolves_issue boolean DEFAULT false NOT NULL,
     verification_status integer DEFAULT 0 NOT NULL,
     last_edited_at timestamp(6) without time zone,
@@ -1352,12 +1354,12 @@ CREATE TABLE public.municipalities (
     sub character varying,
     email character varying,
     municipality_type integer,
-    has_municipality_districts boolean,
+    has_municipality_districts boolean DEFAULT false NOT NULL,
     handled_by integer,
     latitude double precision,
     longitude double precision,
     population integer,
-    active boolean,
+    active boolean DEFAULT false NOT NULL,
     category integer,
     languages character varying,
     logo character varying,
@@ -1366,7 +1368,7 @@ CREATE TABLE public.municipalities (
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     active_on_old_portal boolean DEFAULT false NOT NULL,
-    archived boolean DEFAULT false
+    archived boolean DEFAULT false NOT NULL
 );
 
 
@@ -1387,6 +1389,16 @@ CREATE SEQUENCE public.municipalities_id_seq
 --
 
 ALTER SEQUENCE public.municipalities_id_seq OWNED BY public.municipalities.id;
+
+
+--
+-- Name: municipalities_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.municipalities_users (
+    municipality_id bigint NOT NULL,
+    user_id bigint NOT NULL
+);
 
 
 --
@@ -1439,8 +1451,8 @@ CREATE TABLE public.municipality_districts (
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
     aliases character varying[] DEFAULT '{}'::character varying[] NOT NULL,
-    archived boolean DEFAULT false,
-    active boolean DEFAULT false
+    archived boolean DEFAULT false NOT NULL,
+    active boolean DEFAULT false NOT NULL
 );
 
 
@@ -1464,6 +1476,16 @@ ALTER SEQUENCE public.municipality_districts_id_seq OWNED BY public.municipality
 
 
 --
+-- Name: municipality_districts_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.municipality_districts_users (
+    municipality_district_id bigint NOT NULL,
+    user_id bigint NOT NULL
+);
+
+
+--
 -- Name: responsible_subjects; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1478,8 +1500,8 @@ CREATE TABLE public.responsible_subjects (
     email character varying,
     name character varying,
     code character varying,
-    active boolean,
-    pro boolean,
+    active boolean DEFAULT true NOT NULL,
+    pro boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
@@ -1581,7 +1603,7 @@ ALTER SEQUENCE public.responsible_subjects_organization_units_id_seq OWNED BY pu
 CREATE TABLE public.responsible_subjects_types (
     id bigint NOT NULL,
     name character varying,
-    active boolean,
+    active boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer
@@ -1655,8 +1677,8 @@ CREATE TABLE public.responsible_subjects_users (
     photo character varying,
     deleted_at timestamp(6) without time zone,
     organization_unit_id bigint,
-    gdpr_accepted boolean,
-    tooltips boolean,
+    gdpr_accepted boolean DEFAULT false NOT NULL,
+    tooltips boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer
@@ -1707,7 +1729,7 @@ CREATE TABLE public.streets (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     legacy_id integer,
-    whitelisted boolean DEFAULT false
+    whitelisted boolean DEFAULT false NOT NULL
 );
 
 
@@ -1926,20 +1948,16 @@ CREATE TABLE public.users (
     lastname character varying,
     external_id integer,
     uuid uuid DEFAULT gen_random_uuid() NOT NULL,
-    banned boolean DEFAULT false,
+    banned boolean DEFAULT false NOT NULL,
     login character varying,
     admin_name character varying,
     phone character varying,
     password_hash character varying,
     about character varying,
-    organization boolean,
     "timestamp" timestamp(6) without time zone,
-    anonymous boolean DEFAULT false,
-    active boolean,
+    anonymous boolean DEFAULT false NOT NULL,
     municipality_id bigint,
-    created_from_app boolean DEFAULT false,
-    verification character varying,
-    verified boolean DEFAULT false,
+    created_from_app boolean DEFAULT false NOT NULL,
     signature character varying,
     city_id integer,
     street_id bigint,
@@ -1949,14 +1967,14 @@ CREATE TABLE public.users (
     fcm_token character varying,
     gdpr_accepted boolean,
     exp integer,
-    email_notifiable boolean DEFAULT true,
+    email_notifiable boolean DEFAULT true NOT NULL,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     legacy_id integer,
     status integer DEFAULT 1 NOT NULL,
     display_name character varying,
-    gdpr_stats_accepted boolean DEFAULT false,
-    onboarded boolean DEFAULT false,
+    gdpr_stats_accepted boolean DEFAULT false NOT NULL,
+    onboarded boolean DEFAULT false NOT NULL,
     newsletter_accepted boolean DEFAULT false NOT NULL,
     phone_verified boolean DEFAULT false NOT NULL,
     phone_verification_attempts integer DEFAULT 0 NOT NULL,
@@ -3572,6 +3590,20 @@ CREATE INDEX index_municipalities_on_longitude ON public.municipalities USING bt
 
 
 --
+-- Name: index_municipalities_users_on_municipality_id_and_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_municipalities_users_on_municipality_id_and_user_id ON public.municipalities_users USING btree (municipality_id, user_id);
+
+
+--
+-- Name: index_municipalities_users_on_user_id_and_municipality_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipalities_users_on_user_id_and_municipality_id ON public.municipalities_users USING btree (user_id, municipality_id);
+
+
+--
 -- Name: index_municipality_boundaries_on_boundary; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3604,6 +3636,20 @@ CREATE UNIQUE INDEX index_municipality_districts_on_legacy_id ON public.municipa
 --
 
 CREATE INDEX index_municipality_districts_on_municipality_id ON public.municipality_districts USING btree (municipality_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_district_and_user; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_municipality_districts_users_on_district_and_user ON public.municipality_districts_users USING btree (municipality_district_id, user_id);
+
+
+--
+-- Name: index_municipality_districts_users_on_user_and_district; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_municipality_districts_users_on_user_and_district ON public.municipality_districts_users USING btree (user_id, municipality_district_id);
 
 
 --
@@ -3844,6 +3890,14 @@ ALTER TABLE ONLY public.municipalities
 
 ALTER TABLE ONLY public.issues
     ADD CONSTRAINT fk_rails_05f1e72feb FOREIGN KEY (author_id) REFERENCES public.users(id);
+
+
+--
+-- Name: municipality_districts_users fk_rails_0ba6beb486; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.municipality_districts_users
+    ADD CONSTRAINT fk_rails_0ba6beb486 FOREIGN KEY (municipality_district_id) REFERENCES public.municipality_districts(id);
 
 
 --
@@ -4239,6 +4293,14 @@ ALTER TABLE ONLY public.responsible_subjects_users
 
 
 --
+-- Name: municipality_districts_users fk_rails_ab81ca2d9b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.municipality_districts_users
+    ADD CONSTRAINT fk_rails_ab81ca2d9b FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: responsible_subjects_organization_units fk_rails_ac40c26458; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4252,6 +4314,14 @@ ALTER TABLE ONLY public.responsible_subjects_organization_units
 
 ALTER TABLE ONLY public.municipality_boundaries
     ADD CONSTRAINT fk_rails_ac7afc9016 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
+
+
+--
+-- Name: municipalities_users fk_rails_aedcef4ab7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.municipalities_users
+    ADD CONSTRAINT fk_rails_aedcef4ab7 FOREIGN KEY (municipality_id) REFERENCES public.municipalities(id);
 
 
 --
@@ -4351,6 +4421,14 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: municipalities_users fk_rails_dd0f245748; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.municipalities_users
+    ADD CONSTRAINT fk_rails_dd0f245748 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: issues_activity_votes fk_rails_dd8812846f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4429,6 +4507,23 @@ ALTER TABLE ONLY public.cms_categories
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20261116100000'),
+('20261109100000'),
+('20261103100000'),
+('20261102100000'),
+('20261019100000'),
+('20261016100000'),
+('20261013100200'),
+('20261013100100'),
+('20261013100000'),
+('20261012100100'),
+('20261012100000'),
+('20261003120000'),
+('20261003115900'),
+('20261003105314'),
+('20260813133737'),
+('20260811144543'),
+('20260811132517'),
 ('20260705131733'),
 ('20260524143000'),
 ('20260524134500'),

@@ -86,6 +86,24 @@ a.button, button.button, input.button {
   cursor: pointer;
 }
 
+form[aria-busy="true"] button.button-with-submit-spinner:disabled {
+  cursor: wait;
+
+  &::before {
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: "";
+    flex: 0 0 1em;
+    height: 1em;
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: rotate360 800ms linear infinite;
+    }
+  }
+}
+
 .button svg {
   height: 20px;
   //stroke-width: 2;
@@ -1056,7 +1074,7 @@ section.report .button {
   margin-top: 30px;
   width: 100%;
 }
-section.report .button:hover {
+section.report .button:hover:not(:where(.button-with-submit-spinner:disabled)) {
   background: variables.$green;
 }
 section.report .notice {
@@ -1680,7 +1698,7 @@ ul.dropdown-list {
   background: variables.$white;
   border: 1px solid variables.$black;
   box-sizing: border-box;
-  height: 194px;
+  height: variables.$dropdown-list-height;
   overflow-y: scroll;
   @include mixins.rounded(6px);
 }
@@ -1697,7 +1715,8 @@ ul.dropdown-list li:hover {
   background: variables.$line;
 }
 
-ul.dropdown-list li a {
+ul.dropdown-list li a,
+ul.dropdown-list li label {
   color: variables.$black;
   display: block;
   padding: 12px 14px;
@@ -1707,7 +1726,8 @@ ul.dropdown-list li.active {
   background: variables.$line;
 }
 
-ul.dropdown-list li.check-box a {
+ul.dropdown-list li.check-box a,
+ul.dropdown-list li.check-box label {
   align-items: center;
   display: grid;
   gap: 0 4px;
@@ -1724,11 +1744,61 @@ ul.dropdown-list li.check-box svg {
 ul.dropdown-list li.check-box:hover svg {
   display: block;
 }
+ul.dropdown-list li.district label {
+  padding-left: 40px;
+}
 ul.dropdown-list li.active .form-check-box {
   background: variables.$blue;
 }
 ul.dropdown-list li.active svg {
   display: block;
+}
+.form-check-box-dash {
+  display: none;
+}
+ul.dropdown-list li.partial .form-check-box {
+  background: variables.$blue;
+}
+ul.dropdown-list li.partial .form-check-box svg {
+  display: none;
+}
+ul.dropdown-list li.partial .form-check-box-dash {
+  background: variables.$black;
+  display: block;
+  height: 2px;
+  width: 12px;
+}
+ul.dropdown-list.is-no-match {
+  display: none;
+}
+.dropdown-not-found {
+  background: variables.$white;
+  border: 1px solid variables.$black;
+  box-sizing: border-box;
+  color: variables.$black;
+  font-family: variables.$general;
+  font-size: variables.em(16,16);
+  font-weight: variables.$medium;
+  height: variables.$dropdown-list-height;
+  line-height: variables.em(24,16);
+  padding: 12px 14px;
+  @include mixins.rounded(6px);
+}
+.form-label-count {
+  color: variables.$black-light;
+}
+ul.dropdown-list {
+  li.nested-level-1 a {
+    padding-left: 40px;
+  }
+
+  li.nested-level-2 a {
+    padding-left: 60px;
+  }
+
+  span.item-title--bold {
+    font-weight: variables.$semibold;
+  }
 }
 .podnety-filter-con .dropdown-button {
   font-size: variables.em(16,16) !important;
@@ -1948,18 +2018,42 @@ section.podnety nav.suggestions .button-location {
   font-weight: variables.$semibold;
   line-height: variables.em(24,24);
 }
-.podnety-filter-wrapper .filter-select-buttons-con {
+// Removable pills: active issue filters and the profile's preferred localities
+.filter-select-buttons-con {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
-.podnety-filter-wrapper .filter-select-buttons-con .filter-select-button {
+.filter-select-buttons-con.none {
+  display: none;
+}
+.filter-select-buttons-con .filter-select-button {
   gap: 0 8px;
   height: unset;
   line-height: variables.em(18,16);
   padding: 8px 14px;
   text-align: left;
   @include mixins.rounded(30px);
+}
+// Without this a wrapping label squeezes the icon, so two-line pills get a smaller X.
+.filter-select-buttons-con .filter-select-button svg {
+  flex-shrink: 0;
+}
+// In a form the pills sit on white, so they take the filter panel's light blue.
+// !important: section.report .button forces font-size/height and .button-transparent a transparent background.
+section.report .filter-select-buttons-con .filter-select-button {
+  background: variables.$blue-light !important;
+  font-size: variables.em(16,16) !important;
+  height: unset;
+  margin-top: 0;
+  width: fit-content;
+}
+section.report .filter-select-buttons-con .filter-select-button:hover {
+  background: variables.$blue !important;
+}
+// Same 10px between the pills and the search input as between the pills (wrapper gap is 6px).
+.autocomplete-wrapper .filter-select-buttons-con {
+  margin-bottom: 4px;
 }
 
 
@@ -2046,6 +2140,27 @@ section.podnety nav.suggestions .button-location {
 }
 .hidden-list {
   display: none;
+}
+
+// Number of active filters on the mobile "Filter" button
+button.button-filter {
+  position: relative;
+}
+
+button.button-filter .filter-count {
+  position: absolute;
+  top: -7px;
+  right: -5px;
+  min-width: 22px;
+  height: 22px;
+  line-height: 22px;
+  padding: 0;
+  border-radius: 100%;
+  background: variables.$red;
+  color: variables.$white;
+  font-size: variables.em(13,16);
+  font-weight: variables.$normal;
+  pointer-events: none;
 }
 /*
 button.button-filter {
@@ -2326,6 +2441,7 @@ section.podnet .podnet-description {
   font-size: variables.em(18,16);
   font-weight: variables.$medium;
   line-height: variables.em(28,18);
+  overflow-wrap: anywhere;
 }
 section.podnet .podnet-pictures-con {
   display: flex;
@@ -2571,6 +2687,9 @@ section.podnet .podnet-discussion .duplicate {
 section.podnet .podnet-discussion .government {
   background: variables.$blue-light;
 }
+section.podnet .podnet-discussion .hidden-comment {
+  background: variables.$gray-light;
+}
 section.podnet .podnet-discussion .confirm-comment {
   background: variables.$green-light;
 }
@@ -2694,6 +2813,14 @@ section.podnet .podnet-discussion figure.small-picture .lens-image {
 section.podnet .podnet-discussion .comment-content {
   font-family: variables.$general;
   font-size: variables.em(18,16);
+  font-weight: variables.$normal;
+  line-height: variables.em(28,18);
+}
+section.podnet .podnet-discussion .comment-hidden-notice {
+  color: variables.$black-light;
+  font-family: variables.$general;
+  font-size: variables.em(18,16);
+  font-style: italic;
   font-weight: variables.$normal;
   line-height: variables.em(28,18);
 }
@@ -3495,3 +3622,13 @@ footer .footer-nav-bottom {
 // 1600px
 @include meta.load-css("_100em.scss");
 
+
+// Náhľad podnetu cez podpísaný odkaz (Triage, Backoffice)
+.issue-preview-notice {
+  margin-bottom: 20px;
+}
+// hlasovanie pri komentároch je v náhľade len na čítanie
+section.podnet .like-dislike-con button.button-share:disabled {
+  cursor: default;
+  fill: transparent;
+}

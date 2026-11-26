@@ -14,5 +14,7 @@ class Issues::Draft::GenerateSuggestionsJob < ApplicationJob
       messages: [ "" ] + draft.photos,
       system_prompt: Ai::Prompt.get("generatesuggestions")
     )
+  rescue Gemini::Error
+    []
   end
 end

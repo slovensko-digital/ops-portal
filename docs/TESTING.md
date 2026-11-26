@@ -65,11 +65,16 @@ unsubscribe headers where they apply.
 
 ## External services
 
-We never call Zammad, Discourse, Gemini, Nominatim or Overpass from tests.
+We never call Zammad, Discourse, Gemini or Nominatim from tests.
 `WebMock` blocks all outbound HTTP (`test_helper.rb`). Stub the exact request
 with `stub_request` and a JSON fixture under `test/fixtures/files/webmock/`,
 then assert the request was made with `assert_requested` when the request
 itself is the point of the test.
+
+For the triage Zammad use `stub_zammad(:get, "tickets/42", fixture:
+"zammad/ticket_resolution")` from `test/test_helpers/zammad_helper.rb`
+(fixtures in `test/fixtures/files/webmock/zammad/`). Test `ZammadApiClient`
+through its public methods against these stubs, not by faking the gem.
 
 ## Conventions
 

@@ -1,22 +1,20 @@
 <div class="form-item-wrapper">
-  <label for="<%= autocomplete.control.label %>"><%= autocomplete.control.label %></label>
+  <% filter_id = "filter-#{autocomplete.control.label.to_s.parameterize}" %>
+  <label for="<%= filter_id %>"><%= autocomplete.control.label %></label>
 
   <div class="autocomplete-wrapper"
-       data-controller="autocomplete toggle"
-       data-autocomplete-none-class="none"
+       data-controller="autocomplete"
        data-action="
-        focusin->toggle#show
-        input->autocomplete#filter
-        keydown.enter->autocomplete#enter">
+        keydown.esc@window->autocomplete#closeOnEscape
+        click@window->autocomplete#closeOnOutsideClick">
     <input
       data-autocomplete-target="input"
+      data-action="focusin->autocomplete#open input->autocomplete#filter keydown.enter->autocomplete#enter"
       placeholder="<%= autocomplete.items.select(&:selected?).map(&:label).join(', ') %>"
-      id="<%= autocomplete.control.label %>"
+      id="<%= filter_id %>"
       autocomplete="off" />
 
     <ul class="dropdown-list none"
-        data-toggle-target="toggleable"
-        data-toggle-class="none"
         data-autocomplete-target="list" >
       <% autocomplete.items.each do |item| %>
         <li
@@ -35,5 +33,7 @@
         </li>
       <% end %>
     </ul>
+
+    <div class="dropdown-not-found none" data-autocomplete-target="empty" role="status">Nič sme nenašli.</div>
   </div>
 </div>

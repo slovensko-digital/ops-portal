@@ -61,6 +61,16 @@ sk:
     messages:
       blank: "je povinná položka"
       accepted: "musíte súhlasiť"
+      outside_editing_window: "Komentár je možné upravovať len %{duration} od jeho vytvorenia."
+    editing_window:
+      minutes:
+        one: "1 minútu"
+        few: "%{count} minúty"
+        other: "%{count} minút"
+      seconds:
+        one: "1 sekundu"
+        few: "%{count} sekundy"
+        other: "%{count} sekúnd"
 
   activerecord:
     errors:
@@ -93,6 +103,14 @@ sk:
           attributes:
             responsible_subject:
               other_than: "nesmie byť totožný s aktuálnym subjektom"
+        issues/user_comment:
+          attributes:
+            text:
+              too_long: je príliš dlhý (maximálne %{count} znakov)
+        issues/responsible_subject_comment:
+          attributes:
+            text:
+              too_long: je príliš dlhý (maximálne %{count} znakov)
         user:
           confirmation: "je nesprávny"
           attributes:

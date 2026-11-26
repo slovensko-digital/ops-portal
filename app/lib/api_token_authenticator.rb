@@ -28,6 +28,6 @@ class ApiTokenAuthenticator
     # TODO use JTI
     # raise JWT::InvalidJtiError unless Token.write("#{sub}-#{jti}", "1", expires_in: MAX_EXP_IN, namespace: "api-jti")
 
-    Client.find(sub)
+    Client.active.find(sub)
   end
 end

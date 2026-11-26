@@ -7,5 +7,5 @@ module ApiEnvironment
       )
   end
 
-  USER_PUBLIC_KEY_READER = ->(sub) { OpenSSL::PKey::EC.new(Client.find(sub).api_token_public_key) }
+  USER_PUBLIC_KEY_READER = ->(sub) { OpenSSL::PKey::EC.new(Client.active.find(sub).api_token_public_key) }
 end

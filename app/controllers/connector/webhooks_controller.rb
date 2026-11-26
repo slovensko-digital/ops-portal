@@ -29,7 +29,7 @@ class Connector::WebhooksController < ActionController::API
   end
 
   def set_tenant
-    @tenant = Connector::Tenant.active.find_by(ops_api_subject_identifier: data.require(:subject_id))
+    @tenant = Connector::Tenant.active.find_by!(ops_api_subject_identifier: data.require(:subject_id))
   end
 
   def authenticate

@@ -4,13 +4,13 @@
 # Table name: responsible_subjects_categories
 #
 #  id                     :bigint           not null, primary key
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
 #  issues_category_id     :bigint
 #  issues_subcategory_id  :bigint
 #  issues_subtype_id      :bigint
 #  legacy_id              :integer
 #  responsible_subject_id :bigint
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
 #
 class ResponsibleSubjects::Category < ApplicationRecord
   belongs_to :responsible_subject, optional: true

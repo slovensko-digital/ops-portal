@@ -32,7 +32,17 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
 
     get relevant_issues_url
 
-    assert_redirected_to issues_url(obec: user.municipality.name)
+    assert_redirected_to issues_url(lokalita: [ user.municipalities.first!.name ])
+  end
+
+  test "should redirect citizen user to followed municipalities, then districts" do
+    user = users(:one)
+    user.municipality_districts << municipality_districts(:Petržalka)
+
+    post "/login", params: { email: user.email, password: "password" }
+    get relevant_issues_url
+
+    assert_redirected_to issues_url(lokalita: [ user.municipalities.first!.name, "Bratislava-Petržalka" ])
   end
 
   test "should redirect anonymous user to all issues" do
@@ -41,21 +51,109 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to issues_url
   end
 
-  test "last visited municipality is remembered for relevant issues" do
-    get issues_url(obec: "Nitra", cast: "")
+  test "last visited localities are remembered for relevant issues" do
+    get issues_url(lokalita: [ "Nitra" ])
     get relevant_issues_url
 
-    assert_redirected_to issues_url(obec: "Nitra", cast: nil)
+    assert_redirected_to issues_url(lokalita: [ "Nitra" ])
+  end
+
+  test "current lokalita values are not redirected" do
+    get issues_url(lokalita: [ "Bratislava-Petržalka", "Nitra" ])
+
+    assert_response :success
+  end
+
+  test "legacy obec param redirects to lokalita" do
+    get issues_url(obec: "Nitra")
+
+    assert_redirected_to issues_url(lokalita: [ "Nitra" ])
+    assert_response :moved_permanently
+  end
+
+  test "legacy obec and cast params redirect to lokalita and keep other params" do
+    get issues_url(obec: "Bratislava", cast: "Staré Mesto", stav: "V riešení", tab: "stats")
+
+    assert_redirected_to issues_url(lokalita: [ "Bratislava-Staré Mesto" ], stav: "V riešení", tab: "stats")
+  end
+
+  test "legacy obec array redirects to multiple lokalita values" do
+    get issues_url(obec: [ "Nitra", "Trnava" ])
+
+    assert_redirected_to issues_url(lokalita: [ "Nitra", "Trnava" ])
+  end
+
+  test "legacy obec with multiple casts redirects to multiple lokalita values" do
+    get issues_url(obec: "Bratislava", cast: [ "Staré Mesto", "Ružinov" ])
+
+    assert_redirected_to issues_url(lokalita: [ "Bratislava-Staré Mesto", "Bratislava-Ružinov" ])
   end
 
   test "should ignore filter params of unexpected shape" do
     get "/dopyty?kategoria[foo]=bar&obec[foo]=bar&podkategoria[0][x]=y&q[a]=b"
+    assert_response :moved_permanently
+    assert_not_includes response.location, "obec"
+
+    follow_redirect!
     assert_response :success
-    assert_nil session[:last_municipality]
+    assert_nil session[:last_localities]
+  end
+
+  test "issue location links use lokalita" do
+    issue = issues(:two)
+
+    get issue_url(issue)
+
+    assert_select "a[href=?]", issues_path(lokalita: [ issue.municipality.name ])
+    assert_select "a[href*='obec=']", count: 0
   end
 
   test "should not show resolved_private issues" do
     get issue_url(issues(:resolved_private))
+    assert_response :not_found
+  end
+
+  # triage preview links
+
+  test "shows a hidden issue with a valid preview token" do
+    issue = issues(:one)
+
+    get issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
+    assert_response :success
+    assert_equal "noindex, nofollow", response.headers["X-Robots-Tag"]
+  end
+
+  test "shows a rejected or privately resolved issue with a valid preview token" do
+    issue = issues(:resolved_private)
+
+    get issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
+    assert_response :success
+  end
+
+  test "does not show a hidden issue with a wrong preview token" do
+    get issue_url(issues(:one), nahlad: "wrong")
+    assert_response :not_found
+
+    get issue_url(issues(:one), nahlad: IssuePreviewSigner.token(issues(:resolved_private)))
+    assert_response :not_found
+  end
+
+  test "a preview token does not make a public issue a preview" do
+    issue = issues(:two)
+
+    get issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
+    assert_response :success
+    assert_nil response.headers["X-Robots-Tag"]
+  end
+
+  test "a preview token does not allow editing" do
+    issue = issues(:one)
+
+    get edit_issue_url(issue, nahlad: IssuePreviewSigner.token(issue))
+
     assert_response :not_found
   end
 
@@ -94,5 +192,21 @@ class IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, feature.dig("properties", "count")
     assert feature.dig("properties").key?("min_latitude")
     assert_nil feature.dig("properties", "title")
+  end
+
+  test "geo responds with GeoJSON to a browser-like request without a format" do
+    get geo_issues_url(bbox: "16.9,48.0,17.3,48.3", z: 12),
+      headers: { "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" }
+
+    assert_response :success
+    assert_equal "application/json", response.media_type
+    assert_equal "FeatureCollection", response.parsed_body["type"]
+  end
+
+  test "filter button shows the number of active filters" do
+    get issues_url(lokalita: [ "Bratislava", "Nitra" ], obdobie: "Tento rok")
+
+    assert_select "button.button-filter[aria-label=?]", "Filter, aktívne filtre: 3"
+    assert_select "button.button-filter .filter-count", text: "3"
   end
 end

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>0 · Dnes | Prototyp</title>
+  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="assets/proto.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+<nav class="proto-bar"><a href="/explorations">Explorations</a><a href="index.html"><strong>Prototyp · Preferované lokality</strong></a><a href="0-current.html" aria-current=page>0 · Dnes</a><a href="a-chips-above.html">A · Štítky nad poľom</a><a href="a2-filter-pills.html">A2 · Pilulky ako vo filtri</a><a href="a3-filter-pills-muted.html">A3 · Pilulky, obec sivou</a><a href="a4-filter-pills-district.html">A4 · Pilulky, len časť</a><a href="b-tags-inside.html">B · Štítky v poli</a><a href="c-selected-list.html">C · Zoznam pod poľom</a><a href="d-summary-rows.html">D · Súhrn a úprava</a></nav>
+<div class="proto-page">
+  <div class="proto-note"><strong>0 · Dnes</strong> — Pôvodné správanie: výber je len v placeholdri, po dvoch položkách „a ďalšie“.<ul><li>Repro problému: 6 vybraných lokalít, vidno 2.</li><li>Odznačiť sa dá len nájdením položky v zozname.</li><li>Správanie 1:1 ako v produkcii (bez Esc, text pri zatvorení ostáva).</li></ul></div>
+
+  <section class="forms-container report">
+    <h1>Osobné údaje</h1>
+    <form data-controller="payload" data-action="submit->payload#show">
+      <div class="form-other-con">
+        <div class="form-items-con">
+          <div class="form-item-wrapper">
+            <label for="user_name">Meno*</label>
+            <input type="text" id="user_name" name="user[name]" value="Jana Nováková">
+          </div>
+        </div>
+
+        <div class="form-items-con">
+          <input type="hidden" name="user[municipality_ids][]" value="">
+          <input type="hidden" name="user[municipality_district_ids][]" value="">
+
+<div class="form-item-wrapper" data-controller="current"
+     data-action="keydown.enter->current#enter click@window->current#close">
+  <label for="preferred_places">Preferované mestá alebo obce</label>
+  <div class="autocomplete-wrapper">
+    <input type="text" class="form-input" id="preferred_places" autocomplete="off"
+           data-current-target="input" data-action="focusin->current#open input->current#filter">
+    <ul class="dropdown-list none" data-current-target="list" data-places-list="current"></ul>
+  </div>
+</div>
+          <div class="form-notice">
+            Vyhľadajte a zaškrtnite si mestá a mestské časti, z ktorých chcete vidieť najviac podnetov a dostávať novinky.
+          </div>
+        </div>
+
+        <div class="form-items-con">
+          <div class="form-description">Chcete dostávať emailové notifikácie k&nbsp;podnetom?</div>
+          <div class="form-radio-button-wrapper">
+            <div class="form-radio-button-con">
+              <input type="radio" id="en_true" name="user[email_notifiable]" value="true" checked>
+              <label for="en_true">Áno</label>
+            </div>
+            <div class="form-radio-button-con">
+              <input type="radio" id="en_false" name="user[email_notifiable]" value="false">
+              <label for="en_false">Nie</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input type="submit" class="button" value="Uložiť">
+      <pre class="proto-payload none" data-payload-target="output"></pre>
+    </form>
+  </section>
+</div>
+</body>
+</html>

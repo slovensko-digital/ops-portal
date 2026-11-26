@@ -1,0 +1,168 @@
+#!/usr/bin/env ruby
+# Sets up the seeded inactive municipalities of a fresh local portal in the local Triage, the way production
+# onboards a municipality. Run it once after bin/ops up on a fresh Triage, or after bin/ops reset
+# (see "Seeded data" in README.md):
+#
+#   1. checks that the local Triage is up and that TRIAGE_ZAMMAD_ADMIN_API_TOKEN works, asks for the
+#      token when it doesn't, and that the seeds left inactive municipalities, before anything is changed
+#      (Bratislava is seeded active, Banská Bystrica, Trnava, Nitra, Malacky and Pezinok inactive)
+#   2. bin/rails municipality_boundaries:download_and_import_municipalities (from the local geojson file), the
+#      activations find a municipality's boundary by it, then download_and_import_districts (Bratislava's city
+#      parts from the Overpass API), which only warns when Overpass fails, the activations don't need it
+#   3. bin/rails responsible_subjects:activate_basic EXISTING_MUNICIPALITY=1 for every inactive municipality
+#      creates its Triage setup for the volunteer and activates it, see docs/how-it-works/08-onboarding.md.
+#      A municipality whose local Backoffice (config/local_backoffices.yml) answers becomes PRO instead: Malacky by
+#      bin/rails responsible_subjects:activate_pro EXISTING_MUNICIPALITY=1, Trnava is activated as BASIC first and
+#      upgraded by bin/rails responsible_subjects:upgrade_to_pro, so the upgrade is tested too
+#   4. gives the Triage admin (the token's user) full access to every group, so they can open any ticket without
+#      logging in as the volunteer
+#   5. checks that each of these Backoffices runs with the portal's ids (.env.<instance> in ../ops-backoffice-saas),
+#      runs dev/up there for one that doesn't, e.g. Trnava gets tenant 1 when only its Backoffice answers
+#
+# Then start bin/dev. New issues in the activated municipalities go to the volunteer in Triage. The seeded
+# issues stay only in the portal, the seeds don't send them to Triage.
+require "bundler/setup"
+require "dotenv"
+require "io/console"
+require "json"
+require "net/http"
+require "yaml"
+
+APP_ROOT = File.expand_path("..", __dir__)
+# created by dev/setup_users.rb in ops-triage-zammad
+TRIAGE_AGENT_EMAIL = "dobrovolnik@example.org"
+LOCAL_BACKOFFICES = YAML.load_file(File.join(APP_ROOT, "config/local_backoffices.yml")).freeze
+BACKOFFICE_DIR = File.expand_path("../ops-backoffice-saas", APP_ROOT)
+
+def run!(*command)
+  puts "\n== #{command.join(" ")}"
+  system(*command, exception: true)
+end
+
+def backoffice_url(backoffice) = "http://localhost:#{8080 + backoffice["slot"]}/"
+
+def backoffice_answers?(backoffice)
+  Net::HTTP.get_response(URI.join(backoffice_url(backoffice), "api/v1/signshow")).is_a?(Net::HTTPSuccess)
+rescue StandardError
+  false
+end
+
+# .env.<instance>, written by dev/up, has these ids
+def started_with?(backoffice, responsible_subject_id, tenant_id)
+  env = File.read(File.join(BACKOFFICE_DIR, ".env.#{backoffice["instance"]}")).lines(chomp: true)
+  env.include?("OPS_RESPONSIBLE_SUBJECT_ID=#{responsible_subject_id}") && env.include?("WEBHOOK_TENANT_ID=#{tenant_id}")
+rescue Errno::ENOENT
+  false
+end
+
+def triage_get(path, token)
+  uri = URI.join(ENV.fetch("TRIAGE_ZAMMAD_URL"), "api/v1/#{path}")
+  Net::HTTP.get_response(uri, "Authorization" => "Token token=#{token}")
+rescue SystemCallError, Net::OpenTimeout
+  abort "Triage is not running at #{ENV.fetch("TRIAGE_ZAMMAD_URL")}, start it: cd ../ops-triage-zammad && docker compose up -d"
+end
+
+def triage_put(path, token, body)
+  uri = URI.join(ENV.fetch("TRIAGE_ZAMMAD_URL"), "api/v1/#{path}")
+  request = Net::HTTP::Put.new(uri, "Authorization" => "Token token=#{token}", "Content-Type" => "application/json")
+  request.body = body.to_json
+  response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") { _1.request(request) }
+  abort "Triage rejected PUT #{path}: #{response.code} #{response.body}" unless response.is_a?(Net::HTTPSuccess)
+end
+
+def give_admin_all_groups(token)
+  admin = JSON.parse(triage_get("users/me", token).body)
+  group_ids = JSON.parse(triage_get("groups", token).body).to_h { [ _1["id"].to_s, [ "full" ] ] }
+  triage_put("users/#{admin["id"]}", token, group_ids: group_ids)
+  puts "\n== Triage admin #{admin["email"]} has full access to all #{group_ids.size} groups"
+end
+
+def triage_accepts?(token)
+  !token.empty? && triage_get("users/me", token).is_a?(Net::HTTPSuccess)
+end
+
+def ask_for_token
+  abort "TRIAGE_ZAMMAD_ADMIN_API_TOKEN does not work, set it in .env" unless $stdin.tty?
+
+  print "Triage admin API token (ADMIN_API_TOKEN in ops-triage-zammad/.env.sample): "
+  token = $stdin.noecho(&:gets).to_s.strip
+  puts
+  token
+end
+
+$stdout.sync = true
+
+Dir.chdir APP_ROOT do
+  Dotenv.load
+
+  puts "== Checking the local Triage at #{ENV.fetch("TRIAGE_ZAMMAD_URL")}"
+  token = ENV["TRIAGE_ZAMMAD_ADMIN_API_TOKEN"].to_s
+  token = ask_for_token unless triage_accepts?(token)
+  abort "Triage rejects the token" unless triage_accepts?(token)
+  # the bin/rails commands below inherit it, it wins over .env
+  ENV["TRIAGE_ZAMMAD_ADMIN_API_TOKEN"] = token
+
+  unless triage_get("users/search?query=#{TRIAGE_AGENT_EMAIL}", token).body.include?(TRIAGE_AGENT_EMAIL)
+    abort "Triage has no volunteer #{TRIAGE_AGENT_EMAIL}, update ops-triage-zammad and run docker compose up -d there"
+  end
+
+  municipalities = IO.popen([ "bin/rails", "runner", <<~RUBY ], &:readlines).map { _1.chomp.split("\t") }
+    Municipality.where(active: false, archived: false).order(:name).each { puts [ _1.name, _1.name.parameterize ].join("\t") }
+  RUBY
+  abort "No inactive municipalities to activate, seed a fresh database first: bin/rails db:reset" if municipalities.empty?
+
+  backoffices = LOCAL_BACKOFFICES.select { municipalities.map(&:first).include?(_1["name"]) }
+  pro, basic = backoffices.partition { backoffice_answers?(_1) }
+  pro.each { puts "== #{_1["name"]} becomes PRO, its local Backoffice answers at #{backoffice_url(_1)}" }
+  basic.each { puts "== #{_1["name"]} stays BASIC, no local Backoffice answers at #{backoffice_url(_1)} (bin/ops up --backoffices=...)" }
+  backoffices = pro
+
+  run! "bin/rails", "municipality_boundaries:download_and_import_municipalities"
+  begin
+    run! "bin/rails", "municipality_boundaries:download_and_import_districts"
+  rescue RuntimeError
+    puts "\n== The city part boundaries were not imported, the activations go on without them. " \
+      "Import them later: bin/rails municipality_boundaries:download_and_import_districts"
+  end
+
+  municipalities.each do |name, slug|
+    backoffice = backoffices.find { _1["name"] == name }
+    backoffice_arguments = [
+      "BACKOFFICE_URL=#{backoffice_url(backoffice)}",
+      "BACKOFFICE_API_TOKEN=#{backoffice["api_token"]}",
+      "BACKOFFICE_WEBHOOK_SECRET=#{backoffice["webhook_secret"]}"
+    ] if backoffice
+
+    if backoffice && !backoffice["upgrade"]
+      run! "bin/rails", "responsible_subjects:activate_pro", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
+        "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}", *backoffice_arguments
+      next
+    end
+
+    run! "bin/rails", "responsible_subjects:activate_basic", "EXISTING_MUNICIPALITY=1", "NAME=#{name}",
+      "USERS=podatelna@#{slug}.example.com,jan.novak@#{slug}.example.com", "TRIAGE_ZAMMAD_AGENT_EMAIL=#{TRIAGE_AGENT_EMAIL}"
+    run! "bin/rails", "responsible_subjects:upgrade_to_pro", "NAME=#{name}", "YES=1", *backoffice_arguments if backoffice
+  end
+
+  give_admin_all_groups(token)
+
+  ids = IO.popen([ "bin/rails", "runner", <<~RUBY ], &:readlines).to_h { _1.chomp.split("\t", 2) }
+    #{backoffices.map { _1["name"] }.inspect}.each do |name|
+      puts [ name, ResponsibleSubject.find_by!(subject_name: name).id, Connector::Tenant.find_by!(name: name).id ].join("\t")
+    end
+  RUBY
+  # PRO municipalities: their Backoffice started before with the fixed ids of config/local_backoffices.yml
+  backoffices.each do |backoffice|
+    responsible_subject_id, tenant_id = ids.fetch(backoffice["name"]).split("\t")
+    next if started_with?(backoffice, responsible_subject_id, tenant_id)
+
+    puts "\n== The Backoffice #{backoffice["instance"]} runs with other ids than the portal's " \
+      "(responsible subject #{responsible_subject_id}, tenant #{tenant_id}), starting it again with them"
+    Dir.chdir(BACKOFFICE_DIR) do
+      run! "dev/up", backoffice["instance"], backoffice["slot"].to_s, backoffice["name"], responsible_subject_id, tenant_id,
+        backoffice["api_token"], backoffice["webhook_secret"]
+    end
+  end
+
+  puts "\n== Done, activated: #{municipalities.map(&:first).join(", ")}. Start bin/dev."
+end

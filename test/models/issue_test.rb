@@ -39,13 +39,24 @@ class IssueTest < ActiveSupport::TestCase
     assert issue.viewable_by?(users(:two))
   end
 
-  test "only the author can edit and only while the issue is waiting" do
+  test "only the author can edit and only while the issue is waiting or waiting for author" do
     issue = issues(:one) # waiting, author users(:one)
-    assert issue.editable_by?(users(:one))
-    assert_not issue.editable_by?(users(:two))
 
-    issue.update_columns(state_id: issues_states(:in_progress).id)
-    assert_not issue.reload.editable_by?(users(:one))
+    %i[waiting waiting_for_author].each do |state_key|
+      issue.update_columns(state_id: issues_states(state_key).id)
+
+      assert issue.reload.editable?, "expected issue to be editable in #{state_key}"
+      assert issue.editable_by?(users(:one)), "expected author to be able to edit in #{state_key}"
+      assert_not issue.editable_by?(users(:two)), "expected non-author not to be able to edit in #{state_key}"
+    end
+
+    %i[in_progress sent_to_responsible referred unresolved rejected closed
+     marked_as_resolved resolved resolved_private duplicate archived].each do |state_key|
+      issue.update_columns(state_id: issues_states(state_key).id)
+
+      assert_not issue.reload.editable?, "expected issue not to be editable in #{state_key}"
+      assert_not issue.editable_by?(users(:one)), "expected author not to be able to edit in #{state_key}"
+    end
   end
 
   test "state predicates" do
@@ -152,5 +163,35 @@ class IssueTest < ActiveSupport::TestCase
     assert_no_enqueued_jobs do
       praise.update!(state: issues_states(:resolved))
     end
+  end
+
+  test "hidden private comment shows as hidden to the author only while the issue is in triage" do
+    issue = issues(:one)
+    issue.update_columns(resolution_external_id: nil)
+    comment = Issues::UserPrivateComment.create!(
+      text: "Komentár z triáže",
+      hidden: true,
+      user_author: users(:one),
+      activity: issue.comment_activities.create!
+    )
+
+    assert_includes issue.reload.visible_activity_objects, comment
+
+    issue.update_columns(resolution_external_id: 99)
+
+    assert_not_includes issue.reload.visible_activity_objects, comment
+  end
+
+  test "hidden public comment stays in the resolution process as a placeholder" do
+    issue = issues(:one)
+    issue.update_columns(resolution_external_id: 99)
+    comment = Issues::UserComment.create!(
+      text: "Verejný komentár",
+      hidden: true,
+      user_author: users(:one),
+      activity: issue.comment_activities.create!
+    )
+
+    assert_includes issue.reload.visible_activity_objects, comment
   end
 end

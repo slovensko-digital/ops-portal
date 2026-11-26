@@ -1,0 +1,45 @@
+# Bratislava with its city districts, the districts do not overlap
+bratislava:
+  boundary_kind: municipality
+  municipality_id: 1
+  boundary: "SRID=4326;POLYGON((17.0098 48.0347, 17.2098 48.0347, 17.2098 48.2347, 17.0098 48.2347, 17.0098 48.0347))"
+
+stare_mesto:
+  boundary_kind: district
+  municipality_id: 1
+  municipality_district_id: 1
+  boundary: "SRID=4326;POLYGON((17.0948 48.1197, 17.1248 48.1197, 17.1248 48.1497, 17.0948 48.1497, 17.0948 48.1197))"
+
+ruzinov:
+  boundary_kind: district
+  municipality_id: 1
+  municipality_district_id: 2
+  boundary: "SRID=4326;POLYGON((17.15 48.14, 17.18 48.14, 17.18 48.17, 17.15 48.17, 17.15 48.14))"
+
+# at the location of test/fixtures/files/graffiti-with-geo.jpg
+karlova_ves:
+  boundary_kind: district
+  municipality_id: 1
+  municipality_district_id: 8
+  boundary: "SRID=4326;POLYGON((17.0343 48.1481, 17.0643 48.1481, 17.0643 48.1781, 17.0343 48.1781, 17.0343 48.1481))"
+
+# district boundaries are imported per municipality, so an unmatched one still has its municipality
+bratislava_unmatched_district:
+  boundary_kind: district
+  municipality_id: 1
+  boundary: "SRID=4326;POLYGON((17.14 48.07, 17.16 48.07, 17.16 48.09, 17.14 48.09, 17.14 48.07))"
+
+trencin:
+  boundary_kind: municipality
+  municipality_id: 18
+  boundary: "SRID=4326;POLYGON((17.9908 48.8444, 18.0908 48.8444, 18.0908 48.9444, 17.9908 48.9444, 17.9908 48.8444))"
+
+banska_bystrica:
+  boundary_kind: municipality
+  municipality_id: 2
+  boundary: "SRID=4326;POLYGON((19.0962 48.6863, 19.1962 48.6863, 19.1962 48.7863, 19.0962 48.7863, 19.0962 48.6863))"
+
+# the point at 17.4501 48.5 lies almost on the edge, so it is simplified away when zoomed out
+unmatched_municipality:
+  boundary_kind: municipality
+  boundary: "SRID=4326;POLYGON((17.45 48.45, 17.4501 48.5, 17.45 48.55, 17.55 48.55, 17.55 48.45, 17.45 48.45))"

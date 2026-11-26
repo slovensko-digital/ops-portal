@@ -1,0 +1,1 @@
+{"candidates":[{"content":{"parts":[{"text":"[\n  {\n    \"action\": \"confirm\",\n    \"info\": \"Odstránenie vraku je komplikovaný proces a môže trvať dlhšie.\",\n    \"title\": \"Vrak\",\n    \"more_info\": \"javascript:alert(1)\"\n  }\n]"}],"role":"model"},"finishReason":"STOP"}],"modelVersion":"gemini-2.5-flash"}

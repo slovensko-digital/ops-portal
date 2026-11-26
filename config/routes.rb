@@ -21,7 +21,9 @@ Rails.application.routes.draw do
   namespace "api", defaults: { format: :json } do
     namespace "v1" do
       resources :issues, only: [ :index, :show, :update ] do
-        resources :activities, only: [ :show, :create ], controller: "issues/activities"
+        resources :activities, only: [ :show, :create ], controller: "issues/activities" do
+          resources :attachments, only: [ :show ], controller: "issues/activities/attachments"
+        end
         collection do
           get :search
         end
@@ -43,7 +45,7 @@ Rails.application.routes.draw do
     resources :issues_responsible_subject_changes, path: "odstupenie", module: :issues
 
     resources :issues_updates, path: "aktualizacie", module: :issues, controller: "issues_updates"
-    get :geo, on: :collection
+    get :geo, on: :collection, defaults: { format: :json }
   end
 
 
@@ -128,6 +130,10 @@ Rails.application.routes.draw do
 
   get "email-auth-request", to: "rodauth#email_auth_request", as: :email_auth_request
 
+  # We never use Active Storage direct uploads. The route trusts the client's content type,
+  # so it let anyone store arbitrary files as images in our bucket.
+  post "rails/active_storage/direct_uploads", to: ->(_env) { [ 404, {}, [] ] }
+
   # legacy urls redirects
   get "r/login", to:  redirect("/login")
   get "r/vsetky-podnety", to: redirect("/dopyty")
@@ -154,6 +160,11 @@ Rails.application.routes.draw do
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
+  if Rails.env.development?
+    get "explorations", to: redirect("/explorations/index.html")
+    mount Rack::Files.new(Rails.root.join("explorations"), "cache-control" => "no-store"), at: "/explorations"
+  end
+
   class GoodJobAdmin
     def self.matches?(request)
       user = request.env["rodauth"].rails_account
@@ -164,6 +175,10 @@ Rails.application.routes.draw do
 
   constraints(GoodJobAdmin) do
     mount GoodJob::Engine => "admin/good_job"
+
+    namespace :admin do
+      resources :municipality_boundaries, only: [ :index, :show ]
+    end
   end
 
   match "/404", to: "errors#render_404", via: :all

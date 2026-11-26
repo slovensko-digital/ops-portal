@@ -18,6 +18,13 @@ class ZammadApiClient
   OPS_PORTAL_ARTICLE_TAG = TriageZammadEnvironment::OPS_PORTAL_ARTICLE_TAG
   MARKED_AS_RESOLVED_TAGS = [ "[[vyriesene]]", "[[vyriešené]]", "[[vyrieseny]]", "[[vyriešený]]" ]
   REFERRED_TAGS = [ "[[odstupene]]", "[[odstúpené]]", "[[odstupeny]]", "[[odstúpený]]" ]
+  # a tag on its own line (e.g. from the ::ops / ::zodpovedny text modules) leaves an empty <div><br></div> behind
+  EMPTY_LINE = %r{\s|<br\s*/?>|<(div|p)\b[^>]*>(?:\s|&nbsp;|<br\s*/?>)*</\1>}i
+  LEADING_EMPTY_LINES = /\A(?:#{EMPTY_LINE})+/
+  TRAILING_EMPTY_LINES = /(?:#{EMPTY_LINE})+\z/
+  # line breaks at the start of the first line or the end of the last one, e.g. <div><br>Dobrý deň</div>
+  LEADING_BREAKS = %r{\A(<(?:div|p)\b[^>]*>)(?:\s|&nbsp;)*<br\s*/?>(?:\s|&nbsp;|<br\s*/?>)*}i
+  TRAILING_BREAKS = %r{(?:\s|&nbsp;|<br\s*/?>)*<br\s*/?>(?:\s|&nbsp;)*(</(?:div|p)>)\z}i
   AUTOMATED_EMAIL_SENDER_PATTERNS = [
     /\b(?:auto(?:mated)?[-_. ]?reply|bounce|do[-_. ]?not[-_. ]?reply|mailer-daemon|no[-_. ]?reply|postmaster)@/i
   ]
@@ -48,7 +55,7 @@ class ZammadApiClient
     @client = ZammadAPI::Client.new(url: url, http_token: http_token)
   end
 
-  def get_ticket(ticket_id, expand: false, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, responsible_subject: nil)
+  def get_ticket(ticket_id, expand: false, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, responsible_subject: nil, download_attachments: true)
     begin
       ticket = @client.ticket.find(ticket_id)
     rescue => e
@@ -76,12 +83,7 @@ class ZammadApiClient
               created_at: result[:created_at],
               updated_at: result[:updated_at],
               attachments: ticket.articles.first.attachments.map do |attachment|
-                {
-                  triage_identifier: attachment.id,
-                  filename: attachment.filename,
-                  content_type: attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"),
-                  data64: Base64.strict_encode64(attachment.download)
-                }
+                build_attachment_response(attachment, attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type"), download: download_attachments)
               end
             }
           ]
@@ -91,13 +93,14 @@ class ZammadApiClient
         return result unless expand
 
         result.merge({
-          activities: [ build_article_response(ticket, ticket.articles.first, allowed_article_types: allowed_article_types, first_article: true) ] +
+          activities: [ build_article_response(ticket, ticket.articles.first, allowed_article_types: allowed_article_types, first_article: true, download_attachments: download_attachments) ] +
             ticket.articles[1..].map { |article|
               build_article_response(
                 ticket,
                 article,
                 allowed_article_types: allowed_article_types,
-                responsible_subject: responsible_subject
+                responsible_subject: responsible_subject,
+                download_attachments: download_attachments
               )
             }.compact
         })
@@ -152,6 +155,7 @@ class ZammadApiClient
       state: state,
       ops_state: ops_state,
       portal_url: Rails.application.routes.url_helpers.issue_url(issue),
+      portal_preview_url: IssuePreviewSigner.url(issue),
       anonymous: issue.anonymous, # TODO add logic to handle legacy logic here (anonymous user)
       responsible_subject: issue.responsible_subject&.then { |s|
         { "label" => s.subject_name, "value" => s.id }
@@ -190,6 +194,13 @@ class ZammadApiClient
       issue_update.author.update!(external_id: create_customer!(issue_update.author))
     end
 
+    ops_state = "waiting"
+    state = "new"
+    if issue_update.resolves_issue? && issue_update.author == issue.author
+      ops_state = "accepted"
+      state = "closed"
+    end
+
     ticket = @client.ticket.create(
       number: issue_update.ticket_number,
       ops_issue_identifier: issue_update.id,
@@ -200,7 +211,8 @@ class ZammadApiClient
       owner: issue_ticket.owner,
       customer_id: issue_update.author&.external_id,
       origin_by_id: issue_update.author&.external_id,
-      ops_state: "waiting",
+      ops_state: ops_state,
+      state: state,
       portal_url: "#{Rails.application.routes.url_helpers.issue_url(issue)}\#komentar_#{issue_update.id}",
       issue_resolved: issue_update.resolves_issue? ? "yes" : "no",
       likes_count: issue_update.activity.likes_count,
@@ -243,6 +255,8 @@ class ZammadApiClient
         ticket.responsible_subject = value
       when "investment"
         ticket.investment = value
+      when "state"
+        ticket.state = value
       end
     end
 
@@ -251,10 +265,17 @@ class ZammadApiClient
 
   def sync_previous_responsible_subject!(ticket_id, previous_responsible_subject)
     ticket = @client.ticket.find(ticket_id)
-    unless previous_responsible_subject[:label] == ticket.responsible_subject[:label] && previous_responsible_subject[:value].to_s == ticket.responsible_subject[:value].to_s
-      ticket.previous_responsible_subject = previous_responsible_subject
-      ticket.save
-    end
+
+    value = {
+      label: previous_responsible_subject.subject_name,
+      value: previous_responsible_subject.id
+    }
+
+    return if value[:label] == ticket.responsible_subject[:label] &&
+              value[:value].to_s == ticket.responsible_subject[:value].to_s
+
+    ticket.previous_responsible_subject = value
+    ticket.save
   end
 
   def close_ticket!(ticket_id)
@@ -282,7 +303,7 @@ class ZammadApiClient
     ticket.subcategory = issue.subcategory&.name
     ticket.subtype = issue.subtype&.name
     ticket.likes_count = issue.likes_count
-    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.name, value: s.id } }
+    ticket.responsible_subject = issue.responsible_subject&.then { |s| { label: s.subject_name, value: s.id } } || {}
 
     ticket.save
 
@@ -361,13 +382,27 @@ class ZammadApiClient
     end
   end
 
-  def get_article(ticket_id, article_id, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, customer_articles: true, responsible_subject: nil)
+  def get_article(ticket_id, article_id, allowed_article_types: DEFAULT_ALLOWED_ARTICLE_TYPES, customer_articles: true, responsible_subject: nil, download_attachments: true)
     ticket, article = find_article(ticket_id, article_id)
     return unless ticket && article
 
-    result = build_article_response(ticket, article, allowed_article_types: allowed_article_types, responsible_subject: responsible_subject)
+    result = build_article_response(ticket, article, allowed_article_types: allowed_article_types, responsible_subject: responsible_subject, download_attachments: download_attachments)
     return unless result.present?
     result
+  end
+
+  # One call to triage, which itself checks that the attachment belongs to the article and the article to the ticket
+  def download_attachment(ticket_id, article_id, attachment_id)
+    url = File.join(@url, "api/v1/ticket_attachment", ticket_id.to_s, article_id.to_s, attachment_id.to_s)
+    response = Faraday.get(url, nil, "Authorization" => "Token token=#{@http_token}")
+    return if response.status.in?([ 403, 404 ])
+    raise "Request failed with status #{response.status}" unless response.status == 200
+
+    {
+      body: response.body,
+      content_type: response.headers["content-type"],
+      content_disposition: response.headers["content-disposition"]
+    }
   end
 
   def create_article!(ticket_id, activity_object, sender:)
@@ -379,6 +414,9 @@ class ZammadApiClient
       content_type: DEFAULT_ARTICLE_CONTENT_TYPE,
       body: activity_object.triage_activity_body.presence || "(bez popisu)",
       type: DEFAULT_ARTICLE_TYPE,
+      internal: activity_object.try(:hidden) || false,
+      # stored for a future Zammad UI patch, Zammad does not show it
+      preferences: { ai_evaluation: activity_object.try(:ai_evaluation).presence }.compact,
       attachments: activity_object.attachments.map do |attachment|
         {
           "filename" => attachment.filename,
@@ -471,6 +509,7 @@ class ZammadApiClient
     rescue RuntimeError => e
       raise e unless e.message.include?("Couldn't find User with")
       Rails.logger.info("Couldn't find user with id: #{user_id}")
+      nil
     end
   end
 
@@ -551,6 +590,74 @@ class ZammadApiClient
     @client.group.all.page(1, 500) { }
   end
 
+  def find_group_by_name(name)
+    get_groups.find { |group| group.name == name }
+  end
+
+  def create_group!(name, email_address_id:)
+    @client.group.create(
+      name: name,
+      email_address_id: email_address_id,
+      follow_up_possible: "yes",
+      follow_up_assignment: true,
+      active: true
+    ).id
+  end
+
+  def find_email_address(email)
+    raw_api_request(:get, "email_addresses").find { |address| address["email"].casecmp?(email) }
+  end
+
+  def find_role_by_name(name)
+    raw_api_request(:get, "roles").find { |role| role["name"] == name }
+  end
+
+  def add_group_to_role!(role_name, group_id)
+    role = find_role_by_name(role_name)
+    raise "Can't find triage zammad role: #{role_name}" unless role
+
+    raw_api_request(:put, "roles/#{role["id"]}", { group_ids: role["group_ids"].merge(group_id.to_s => [ "full" ]) })
+  end
+
+  def find_organization_by_name(name)
+    @client.organization.search(query: name).page(1, 100) { }.find { |organization| organization.name == name }
+  end
+
+  def create_organization!(name)
+    @client.organization.create(name: name, shared: false, domain_assignment: false, vip: false, active: true).id
+  end
+
+  def get_organization(organization_id)
+    raw_api_request(:get, "organizations/#{organization_id}")
+  end
+
+  # Zammad refuses while users or tickets still belong to the organization
+  def delete_organization!(organization_id)
+    raw_api_request(:delete, "organizations/#{organization_id}")
+  end
+
+  def update_user!(user_id, attributes)
+    raw_api_request(:put, "users/#{user_id}", attributes)
+  end
+
+  def find_user_by_email(email)
+    @client.user.search(query: email).page(1, 100) { }.find { |user| user.email.to_s.casecmp?(email) }
+  end
+
+  def create_user!(email:, firstname:, lastname:, roles:, organization: nil)
+    @client.user.create(
+      { firstname: firstname, lastname: lastname, login: email, email: email, organization: organization, roles: roles }.compact
+    ).id
+  end
+
+  def get_triggers
+    raw_api_request(:get, "triggers")
+  end
+
+  def create_trigger!(attributes)
+    raw_api_request(:post, "triggers", attributes)["id"]
+  end
+
   def find_ticket_responsible_subject(ticket_id)
     @client.ticket.find(ticket_id).responsible_subject
   end
@@ -617,7 +724,7 @@ class ZammadApiClient
     @client.user.search(query: query).first
   end
 
-  def build_author_response(article_type, author, zammad_api_client: TriageZammadEnvironment.client.client)
+  def build_author_response(article_type, author)
     return DEFAULT_OPS_ADMIN_USER if [ :agent_portal_comment, :agent_portal_and_backoffice_comment, :agent_backoffice_comment ].include?(article_type)
 
     return unless author
@@ -636,7 +743,7 @@ class ZammadApiClient
         }
       end
     elsif article_type == :responsible_subject_portal_and_backoffice_comment
-      responsible_subject = zammad_api_client.user.find(author.external_id)
+      responsible_subject = @client.user.find(author.external_id)
       if responsible_subject.nil?
         Rails.logger.warn("Responsible subject with id: #{author.external_id} not found in Triage Zammad")
         nil
@@ -704,12 +811,13 @@ class ZammadApiClient
       address_house_number: ticket.address_house_number,
       likes_count: ticket.likes_count,
       portal_url: ticket.portal_url,
+      portal_preview_url: ticket.portal_preview_url,
       created_at: ticket.created_at,
       updated_at: ticket.updated_at
     }
   end
 
-  def build_article_response(ticket, article, allowed_article_types:, responsible_subject: nil, first_article: false)
+  def build_article_response(ticket, article, allowed_article_types:, responsible_subject: nil, first_article: false, download_attachments: true)
     article_type = get_article_type(article, ticket.process_type)
     return unless first_article || allowed_article_types.include?(article_type)
 
@@ -761,22 +869,26 @@ class ZammadApiClient
       updated_at: article.updated_at,
       attachments: article.attachments.map do |attachment|
         content_type = attachment.preferences.dig(:"Mime-Type") || attachment.preferences.dig(:"Content-Type")
-        {
-          triage_identifier: attachment.id,
-          filename: attachment.filename,
-          content_type: content_type,
-          data64: Base64.strict_encode64(attachment.download)
-        } unless content_type == "text/html"
+        build_attachment_response(attachment, content_type, download: download_attachments) unless content_type == "text/html"
       end.compact
     }
   end
 
-  def strip_tags_from_article_body(body)
-    tags = MARKED_AS_RESOLVED_TAGS + REFERRED_TAGS + [ RESPONSIBLE_SUBJECT_ARTICLE_TAG, OPS_PORTAL_ARTICLE_TAG ]
-    body.gsub(Regexp.union(tags), "").strip
+  def build_attachment_response(attachment, content_type, download:)
+    response = { triage_identifier: attachment.id, filename: attachment.filename, content_type: content_type }
+    response[:data64] = Base64.strict_encode64(attachment.download) if download
+    response
   end
 
-  def get_article_type(article, process_type, zammad_api_client: @client)
+  def strip_tags_from_article_body(body)
+    tags = MARKED_AS_RESOLVED_TAGS + REFERRED_TAGS + [ RESPONSIBLE_SUBJECT_ARTICLE_TAG, OPS_PORTAL_ARTICLE_TAG ]
+    body.gsub(Regexp.union(tags), "")
+      .sub(LEADING_EMPTY_LINES, "").sub(TRAILING_EMPTY_LINES, "")
+      .sub(LEADING_BREAKS, "\\1").sub(TRAILING_BREAKS, "\\1")
+      .strip
+  end
+
+  def get_article_type(article, process_type)
     return if article.internal
     return :system_note if article.sender == "System"
 
@@ -789,7 +901,7 @@ class ZammadApiClient
     when "portal_issue_resolution"
       return :unknown_user_portal_comment if article.sender == "Customer" && article.origin_by_id == nil && article.created_by_id == ENV.fetch("TRIAGE_ZAMMAD_TECH_USER_ID").to_i
 
-      article_author = zammad_api_client.user.find(article.origin_by_id || article.created_by_id)
+      article_author = @client.user.find(article.origin_by_id || article.created_by_id)
       return :user_portal_comment if article.sender == "Customer" && article_author&.origin == "portal"
 
       if article.sender == "Customer" && responsible_subject_article_author?(article_author)
@@ -824,12 +936,13 @@ class ZammadApiClient
   def automated_email?(article)
     return false unless article.type == "email"
 
-    preferences = article.respond_to?(:preferences) ? article.preferences : {}
-    auto_submitted = preferences&.[]("Auto-Submitted") || preferences&.[](:"Auto-Submitted")
-    return true if [ "auto-generated", "auto-replied" ].include?(auto_submitted.to_s.downcase)
+    # Zammad's Channel::Filter::AutoResponseCheck turns headers like Auto-Submitted into this flag;
+    # the zammad_api gem symbolizes the keys
+    preferences = article.preferences || {}
+    return true if preferences[:"is-auto-response"] == true
 
-    sender = article.respond_to?(:from) ? article.from.to_s : ""
-    subject = article.respond_to?(:subject) ? article.subject.to_s : ""
+    sender = article.from.to_s
+    subject = article.subject.to_s
 
     AUTOMATED_EMAIL_SENDER_PATTERNS.any? { |pattern| sender.match?(pattern) } ||
       AUTOMATED_EMAIL_SUBJECT_PATTERNS.any? { |pattern| subject.match?(pattern) }

@@ -1,4 +1,5 @@
 <section class="podnet" data-controller="zoombox">
+  <%= render partial: "issues/preview_notice" if issue_preview? %>
   <div class="podnet-con">
     <!-- Podnet Description & Pictures -->
     <%= turbo_frame_tag issue, :edit do %>
@@ -38,13 +39,17 @@
         </div>
 
         <div class="share-buttons">
-          <% if current_user.can_edit?(issue) %>
+          <% if can_edit_issue?(issue) %>
             <%= button_to "Upraviť", edit_issue_path(issue), method: :get, class: "button button-transparent button-edit" %>
           <% end %>
-          <%= render partial: "issue_subscriptions/button" %>
-          <%= render partial: "issue_likes/button" %>
+          <% if issue_actions_allowed? %>
+            <%= render partial: "issue_subscriptions/button" %>
+          <% end %>
+          <% if can_like_issue?(issue) %>
+            <%= render partial: "issue_likes/button" %>
+          <% end %>
 
-          <% unless issue.editable? %>
+          <% if can_share_issue?(issue) %>
             <%= render partial: "issues/share_issue_om_social_media", locals: { issue: issue } %>
           <% end %>
         </div>
@@ -117,10 +122,10 @@
         <div class="information-wrapper">
           <div class="label">Poloha:</div>
           <div class="value-con">
-            <% if issue.address_street.present? %><%= link_to issue.address_street, issues_path(ulica: issue.address_street, cast: issue.municipality_district&.name, obec: issue.municipality&.name), class: "value" %><% end %>
-            <% if issue.municipality_district %><%= link_to issue.municipality_district.name, issues_path(cast: issue.municipality_district.name, obec: issue.municipality.name), class: "value" %>
+            <% if issue.address_street.present? %><%= link_to issue.address_street, search_issues_path(lokalita: issue.municipality_district || issue.municipality, ulica: issue.address_street), class: "value" %><% end %>
+            <% if issue.municipality_district %><%= link_to issue.municipality_district.name, search_issues_path(lokalita: issue.municipality_district), class: "value" %>
             <% end %>
-            <%= link_to issue.municipality.name, issues_path(obec: issue.municipality.name), class: "value" %>
+            <%= link_to issue.municipality.name, search_issues_path(lokalita: issue.municipality), class: "value" %>
           </div>
           <div class="map" data-controller="map" data-map-latitude-value="<%= issue.latitude %>" data-map-longitude-value="<%= issue.longitude %>">
             <div data-map-target="map"></div>
@@ -149,7 +154,9 @@
           <% end %>
         <% end %>
 
-        <% if logged_in? %>
+        <% if !issue_actions_allowed? %>
+          <%# read-only preview, no discussion form %>
+        <% elsif logged_in? %>
           <% if issue.discussion_closed? %>
             <div class="unverified-notice-con">
               <div class="unverified-notice-title">Diskusia k tomuto podnetu bola uzatvorená.</div>

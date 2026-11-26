@@ -1,5 +1,5 @@
 <%= turbo_frame_tag comment do %>
-  <div class="<%= class_names("comment", government: comment.responsible_subject?, duplicate: comment.duplicate?) %>" id="komentar_<%= comment.id %>">
+  <div class="<%= class_names("comment", government: comment.responsible_subject?, duplicate: comment.duplicate?, "hidden-comment": comment.hidden?) %>" id="komentar_<%= comment.id %>">
     <div class="comment-header">
       <% if comment.edited? %>
         <div class="edit-comment-notice">Komentár bol upravený</div>
@@ -10,61 +10,70 @@
       </div>
     </div>
     <div class="date"><%= l comment.created_at.to_date %></div>
-    <% if comment.text.present? %>
-      <turbo-frame target="_top">
-        <div class="comment-content">
-          <% if comment.legacy_data.blank? %>
-            <div class="prose">
-              <% if comment.responsible_subject? || comment.agent? %>
-                <%= simple_format(comment.text, {}, wrapper_tag: "div") %>
-              <% else %>
-                <%= simple_format(comment.text) %>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="comment-legacy">
-              <div class="comment-legacy-text">
-                <%# see legacy_id 85598 %>
-                <%= simple_format(comment.legacy_data["plain_message"].presence || comment.text) %>
+    <% if comment.hidden? %>
+      <div class="comment-hidden-notice">
+        <div>Tento komentár bol skrytý.</div>
+        <% if comment.hidden_reason %>
+          <div>Dôvod: <%= comment.hidden_reason %></div>
+        <% end %>
+      </div>
+    <% else %>
+      <% if comment.text.present? %>
+        <turbo-frame target="_top">
+          <div class="comment-content">
+            <% if comment.legacy_data.blank? %>
+              <div class="prose">
+                <% if comment.responsible_subject? || comment.agent? %>
+                  <%= simple_format(comment.text, {}, wrapper_tag: "div") %>
+                <% else %>
+                  <%= simple_format(comment.text) %>
+                <% end %>
               </div>
+            <% else %>
+              <div class="comment-legacy">
+                <div class="comment-legacy-text">
+                  <%# see legacy_id 85598 %>
+                  <%= simple_format(comment.legacy_data["plain_message"].presence || comment.text) %>
+                </div>
 
-              <% if comment.legacy_data["solved_by"].present? %>
-                <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
-              <% end %>
-              <% if comment.legacy_data["solved_in"].present? %>
-                <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
-              <% end %>
-              <% if comment.legacy_data["signature"].present? %>
-                <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      </turbo-frame>
-    <% end %>
-    <% if comment.attachments.any? %>
-      <%= render "issues/activity_object_attachments", activity_object: comment %>
-    <% end %>
-
-    <div class="like-dislike-confirm-con">
-      <%= render partial: "issues/activity_votes/buttons", locals: { activity: comment.activity } %>
-      <!--    <a class="button-confirm">-->
-      <!--      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 20 20">-->
-      <!--        <path d="M10,20C4.49,20,0,15.51,0,10S4.49,0,10,0s10,4.49,10,10-4.49,10-10,10ZM10,1.46C5.29,1.46,1.46,5.29,1.46,10s3.83,8.54,8.54,8.54,8.54-3.83,8.54-8.54S14.71,1.46,10,1.46Z"/>-->
-      <!--        <path d="M10,11.59c-.4,0-.73-.33-.73-.73v-5.85c0-.4.33-.73.73-.73s.73.33.73.73v5.85c0,.4-.33.73-.73.73Z"/>-->
-      <!--        <circle cx="10" cy="14.02" r=".98"/>-->
-      <!--      </svg>-->
-      <!--      <span>Nahlásiť komentár</span>-->
-      <!--    </a>-->
-      <% if comment.editable_by?(current_user) %>
-        <div class="like-dislike-con">
-          <%= link_to "Upraviť",
-                      comment.responsible_subject? ?
-                        edit_issue_issues_responsible_subject_comment_path(comment.activity.issue, comment) :
-                        edit_issue_issues_user_comment_path(comment.activity.issue, comment),
-                      class: "button button-md button-edit" %>
-        </div>
+                <% if comment.legacy_data["solved_by"].present? %>
+                  <p><strong>Kto?</strong> <%= comment.legacy_data["solved_by"] %></p>
+                <% end %>
+                <% if comment.legacy_data["solved_in"].present? %>
+                  <p><strong>Kedy?</strong> <%= comment.legacy_data["solved_in"] %></p>
+                <% end %>
+                <% if comment.legacy_data["signature"].present? %>
+                  <p class="comment-legacy-signature"><%= simple_format(comment.legacy_data["signature"]) %></p>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </turbo-frame>
       <% end %>
-    </div>
+      <% if comment.attachments.any? %>
+        <%= render "issues/activity_object_attachments", activity_object: comment %>
+      <% end %>
+
+      <div class="like-dislike-confirm-con">
+        <%= render partial: "issues/activity_votes/buttons", locals: { activity: comment.activity } %>
+        <!--    <a class="button-confirm">-->
+        <!--      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 20 20">-->
+        <!--        <path d="M10,20C4.49,20,0,15.51,0,10S4.49,0,10,0s10,4.49,10,10-4.49,10-10,10ZM10,1.46C5.29,1.46,1.46,5.29,1.46,10s3.83,8.54,8.54,8.54,8.54-3.83,8.54-8.54S14.71,1.46,10,1.46Z"/>-->
+        <!--        <path d="M10,11.59c-.4,0-.73-.33-.73-.73v-5.85c0-.4.33-.73.73-.73s.73.33.73.73v5.85c0,.4-.33.73-.73.73Z"/>-->
+        <!--        <circle cx="10" cy="14.02" r=".98"/>-->
+        <!--      </svg>-->
+        <!--      <span>Nahlásiť komentár</span>-->
+        <!--    </a>-->
+        <% if comment.editable_by?(current_user) %>
+          <div class="like-dislike-con">
+            <%= link_to "Upraviť",
+                        comment.responsible_subject? ?
+                          edit_issue_issues_responsible_subject_comment_path(comment.activity.issue, comment) :
+                          edit_issue_issues_user_comment_path(comment.activity.issue, comment),
+                        class: "button button-md button-edit" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 <% end %>

@@ -4,13 +4,20 @@ class Profiles::AvatarsController < ApplicationController
     if current_user.save
       redirect_to edit_profile_path, notice: "Fotka bola úspešne zmenená."
     else
-      redirect_to edit_profile_path, error: current_user.errors.full_messages.join(", ")
+      redirect_to edit_profile_path, alert: current_user.errors.full_messages.join(", ")
     end
+  end
+
+  def destroy
+    current_user.avatar.purge_later
+    redirect_to edit_profile_path, notice: "Fotka bola odstránená."
   end
 
   private
 
   def avatar_params
-    params.require(:user).permit(:avatar)
+    params.require(:user).permit(:avatar).tap do |permitted|
+      permitted[:avatar] = ImageUpload.normalize(permitted[:avatar]) if permitted[:avatar]
+    end
   end
 end
