@@ -231,6 +231,7 @@ class Issue < ApplicationRecord
     self.responsible_subject_last_contact_at = Issues::ResponsibleSubjectComment
       .joins(activity: :issue)
       .where(issues: { id: id })
+      .where(hidden: false)
       .maximum(:created_at)
 
     self.last_activity_at = activities.maximum(:created_at)

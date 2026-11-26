@@ -19,6 +19,18 @@ class Triage::UpdatePortalActivityFromTriageJobTest < ActiveJob::TestCase
     assert @comment.reload.hidden
   end
 
+  test "hiding the comment recalculates the issue counters" do
+    issue = @comment.issue
+    issue.update_columns(comments_count: 99)
+    client = Minitest::Mock.new
+    client.expect :find_article, [ Object.new, OpenStruct.new(internal: true) ], [ 3, "7" ]
+
+    Triage::UpdatePortalActivityFromTriageJob.new.perform(3, "7", triage_zammad_client: client)
+
+    assert_mock client
+    assert_equal issue.reload.visible_activity_objects.count, issue.comments_count
+  end
+
   test "shows the comment again when the article became public" do
     @comment.update_columns(hidden: true)
     client = Minitest::Mock.new
