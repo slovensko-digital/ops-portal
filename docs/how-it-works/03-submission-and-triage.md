@@ -21,10 +21,9 @@ flowchart TD
   H -->|duplicates within 500 m,<br/>same category| H2[Podnet má problém:<br/>Zobraziť podobné podnety]
   H2 -->|duplicates_shown = true,<br/>redirect to filtered list| H3[List page. User must go back via<br/>header 'Neodoslaný podnet' and submit again]
   H3 --> G
-  H -->|AI checks failed| H4[Show checks, Upraviť or<br/>'Odoslať podnet aj tak' → checks/confirm]
-  H -->|AI checks not computed<br/>Gemini error, job retried| H5[Automatickú kontrolu sa nepodarilo<br/>vykonať, no checks/confirm]
-  H5 --> G
-  H -->|ok| I[Draft#confirm: Issue state waiting,<br/>subscribe author, SyncIssueToTriageJob]
+  H -->|AI checks found problems| H4[Show checks, always both<br/>Upraviť podnet and<br/>'Odoslať podnet aj tak' → checks/confirm]
+  H4 -->|Odoslať podnet aj tak| I
+  H -->|ok, no problems or<br/>Gemini error: submitted unchecked| I[Draft#confirm: Issue state waiting,<br/>subscribe author, SyncIssueToTriageJob]
   I --> J[/dopyty/novy-dopyt/dakujeme/]
 ```
 
@@ -54,6 +53,14 @@ That link opens the summary. A complete draft shows "Zhrnutie podnetu" with
 (`Issues::Draft#first_unfinished_step`: photos, location, suggestions, category,
 details) shows "Rozpracovaný podnet" instead: the sections filled in so far,
 read-only, and "Pokračovať" to that step.
+
+AI checks (`Issues::Draft::GenerateChecksJob`, Gemini with the CMS prompt
+tagged `prompt:generatechecks`) only warn and never block submission, a
+temporary measure for false positives
+([ops#1377](https://github.com/slovensko-digital/ops/issues/1377)). The
+`action` Gemini returns per check (`back` / `confirm`) is ignored: every
+warning offers "Odoslať podnet aj tak". When Gemini fails, `checks` stays nil,
+the job is retried in the background and the issue is submitted without checks.
 
 `checks/create` and `checks/confirm` redirect to the summary ("Rozpracovaný
 podnet") when the draft is incomplete (e.g. a summary page opened earlier).
@@ -249,4 +256,5 @@ Known problems in this flow, tracked in the private `slovensko-digital/ops` repo
 | [ops#1323](https://github.com/slovensko-digital/ops/issues/1323) | [2c. Reject](#2c-reject) | A rejected issue can't be supplemented |
 | [ops#1328](https://github.com/slovensko-digital/ops/issues/1328) | [2a. Request supplement (doplnenie) (observed)](#2a-request-supplement-doplnenie-observed) | Request supplement sends the author two emails |
 | [ops#1330](https://github.com/slovensko-digital/ops/issues/1330) | [2b. Accept (observed)](#2b-accept-observed) | The supplement has to be copied into "Finálny text" by hand; accept overwrites the citizen's text |
-| [ops#1345](https://github.com/slovensko-digital/ops/issues/1345) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | `ChecksController#confirm` renders nothing when the draft is not confirmable; no server-side protection against concurrent submissions |
+| [ops#1345](https://github.com/slovensko-digital/ops/issues/1345) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | No server-side protection against concurrent submissions |
+| [ops#1377](https://github.com/slovensko-digital/ops/issues/1377) | [1. Citizen submits an issue or a question (observed)](#1-citizen-submits-an-issue-or-a-question-observed) | AI checks report irrelevant problems; until fixed they only warn and never block |

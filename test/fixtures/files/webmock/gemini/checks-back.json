@@ -1,0 +1,34 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "[\n  {\n    \"action\": \"back\",\n    \"title\": \"Pitie alkoholu na verejnosti\",\n    \"info\": \"Pitie alkoholu na verejnosti rieši mestská polícia. Upravte, prosím, podnet.\"\n  }\n]"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "avgLogprobs": -0.00013921140276606958
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 2585,
+    "candidatesTokenCount": 199,
+    "totalTokenCount": 2784,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 2585
+      }
+    ],
+    "candidatesTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 199
+      }
+    ]
+  },
+  "modelVersion": "gemini-2.0-flash"
+}

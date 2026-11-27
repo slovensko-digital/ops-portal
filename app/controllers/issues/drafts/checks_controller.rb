@@ -8,11 +8,9 @@ class Issues::Drafts::ChecksController < ApplicationController
   end
 
   def confirm
-    if @draft.confirmable?
-      @draft.confirm
+    @draft.confirm
 
-      redirect_to thanks_issues_drafts_path
-    end
+    redirect_to thanks_issues_drafts_path
   end
 
   def create

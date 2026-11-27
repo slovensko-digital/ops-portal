@@ -272,6 +272,43 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     assert_equal "Zeleň a životné prostredie", @user.issues.last.category.name
   end
 
+  test "issue can be submitted anyway when an AI check asks to edit it" do
+    stub_json_request(
+      :post,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=",
+      body: /checks prompt/,
+      response: "webmock/gemini/checks-back.json"
+    )
+
+    login_as(@user)
+    open_complete_draft_summary
+
+    click_on "Odoslať podnet"
+
+    assert_text "Podnet má problém"
+    assert_text "Pitie alkoholu na verejnosti"
+    assert_link "Upraviť podnet"
+    click_on "Odoslať podnet aj tak"
+
+    assert_text "Podnet bol odoslaný!"
+    assert_equal "Graffiti na skrini", @user.issues.last.title
+  end
+
+  test "issue is submitted without AI checks when Gemini fails" do
+    stub_request(
+      :post,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="
+    ).with(body: /checks prompt/).to_return(status: 500, body: "Internal Server Error")
+
+    login_as(@user)
+    open_complete_draft_summary
+
+    click_on "Odoslať podnet"
+
+    assert_text "Podnet bol odoslaný!"
+    assert_equal "Graffiti na skrini", @user.issues.last.title
+  end
+
   test "unfinished draft whose photos were all removed continues with the photos" do
     login_as(@user)
 
@@ -316,6 +353,19 @@ class Issues::DraftsTest < ApplicationSystemTestCase
     assert_text "Lokalita"
     click_on "Pokračovať"
     assert_text "Poškodená rozvodná skriňa"
+  end
+
+  def open_complete_draft_summary
+    leave_draft_on_suggestions_step
+    @user.issues_drafts.last.update!(
+      title: "Graffiti na skrini", description: "Je tu graffiti, treba vycistit",
+      category: issues_categories(:one), subcategory: issues_subcategories(:one)
+    )
+
+    visit root_path
+    click_on "Neodoslaný podnet"
+    click_on "Zobraziť neodoslaný podnet"
+    assert_selector "h1", text: "Zhrnutie podnetu"
   end
 
   def pause_submission(button)
