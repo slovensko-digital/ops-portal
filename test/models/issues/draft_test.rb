@@ -28,9 +28,16 @@ class Issues::DraftTest < ActiveSupport::TestCase
     exif_data_mock.verify
   end
 
-  test "checks step does not pass when checks were never computed" do
+  test "checks step passes when checks could not be computed" do
     draft = Issues::Draft.create!(author: users(:one), duplicates_shown: true)
     draft.checks = nil
+
+    assert draft.valid?(:checks_step)
+  end
+
+  test "checks step does not pass when AI checks found a problem" do
+    draft = Issues::Draft.create!(author: users(:one), duplicates_shown: true)
+    draft.checks = [ { "action" => "back", "title" => "Pitie alkoholu na verejnosti" } ]
 
     assert_not draft.valid?(:checks_step)
     assert draft.errors.added?(:checks, :invalid)
@@ -41,20 +48,6 @@ class Issues::DraftTest < ActiveSupport::TestCase
     draft.checks = []
 
     assert draft.valid?(:checks_step)
-  end
-
-  test "not confirmable when checks were never computed" do
-    draft = Issues::Draft.create!(author: users(:one))
-    draft.checks = nil
-
-    assert_not draft.confirmable?
-  end
-
-  test "confirmable when all checks allow confirmation" do
-    draft = Issues::Draft.create!(author: users(:one))
-    draft.checks = [ { "action" => "confirm" } ]
-
-    assert draft.confirmable?
   end
 
   test "first unfinished step follows the wizard order" do

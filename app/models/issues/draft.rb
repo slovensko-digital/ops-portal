@@ -108,10 +108,6 @@ class Issues::Draft < ApplicationRecord
     end
   end
 
-  def needs_editing?
-    checks.to_a.any? { |check| check["action"] == "back" }
-  end
-
   def geo
     [ latitude, longitude ] if latitude.present? && longitude.present?
   end
@@ -168,10 +164,6 @@ class Issues::Draft < ApplicationRecord
     first_unfinished_step == :summary
   end
 
-  def confirmable?
-    !checks.nil? && checks.all? { |check| check["action"] == "confirm" }
-  end
-
   def municipality_errors?
     errors.added?(:base, :municipality_unsupported) ||
       errors.added?(:base, :municipality_district_unsupported) ||
@@ -194,8 +186,10 @@ class Issues::Draft < ApplicationRecord
     errors.add(:base, :duplicates_nearby) if nearby_issues.any?
   end
 
+  # TEMP ops#1377: AI checks report false positives, so they only warn and never block submission.
+  # Problems found are shown with "Odoslať podnet aj tak"; when Gemini fails (checks nil) the issue is submitted unchecked.
   def checks_passed
-    errors.add(:checks, :invalid) if checks.nil? || checks.any?
+    errors.add(:checks, :invalid) if checks.present?
   end
 
   def municipality_supported
